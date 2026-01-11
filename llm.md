@@ -13,10 +13,6 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
   - [Crear un diálogo con formulario y extraer la respuesta](#crear-un-dilogo-con-formulario-y-extraer-la-respuesta)
 - [Nwt Toasts API](#nwt-toasts-api)
   - [Mostrar un mensaje emergente:](#mostrar-un-mensaje-emergente)
-- [Nwt Errors API](#nwt-errors-api)
-  - [Exposición](#exposicin)
-  - [Mostrar un error](#mostrar-un-error)
-  - [Captura automática de aserciones globales](#captura-automtica-de-aserciones-globales)
 - [Nwt Asserter API](#nwt-asserter-api)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
@@ -86,6 +82,11 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
 
 # Estructura del proyecto
 
+- 📁 trash71
+  - 📄 1.json
+  - 📄 2.txt
+- 📁 trash70
+  - 📄 throw-error.js
 - 📁 trash7
 - 📁 trash6
   - 📄 salida-0000.csv
@@ -211,6 +212,9 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
 - 📁 trash1
   - 📄 僕とロボコ #02.pdf
   - 📄 僕とロボコ #13.pdf
+- 📁 trash-x-100
+  - 📄 fichero 2.txt
+  - 📄 fichero de ejemplo.txt
 - 📁 documentation
   - 📄 asserter-api.md
   - 📄 common-injections-api.md
@@ -251,110 +255,316 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
   - 📄 v-resizable-api.md
 - 📁 assets
   - 📁 framework
-    - 📁 win7
-      - 📄 win7-patches.css
-      - 📄 win7.css
-    - 📁 vue2
-      - 📄 vue2.js
-      - 📄 vue2.min.js
-    - 📁 socket.io-client
-      - 📄 socket.io-client.js
-    - 📁 reloader
-      - 📄 .gitignore
-      - 📄 package-lock.json
-      - 📄 package.json
-      - 📄 reloadable.js
-      - 📄 reloader.js
-      - 📄 starter.js
-    - 📁 papaparse
-      - 📄 papaparse.js
-      - 📄 papaparse.min.js
-    - 📁 marked
-      - 📄 marked.js
-    - 📁 directives
-      - 📄 v-draggable.js
-      - 📄 v-focus.js
-      - 📄 v-resizable-simple.js
-      - 📄 v-resizable.js
-    - 📁 css
-      - 📁 one-framework
-        - 📄 one-framework.css
-      - 📁 custom
-        - 📄 custom.css
-    - 📁 components
-      - 📁 nwt-tester-viewer
-        - 📄 nwt-tester-viewer.css
-        - 📄 nwt-tester-viewer.html
-        - 📄 nwt-tester-viewer.js
-      - 📁 nwt-tester-node
-        - 📄 nwt-tester-node.css
-        - 📄 nwt-tester-node.html
-        - 📄 nwt-tester-node.js
-      - 📁 nwt-source-viewer
-        - 📄 nwt-source-viewer.css
-        - 📄 nwt-source-viewer.html
-        - 📄 nwt-source-viewer.js
-      - 📁 nwt-settings-viewer
-        - 📄 nwt-settings-viewer.css
-        - 📄 nwt-settings-viewer.html
-        - 📄 nwt-settings-viewer.js
-      - 📁 nwt-progress-bar-viewer
-        - 📄 nwt-progress-bar-viewer.css
-        - 📄 nwt-progress-bar-viewer.html
-        - 📄 nwt-progress-bar-viewer.js
-      - 📁 nwt-process-manager-viewer
-        - 📄 nwt-process-manager-viewer.css
-        - 📄 nwt-process-manager-viewer.html
-        - 📄 nwt-process-manager-viewer.js
-      - 📁 nwt-procedures-manager-viewer
-        - 📄 nwt-procedures-manager-viewer.css
-        - 📄 nwt-procedures-manager-viewer.html
-        - 📄 nwt-procedures-manager-viewer.js
-      - 📁 nwt-procedure-documentation-viewer
-        - 📄 nwt-procedure-documentation-viewer.css
-        - 📄 nwt-procedure-documentation-viewer.html
-        - 📄 nwt-procedure-documentation-viewer.js
-      - 📁 nwt-file-explorer
-        - 📄 nwt-file-explorer.css
-        - 📄 nwt-file-explorer.html
-        - 📄 nwt-file-explorer.js
-      - 📁 nwt-code-highlighter
-        - 📄 nwt-code-highlighter.css
-        - 📄 nwt-code-highlighter.html
-        - 📄 nwt-code-highlighter.js
-      - 📁 nwt-box-viewer
-        - 📄 nwt-box-viewer.css
-        - 📄 nwt-box-viewer.html
-        - 📄 nwt-box-viewer.js
-      - 📁 common-toasts
-        - 📄 common-toasts.css
-        - 📄 common-toasts.html
-        - 📄 common-toasts.js
-      - 📁 common-injections
-        - 📄 common-injections.css
-        - 📄 common-injections.html
-        - 📄 common-injections.js
-      - 📁 common-errors
-        - 📄 common-errors.css
-        - 📄 common-errors.html
-        - 📄 common-errors.js
-      - 📁 common-dialogs
-        - 📄 common-dialogs.css
-        - 📄 common-dialogs.html
-        - 📄 common-dialogs.js
+    - 📁 nwt-templates
+      - 📁 templates
+        - 📁 nwt
+          - 📁 nwt-iterable-function
+            - 📄 template.js
+          - 📁 nwt-example-1
+            - 📄 template.js
+          - 📁 nwt-errors-manager
+            - 📁 viewer
+              - 📄 template.css
+              - 📄 template.html
+              - 📄 template.js
+            - 📁 error-header
+            - 📁 error-details
+          - 📁 nwt-ast-tree
+            - 📄 template.js
+          - 📄 controller-to-return.js
+          - 📄 controller-to-throw.js
+          - 📄 hello-user.js
+      - 📄 nwt-templates.js
+      - 📄 tjs-parser.fix.js
+      - 📄 tjs-parser.js
+      - 📄 tjs-parser.pegjs
+      - 📄 tjs.build.sh
+    - 📁 nwt-submemory
+      - 📁 global
+        - 📁 kfxtrxzzqt
+          - 📁 proc
+            - 📄 state.json
+        - 📄 submemory-ids.json
+    - 📁 nwt-string-shortener
+      - 📄 global.json
+    - 📁 nwt-persister
+      - 📁 test
+        - 📁 dir2
+        - 📁 dir1
+        - 📄 file-2.jsonl
+        - 📄 file.json
+      - 📄 README.md
+      - 📄 api.js
+      - 📄 nwt-directory-persister.js
+      - 📄 nwt-file-persister.js
+      - 📄 nwt-json-persister.js
+      - 📄 nwt-jsonl-persister.js
+      - 📄 nwt-persister.js
+      - 📄 test.js
+    - 📁 nwt-js-controllers
+      - 📄 nwt-js-controller.js
+      - 📄 nwt-js-return-controller.js
+      - 📄 nwt-js-throw-controller.js
+    - 📁 nwt-interruption
+      - 📄 nwt-interruptible.js
+      - 📄 nwt-interruption-handler.js
+      - 📄 nwt-interruption.js
+      - 📄 test.js
+    - 📁 nwt-filetree
+      - 📁 selector
+        - 📄 nwt-filetree-selector-interpreter.js
+        - 📄 nwt-filetree-selector-parser.build.sh
+        - 📄 nwt-filetree-selector-parser.dev.sh
+        - 📄 nwt-filetree-selector-parser.fix.js
+        - 📄 nwt-filetree-selector-parser.js
+        - 📄 nwt-filetree-selector-parser.pegjs
+        - 📄 nwt-filetree-selector.js
+      - 📁 interfaces
+        - 📄 nwt-filetree-directory.js
+        - 📄 nwt-filetree-file.js
+        - 📄 nwt-filetree-glob.js
+        - 📄 nwt-filetree-json.js
+        - 📄 nwt-filetree-node.js
+        - 📄 nwt-filetree-property.js
+      - 📄 nwt-filetree.js
+    - 📁 nwt-command
+      - 📁 registry
+        - 📁 nwt
+          - 📁 util.txt.concatenation
+            - 📄 COMMAND.md
+            - 📄 command.js
+            - 📄 questions.js
+          - 📁 util.csv.concatenation
+            - 📁 view
+              - 📄 view.css
+              - 📄 view.html
+              - 📄 view.js
+            - 📁 form
+              - 📄 form.css
+              - 📄 form.html
+              - 📄 form.js
+            - 📄 COMMAND.md
+            - 📄 command.js
+            - 📄 questions.js
+      - 📁 interfaces
+      - 📁 components
+        - 📁 nwt-commands-manager-viewer
+          - 📄 nwt-commands-manager-viewer.css
+          - 📄 nwt-commands-manager-viewer.html
+          - 📄 nwt-commands-manager-viewer.js
+        - 📁 nwt-anonymous-command-view
+          - 📄 nwt-anonymous-command-view.css
+          - 📄 nwt-anonymous-command-view.html
+          - 📄 nwt-anonymous-command-view.js
+        - 📁 nwt-anonymous-command-form
+          - 📄 nwt-anonymous-command-form.css
+          - 📄 nwt-anonymous-command-form.html
+          - 📄 nwt-anonymous-command-form.js
+        - 📁 mixins
+          - 📄 nwt-command-context-interface.js
+          - 📄 nwt-command-form-interface.js
+          - 📄 nwt-command-view-interface.js
+      - 📄 nwt-command.js
+      - 📄 nwt-commands-manager.js
+    - 📁 browser
+      - 📁 win7
+        - 📄 win7-patches.css
+        - 📄 win7.css
+      - 📁 vue2
+        - 📄 vue2.js
+        - 📄 vue2.min.js
+      - 📁 socket.io-client
+        - 📄 socket.io-client.js
+      - 📁 reloader
+        - 📄 .gitignore
+        - 📄 package-lock.json
+        - 📄 package.json
+        - 📄 reloadable.js
+        - 📄 reloader.js
+        - 📄 starter.js
+      - 📁 papaparse
+        - 📄 papaparse.js
+        - 📄 papaparse.min.js
+      - 📁 marked
+        - 📄 marked.js
+      - 📁 ejs
+        - 📄 ejs.js
+        - 📄 ejs.min.js
+      - 📁 directives
+        - 📄 v-draggable.js
+        - 📄 v-focus.js
+        - 📄 v-forms.js
+        - 📄 v-resizable-simple.js
+        - 📄 v-resizable.js
+      - 📁 css
+        - 📁 one-framework
+          - 📄 one-framework.css
+        - 📁 custom
+          - 📄 custom.css
+      - 📁 components
+        - 📁 nwt-tester-viewer
+          - 📄 nwt-tester-viewer.css
+          - 📄 nwt-tester-viewer.html
+          - 📄 nwt-tester-viewer.js
+        - 📁 nwt-tester-node
+          - 📄 nwt-tester-node.css
+          - 📄 nwt-tester-node.html
+          - 📄 nwt-tester-node.js
+        - 📁 nwt-stars-background
+          - 📄 nwt-stars-background.css
+          - 📄 nwt-stars-background.html
+          - 📄 nwt-stars-background.js
+        - 📁 nwt-source-viewer
+          - 📄 nwt-source-viewer.css
+          - 📄 nwt-source-viewer.html
+          - 📄 nwt-source-viewer.js
+        - 📁 nwt-settings-viewer
+          - 📄 nwt-settings-viewer.css
+          - 📄 nwt-settings-viewer.html
+          - 📄 nwt-settings-viewer.js
+        - 📁 nwt-prompts-manager-viewer
+          - 📄 nwt-prompts-manager-viewer.css
+          - 📄 nwt-prompts-manager-viewer.html
+          - 📄 nwt-prompts-manager-viewer.js
+        - 📁 nwt-progress-bar-viewer
+          - 📄 nwt-progress-bar-viewer.css
+          - 📄 nwt-progress-bar-viewer.html
+          - 📄 nwt-progress-bar-viewer.js
+        - 📁 nwt-process-manager-viewer
+          - 📄 nwt-process-manager-viewer.css
+          - 📄 nwt-process-manager-viewer.html
+          - 📄 nwt-process-manager-viewer.js
+        - 📁 nwt-procedures-manager-viewer
+          - 📄 nwt-procedures-manager-viewer.css
+          - 📄 nwt-procedures-manager-viewer.html
+          - 📄 nwt-procedures-manager-viewer.js
+        - 📁 nwt-procedure-documentation-viewer
+          - 📄 nwt-procedure-documentation-viewer.css
+          - 📄 nwt-procedure-documentation-viewer.html
+          - 📄 nwt-procedure-documentation-viewer.js
+        - 📁 nwt-matrix-background
+          - 📄 nwt-matrix-background.css
+          - 📄 nwt-matrix-background.html
+          - 📄 nwt-matrix-background.js
+        - 📁 nwt-form
+          - 📁 control-statement
+            - 📄 nwt-form-control-statement.css
+            - 📄 nwt-form-control-statement.html
+            - 📄 nwt-form-control-statement.js
+          - 📁 control-handler
+            - 📄 nwt-form-control-handler.css
+            - 📄 nwt-form-control-handler.html
+            - 📄 nwt-form-control-handler.js
+          - 📁 control-for
+            - 📁 text
+              - 📁 password
+                - 📄 control.css
+                - 📄 control.html
+                - 📄 control.js
+              - 📁 oneline
+                - 📄 control.css
+                - 📄 control.html
+                - 📄 control.js
+              - 📁 multiline
+                - 📄 control.css
+                - 📄 control.html
+                - 📄 control.js
+              - 📁 email
+                - 📄 control.css
+                - 📄 control.html
+                - 📄 control.js
+            - 📁 file-chooser
+              - 📁 new-file
+                - 📄 control.css
+                - 📄 control.html
+                - 📄 control.js
+              - 📁 file
+                - 📄 control.css
+                - 📄 control.html
+                - 📄 control.js
+              - 📁 directory
+                - 📄 control.css
+                - 📄 control.html
+                - 📄 control.js
+          - 📁 control-buttons
+            - 📄 nwt-form-control-buttons.css
+            - 📄 nwt-form-control-buttons.html
+            - 📄 nwt-form-control-buttons.js
+          - 📁 builder
+            - 📄 builder.css
+            - 📄 builder.html
+            - 📄 builder.js
+          - 📄 control-prototype.js
+          - 📄 nwt-form-element-to-any.js
+          - 📄 nwt-form-element-to-control.js
+          - 📄 nwt-form-element-to-form.js
+          - 📄 nwt-form-element-to-handler.js
+          - 📄 nwt-form-utils.js
+        - 📁 nwt-file-explorer
+          - 📄 nwt-file-explorer.css
+          - 📄 nwt-file-explorer.html
+          - 📄 nwt-file-explorer.js
+        - 📁 nwt-code-highlighter
+          - 📄 nwt-code-highlighter.css
+          - 📄 nwt-code-highlighter.html
+          - 📄 nwt-code-highlighter.js
+        - 📁 nwt-chatgpt-files-manager-viewer
+          - 📄 nwt-chatgpt-files-manager-viewer.css
+          - 📄 nwt-chatgpt-files-manager-viewer.html
+          - 📄 nwt-chatgpt-files-manager-viewer.js
+        - 📁 nwt-box-viewer
+          - 📄 nwt-box-viewer.css
+          - 📄 nwt-box-viewer.html
+          - 📄 nwt-box-viewer.js
+        - 📁 common-toasts
+          - 📄 common-toasts.css
+          - 📄 common-toasts.html
+          - 📄 common-toasts.js
+        - 📁 common-injections
+          - 📄 common-injections.css
+          - 📄 common-injections.html
+          - 📄 common-injections.js
+        - 📁 common-errors
+          - 📄 common-errors.css
+          - 📄 common-errors.html
+          - 📄 common-errors.js
+        - 📁 common-dialogs
+          - 📄 common-dialogs.css
+          - 📄 common-dialogs.html
+          - 📄 common-dialogs.js
+    - 📄 nwt-argumenter.js
+    - 📄 nwt-array-utils.js
     - 📄 nwt-asserter.js
+    - 📄 nwt-ast-tree-class.js
+    - 📄 nwt-ast-tree-template-source.js
     - 📄 nwt-boot.js
+    - 📄 nwt-cache-directory.js
+    - 📄 nwt-chatgpt.js
+    - 📄 nwt-clipboard.js
+    - 📄 nwt-code-composer.js
+    - 📄 nwt-collection-utils.js
     - 📄 nwt-csv.js
+    - 📄 nwt-debug.js
     - 📄 nwt-dialog-definition.js
+    - 📄 nwt-dom.js
     - 📄 nwt-environment.js
+    - 📄 nwt-error-utils.js
+    - 📄 nwt-errors-manager.js
+    - 📄 nwt-exporter.js
     - 📄 nwt-file-chooser.js
     - 📄 nwt-filesystem.js
     - 📄 nwt-globalizer.js
     - 📄 nwt-importer.js
     - 📄 nwt-injection.js
+    - 📄 nwt-iterable-class.js
+    - 📄 nwt-iterable-command-class.js
+    - 📄 nwt-iterable-function.js
     - 📄 nwt-json-storer.js
     - 📄 nwt-lazy-loader.js
+    - 📄 nwt-live-injector.js
+    - 📄 nwt-object-utils.js
     - 📄 nwt-pack.js
+    - 📄 nwt-paths.js
     - 📄 nwt-procedure-definition.js
     - 📄 nwt-procedure-injections.js
     - 📄 nwt-procedure-seed.js
@@ -362,19 +572,30 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
     - 📄 nwt-process-manager.js
     - 📄 nwt-process.js
     - 📄 nwt-progress-bar.js
+    - 📄 nwt-prompts-manager.js
+    - 📄 nwt-proxy-chain.js
     - 📄 nwt-randomizer.js
     - 📄 nwt-settings.js
     - 📄 nwt-shell.js
+    - 📄 nwt-string-shortener.js
+    - 📄 nwt-strings.js
+    - 📄 nwt-submemory.js
+    - 📄 nwt-submemory.prev.js
+    - 📄 nwt-subpathable.js
     - 📄 nwt-tester.js
     - 📄 nwt-timer.js
     - 📄 nwt-tracer.js
     - 📄 nwt-utils.js
+    - 📄 nwt-vue2.js
   - 📁 external
     - 📁 qunit
       - 📄 qunit.css
       - 📄 qunit.js
       - 📄 qunit.min.css
       - 📄 qunit.min.js
+    - 📁 js-beautify
+      - 📄 js-beautify.js
+      - 📄 js-beautify.min.js
     - 📁 highlight.js
       - 📁 syntaxes
         - 📄 css.min.js
@@ -386,12 +607,188 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
   - 📁 builder
     - 📄 build-docs.js
     - 📄 bundle.js
+    - 📄 bundlelist-common.js
     - 📄 bundlelist-external.js
     - 📄 bundlelist.js
     - 📄 vuebundler.js
   - 📁 app
+    - 📁 temporary
+      - 📁 directory
+        - 📁 zlvlmenorg
+          - 📁 step_8_csv_to_csv_unificado
+          - 📁 step_7_csv_to_csv_expandido
+          - 📁 step_6_csv_to_csv_paginado
+          - 📁 step_5_txt_to_csv
+          - 📁 step_4_txt_to_txt_unificado
+          - 📁 step_3_png_to_txt
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-0.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-0.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-1.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-1.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-10.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-10.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-11.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-11.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-12.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-12.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-13.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-13.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-2.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-2.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-3.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-3.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-4.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-4.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-5.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-5.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-6.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-6.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-7.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-7.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-8.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-8.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-9.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-9.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-0.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-0.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-1.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-1.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-10.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-10.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-11.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-11.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-12.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-12.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-13.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-13.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-14.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-14.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-15.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-15.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-2.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-2.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-3.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-3.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-4.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-4.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-5.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-5.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-6.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-6.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-7.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-7.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-8.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-8.part-002.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-9.part-001.md
+            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-9.part-002.md
+          - 📁 step_2_png_to_png_recortado
+            - 📄 僕とロボコ #02-0.part-001.png
+            - 📄 僕とロボコ #02-0.part-002.png
+            - 📄 僕とロボコ #02-1.part-001.png
+            - 📄 僕とロボコ #02-1.part-002.png
+            - 📄 僕とロボコ #02-10.part-001.png
+            - 📄 僕とロボコ #02-10.part-002.png
+            - 📄 僕とロボコ #02-11.part-001.png
+            - 📄 僕とロボコ #02-11.part-002.png
+            - 📄 僕とロボコ #02-12.part-001.png
+            - 📄 僕とロボコ #02-12.part-002.png
+            - 📄 僕とロボコ #02-13.part-001.png
+            - 📄 僕とロボコ #02-13.part-002.png
+            - 📄 僕とロボコ #02-2.part-001.png
+            - 📄 僕とロボコ #02-2.part-002.png
+            - 📄 僕とロボコ #02-3.part-001.png
+            - 📄 僕とロボコ #02-3.part-002.png
+            - 📄 僕とロボコ #02-4.part-001.png
+            - 📄 僕とロボコ #02-4.part-002.png
+            - 📄 僕とロボコ #02-5.part-001.png
+            - 📄 僕とロボコ #02-5.part-002.png
+            - 📄 僕とロボコ #02-6.part-001.png
+            - 📄 僕とロボコ #02-6.part-002.png
+            - 📄 僕とロボコ #02-7.part-001.png
+            - 📄 僕とロボコ #02-7.part-002.png
+            - 📄 僕とロボコ #02-8.part-001.png
+            - 📄 僕とロボコ #02-8.part-002.png
+            - 📄 僕とロボコ #02-9.part-001.png
+            - 📄 僕とロボコ #02-9.part-002.png
+            - 📄 僕とロボコ #13-0.part-001.png
+            - 📄 僕とロボコ #13-0.part-002.png
+            - 📄 僕とロボコ #13-1.part-001.png
+            - 📄 僕とロボコ #13-1.part-002.png
+            - 📄 僕とロボコ #13-10.part-001.png
+            - 📄 僕とロボコ #13-10.part-002.png
+            - 📄 僕とロボコ #13-11.part-001.png
+            - 📄 僕とロボコ #13-11.part-002.png
+            - 📄 僕とロボコ #13-12.part-001.png
+            - 📄 僕とロボコ #13-12.part-002.png
+            - 📄 僕とロボコ #13-13.part-001.png
+            - 📄 僕とロボコ #13-13.part-002.png
+            - 📄 僕とロボコ #13-14.part-001.png
+            - 📄 僕とロボコ #13-14.part-002.png
+            - 📄 僕とロボコ #13-15.part-001.png
+            - 📄 僕とロボコ #13-15.part-002.png
+            - 📄 僕とロボコ #13-2.part-001.png
+            - 📄 僕とロボコ #13-2.part-002.png
+            - 📄 僕とロボコ #13-3.part-001.png
+            - 📄 僕とロボコ #13-3.part-002.png
+            - 📄 僕とロボコ #13-4.part-001.png
+            - 📄 僕とロボコ #13-4.part-002.png
+            - 📄 僕とロボコ #13-5.part-001.png
+            - 📄 僕とロボコ #13-5.part-002.png
+            - 📄 僕とロボコ #13-6.part-001.png
+            - 📄 僕とロボコ #13-6.part-002.png
+            - 📄 僕とロボコ #13-7.part-001.png
+            - 📄 僕とロボコ #13-7.part-002.png
+            - 📄 僕とロボコ #13-8.part-001.png
+            - 📄 僕とロボコ #13-8.part-002.png
+            - 📄 僕とロボコ #13-9.part-001.png
+            - 📄 僕とロボコ #13-9.part-002.png
+          - 📁 step_1_pdf_to_png
+            - 📄 僕とロボコ #02-0.png
+            - 📄 僕とロボコ #02-1.png
+            - 📄 僕とロボコ #02-10.png
+            - 📄 僕とロボコ #02-11.png
+            - 📄 僕とロボコ #02-12.png
+            - 📄 僕とロボコ #02-13.png
+            - 📄 僕とロボコ #02-2.png
+            - 📄 僕とロボコ #02-3.png
+            - 📄 僕とロボコ #02-4.png
+            - 📄 僕とロボコ #02-5.png
+            - 📄 僕とロボコ #02-6.png
+            - 📄 僕とロボコ #02-7.png
+            - 📄 僕とロボコ #02-8.png
+            - 📄 僕とロボコ #02-9.png
+            - 📄 僕とロボコ #13-0.png
+            - 📄 僕とロボコ #13-1.png
+            - 📄 僕とロボコ #13-10.png
+            - 📄 僕とロボコ #13-11.png
+            - 📄 僕とロボコ #13-12.png
+            - 📄 僕とロボコ #13-13.png
+            - 📄 僕とロボコ #13-14.png
+            - 📄 僕とロボコ #13-15.png
+            - 📄 僕とロボコ #13-2.png
+            - 📄 僕とロボコ #13-3.png
+            - 📄 僕とロボコ #13-4.png
+            - 📄 僕とロボコ #13-5.png
+            - 📄 僕とロボコ #13-6.png
+            - 📄 僕とロボコ #13-7.png
+            - 📄 僕とロボコ #13-8.png
+            - 📄 僕とロボコ #13-9.png
+    - 📁 strings
+      - 📄 Prompt para expandir CSV con traducción y análisis gramatical especificación 1.txt
+      - 📄 Prompt para obtener CSV a partir de TXT en japonés especificación 1.txt
     - 📁 procedures
       - 📁 Prototipo para tester y progressBar
+        - 📁 viewer
+          - 📄 viewer.css
+          - 📄 viewer.html
+          - 📄 viewer.js
+        - 📁 form
+          - 📄 form.css
+          - 📄 form.html
+          - 📄 form.js
+        - 📄 PROCEDURE.md
+        - 📄 definition.js
+      - 📁 Prototipo para subprocedimientos
         - 📁 viewer
           - 📄 viewer.css
           - 📄 viewer.html
@@ -413,8 +810,28 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
           - 📄 form.js
         - 📄 PROCEDURE.md
         - 📄 definition.js
-      - 📁 Convertir de texto en japonés a CSV por chatgpt
+      - 📁 Flujo desde PDF en japonés especificación 1 hasta CSV con traducción y análisis gramatical
+        - 📁 viewer
+          - 📄 viewer.css
+          - 📄 viewer.html
+          - 📄 viewer.js
+        - 📁 form
+          - 📄 form.css
+          - 📄 form.html
+          - 📄 form.js
         - 📄 PROCEDURE.md
+        - 📄 definition.js
+      - 📁 Convertir de TXT en japonés a CSV especificación 1 por chatgpt
+        - 📁 viewer
+          - 📄 viewer.css
+          - 📄 viewer.html
+          - 📄 viewer.js
+        - 📁 form
+          - 📄 form.css
+          - 📄 form.html
+          - 📄 form.js
+        - 📄 PROCEDURE.md
+        - 📄 definition.js
       - 📁 Convertir de PNG a TXT en japonés por yomitoku
         - 📁 viewer
           - 📄 viewer.css
@@ -459,7 +876,7 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
           - 📄 form.js
         - 📄 PROCEDURE.md
         - 📄 definition.js
-      - 📁 Convertir de CSV a CSV expandido por chatgpt
+      - 📁 Convertir de CSV a CSV expandido especificación 1 por chatgpt
         - 📁 viewer
           - 📄 viewer.css
           - 📄 viewer.html
@@ -492,12 +909,13 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
           - 📄 form.js
         - 📄 PROCEDURE.md
         - 📄 definition.js
+    - 📁 files
+      - 📄 chatgpt-calls.txt
     - 📁 components
       - 📁 main-window
         - 📄 main-window.css
         - 📄 main-window.html
         - 📄 main-window.js
-    - 📄 app-paths.js
     - 📄 app-payload.js
     - 📄 app-root.js
   - 📄 dist.css
@@ -507,10 +925,14 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
 - 📄 README-NWT.md
 - 📄 README.md
 - 📄 TODO.md
+- 📄 heap.json
+- 📄 heaper.js
 - 📄 index.html
+- 📄 injector.js
 - 📄 llm.md
 - 📄 package-lock.json
 - 📄 package.json
+- 📄 timeline-heap.json
 
 
 
@@ -587,35 +1009,7 @@ CommonToasts.show({
 
 
 
-# Nwt Errors API
 
-## Exposición
-
-Está expuesta en las globales:
-
-```js
-CommonErrors
-NwtErrors
-NwtFramework.Errors
-Vue.prototype.$nwt.Errors
-Vue.prototype.$errors
-```
-
-## Mostrar un error
-
-```js
-CommonErrors.showError(new Error("Cualquier cosa"));
-```
-
-## Captura automática de aserciones globales
-
-El componente hace:
-
-```js
-assertion.setErrorCallback(error => this.showError(error))
-```
-
-Esto implica que las aserciones globales mostrarán su error en este widget.
 
 # Nwt Asserter API
 
