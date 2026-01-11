@@ -8,15 +8,15 @@ const main = async function () {
 
   const apis = [
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/common-dialogs`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/common-dialogs`],
       to: `${PROJECT_ROOT}/documentation/dialogs-api.md`
     },
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/common-toasts`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/common-toasts`],
       to: `${PROJECT_ROOT}/documentation/toasts-api.md`
     },
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/common-errors`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/common-errors`],
       to: `${PROJECT_ROOT}/documentation/errors-api.md`
     },
     {
@@ -48,7 +48,7 @@ const main = async function () {
       to: `${PROJECT_ROOT}/documentation/settings-api.md`
     },
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/nwt-settings-viewer/nwt-settings-viewer.js`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js`],
       to: `${PROJECT_ROOT}/documentation/settings-viewer-api.md`
     },
     {
@@ -64,7 +64,7 @@ const main = async function () {
       to: `${PROJECT_ROOT}/documentation/process-manager-api.md`
     },
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js`],
       to: `${PROJECT_ROOT}/documentation/process-manager-viewer-api.md`
     },
     {
@@ -72,7 +72,7 @@ const main = async function () {
       to: `${PROJECT_ROOT}/documentation/dialog-definition-api.md`
     },
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/nwt-tester-ui/nwt-tester-viewer/nwt-tester-viewer.js`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/nwt-tester-ui/nwt-tester-viewer/nwt-tester-viewer.js`],
       to: `${PROJECT_ROOT}/documentation/tester-viewer-api.md`
     },
     {
@@ -96,7 +96,7 @@ const main = async function () {
       to: `${PROJECT_ROOT}/documentation/progress-bar-api.md`
     },
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js`],
       to: `${PROJECT_ROOT}/documentation/progress-bar-viewer-api.md`
     },
     {
@@ -108,7 +108,7 @@ const main = async function () {
       to: `${PROJECT_ROOT}/documentation/v-resizable-api.md`
     },
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/common-injections/common-injections.js`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/common-injections/common-injections.js`],
       to: `${PROJECT_ROOT}/documentation/common-injections-api.md`
     },
     {
@@ -140,7 +140,7 @@ const main = async function () {
       to: `${PROJECT_ROOT}/documentation/procedures-manager-api.md`
     },
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js`],
       to: `${PROJECT_ROOT}/documentation/procedures-manager-viewer-api.md`
     },
     {
@@ -148,7 +148,7 @@ const main = async function () {
       to: `${PROJECT_ROOT}/documentation/csv-api.md`
     },
     {
-      from: [`${PROJECT_ROOT}/assets/framework/components/nwt-source-viewer/nwt-source-viewer.js`],
+      from: [`${PROJECT_ROOT}/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js`],
       to: `${PROJECT_ROOT}/documentation/source-viewer-api.md`
     }
   ];

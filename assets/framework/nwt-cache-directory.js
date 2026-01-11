@@ -21,6 +21,16 @@
       super(basedir);
     }
 
+    async saveStep(keys, result = {done:true}) {
+      trace("NwtCacheDirectory.prototype.saveStep");
+      // @TODO:
+    }
+
+    async loadStep(keys, initializer = {done:false}) {
+      trace("NwtCacheDirectory.prototype.loadStep");
+      // @TODO:
+    }
+
   };
 
   

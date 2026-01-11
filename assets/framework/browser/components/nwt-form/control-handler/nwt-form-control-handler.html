@@ -1,0 +1,16 @@
+<div class="nwt_form_control_handler"
+    v-forms.handler="{component:control}">
+    <div class="pad_top_1" v-if="control.validationErrors.length">
+        <div class="handler_message error_message">
+            <div v-if="control.validationErrors.length === 1">
+                <div>⛔️ Error: {{ control.validationErrors[0].message }} ({{ control.validationErrors[0].name }})</div>
+            </div>
+            <div v-else>
+                <div>⛔️ Errores:</div>
+                <div v-for="error, errorIndex in control.validationErrors" v-bind:key="'error_' + errorIndex">
+                    <div>❗️ Razón {{ errorIndex + 1 }}. {{ error.message }} ({{ error.name }})</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -36,6 +36,7 @@
           form: path.resolve(directory, "form/form"),
           viewer: path.resolve(directory, "viewer/viewer"),
           definition: path.resolve(directory, "definition.js"),
+          iterable: path.resolve(directory, "iterable.js"),
         });
       }
     }

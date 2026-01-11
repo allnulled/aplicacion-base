@@ -1,0 +1,9 @@
+<div class="nwt_anonymous_command_form">
+    <div class="card" v-if="questions && questions.length">
+        <nwt-form-builder
+            :title="`Formulario de comando «${command.getCommandName()}»`"
+            :controls="questions"
+            footer="No olvides enviar el formulario antes de irte"
+        />
+    </div>
+</div>

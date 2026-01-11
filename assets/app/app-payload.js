@@ -23,15 +23,27 @@
   const AppPayload = class {
 
     static inject() {
-      window.addEventListener("app-mounted", function (event) {
+      window.addEventListener("app-mounted", async function (event) {
         trace("AppPayload.inject@app-mounted");
-        setTimeout(async () => {
-          // event.detail.component.startConfiguraciones();
-          // event.detail.component.startGestorDePrompts();
-          // event.detail.component.startExploradorDeFicheros();
-          // event.detail.component.startGestorDeFicherosDeChatgpt();
-          event.detail.component.startProcedimientos();
-        }, 400);
+        On_development: {
+          await NwtCodeComposer.loadBeautifyJs();
+        }
+        await NwtTimer.timeout(400);
+        // event.detail.component.startConfiguraciones();
+        // event.detail.component.startGestorDePrompts();
+        // event.detail.component.startExploradorDeFicheros();
+        // event.detail.component.startGestorDeFicherosDeChatgpt();
+        // event.detail.component.startProcedimientos();
+        event.detail.component.startNewFeature();
+        window.dispatchEvent(new CustomEvent("app-started"));
+      });
+      window.addEventListener("app-started", async function(event) {
+        trace("AppPayload.inject@app-started");
+        await NwtLiveInjector.start();
+        await NwtTimer.timeout(400);
+        Final_payload: {
+          
+        }
       });
     }
 

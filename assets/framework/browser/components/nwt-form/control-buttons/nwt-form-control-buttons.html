@@ -1,0 +1,9 @@
+<div class="nwt_form_control_buttons">
+    <div v-for="button, buttonIndex in control.buttons">
+        <div class="flex_1 pad_left_1"
+            v-bind:key="'button_' + buttonIndex">
+            <button class="mini no_wrap width_100"
+                v-on:click="e => button.click(e)">{{ button.text }}</button>
+        </div>
+    </div>
+</div>

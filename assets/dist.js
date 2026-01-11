@@ -1,13 +1,13 @@
 
-// @vuebundler[Proyecto_base_001][0]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/win7/win7.css
+// @vuebundler[Proyecto_base_001][0]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/win7/win7.css
 
-// @vuebundler[Proyecto_base_001][1]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/win7/win7-patches.css
+// @vuebundler[Proyecto_base_001][1]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/win7/win7-patches.css
 
-// @vuebundler[Proyecto_base_001][2]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][2]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][3]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][3]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
 
-// @vuebundler[Proyecto_base_001][4]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/vue2/vue2.js
+// @vuebundler[Proyecto_base_001][4]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/vue2/vue2.js
 /*!
  * Vue.js v2.7.16
  * (c) 2014-2023 Evan You
@@ -11942,7 +11942,1756 @@
 }));
 
 
-// @vuebundler[Proyecto_base_001][5]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/socket.io-client/socket.io-client.js
+// @vuebundler[Proyecto_base_001][5]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/ejs/ejs.js
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.ejs = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+/*
+ * EJS Embedded JavaScript templates
+ * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+'use strict';
+
+/**
+ * @file Embedded JavaScript templating engine. {@link http://ejs.co}
+ * @author Matthew Eernisse <mde@fleegix.org>
+ * @author Tiancheng "Timothy" Gu <timothygu99@gmail.com>
+ * @project EJS
+ * @license {@link http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0}
+ */
+
+/**
+ * EJS internal functions.
+ *
+ * Technically this "module" lies in the same file as {@link module:ejs}, for
+ * the sake of organization all the private functions re grouped into this
+ * module.
+ *
+ * @module ejs-internal
+ * @private
+ */
+
+/**
+ * Embedded JavaScript templating engine.
+ *
+ * @module ejs
+ * @public
+ */
+
+
+var fs = require('fs');
+var path = require('path');
+var utils = require('./utils');
+
+var scopeOptionWarned = false;
+/** @type {string} */
+var _VERSION_STRING = require('../package.json').version;
+var _DEFAULT_OPEN_DELIMITER = '<';
+var _DEFAULT_CLOSE_DELIMITER = '>';
+var _DEFAULT_DELIMITER = '%';
+var _DEFAULT_LOCALS_NAME = 'locals';
+var _NAME = 'ejs';
+var _REGEX_STRING = '(<%%|%%>|<%=|<%-|<%_|<%#|<%|%>|-%>|_%>)';
+var _OPTS_PASSABLE_WITH_DATA = ['delimiter', 'scope', 'context', 'debug', 'compileDebug',
+  'client', '_with', 'rmWhitespace', 'strict', 'filename', 'async'];
+// We don't allow 'cache' option to be passed in the data obj for
+// the normal `render` call, but this is where Express 2 & 3 put it
+// so we make an exception for `renderFile`
+var _OPTS_PASSABLE_WITH_DATA_EXPRESS = _OPTS_PASSABLE_WITH_DATA.concat('cache');
+var _BOM = /^\uFEFF/;
+var _JS_IDENTIFIER = /^[a-zA-Z_$][0-9a-zA-Z_$]*$/;
+
+/**
+ * EJS template function cache. This can be a LRU object from lru-cache NPM
+ * module. By default, it is {@link module:utils.cache}, a simple in-process
+ * cache that grows continuously.
+ *
+ * @type {Cache}
+ */
+
+exports.cache = utils.cache;
+
+/**
+ * Custom file loader. Useful for template preprocessing or restricting access
+ * to a certain part of the filesystem.
+ *
+ * @type {fileLoader}
+ */
+
+exports.fileLoader = fs.readFileSync;
+
+/**
+ * Name of the object containing the locals.
+ *
+ * This variable is overridden by {@link Options}`.localsName` if it is not
+ * `undefined`.
+ *
+ * @type {String}
+ * @public
+ */
+
+exports.localsName = _DEFAULT_LOCALS_NAME;
+
+/**
+ * Promise implementation -- defaults to the native implementation if available
+ * This is mostly just for testability
+ *
+ * @type {PromiseConstructorLike}
+ * @public
+ */
+
+exports.promiseImpl = (new Function('return this;'))().Promise;
+
+/**
+ * Get the path to the included file from the parent file path and the
+ * specified path.
+ *
+ * @param {String}  name     specified path
+ * @param {String}  filename parent file path
+ * @param {Boolean} [isDir=false] whether the parent file path is a directory
+ * @return {String}
+ */
+exports.resolveInclude = function(name, filename, isDir) {
+  var dirname = path.dirname;
+  var extname = path.extname;
+  var resolve = path.resolve;
+  var includePath = resolve(isDir ? filename : dirname(filename), name);
+  var ext = extname(name);
+  if (!ext) {
+    includePath += '.ejs';
+  }
+  return includePath;
+};
+
+/**
+ * Try to resolve file path on multiple directories
+ *
+ * @param  {String}        name  specified path
+ * @param  {Array<String>} paths list of possible parent directory paths
+ * @return {String}
+ */
+function resolvePaths(name, paths) {
+  var filePath;
+  if (paths.some(function (v) {
+    filePath = exports.resolveInclude(name, v, true);
+    return fs.existsSync(filePath);
+  })) {
+    return filePath;
+  }
+}
+
+/**
+ * Get the path to the included file by Options
+ *
+ * @param  {String}  path    specified path
+ * @param  {Options} options compilation options
+ * @return {String}
+ */
+function getIncludePath(path, options) {
+  var includePath;
+  var filePath;
+  var views = options.views;
+  var match = /^[A-Za-z]+:\\|^\//.exec(path);
+
+  // Abs path
+  if (match && match.length) {
+    path = path.replace(/^\/*/, '');
+    if (Array.isArray(options.root)) {
+      includePath = resolvePaths(path, options.root);
+    } else {
+      includePath = exports.resolveInclude(path, options.root || '/', true);
+    }
+  }
+  // Relative paths
+  else {
+    // Look relative to a passed filename first
+    if (options.filename) {
+      filePath = exports.resolveInclude(path, options.filename);
+      if (fs.existsSync(filePath)) {
+        includePath = filePath;
+      }
+    }
+    // Then look in any views directories
+    if (!includePath && Array.isArray(views)) {
+      includePath = resolvePaths(path, views);
+    }
+    if (!includePath && typeof options.includer !== 'function') {
+      throw new Error('Could not find the include file "' +
+          options.escapeFunction(path) + '"');
+    }
+  }
+  return includePath;
+}
+
+/**
+ * Get the template from a string or a file, either compiled on-the-fly or
+ * read from cache (if enabled), and cache the template if needed.
+ *
+ * If `template` is not set, the file specified in `options.filename` will be
+ * read.
+ *
+ * If `options.cache` is true, this function reads the file from
+ * `options.filename` so it must be set prior to calling this function.
+ *
+ * @memberof module:ejs-internal
+ * @param {Options} options   compilation options
+ * @param {String} [template] template source
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `options.client`, either type might be returned.
+ * @static
+ */
+
+function handleCache(options, template) {
+  var func;
+  var filename = options.filename;
+  var hasTemplate = arguments.length > 1;
+
+  if (options.cache) {
+    if (!filename) {
+      throw new Error('cache option requires a filename');
+    }
+    func = exports.cache.get(filename);
+    if (func) {
+      return func;
+    }
+    if (!hasTemplate) {
+      template = fileLoader(filename).toString().replace(_BOM, '');
+    }
+  }
+  else if (!hasTemplate) {
+    // istanbul ignore if: should not happen at all
+    if (!filename) {
+      throw new Error('Internal EJS error: no file name or template '
+                    + 'provided');
+    }
+    template = fileLoader(filename).toString().replace(_BOM, '');
+  }
+  func = exports.compile(template, options);
+  if (options.cache) {
+    exports.cache.set(filename, func);
+  }
+  return func;
+}
+
+/**
+ * Try calling handleCache with the given options and data and call the
+ * callback with the result. If an error occurs, call the callback with
+ * the error. Used by renderFile().
+ *
+ * @memberof module:ejs-internal
+ * @param {Options} options    compilation options
+ * @param {Object} data        template data
+ * @param {RenderFileCallback} cb callback
+ * @static
+ */
+
+function tryHandleCache(options, data, cb) {
+  var result;
+  if (!cb) {
+    if (typeof exports.promiseImpl == 'function') {
+      return new exports.promiseImpl(function (resolve, reject) {
+        try {
+          result = handleCache(options)(data);
+          resolve(result);
+        }
+        catch (err) {
+          reject(err);
+        }
+      });
+    }
+    else {
+      throw new Error('Please provide a callback function');
+    }
+  }
+  else {
+    try {
+      result = handleCache(options)(data);
+    }
+    catch (err) {
+      return cb(err);
+    }
+
+    cb(null, result);
+  }
+}
+
+/**
+ * fileLoader is independent
+ *
+ * @param {String} filePath ejs file path.
+ * @return {String} The contents of the specified file.
+ * @static
+ */
+
+function fileLoader(filePath){
+  return exports.fileLoader(filePath);
+}
+
+/**
+ * Get the template function.
+ *
+ * If `options.cache` is `true`, then the template is cached.
+ *
+ * @memberof module:ejs-internal
+ * @param {String}  path    path for the specified file
+ * @param {Options} options compilation options
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `options.client`, either type might be returned
+ * @static
+ */
+
+function includeFile(path, options) {
+  var opts = utils.shallowCopy(utils.createNullProtoObjWherePossible(), options);
+  opts.filename = getIncludePath(path, opts);
+  if (typeof options.includer === 'function') {
+    var includerResult = options.includer(path, opts.filename);
+    if (includerResult) {
+      if (includerResult.filename) {
+        opts.filename = includerResult.filename;
+      }
+      if (includerResult.template) {
+        return handleCache(opts, includerResult.template);
+      }
+    }
+  }
+  return handleCache(opts);
+}
+
+/**
+ * Re-throw the given `err` in context to the `str` of ejs, `filename`, and
+ * `lineno`.
+ *
+ * @implements {RethrowCallback}
+ * @memberof module:ejs-internal
+ * @param {Error}  err      Error object
+ * @param {String} str      EJS source
+ * @param {String} flnm     file name of the EJS file
+ * @param {Number} lineno   line number of the error
+ * @param {EscapeCallback} esc
+ * @static
+ */
+
+function rethrow(err, str, flnm, lineno, esc) {
+  var lines = str.split('\n');
+  var start = Math.max(lineno - 3, 0);
+  var end = Math.min(lines.length, lineno + 3);
+  var filename = esc(flnm);
+  // Error context
+  var context = lines.slice(start, end).map(function (line, i){
+    var curr = i + start + 1;
+    return (curr == lineno ? ' >> ' : '    ')
+      + curr
+      + '| '
+      + line;
+  }).join('\n');
+
+  // Alter exception message
+  err.path = filename;
+  err.message = (filename || 'ejs') + ':'
+    + lineno + '\n'
+    + context + '\n\n'
+    + err.message;
+
+  throw err;
+}
+
+function stripSemi(str){
+  return str.replace(/;(\s*$)/, '$1');
+}
+
+/**
+ * Compile the given `str` of ejs into a template function.
+ *
+ * @param {String}  template EJS template
+ *
+ * @param {Options} [opts] compilation options
+ *
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `opts.client`, either type might be returned.
+ * Note that the return type of the function also depends on the value of `opts.async`.
+ * @public
+ */
+
+exports.compile = function compile(template, opts) {
+  var templ;
+
+  // v1 compat
+  // 'scope' is 'context'
+  // FIXME: Remove this in a future version
+  if (opts && opts.scope) {
+    if (!scopeOptionWarned){
+      console.warn('`scope` option is deprecated and will be removed in EJS 3');
+      scopeOptionWarned = true;
+    }
+    if (!opts.context) {
+      opts.context = opts.scope;
+    }
+    delete opts.scope;
+  }
+  templ = new Template(template, opts);
+  return templ.compile();
+};
+
+/**
+ * Render the given `template` of ejs.
+ *
+ * If you would like to include options but not data, you need to explicitly
+ * call this function with `data` being an empty object or `null`.
+ *
+ * @param {String}   template EJS template
+ * @param {Object}  [data={}] template data
+ * @param {Options} [opts={}] compilation and rendering options
+ * @return {(String|Promise<String>)}
+ * Return value type depends on `opts.async`.
+ * @public
+ */
+
+exports.render = function (template, d, o) {
+  var data = d || utils.createNullProtoObjWherePossible();
+  var opts = o || utils.createNullProtoObjWherePossible();
+
+  // No options object -- if there are optiony names
+  // in the data, copy them to options
+  if (arguments.length == 2) {
+    utils.shallowCopyFromList(opts, data, _OPTS_PASSABLE_WITH_DATA);
+  }
+
+  return handleCache(opts, template)(data);
+};
+
+/**
+ * Render an EJS file at the given `path` and callback `cb(err, str)`.
+ *
+ * If you would like to include options but not data, you need to explicitly
+ * call this function with `data` being an empty object or `null`.
+ *
+ * @param {String}             path     path to the EJS file
+ * @param {Object}            [data={}] template data
+ * @param {Options}           [opts={}] compilation and rendering options
+ * @param {RenderFileCallback} cb callback
+ * @public
+ */
+
+exports.renderFile = function () {
+  var args = Array.prototype.slice.call(arguments);
+  var filename = args.shift();
+  var cb;
+  var opts = {filename: filename};
+  var data;
+  var viewOpts;
+
+  // Do we have a callback?
+  if (typeof arguments[arguments.length - 1] == 'function') {
+    cb = args.pop();
+  }
+  // Do we have data/opts?
+  if (args.length) {
+    // Should always have data obj
+    data = args.shift();
+    // Normal passed opts (data obj + opts obj)
+    if (args.length) {
+      // Use shallowCopy so we don't pollute passed in opts obj with new vals
+      utils.shallowCopy(opts, args.pop());
+    }
+    // Special casing for Express (settings + opts-in-data)
+    else {
+      // Express 3 and 4
+      if (data.settings) {
+        // Pull a few things from known locations
+        if (data.settings.views) {
+          opts.views = data.settings.views;
+        }
+        if (data.settings['view cache']) {
+          opts.cache = true;
+        }
+        // Undocumented after Express 2, but still usable, esp. for
+        // items that are unsafe to be passed along with data, like `root`
+        viewOpts = data.settings['view options'];
+        if (viewOpts) {
+          utils.shallowCopy(opts, viewOpts);
+        }
+      }
+      // Express 2 and lower, values set in app.locals, or people who just
+      // want to pass options in their data. NOTE: These values will override
+      // anything previously set in settings  or settings['view options']
+      utils.shallowCopyFromList(opts, data, _OPTS_PASSABLE_WITH_DATA_EXPRESS);
+    }
+    opts.filename = filename;
+  }
+  else {
+    data = utils.createNullProtoObjWherePossible();
+  }
+
+  return tryHandleCache(opts, data, cb);
+};
+
+/**
+ * Clear intermediate JavaScript cache. Calls {@link Cache#reset}.
+ * @public
+ */
+
+/**
+ * EJS template class
+ * @public
+ */
+exports.Template = Template;
+
+exports.clearCache = function () {
+  exports.cache.reset();
+};
+
+function Template(text, optsParam) {
+  var opts = utils.hasOwnOnlyObject(optsParam);
+  var options = utils.createNullProtoObjWherePossible();
+  this.templateText = text;
+  /** @type {string | null} */
+  this.mode = null;
+  this.truncate = false;
+  this.currentLine = 1;
+  this.source = '';
+  options.client = opts.client || false;
+  options.escapeFunction = opts.escape || opts.escapeFunction || utils.escapeXML;
+  options.compileDebug = opts.compileDebug !== false;
+  options.debug = !!opts.debug;
+  options.filename = opts.filename;
+  options.openDelimiter = opts.openDelimiter || exports.openDelimiter || _DEFAULT_OPEN_DELIMITER;
+  options.closeDelimiter = opts.closeDelimiter || exports.closeDelimiter || _DEFAULT_CLOSE_DELIMITER;
+  options.delimiter = opts.delimiter || exports.delimiter || _DEFAULT_DELIMITER;
+  options.strict = opts.strict || false;
+  options.context = opts.context;
+  options.cache = opts.cache || false;
+  options.rmWhitespace = opts.rmWhitespace;
+  options.root = opts.root;
+  options.includer = opts.includer;
+  options.outputFunctionName = opts.outputFunctionName;
+  options.localsName = opts.localsName || exports.localsName || _DEFAULT_LOCALS_NAME;
+  options.views = opts.views;
+  options.async = opts.async;
+  options.destructuredLocals = opts.destructuredLocals;
+  options.legacyInclude = typeof opts.legacyInclude != 'undefined' ? !!opts.legacyInclude : true;
+
+  if (options.strict) {
+    options._with = false;
+  }
+  else {
+    options._with = typeof opts._with != 'undefined' ? opts._with : true;
+  }
+
+  this.opts = options;
+
+  this.regex = this.createRegex();
+}
+
+Template.modes = {
+  EVAL: 'eval',
+  ESCAPED: 'escaped',
+  RAW: 'raw',
+  COMMENT: 'comment',
+  LITERAL: 'literal'
+};
+
+Template.prototype = {
+  createRegex: function () {
+    var str = _REGEX_STRING;
+    var delim = utils.escapeRegExpChars(this.opts.delimiter);
+    var open = utils.escapeRegExpChars(this.opts.openDelimiter);
+    var close = utils.escapeRegExpChars(this.opts.closeDelimiter);
+    str = str.replace(/%/g, delim)
+      .replace(/</g, open)
+      .replace(/>/g, close);
+    return new RegExp(str);
+  },
+
+  compile: function () {
+    /** @type {string} */
+    var src;
+    /** @type {ClientFunction} */
+    var fn;
+    var opts = this.opts;
+    var prepended = '';
+    var appended = '';
+    /** @type {EscapeCallback} */
+    var escapeFn = opts.escapeFunction;
+    /** @type {FunctionConstructor} */
+    var ctor;
+    /** @type {string} */
+    var sanitizedFilename = opts.filename ? JSON.stringify(opts.filename) : 'undefined';
+
+    if (!this.source) {
+      this.generateSource();
+      prepended +=
+        '  var __output = "";\n' +
+        '  function __append(s) { if (s !== undefined && s !== null) __output += s }\n';
+      if (opts.outputFunctionName) {
+        if (!_JS_IDENTIFIER.test(opts.outputFunctionName)) {
+          throw new Error('outputFunctionName is not a valid JS identifier.');
+        }
+        prepended += '  var ' + opts.outputFunctionName + ' = __append;' + '\n';
+      }
+      if (opts.localsName && !_JS_IDENTIFIER.test(opts.localsName)) {
+        throw new Error('localsName is not a valid JS identifier.');
+      }
+      if (opts.destructuredLocals && opts.destructuredLocals.length) {
+        var destructuring = '  var __locals = (' + opts.localsName + ' || {}),\n';
+        for (var i = 0; i < opts.destructuredLocals.length; i++) {
+          var name = opts.destructuredLocals[i];
+          if (!_JS_IDENTIFIER.test(name)) {
+            throw new Error('destructuredLocals[' + i + '] is not a valid JS identifier.');
+          }
+          if (i > 0) {
+            destructuring += ',\n  ';
+          }
+          destructuring += name + ' = __locals.' + name;
+        }
+        prepended += destructuring + ';\n';
+      }
+      if (opts._with !== false) {
+        prepended +=  '  with (' + opts.localsName + ' || {}) {' + '\n';
+        appended += '  }' + '\n';
+      }
+      appended += '  return __output;' + '\n';
+      this.source = prepended + this.source + appended;
+    }
+
+    if (opts.compileDebug) {
+      src = 'var __line = 1' + '\n'
+        + '  , __lines = ' + JSON.stringify(this.templateText) + '\n'
+        + '  , __filename = ' + sanitizedFilename + ';' + '\n'
+        + 'try {' + '\n'
+        + this.source
+        + '} catch (e) {' + '\n'
+        + '  rethrow(e, __lines, __filename, __line, escapeFn);' + '\n'
+        + '}' + '\n';
+    }
+    else {
+      src = this.source;
+    }
+
+    if (opts.client) {
+      src = 'escapeFn = escapeFn || ' + escapeFn.toString() + ';' + '\n' + src;
+      if (opts.compileDebug) {
+        src = 'rethrow = rethrow || ' + rethrow.toString() + ';' + '\n' + src;
+      }
+    }
+
+    if (opts.strict) {
+      src = '"use strict";\n' + src;
+    }
+    if (opts.debug) {
+      console.log(src);
+    }
+    if (opts.compileDebug && opts.filename) {
+      src = src + '\n'
+        + '//# sourceURL=' + sanitizedFilename + '\n';
+    }
+
+    try {
+      if (opts.async) {
+        // Have to use generated function for this, since in envs without support,
+        // it breaks in parsing
+        try {
+          ctor = (new Function('return (async function(){}).constructor;'))();
+        }
+        catch(e) {
+          if (e instanceof SyntaxError) {
+            throw new Error('This environment does not support async/await');
+          }
+          else {
+            throw e;
+          }
+        }
+      }
+      else {
+        ctor = Function;
+      }
+      fn = new ctor(opts.localsName + ', escapeFn, include, rethrow', src);
+    }
+    catch(e) {
+      // istanbul ignore else
+      if (e instanceof SyntaxError) {
+        if (opts.filename) {
+          e.message += ' in ' + opts.filename;
+        }
+        e.message += ' while compiling ejs\n\n';
+        e.message += 'If the above error is not helpful, you may want to try EJS-Lint:\n';
+        e.message += 'https://github.com/RyanZim/EJS-Lint';
+        if (!opts.async) {
+          e.message += '\n';
+          e.message += 'Or, if you meant to create an async function, pass `async: true` as an option.';
+        }
+      }
+      throw e;
+    }
+
+    // Return a callable function which will execute the function
+    // created by the source-code, with the passed data as locals
+    // Adds a local `include` function which allows full recursive include
+    var returnedFn = opts.client ? fn : function anonymous(data) {
+      var include = function (path, includeData) {
+        var d = utils.shallowCopy(utils.createNullProtoObjWherePossible(), data);
+        if (includeData) {
+          d = utils.shallowCopy(d, includeData);
+        }
+        return includeFile(path, opts)(d);
+      };
+      return fn.apply(opts.context,
+        [data || utils.createNullProtoObjWherePossible(), escapeFn, include, rethrow]);
+    };
+    if (opts.filename && typeof Object.defineProperty === 'function') {
+      var filename = opts.filename;
+      var basename = path.basename(filename, path.extname(filename));
+      try {
+        Object.defineProperty(returnedFn, 'name', {
+          value: basename,
+          writable: false,
+          enumerable: false,
+          configurable: true
+        });
+      } catch (e) {/* ignore */}
+    }
+    return returnedFn;
+  },
+
+  generateSource: function () {
+    var opts = this.opts;
+
+    if (opts.rmWhitespace) {
+      // Have to use two separate replace here as `^` and `$` operators don't
+      // work well with `\r` and empty lines don't work well with the `m` flag.
+      this.templateText =
+        this.templateText.replace(/[\r\n]+/g, '\n').replace(/^\s+|\s+$/gm, '');
+    }
+
+    // Slurp spaces and tabs before <%_ and after _%>
+    this.templateText =
+      this.templateText.replace(/[ \t]*<%_/gm, '<%_').replace(/_%>[ \t]*/gm, '_%>');
+
+    var self = this;
+    var matches = this.parseTemplateText();
+    var d = this.opts.delimiter;
+    var o = this.opts.openDelimiter;
+    var c = this.opts.closeDelimiter;
+
+    if (matches && matches.length) {
+      matches.forEach(function (line, index) {
+        var closing;
+        // If this is an opening tag, check for closing tags
+        // FIXME: May end up with some false positives here
+        // Better to store modes as k/v with openDelimiter + delimiter as key
+        // Then this can simply check against the map
+        if ( line.indexOf(o + d) === 0        // If it is a tag
+          && line.indexOf(o + d + d) !== 0) { // and is not escaped
+          closing = matches[index + 2];
+          if (!(closing == d + c || closing == '-' + d + c || closing == '_' + d + c)) {
+            throw new Error('Could not find matching close tag for "' + line + '".');
+          }
+        }
+        self.scanLine(line);
+      });
+    }
+
+  },
+
+  parseTemplateText: function () {
+    var str = this.templateText;
+    var pat = this.regex;
+    var result = pat.exec(str);
+    var arr = [];
+    var firstPos;
+
+    while (result) {
+      firstPos = result.index;
+
+      if (firstPos !== 0) {
+        arr.push(str.substring(0, firstPos));
+        str = str.slice(firstPos);
+      }
+
+      arr.push(result[0]);
+      str = str.slice(result[0].length);
+      result = pat.exec(str);
+    }
+
+    if (str) {
+      arr.push(str);
+    }
+
+    return arr;
+  },
+
+  _addOutput: function (line) {
+    if (this.truncate) {
+      // Only replace single leading linebreak in the line after
+      // -%> tag -- this is the single, trailing linebreak
+      // after the tag that the truncation mode replaces
+      // Handle Win / Unix / old Mac linebreaks -- do the \r\n
+      // combo first in the regex-or
+      line = line.replace(/^(?:\r\n|\r|\n)/, '');
+      this.truncate = false;
+    }
+    if (!line) {
+      return line;
+    }
+
+    // Preserve literal slashes
+    line = line.replace(/\\/g, '\\\\');
+
+    // Convert linebreaks
+    line = line.replace(/\n/g, '\\n');
+    line = line.replace(/\r/g, '\\r');
+
+    // Escape double-quotes
+    // - this will be the delimiter during execution
+    line = line.replace(/"/g, '\\"');
+    this.source += '    ; __append("' + line + '")' + '\n';
+  },
+
+  scanLine: function (line) {
+    var self = this;
+    var d = this.opts.delimiter;
+    var o = this.opts.openDelimiter;
+    var c = this.opts.closeDelimiter;
+    var newLineCount = 0;
+
+    newLineCount = (line.split('\n').length - 1);
+
+    switch (line) {
+    case o + d:
+    case o + d + '_':
+      this.mode = Template.modes.EVAL;
+      break;
+    case o + d + '=':
+      this.mode = Template.modes.ESCAPED;
+      break;
+    case o + d + '-':
+      this.mode = Template.modes.RAW;
+      break;
+    case o + d + '#':
+      this.mode = Template.modes.COMMENT;
+      break;
+    case o + d + d:
+      this.mode = Template.modes.LITERAL;
+      this.source += '    ; __append("' + line.replace(o + d + d, o + d) + '")' + '\n';
+      break;
+    case d + d + c:
+      this.mode = Template.modes.LITERAL;
+      this.source += '    ; __append("' + line.replace(d + d + c, d + c) + '")' + '\n';
+      break;
+    case d + c:
+    case '-' + d + c:
+    case '_' + d + c:
+      if (this.mode == Template.modes.LITERAL) {
+        this._addOutput(line);
+      }
+
+      this.mode = null;
+      this.truncate = line.indexOf('-') === 0 || line.indexOf('_') === 0;
+      break;
+    default:
+      // In script mode, depends on type of tag
+      if (this.mode) {
+        // If '//' is found without a line break, add a line break.
+        switch (this.mode) {
+        case Template.modes.EVAL:
+        case Template.modes.ESCAPED:
+        case Template.modes.RAW:
+          if (line.lastIndexOf('//') > line.lastIndexOf('\n')) {
+            line += '\n';
+          }
+        }
+        switch (this.mode) {
+        // Just executing code
+        case Template.modes.EVAL:
+          this.source += '    ; ' + line + '\n';
+          break;
+          // Exec, esc, and output
+        case Template.modes.ESCAPED:
+          this.source += '    ; __append(escapeFn(' + stripSemi(line) + '))' + '\n';
+          break;
+          // Exec and output
+        case Template.modes.RAW:
+          this.source += '    ; __append(' + stripSemi(line) + ')' + '\n';
+          break;
+        case Template.modes.COMMENT:
+          // Do nothing
+          break;
+          // Literal <%% mode, append as raw output
+        case Template.modes.LITERAL:
+          this._addOutput(line);
+          break;
+        }
+      }
+      // In string mode, just add the output
+      else {
+        this._addOutput(line);
+      }
+    }
+
+    if (self.opts.compileDebug && newLineCount) {
+      this.currentLine += newLineCount;
+      this.source += '    ; __line = ' + this.currentLine + '\n';
+    }
+  }
+};
+
+/**
+ * Escape characters reserved in XML.
+ *
+ * This is simply an export of {@link module:utils.escapeXML}.
+ *
+ * If `markup` is `undefined` or `null`, the empty string is returned.
+ *
+ * @param {String} markup Input string
+ * @return {String} Escaped string
+ * @public
+ * @func
+ * */
+exports.escapeXML = utils.escapeXML;
+
+/**
+ * Express.js support.
+ *
+ * This is an alias for {@link module:ejs.renderFile}, in order to support
+ * Express.js out-of-the-box.
+ *
+ * @func
+ */
+
+exports.__express = exports.renderFile;
+
+/**
+ * Version of EJS.
+ *
+ * @readonly
+ * @type {String}
+ * @public
+ */
+
+exports.VERSION = _VERSION_STRING;
+
+/**
+ * Name for detection of EJS.
+ *
+ * @readonly
+ * @type {String}
+ * @public
+ */
+
+exports.name = _NAME;
+
+/* istanbul ignore if */
+if (typeof window != 'undefined') {
+  window.ejs = exports;
+}
+
+
+},{"../package.json":6,"./utils":2,"fs":3,"path":4}],2:[function(require,module,exports){
+/*
+ * EJS Embedded JavaScript templates
+ * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+/**
+ * Private utility functions
+ * @module utils
+ * @private
+ */
+
+'use strict';
+
+var regExpChars = /[|\\{}()[\]^$+*?.]/g;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var hasOwn = function (obj, key) { return hasOwnProperty.apply(obj, [key]); };
+
+/**
+ * Escape characters reserved in regular expressions.
+ *
+ * If `string` is `undefined` or `null`, the empty string is returned.
+ *
+ * @param {String} string Input string
+ * @return {String} Escaped string
+ * @static
+ * @private
+ */
+exports.escapeRegExpChars = function (string) {
+  // istanbul ignore if
+  if (!string) {
+    return '';
+  }
+  return String(string).replace(regExpChars, '\\$&');
+};
+
+var _ENCODE_HTML_RULES = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&#34;',
+  "'": '&#39;'
+};
+var _MATCH_HTML = /[&<>'"]/g;
+
+function encode_char(c) {
+  return _ENCODE_HTML_RULES[c] || c;
+}
+
+/**
+ * Stringified version of constants used by {@link module:utils.escapeXML}.
+ *
+ * It is used in the process of generating {@link ClientFunction}s.
+ *
+ * @readonly
+ * @type {String}
+ */
+
+var escapeFuncStr =
+  'var _ENCODE_HTML_RULES = {\n'
++ '      "&": "&amp;"\n'
++ '    , "<": "&lt;"\n'
++ '    , ">": "&gt;"\n'
++ '    , \'"\': "&#34;"\n'
++ '    , "\'": "&#39;"\n'
++ '    }\n'
++ '  , _MATCH_HTML = /[&<>\'"]/g;\n'
++ 'function encode_char(c) {\n'
++ '  return _ENCODE_HTML_RULES[c] || c;\n'
++ '};\n';
+
+/**
+ * Escape characters reserved in XML.
+ *
+ * If `markup` is `undefined` or `null`, the empty string is returned.
+ *
+ * @implements {EscapeCallback}
+ * @param {String} markup Input string
+ * @return {String} Escaped string
+ * @static
+ * @private
+ */
+
+exports.escapeXML = function (markup) {
+  return markup == undefined
+    ? ''
+    : String(markup)
+      .replace(_MATCH_HTML, encode_char);
+};
+
+function escapeXMLToString() {
+  return Function.prototype.toString.call(this) + ';\n' + escapeFuncStr;
+}
+
+try {
+  if (typeof Object.defineProperty === 'function') {
+  // If the Function prototype is frozen, the "toString" property is non-writable. This means that any objects which inherit this property
+  // cannot have the property changed using an assignment. If using strict mode, attempting that will cause an error. If not using strict
+  // mode, attempting that will be silently ignored.
+  // However, we can still explicitly shadow the prototype's "toString" property by defining a new "toString" property on this object.
+    Object.defineProperty(exports.escapeXML, 'toString', { value: escapeXMLToString });
+  } else {
+    // If Object.defineProperty() doesn't exist, attempt to shadow this property using the assignment operator.
+    exports.escapeXML.toString = escapeXMLToString;
+  }
+} catch (err) {
+  console.warn('Unable to set escapeXML.toString (is the Function prototype frozen?)');
+}
+
+/**
+ * Naive copy of properties from one object to another.
+ * Does not recurse into non-scalar properties
+ * Does not check to see if the property has a value before copying
+ *
+ * @param  {Object} to   Destination object
+ * @param  {Object} from Source object
+ * @return {Object}      Destination object
+ * @static
+ * @private
+ */
+exports.shallowCopy = function (to, from) {
+  from = from || {};
+  if ((to !== null) && (to !== undefined)) {
+    for (var p in from) {
+      if (!hasOwn(from, p)) {
+        continue;
+      }
+      if (p === '__proto__' || p === 'constructor') {
+        continue;
+      }
+      to[p] = from[p];
+    }
+  }
+  return to;
+};
+
+/**
+ * Naive copy of a list of key names, from one object to another.
+ * Only copies property if it is actually defined
+ * Does not recurse into non-scalar properties
+ *
+ * @param  {Object} to   Destination object
+ * @param  {Object} from Source object
+ * @param  {Array} list List of properties to copy
+ * @return {Object}      Destination object
+ * @static
+ * @private
+ */
+exports.shallowCopyFromList = function (to, from, list) {
+  list = list || [];
+  from = from || {};
+  if ((to !== null) && (to !== undefined)) {
+    for (var i = 0; i < list.length; i++) {
+      var p = list[i];
+      if (typeof from[p] != 'undefined') {
+        if (!hasOwn(from, p)) {
+          continue;
+        }
+        if (p === '__proto__' || p === 'constructor') {
+          continue;
+        }
+        to[p] = from[p];
+      }
+    }
+  }
+  return to;
+};
+
+/**
+ * Simple in-process cache implementation. Does not implement limits of any
+ * sort.
+ *
+ * @implements {Cache}
+ * @static
+ * @private
+ */
+exports.cache = {
+  _data: {},
+  set: function (key, val) {
+    this._data[key] = val;
+  },
+  get: function (key) {
+    return this._data[key];
+  },
+  remove: function (key) {
+    delete this._data[key];
+  },
+  reset: function () {
+    this._data = {};
+  }
+};
+
+/**
+ * Transforms hyphen case variable into camel case.
+ *
+ * @param {String} string Hyphen case string
+ * @return {String} Camel case string
+ * @static
+ * @private
+ */
+exports.hyphenToCamel = function (str) {
+  return str.replace(/-[a-z]/g, function (match) { return match[1].toUpperCase(); });
+};
+
+/**
+ * Returns a null-prototype object in runtimes that support it
+ *
+ * @return {Object} Object, prototype will be set to null where possible
+ * @static
+ * @private
+ */
+exports.createNullProtoObjWherePossible = (function () {
+  if (typeof Object.create == 'function') {
+    return function () {
+      return Object.create(null);
+    };
+  }
+  if (!({__proto__: null} instanceof Object)) {
+    return function () {
+      return {__proto__: null};
+    };
+  }
+  // Not possible, just pass through
+  return function () {
+    return {};
+  };
+})();
+
+exports.hasOwnOnlyObject = function (obj) {
+  var o = exports.createNullProtoObjWherePossible();
+  for (var p in obj) {
+    if (hasOwn(obj, p)) {
+      o[p] = obj[p];
+    }
+  }
+  return o;
+};
+
+
+},{}],3:[function(require,module,exports){
+
+},{}],4:[function(require,module,exports){
+(function (process){
+// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
+// backported and transplited with Babel, with backwards-compat fixes
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  if (path.length === 0) return '.';
+  var code = path.charCodeAt(0);
+  var hasRoot = code === 47 /*/*/;
+  var end = -1;
+  var matchedSlash = true;
+  for (var i = path.length - 1; i >= 1; --i) {
+    code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        if (!matchedSlash) {
+          end = i;
+          break;
+        }
+      } else {
+      // We saw the first non-path separator
+      matchedSlash = false;
+    }
+  }
+
+  if (end === -1) return hasRoot ? '/' : '.';
+  if (hasRoot && end === 1) {
+    // return '//';
+    // Backwards-compat fix:
+    return '/';
+  }
+  return path.slice(0, end);
+};
+
+function basename(path) {
+  if (typeof path !== 'string') path = path + '';
+
+  var start = 0;
+  var end = -1;
+  var matchedSlash = true;
+  var i;
+
+  for (i = path.length - 1; i >= 0; --i) {
+    if (path.charCodeAt(i) === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          start = i + 1;
+          break;
+        }
+      } else if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // path component
+      matchedSlash = false;
+      end = i + 1;
+    }
+  }
+
+  if (end === -1) return '';
+  return path.slice(start, end);
+}
+
+// Uses a mixed approach for backwards-compatibility, as ext behavior changed
+// in new Node.js versions, so only basename() above is backported here
+exports.basename = function (path, ext) {
+  var f = basename(path);
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+exports.extname = function (path) {
+  if (typeof path !== 'string') path = path + '';
+  var startDot = -1;
+  var startPart = 0;
+  var end = -1;
+  var matchedSlash = true;
+  // Track the state of characters (if any) we see before our first dot and
+  // after any path separator we find
+  var preDotState = 0;
+  for (var i = path.length - 1; i >= 0; --i) {
+    var code = path.charCodeAt(i);
+    if (code === 47 /*/*/) {
+        // If we reached a path separator that was not part of a set of path
+        // separators at the end of the string, stop now
+        if (!matchedSlash) {
+          startPart = i + 1;
+          break;
+        }
+        continue;
+      }
+    if (end === -1) {
+      // We saw the first non-path separator, mark this as the end of our
+      // extension
+      matchedSlash = false;
+      end = i + 1;
+    }
+    if (code === 46 /*.*/) {
+        // If this is our first dot, mark it as the start of our extension
+        if (startDot === -1)
+          startDot = i;
+        else if (preDotState !== 1)
+          preDotState = 1;
+    } else if (startDot !== -1) {
+      // We saw a non-dot and non-path separator before our dot, so we should
+      // have a good chance at having a non-empty extension
+      preDotState = -1;
+    }
+  }
+
+  if (startDot === -1 || end === -1 ||
+      // We saw a non-dot character immediately before the dot
+      preDotState === 0 ||
+      // The (right-most) trimmed path component is exactly '..'
+      preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+    return '';
+  }
+  return path.slice(startDot, end);
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require('_process'))
+},{"_process":5}],5:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],6:[function(require,module,exports){
+module.exports={
+  "name": "ejs",
+  "description": "Embedded JavaScript templates",
+  "keywords": [
+    "template",
+    "engine",
+    "ejs"
+  ],
+  "version": "3.1.9",
+  "author": "Matthew Eernisse <mde@fleegix.org> (http://fleegix.org)",
+  "license": "Apache-2.0",
+  "bin": {
+    "ejs": "./bin/cli.js"
+  },
+  "main": "./lib/ejs.js",
+  "jsdelivr": "ejs.min.js",
+  "unpkg": "ejs.min.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mde/ejs.git"
+  },
+  "bugs": "https://github.com/mde/ejs/issues",
+  "homepage": "https://github.com/mde/ejs",
+  "dependencies": {
+    "jake": "^10.8.5"
+  },
+  "devDependencies": {
+    "browserify": "^16.5.1",
+    "eslint": "^6.8.0",
+    "git-directory-deploy": "^1.5.1",
+    "jsdoc": "^4.0.2",
+    "lru-cache": "^4.0.1",
+    "mocha": "^10.2.0",
+    "uglify-js": "^3.3.16"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "npx jake test"
+  }
+}
+
+},{}]},{},[1])(1)
+});
+
+
+// @vuebundler[Proyecto_base_001][6]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/socket.io-client/socket.io-client.js
 /*!
  * Socket.IO v4.8.1
  * (c) 2014-2024 Guillermo Rauch
@@ -16853,7 +18602,7 @@
 
 
 
-// @vuebundler[Proyecto_base_001][6]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/marked/marked.js
+// @vuebundler[Proyecto_base_001][7]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/marked/marked.js
 /**
  * marked v16.3.0 - a markdown parser
  * Copyright (c) 2011-2025, Christopher Jeffrey. (MIT Licensed)
@@ -16930,7 +18679,7 @@ if(__exports != exports)module.exports = exports;return module.exports}));
 //# sourceMappingURL=marked.umd.js.map
 
 
-// @vuebundler[Proyecto_base_001][7]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/papaparse/papaparse.min.js
+// @vuebundler[Proyecto_base_001][8]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/papaparse/papaparse.min.js
 /* @license
 Papa Parse
 v5.5.3
@@ -16939,7 +18688,7 @@ License: MIT
 */
 ((e,t)=>{"function"==typeof define&&define.amd?define([],t):"object"==typeof module&&"undefined"!=typeof exports?module.exports=t():e.Papa=t()})(this,function r(){var n="undefined"!=typeof self?self:"undefined"!=typeof window?window:void 0!==n?n:{};var d,s=!n.document&&!!n.postMessage,a=n.IS_PAPA_WORKER||!1,o={},h=0,v={};function u(e){this._handle=null,this._finished=!1,this._completed=!1,this._halted=!1,this._input=null,this._baseIndex=0,this._partialLine="",this._rowCount=0,this._start=0,this._nextChunk=null,this.isFirstChunk=!0,this._completeResults={data:[],errors:[],meta:{}},function(e){var t=b(e);t.chunkSize=parseInt(t.chunkSize),e.step||e.chunk||(t.chunkSize=null);this._handle=new i(t),(this._handle.streamer=this)._config=t}.call(this,e),this.parseChunk=function(t,e){var i=parseInt(this._config.skipFirstNLines)||0;if(this.isFirstChunk&&0<i){let e=this._config.newline;e||(r=this._config.quoteChar||'"',e=this._handle.guessLineEndings(t,r)),t=[...t.split(e).slice(i)].join(e)}this.isFirstChunk&&U(this._config.beforeFirstChunk)&&void 0!==(r=this._config.beforeFirstChunk(t))&&(t=r),this.isFirstChunk=!1,this._halted=!1;var i=this._partialLine+t,r=(this._partialLine="",this._handle.parse(i,this._baseIndex,!this._finished));if(!this._handle.paused()&&!this._handle.aborted()){t=r.meta.cursor,i=(this._finished||(this._partialLine=i.substring(t-this._baseIndex),this._baseIndex=t),r&&r.data&&(this._rowCount+=r.data.length),this._finished||this._config.preview&&this._rowCount>=this._config.preview);if(a)n.postMessage({results:r,workerId:v.WORKER_ID,finished:i});else if(U(this._config.chunk)&&!e){if(this._config.chunk(r,this._handle),this._handle.paused()||this._handle.aborted())return void(this._halted=!0);this._completeResults=r=void 0}return this._config.step||this._config.chunk||(this._completeResults.data=this._completeResults.data.concat(r.data),this._completeResults.errors=this._completeResults.errors.concat(r.errors),this._completeResults.meta=r.meta),this._completed||!i||!U(this._config.complete)||r&&r.meta.aborted||(this._config.complete(this._completeResults,this._input),this._completed=!0),i||r&&r.meta.paused||this._nextChunk(),r}this._halted=!0},this._sendError=function(e){U(this._config.error)?this._config.error(e):a&&this._config.error&&n.postMessage({workerId:v.WORKER_ID,error:e,finished:!1})}}function f(e){var r;(e=e||{}).chunkSize||(e.chunkSize=v.RemoteChunkSize),u.call(this,e),this._nextChunk=s?function(){this._readChunk(),this._chunkLoaded()}:function(){this._readChunk()},this.stream=function(e){this._input=e,this._nextChunk()},this._readChunk=function(){if(this._finished)this._chunkLoaded();else{if(r=new XMLHttpRequest,this._config.withCredentials&&(r.withCredentials=this._config.withCredentials),s||(r.onload=y(this._chunkLoaded,this),r.onerror=y(this._chunkError,this)),r.open(this._config.downloadRequestBody?"POST":"GET",this._input,!s),this._config.downloadRequestHeaders){var e,t=this._config.downloadRequestHeaders;for(e in t)r.setRequestHeader(e,t[e])}var i;this._config.chunkSize&&(i=this._start+this._config.chunkSize-1,r.setRequestHeader("Range","bytes="+this._start+"-"+i));try{r.send(this._config.downloadRequestBody)}catch(e){this._chunkError(e.message)}s&&0===r.status&&this._chunkError()}},this._chunkLoaded=function(){4===r.readyState&&(r.status<200||400<=r.status?this._chunkError():(this._start+=this._config.chunkSize||r.responseText.length,this._finished=!this._config.chunkSize||this._start>=(e=>null!==(e=e.getResponseHeader("Content-Range"))?parseInt(e.substring(e.lastIndexOf("/")+1)):-1)(r),this.parseChunk(r.responseText)))},this._chunkError=function(e){e=r.statusText||e;this._sendError(new Error(e))}}function l(e){(e=e||{}).chunkSize||(e.chunkSize=v.LocalChunkSize),u.call(this,e);var i,r,n="undefined"!=typeof FileReader;this.stream=function(e){this._input=e,r=e.slice||e.webkitSlice||e.mozSlice,n?((i=new FileReader).onload=y(this._chunkLoaded,this),i.onerror=y(this._chunkError,this)):i=new FileReaderSync,this._nextChunk()},this._nextChunk=function(){this._finished||this._config.preview&&!(this._rowCount<this._config.preview)||this._readChunk()},this._readChunk=function(){var e=this._input,t=(this._config.chunkSize&&(t=Math.min(this._start+this._config.chunkSize,this._input.size),e=r.call(e,this._start,t)),i.readAsText(e,this._config.encoding));n||this._chunkLoaded({target:{result:t}})},this._chunkLoaded=function(e){this._start+=this._config.chunkSize,this._finished=!this._config.chunkSize||this._start>=this._input.size,this.parseChunk(e.target.result)},this._chunkError=function(){this._sendError(i.error)}}function c(e){var i;u.call(this,e=e||{}),this.stream=function(e){return i=e,this._nextChunk()},this._nextChunk=function(){var e,t;if(!this._finished)return e=this._config.chunkSize,i=e?(t=i.substring(0,e),i.substring(e)):(t=i,""),this._finished=!i,this.parseChunk(t)}}function p(e){u.call(this,e=e||{});var t=[],i=!0,r=!1;this.pause=function(){u.prototype.pause.apply(this,arguments),this._input.pause()},this.resume=function(){u.prototype.resume.apply(this,arguments),this._input.resume()},this.stream=function(e){this._input=e,this._input.on("data",this._streamData),this._input.on("end",this._streamEnd),this._input.on("error",this._streamError)},this._checkIsFinished=function(){r&&1===t.length&&(this._finished=!0)},this._nextChunk=function(){this._checkIsFinished(),t.length?this.parseChunk(t.shift()):i=!0},this._streamData=y(function(e){try{t.push("string"==typeof e?e:e.toString(this._config.encoding)),i&&(i=!1,this._checkIsFinished(),this.parseChunk(t.shift()))}catch(e){this._streamError(e)}},this),this._streamError=y(function(e){this._streamCleanUp(),this._sendError(e)},this),this._streamEnd=y(function(){this._streamCleanUp(),r=!0,this._streamData("")},this),this._streamCleanUp=y(function(){this._input.removeListener("data",this._streamData),this._input.removeListener("end",this._streamEnd),this._input.removeListener("error",this._streamError)},this)}function i(m){var n,s,a,t,o=Math.pow(2,53),h=-o,u=/^\s*-?(\d+\.?|\.\d+|\d+\.\d+)([eE][-+]?\d+)?\s*$/,d=/^((\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)))$/,i=this,r=0,f=0,l=!1,e=!1,c=[],p={data:[],errors:[],meta:{}};function y(e){return"greedy"===m.skipEmptyLines?""===e.join("").trim():1===e.length&&0===e[0].length}function g(){if(p&&a&&(k("Delimiter","UndetectableDelimiter","Unable to auto-detect delimiting character; defaulted to '"+v.DefaultDelimiter+"'"),a=!1),m.skipEmptyLines&&(p.data=p.data.filter(function(e){return!y(e)})),_()){if(p)if(Array.isArray(p.data[0])){for(var e=0;_()&&e<p.data.length;e++)p.data[e].forEach(t);p.data.splice(0,1)}else p.data.forEach(t);function t(e,t){U(m.transformHeader)&&(e=m.transformHeader(e,t)),c.push(e)}}function i(e,t){for(var i=m.header?{}:[],r=0;r<e.length;r++){var n=r,s=e[r],s=((e,t)=>(e=>(m.dynamicTypingFunction&&void 0===m.dynamicTyping[e]&&(m.dynamicTyping[e]=m.dynamicTypingFunction(e)),!0===(m.dynamicTyping[e]||m.dynamicTyping)))(e)?"true"===t||"TRUE"===t||"false"!==t&&"FALSE"!==t&&((e=>{if(u.test(e)){e=parseFloat(e);if(h<e&&e<o)return 1}})(t)?parseFloat(t):d.test(t)?new Date(t):""===t?null:t):t)(n=m.header?r>=c.length?"__parsed_extra":c[r]:n,s=m.transform?m.transform(s,n):s);"__parsed_extra"===n?(i[n]=i[n]||[],i[n].push(s)):i[n]=s}return m.header&&(r>c.length?k("FieldMismatch","TooManyFields","Too many fields: expected "+c.length+" fields but parsed "+r,f+t):r<c.length&&k("FieldMismatch","TooFewFields","Too few fields: expected "+c.length+" fields but parsed "+r,f+t)),i}var r;p&&(m.header||m.dynamicTyping||m.transform)&&(r=1,!p.data.length||Array.isArray(p.data[0])?(p.data=p.data.map(i),r=p.data.length):p.data=i(p.data,0),m.header&&p.meta&&(p.meta.fields=c),f+=r)}function _(){return m.header&&0===c.length}function k(e,t,i,r){e={type:e,code:t,message:i};void 0!==r&&(e.row=r),p.errors.push(e)}U(m.step)&&(t=m.step,m.step=function(e){p=e,_()?g():(g(),0!==p.data.length&&(r+=e.data.length,m.preview&&r>m.preview?s.abort():(p.data=p.data[0],t(p,i))))}),this.parse=function(e,t,i){var r=m.quoteChar||'"',r=(m.newline||(m.newline=this.guessLineEndings(e,r)),a=!1,m.delimiter?U(m.delimiter)&&(m.delimiter=m.delimiter(e),p.meta.delimiter=m.delimiter):((r=((e,t,i,r,n)=>{var s,a,o,h;n=n||[",","\t","|",";",v.RECORD_SEP,v.UNIT_SEP];for(var u=0;u<n.length;u++){for(var d,f=n[u],l=0,c=0,p=0,g=(o=void 0,new E({comments:r,delimiter:f,newline:t,preview:10}).parse(e)),_=0;_<g.data.length;_++)i&&y(g.data[_])?p++:(d=g.data[_].length,c+=d,void 0===o?o=d:0<d&&(l+=Math.abs(d-o),o=d));0<g.data.length&&(c/=g.data.length-p),(void 0===a||l<=a)&&(void 0===h||h<c)&&1.99<c&&(a=l,s=f,h=c)}return{successful:!!(m.delimiter=s),bestDelimiter:s}})(e,m.newline,m.skipEmptyLines,m.comments,m.delimitersToGuess)).successful?m.delimiter=r.bestDelimiter:(a=!0,m.delimiter=v.DefaultDelimiter),p.meta.delimiter=m.delimiter),b(m));return m.preview&&m.header&&r.preview++,n=e,s=new E(r),p=s.parse(n,t,i),g(),l?{meta:{paused:!0}}:p||{meta:{paused:!1}}},this.paused=function(){return l},this.pause=function(){l=!0,s.abort(),n=U(m.chunk)?"":n.substring(s.getCharIndex())},this.resume=function(){i.streamer._halted?(l=!1,i.streamer.parseChunk(n,!0)):setTimeout(i.resume,3)},this.aborted=function(){return e},this.abort=function(){e=!0,s.abort(),p.meta.aborted=!0,U(m.complete)&&m.complete(p),n=""},this.guessLineEndings=function(e,t){e=e.substring(0,1048576);var t=new RegExp(P(t)+"([^]*?)"+P(t),"gm"),i=(e=e.replace(t,"")).split("\r"),t=e.split("\n"),e=1<t.length&&t[0].length<i[0].length;if(1===i.length||e)return"\n";for(var r=0,n=0;n<i.length;n++)"\n"===i[n][0]&&r++;return r>=i.length/2?"\r\n":"\r"}}function P(e){return e.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}function E(C){var S=(C=C||{}).delimiter,O=C.newline,x=C.comments,I=C.step,A=C.preview,T=C.fastMode,D=null,L=!1,F=null==C.quoteChar?'"':C.quoteChar,j=F;if(void 0!==C.escapeChar&&(j=C.escapeChar),("string"!=typeof S||-1<v.BAD_DELIMITERS.indexOf(S))&&(S=","),x===S)throw new Error("Comment character same as delimiter");!0===x?x="#":("string"!=typeof x||-1<v.BAD_DELIMITERS.indexOf(x))&&(x=!1),"\n"!==O&&"\r"!==O&&"\r\n"!==O&&(O="\n");var z=0,M=!1;this.parse=function(i,t,r){if("string"!=typeof i)throw new Error("Input must be a string");var n=i.length,e=S.length,s=O.length,a=x.length,o=U(I),h=[],u=[],d=[],f=z=0;if(!i)return w();if(T||!1!==T&&-1===i.indexOf(F)){for(var l=i.split(O),c=0;c<l.length;c++){if(d=l[c],z+=d.length,c!==l.length-1)z+=O.length;else if(r)return w();if(!x||d.substring(0,a)!==x){if(o){if(h=[],k(d.split(S)),R(),M)return w()}else k(d.split(S));if(A&&A<=c)return h=h.slice(0,A),w(!0)}}return w()}for(var p=i.indexOf(S,z),g=i.indexOf(O,z),_=new RegExp(P(j)+P(F),"g"),m=i.indexOf(F,z);;)if(i[z]===F)for(m=z,z++;;){if(-1===(m=i.indexOf(F,m+1)))return r||u.push({type:"Quotes",code:"MissingQuotes",message:"Quoted field unterminated",row:h.length,index:z}),E();if(m===n-1)return E(i.substring(z,m).replace(_,F));if(F===j&&i[m+1]===j)m++;else if(F===j||0===m||i[m-1]!==j){-1!==p&&p<m+1&&(p=i.indexOf(S,m+1));var y=v(-1===(g=-1!==g&&g<m+1?i.indexOf(O,m+1):g)?p:Math.min(p,g));if(i.substr(m+1+y,e)===S){d.push(i.substring(z,m).replace(_,F)),i[z=m+1+y+e]!==F&&(m=i.indexOf(F,z)),p=i.indexOf(S,z),g=i.indexOf(O,z);break}y=v(g);if(i.substring(m+1+y,m+1+y+s)===O){if(d.push(i.substring(z,m).replace(_,F)),b(m+1+y+s),p=i.indexOf(S,z),m=i.indexOf(F,z),o&&(R(),M))return w();if(A&&h.length>=A)return w(!0);break}u.push({type:"Quotes",code:"InvalidQuotes",message:"Trailing quote on quoted field is malformed",row:h.length,index:z}),m++}}else if(x&&0===d.length&&i.substring(z,z+a)===x){if(-1===g)return w();z=g+s,g=i.indexOf(O,z),p=i.indexOf(S,z)}else if(-1!==p&&(p<g||-1===g))d.push(i.substring(z,p)),z=p+e,p=i.indexOf(S,z);else{if(-1===g)break;if(d.push(i.substring(z,g)),b(g+s),o&&(R(),M))return w();if(A&&h.length>=A)return w(!0)}return E();function k(e){h.push(e),f=z}function v(e){var t=0;return t=-1!==e&&(e=i.substring(m+1,e))&&""===e.trim()?e.length:t}function E(e){return r||(void 0===e&&(e=i.substring(z)),d.push(e),z=n,k(d),o&&R()),w()}function b(e){z=e,k(d),d=[],g=i.indexOf(O,z)}function w(e){if(C.header&&!t&&h.length&&!L){var s=h[0],a=Object.create(null),o=new Set(s);let n=!1;for(let r=0;r<s.length;r++){let i=s[r];if(a[i=U(C.transformHeader)?C.transformHeader(i,r):i]){let e,t=a[i];for(;e=i+"_"+t,t++,o.has(e););o.add(e),s[r]=e,a[i]++,n=!0,(D=null===D?{}:D)[e]=i}else a[i]=1,s[r]=i;o.add(i)}n&&console.warn("Duplicate headers found and renamed."),L=!0}return{data:h,errors:u,meta:{delimiter:S,linebreak:O,aborted:M,truncated:!!e,cursor:f+(t||0),renamedHeaders:D}}}function R(){I(w()),h=[],u=[]}},this.abort=function(){M=!0},this.getCharIndex=function(){return z}}function g(e){var t=e.data,i=o[t.workerId],r=!1;if(t.error)i.userError(t.error,t.file);else if(t.results&&t.results.data){var n={abort:function(){r=!0,_(t.workerId,{data:[],errors:[],meta:{aborted:!0}})},pause:m,resume:m};if(U(i.userStep)){for(var s=0;s<t.results.data.length&&(i.userStep({data:t.results.data[s],errors:t.results.errors,meta:t.results.meta},n),!r);s++);delete t.results}else U(i.userChunk)&&(i.userChunk(t.results,n,t.file),delete t.results)}t.finished&&!r&&_(t.workerId,t.results)}function _(e,t){var i=o[e];U(i.userComplete)&&i.userComplete(t),i.terminate(),delete o[e]}function m(){throw new Error("Not implemented.")}function b(e){if("object"!=typeof e||null===e)return e;var t,i=Array.isArray(e)?[]:{};for(t in e)i[t]=b(e[t]);return i}function y(e,t){return function(){e.apply(t,arguments)}}function U(e){return"function"==typeof e}return v.parse=function(e,t){var i=(t=t||{}).dynamicTyping||!1;U(i)&&(t.dynamicTypingFunction=i,i={});if(t.dynamicTyping=i,t.transform=!!U(t.transform)&&t.transform,!t.worker||!v.WORKERS_SUPPORTED)return i=null,v.NODE_STREAM_INPUT,"string"==typeof e?(e=(e=>65279!==e.charCodeAt(0)?e:e.slice(1))(e),i=new(t.download?f:c)(t)):!0===e.readable&&U(e.read)&&U(e.on)?i=new p(t):(n.File&&e instanceof File||e instanceof Object)&&(i=new l(t)),i.stream(e);(i=(()=>{var e;return!!v.WORKERS_SUPPORTED&&(e=(()=>{var e=n.URL||n.webkitURL||null,t=r.toString();return v.BLOB_URL||(v.BLOB_URL=e.createObjectURL(new Blob(["var global = (function() { if (typeof self !== 'undefined') { return self; } if (typeof window !== 'undefined') { return window; } if (typeof global !== 'undefined') { return global; } return {}; })(); global.IS_PAPA_WORKER=true; ","(",t,")();"],{type:"text/javascript"})))})(),(e=new n.Worker(e)).onmessage=g,e.id=h++,o[e.id]=e)})()).userStep=t.step,i.userChunk=t.chunk,i.userComplete=t.complete,i.userError=t.error,t.step=U(t.step),t.chunk=U(t.chunk),t.complete=U(t.complete),t.error=U(t.error),delete t.worker,i.postMessage({input:e,config:t,workerId:i.id})},v.unparse=function(e,t){var n=!1,_=!0,m=",",y="\r\n",s='"',a=s+s,i=!1,r=null,o=!1,h=((()=>{if("object"==typeof t){if("string"!=typeof t.delimiter||v.BAD_DELIMITERS.filter(function(e){return-1!==t.delimiter.indexOf(e)}).length||(m=t.delimiter),"boolean"!=typeof t.quotes&&"function"!=typeof t.quotes&&!Array.isArray(t.quotes)||(n=t.quotes),"boolean"!=typeof t.skipEmptyLines&&"string"!=typeof t.skipEmptyLines||(i=t.skipEmptyLines),"string"==typeof t.newline&&(y=t.newline),"string"==typeof t.quoteChar&&(s=t.quoteChar),"boolean"==typeof t.header&&(_=t.header),Array.isArray(t.columns)){if(0===t.columns.length)throw new Error("Option columns is empty");r=t.columns}void 0!==t.escapeChar&&(a=t.escapeChar+s),t.escapeFormulae instanceof RegExp?o=t.escapeFormulae:"boolean"==typeof t.escapeFormulae&&t.escapeFormulae&&(o=/^[=+\-@\t\r].*$/)}})(),new RegExp(P(s),"g"));"string"==typeof e&&(e=JSON.parse(e));if(Array.isArray(e)){if(!e.length||Array.isArray(e[0]))return u(null,e,i);if("object"==typeof e[0])return u(r||Object.keys(e[0]),e,i)}else if("object"==typeof e)return"string"==typeof e.data&&(e.data=JSON.parse(e.data)),Array.isArray(e.data)&&(e.fields||(e.fields=e.meta&&e.meta.fields||r),e.fields||(e.fields=Array.isArray(e.data[0])?e.fields:"object"==typeof e.data[0]?Object.keys(e.data[0]):[]),Array.isArray(e.data[0])||"object"==typeof e.data[0]||(e.data=[e.data])),u(e.fields||[],e.data||[],i);throw new Error("Unable to serialize unrecognized input");function u(e,t,i){var r="",n=("string"==typeof e&&(e=JSON.parse(e)),"string"==typeof t&&(t=JSON.parse(t)),Array.isArray(e)&&0<e.length),s=!Array.isArray(t[0]);if(n&&_){for(var a=0;a<e.length;a++)0<a&&(r+=m),r+=k(e[a],a);0<t.length&&(r+=y)}for(var o=0;o<t.length;o++){var h=(n?e:t[o]).length,u=!1,d=n?0===Object.keys(t[o]).length:0===t[o].length;if(i&&!n&&(u="greedy"===i?""===t[o].join("").trim():1===t[o].length&&0===t[o][0].length),"greedy"===i&&n){for(var f=[],l=0;l<h;l++){var c=s?e[l]:l;f.push(t[o][c])}u=""===f.join("").trim()}if(!u){for(var p=0;p<h;p++){0<p&&!d&&(r+=m);var g=n&&s?e[p]:p;r+=k(t[o][g],p)}o<t.length-1&&(!i||0<h&&!d)&&(r+=y)}}return r}function k(e,t){var i,r;return null==e?"":e.constructor===Date?JSON.stringify(e).slice(1,25):(r=!1,o&&"string"==typeof e&&o.test(e)&&(e="'"+e,r=!0),i=e.toString().replace(h,a),(r=r||!0===n||"function"==typeof n&&n(e,t)||Array.isArray(n)&&n[t]||((e,t)=>{for(var i=0;i<t.length;i++)if(-1<e.indexOf(t[i]))return!0;return!1})(i,v.BAD_DELIMITERS)||-1<i.indexOf(m)||" "===i.charAt(0)||" "===i.charAt(i.length-1))?s+i+s:i)}},v.RECORD_SEP=String.fromCharCode(30),v.UNIT_SEP=String.fromCharCode(31),v.BYTE_ORDER_MARK="\ufeff",v.BAD_DELIMITERS=["\r","\n",'"',v.BYTE_ORDER_MARK],v.WORKERS_SUPPORTED=!s&&!!n.Worker,v.NODE_STREAM_INPUT=1,v.LocalChunkSize=10485760,v.RemoteChunkSize=5242880,v.DefaultDelimiter=",",v.Parser=E,v.ParserHandle=i,v.NetworkStreamer=f,v.FileStreamer=l,v.StringStreamer=c,v.ReadableStreamStreamer=p,n.jQuery&&((d=n.jQuery).fn.parse=function(o){var i=o.config||{},h=[];return this.each(function(e){if(!("INPUT"===d(this).prop("tagName").toUpperCase()&&"file"===d(this).attr("type").toLowerCase()&&n.FileReader)||!this.files||0===this.files.length)return!0;for(var t=0;t<this.files.length;t++)h.push({file:this.files[t],inputElem:this,instanceConfig:d.extend({},i)})}),e(),this;function e(){if(0===h.length)U(o.complete)&&o.complete();else{var e,t,i,r,n=h[0];if(U(o.before)){var s=o.before(n.file,n.inputElem);if("object"==typeof s){if("abort"===s.action)return e="AbortError",t=n.file,i=n.inputElem,r=s.reason,void(U(o.error)&&o.error({name:e},t,i,r));if("skip"===s.action)return void u();"object"==typeof s.config&&(n.instanceConfig=d.extend(n.instanceConfig,s.config))}else if("skip"===s)return void u()}var a=n.instanceConfig.complete;n.instanceConfig.complete=function(e){U(a)&&a(e,n.file,n.inputElem),u()},v.parse(n.file,n.instanceConfig)}}function u(){h.splice(0,1),e()}}),a&&(n.onmessage=function(e){e=e.data;void 0===v.WORKER_ID&&e&&(v.WORKER_ID=e.workerId);"string"==typeof e.input?n.postMessage({workerId:v.WORKER_ID,results:v.parse(e.input,e.config),finished:!0}):(n.File&&e.input instanceof File||e.input instanceof Object)&&(e=v.parse(e.input,e.config))&&n.postMessage({workerId:v.WORKER_ID,results:e,finished:!0})}),(f.prototype=Object.create(u.prototype)).constructor=f,(l.prototype=Object.create(u.prototype)).constructor=l,(c.prototype=Object.create(c.prototype)).constructor=c,(p.prototype=Object.create(u.prototype)).constructor=p,v});
 
-// @vuebundler[Proyecto_base_001][8]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/reloader/reloadable.js
+// @vuebundler[Proyecto_base_001][9]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/reloader/reloadable.js
 // @code.start: LswReloadable injection | @$section: LswReloader API » LswReloadable injection
 const serverUrl = 'http://127.0.0.1';
 const serverPort = 3000;
@@ -16953,7 +18702,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 }
 // @code.end: LswReloadable injection
 
-// @vuebundler[Proyecto_base_001][9]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-boot.js
+// @vuebundler[Proyecto_base_001][10]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-boot.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -16977,7 +18726,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][10]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tracer.js
+// @vuebundler[Proyecto_base_001][11]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tracer.js
 /**
  * 
  * # Nwt Tracer API
@@ -17075,7 +18824,311 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][11]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-asserter.js
+// @vuebundler[Proyecto_base_001][12]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-argumenter.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtArgumenter'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtArgumenter'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtArgumenter = class {
+
+    static formatters = {
+      check: {
+        arguments: {
+          can: (...args) => this.formatters.checkArgumentsCan(...args),
+        },
+        argument: {
+          is: {
+            type: (...args) => this.formatters.checkArgumentIsType(...args),
+          }
+        }
+      },
+      ensure: {
+        arguments: {
+          can: (...args) => this.formatters.ensureArgumentsCan(...args),
+        },
+        argument: {
+          is: {
+            type: (...args) => this.formatters.ensureArgumentIsType(...args),
+          }
+        }
+      },
+      export: {
+        properties: {
+          from: {
+            indexes: (...args) => this.formatters.exportPropertiesFromIndexes(...args),
+          }
+        },
+        indexes: {
+          to: {
+            names: (...args) => this.formatters.exportIndexesToNames(...args),
+          }
+        },
+        input: {
+          to: {
+            property: (...args) => this.formatters.exportInputToProperty(...args),
+          },
+        }
+      },
+      remove: {
+        output: {
+          properties: {
+            where: (...args) => this.formatters.removeOutputPropertiesWhere(...args),
+          }
+        }
+      },
+      checkArgumentIsType: (index, typeId) => {
+        trace("NwtArgumenter.formatters.checkArgumentIsType");
+        return $ => {
+          trace("NwtArgumenter.formatters.checkArgumentIsType#callback");
+          if(!(index in $)) {
+            return typeId === "undefined";
+          }
+          if(typeId === "array") {
+            return Array.isArray($[index]);
+          } else if(typeId === "promise") {
+            return $[index] instanceof Promise;
+          }
+          return typeof $[index] === typeId;
+        };
+      },
+      ensureArgumentIsType: (index, typeId, context = false) => {
+        trace("NwtArgumenter.formatters.ensureArgumentIsType");
+        return $ => {
+          trace("NwtArgumenter.formatters.ensureArgumentIsType#callback");
+          if(typeId === "array") {
+            assertion(Array.isArray($[index]), `Argument «${index}» must be type «${typeId}» but it is type «${typeof $[index]}»${context ? " on «" + context + "»" : ""}`);
+          } else if(typeId === "promise") {
+            assertion($[index] instanceof Promise, `Argument «${index}» must be type «${typeId}» but it is type «${typeof $[index]}»${context ? " on «" + context + "»" : ""}`);
+          } else {
+            assertion(typeof $[index] === typeId, `Argument «${index}» must be type «${typeId}» but it is type «${typeof $[index]}»${context ? " on «" + context + "»" : ""}`);
+          }
+        };
+      },
+      exportPropertiesFromIndexes: (map) => {
+        trace("NwtArgumenter.exportPropertiesFromIndexes");
+        return $ => {
+          trace("NwtArgumenter.exportPropertiesFromIndexes#callback");
+          const destinationProps = Object.keys(map);
+          const originalArgs = Object.values(map);
+          const output = {};
+          for (let index = 0; index < destinationProps.length; index++) {
+            const prop = destinationProps[index];
+            const arg = originalArgs[index];
+            output[prop] = $[arg];
+          }
+          return output;
+        }
+      },
+      exportInputToProperty: (name) => {
+        trace("NwtArgumenter.formatters.exportInputToProperty");
+        assertion(typeof name === "string", "Parameter «name» must be string on «NwtArgumenter.formatters.exportInputToProperty»");
+        return $ => {
+          trace("NwtArgumenter.formatters.exportInputToProperty#callback");
+          return {
+            [name]: $
+          };
+        };
+      },
+      exportIndexesToNames: (...names) => {
+        trace("NwtArgumenter.formatters.exportIndexesToNames");
+        return $ => {
+          trace("NwtArgumenter.formatters.exportIndexesToNames#callback");
+          const output = {};
+          for (let index = 0; index < names.length; index++) {
+            const name = names[index];
+            assertion(typeof name === "string", `Parameter «names[${index}]» must be string on «NwtArgumenter.formatters.exportIndexesToNames»`);
+            output[name] = $[index];
+          }
+          return output;
+        }
+      },
+      removeOutputPropertiesWhere: condition => {
+        trace("NwtArgumenter.formatters.removeOutputPropertiesWhere");
+        assertion(typeof condition === "function", `Parameter «condition» must be function on «NwtArgumenter.formatters.removeOutputPropertiesWhere»`);
+        return ($, index, output) => {
+          trace("NwtArgumenter.formatters.removeOutputPropertiesWhere#callback");
+          for (const key in output) {
+            const val = output[key];
+            const result = condition(val, key, index, output, $);
+            if (result === true) {
+              delete output[key];
+            }
+          }
+          return undefined;
+        };
+      },
+      checkArgumentsCan: (callback) => {
+        trace("NwtArgumenter.formatters.checkArgumentsCan");
+        assertion(typeof callback === "function", `Parameter «callback» must be function on «NwtArgumenter.formatters.checkArgumentsCan»`);
+        return ($, index, output) => {
+          trace("NwtArgumenter.formatters.checkArgumentsCan#callback");
+          return callback($, index, output);
+        };
+      },
+      ensureArgumentsCan: (callback, action = 'do unspecified action', context = false) => {
+        trace("NwtArgumenter.formatters.checkArgumentsCan");
+        assertion(typeof callback === "function", `Parameter «callback» must be function on «NwtArgumenter.formatters.checkArgumentsCan»`);
+        return ($, index, output) => {
+          trace("NwtArgumenter.formatters.checkArgumentsCan#callback");
+          assertion(true === callback($, index, output), `Arguments could not «${action}»${ context ? " on «" + context + "»" : "" }`);
+        };
+      }
+    };
+
+    static format(args, formatters = [], argv = false) {
+      trace("NwtArgumenter.format");
+      assertion(Array.isArray(args) || (Object.prototype.toString.call(args) === "[object Arguments]"), "Parameter «args» must to be instance of «Arguments» on «NwtArgumenter.format»");
+      if (typeof formatters === "function") {
+        formatters = formatters(this.formatters);
+      }
+      assertion(Array.isArray(formatters), "Parameter «formatters» must be array on «NwtArgumenter.format»");
+      if (!argv) {
+        argv = {};
+      }
+      Iterate_formatters:
+      for (let index = 0; index < formatters.length; index++) {
+        const formatter = formatters[index];
+        if (typeof formatter === "function") {
+          Si_formatter_es_funcion: {
+            const overrider = formatter(args, index, argv);
+            if (typeof overrider === "undefined") {
+              // @OK: no hacer nada
+            } else if (typeof overrider === "object") {
+              Object.assign(argv, overrider);
+            } else {
+              throw new Error(`Operation «formatters[${index}] returns type ${typeof overrider} but not object or undefined» not valid on «NwtArgumenter.format»`);
+            }
+          }
+        } else if (Array.isArray(formatter)) {
+          Si_formatter_es_array: {
+            if (formatter.length === 0) {
+              Si_formatter_es_array_de_0: {
+                throw new Error(`Operation «formatters[${index}] type empty array» not valid on «NwtArgumenter.format»`);
+              }
+            } else if (formatter.length === 1) {
+              Si_formatter_es_array_de_1: {
+                const formatterRule = formatter[0];
+                if (typeof formatterRule === "function") {
+                  const overrider = formatterRule(args, index, argv);
+                  if (typeof overrider === "undefined") {
+                    // @OK: no hacer nada
+                  } else if (typeof overrider === "object") {
+                    Object.assign(argv, overrider);
+                  } else {
+                    throw new Error(`Operation «formatters[${index}][0] returns type ${typeof overrider} but not object or undefined» not valid on «NwtArgumenter.format»`);
+                  }
+                } else {
+                  throw new Error(`Operation «formatters[${index}][0] type ${typeof formatterRule} but not function» not valid on «NwtArgumenter.format»`);
+                }
+              }
+            } else if (formatter.length === 2) {
+              Si_formatter_es_array_de_2: {
+                const formatterRule1 = formatter[0];
+                const formatterRule2 = formatter[1];
+                if (typeof formatterRule1 === "function") {
+                  Si_formatter_0_es_funcion: {
+                    const condition = formatterRule1(args, index, argv);
+                    if (typeof condition !== "boolean") {
+                      throw new Error(`Operation «formatters[${index}][0] returns type ${typeof overrider} but not boolean» not valid on «NwtArgumenter.format»`);
+                    }
+                  }
+                } else {
+                  throw new Error(`Operation «formatters[${index}][0] type ${typeof formatterRule1} but not function» not valid on «NwtArgumenter.format»`);
+                }
+                if (typeof formatterRule2 === "function") {
+                  Si_formatter_1_es_funcion: {
+                    const overrider = formatterRule2(args, index, argv);
+                    if (typeof overrider === "undefined") {
+                      // @OK: no hacer nada
+                    } else if (typeof overrider === "object") {
+                      Object.assign(argv, overrider);
+                    } else {
+                      throw new Error(`Operation «formatters[${index}][1] returns type ${typeof overrider} but not object or undefined» not valid on «NwtArgumenter.format»`);
+                    }
+                  }
+                } else if (Array.isArray(formatterRule2)) {
+                  NwtArgumenter.format(args, formatterRule2, argv);
+                  // throw new Error(`Operation «formatters[${index}][1] type ${typeof formatterRule2} but not function» not supported yet on «NwtArgumenter.format»`);
+                } else if (typeof formatterRule2 === "object") {
+                  Si_formatter_1_es_objeto_pero_no_array: {
+                    Object.assign(argv, formatterRule2);
+                  }
+                } else {
+                  throw new Error(`Operation «formatters[${index}][1] type ${typeof formatterRule2} but not function, array or object» not valid on «NwtArgumenter.format»`);
+                }
+              }
+            } else if (formatter.length > 2) {
+              NwtArgumenter.format(args, formatter, argv);
+            }
+          }
+        } else if (typeof formatter === "object") {
+          Object.assign(argv, formatter);
+        } else if (typeof formatter === "string") {
+          throw new Error(`Operation «formatters[${index}] type string but not array or function» not supported yet on «NwtArgumenter.format»`);
+        } else {
+          throw new Error(`Operation «formatters[${index}] type ${typeof formatter} but not function or array» not valid on «NwtArgumenter.format»`);
+        }
+      }
+      if (Object.keys(argv).length === 0) {
+        argv._ = args;
+      }
+      return argv;
+    }
+
+  };
+
+  return NwtArgumenter;
+
+  // Ejemplo de uso:
+
+  let o = NwtArgumenter.format(["path/to/template", { p1: 1 }, { async: true }], [
+    (out, i, inp) => assertion(typeof inp[0] === "string", "param 1 must be string"),
+    (out, i, inp) => assertion(typeof inp[1] === "object", "param 2 must be object"),
+    (out, i, inp) => assertion(typeof inp[2] === "object", "param 3 must be object"),
+    (out, i, inp) => ({ template: inp[0], parameters: inp[1], settings: inp[2] })
+  ]);
+
+  // Otro caso de uso:
+
+
+  c = NwtTimer.Cronometer.create();
+  o = NwtArgumenter.format(["path/to/property", "value"], [
+    NwtArgumenter.formatters.export.input.by.names("$arg1", "$arg2", "$arg3"),
+    NwtArgumenter.formatters.ensure.argument.is.type(0, "string", "Function.prototype.method"),
+    NwtArgumenter.formatters.ensure.argument.is.type(1, "string", "Function.prototype.method"),
+    NwtArgumenter.formatters.ensure.argument.is.type(2, "undefined", "Function.prototype.method"),
+    NwtArgumenter.formatters.export.input.to.properties.by.index({ path: 0, value: 1, another: 1 }),
+    NwtArgumenter.formatters.export.input.to.property("$argOriginal"),
+    NwtArgumenter.formatters.remove.output.properties.where((val, key) => key.startsWith("$arg")),
+  ]);
+  c.stop();
+
+  // Otro caso más explosivo de uso:
+
+
+  c = NwtTimer.Cronometer.create();
+  o = NwtArgumenter.format(["path/to/property", "value"], _ => [
+    _.export.indexes.to.names("$arg1", "$arg2", "$arg3"),
+    _.ensure.argument.is.type(0, "string", "Function.prototype.method"),
+    _.ensure.argument.is.type(1, "string", "Function.prototype.method"),
+    _.ensure.argument.is.type(2, "undefined", "Function.prototype.method"),
+    _.export.indexes.to.properties({ path: 0, value: 1, another: 1 }),
+    _.export.input.to.property("$argOriginal"),
+    _.remove.output.properties.where((val, key) => key.startsWith("$arg")),
+  ]);
+
+});
+
+// @vuebundler[Proyecto_base_001][13]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-asserter.js
 /**
  * 
  * # Nwt Asserter API
@@ -17194,7 +19247,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][12]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-debug.js
+// @vuebundler[Proyecto_base_001][14]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-debug.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -17219,7 +19272,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       for(let index=0; index<args.length; index++) {
         const arg = args[index];
         try {
-          const data = NwtUtils.jsonify(arg, 2);
+          const data = typeof arg === "string" ? arg : NwtUtils.jsonify(arg, 2);
           console.log(`[debug][global] Parameter ${index+1}/${args.length} of type ${typeof data}: ${data}`);
           output.push(data);
         } catch (error) {
@@ -17253,7 +19306,251 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][13]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dialog-definition.js
+// @vuebundler[Proyecto_base_001][15]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-errors-manager.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtErrorsManager'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtErrorsManager'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtErrorsManager = class {
+
+    static create(...args) {
+      trace("NwtErrorsManager.create");
+      return new this(...args);
+    }
+
+    constructor(vueComponent = false) {
+      trace("NwtErrorsManager.constructor");
+      assertion(vueComponent instanceof Vue, "Parameter «vueComponent» must be instance of Vue on «NwtErrorsManager.constructor»");
+      this.vueComponent = vueComponent;
+      this.htmlElement = vueComponent.$el;
+      this.errors = [];
+      this.loopbroker = undefined;
+    }
+
+    triggerLoopbroker() {
+      trace("NwtErrorsManager.prototype.triggerLoopbroker");
+      clearTimeout(this.loopbroker);
+      this.loopbroker = setTimeout(() => {
+
+      }, 1000);
+    }
+
+    async initialize() {
+      trace("NwtErrorsManager.prototype.initialize");
+      assertion(this.htmlElement instanceof HTMLElement, "Parameter «htmlElement» must be instance of HTMLElement on «NwtErrorsManager.initialize»");
+      NwtGlobalizer.exportTo("CommonErrors", this);
+      NwtGlobalizer.exportTo("NwtErrors", this);
+      Vue.prototype.$errors = this;
+      Bind_error_handlers: {
+        // For assertions globally:
+        assertion.setErrorCallback(error => this.showError(error));
+        // For vue errors globally:
+        //*
+        const globalErrorHandler = (...args) => {
+          const [errorOrWarn, component, stack, ...others] = args;
+          let error = undefined;
+          if (errorOrWarn instanceof Error) {
+            error = errorOrWarn;
+          } else {
+            error = new Error(`On component «${component?.$options?._componentTag}»: ${errorOrWarn}`);
+            if (typeof stack === "string") {
+              error.injectedStack = stack;
+            }
+          }
+          if(this.isErrorDuplicated(error)) return false;
+          NwtErrorsManager.expandError(error, {
+            byComponent: component?.$options?._componentTag || component,
+          });
+          this.showError(error);
+        };
+        Vue.config.errorHandler = globalErrorHandler;
+        Vue.config.warnHandler = globalErrorHandler;
+        window.addEventListener("error", (event) => {
+          const error = new Error(event.message);
+          this.showError(event.error || error);
+          console.error(error);
+        });
+        window.addEventListener("unhandledrejection", (event) => {
+          const error = new Error(event.reason);
+          this.showError(error);
+          console.error(error);
+        });
+        Load_dist_source_once: {
+          await NwtStrings.getDistJsSource();
+        }
+      }
+      return this;
+    }
+
+    isErrorDuplicated(error) {
+      trace("NwtErrorsManager.prototype.isErrorDuplicated");
+      const repeated = NwtErrors.errors.filter(actualError => error.name === actualError.name && error.message === actualError.message);
+      if (repeated.length) {
+        console.error(`Repeating error: [${error.name}] ${error.message}`);
+        return true;
+      }
+      return false;
+    }
+
+    showError(error) {
+      trace("NwtErrorsManager.prototype.showError");
+      Securers: {
+        if (this.isErrorDuplicated(error)) return false;
+        console.error("showError:", error);
+        if (NwtErrors.errors.length >= 50) return false;
+      }
+      this.errors.push(error);
+      this.reload();
+    }
+
+    clearErrors() {
+      trace("NwtErrorsManager.prototype.clearErrors");
+      this.errors = [];
+      this.reload();
+    }
+
+    clearError(pos) {
+      trace("NwtErrorsManager.prototype.clearError");
+      this.errors.splice(pos, 1);
+      this.reload();
+    }
+
+    async reload() {
+      trace("NwtErrorsManager.prototype.reload");
+      const { html, js } = await this.utils.formatErrorsToHtmlAndJs();
+      this.htmlElement.innerHTML = html;
+      await js(this.errors, this);
+    }
+
+    utils = {
+      formatErrorsToHtmlAndJs: async () => {
+        trace("NwtErrorsManager.prototype.utils.formatErrorsToHtmlAndJs");
+        const html = await NwtTemplates.global.render.ejs.file("nwt/nwt-errors-manager/viewer/template.html", this);
+        const jsSource = await NwtFilesystem.readFile(NwtTemplates.global.resolve("nwt/nwt-errors-manager/viewer/template.js"));
+        const js = NwtImporter.asyncFactory(jsSource, ["errors", "manager"]);
+        return { html, js };
+      },
+      formatErrorsToText: () => {
+        trace("NwtErrorsManager.prototype.utils.formatErrorsToText");
+        let text = "";
+        for (let index = 0; index < this.errors.length; index++) {
+          const error = this.errors[index];
+          if (error instanceof Error) {
+            this.constructor.expandError(error);
+            text += `Error ${index}:\n`;
+            text += error.name + "\n";
+            text += error.message + "\n";
+            if (error.expandedStack) {
+              text += NwtUtils.jsonify(error.expandedStack, 2) + "\n";
+            } else {
+              text += error.stack + "\n";
+            }
+          } else {
+            text += `Error ${index}:\n`;
+            text += error;
+          }
+        }
+        return text;
+      }
+    };
+
+    static expandError(errorInput, overriders = false) {
+      trace("NwtUtils.expandError");
+      console.error("expandError", errorInput);
+      Securers: {
+        if (NwtErrors.errors.length >= 50) return false;
+      }
+      if (overriders) {
+        assertion(typeof overriders === "object", "Required parameter «overriders» to be object on «NwtErrorsManager.expandError»");
+      }
+      if (errorInput.stack) {
+        errorInput.expandedStack = this.parseStackTrace(errorInput.stack);
+      }
+      if (overriders) {
+        Object.assign(errorInput, overriders);
+      }
+      return errorInput;
+    }
+
+    static parseStackTrace(stack) {
+      trace("NwtUtils.parseStackTrace");
+      return stack.split("\n").map(line => {
+        const m = line.match(/at\s+(.*?)\s+\((.*):(\d+):(\d+)\)/);
+        let missing = false;
+        if (!m) missing = "*";
+        else if (!m[1]) missing = 1;
+        else if (!m[2]) missing = 2;
+        else if (!m[3]) missing = 3;
+        else if (!m[4]) missing = 4;
+        if (missing !== false) {
+          console.log(`Missing factor ${missing}`);
+          return line;
+        }
+        const info = {
+          function: m[1],
+          file: m[2],
+          line: Number(m[3]),
+          column: Number(m[4]),
+        };
+        if (info.file.trim().endsWith("/assets/dist.js")) {
+          info.fragment = NwtStrings.printSurroundingLinesFromDistJs(info);
+        }
+        return info;
+        return `on ${info.function}@${info.file}:${info.line}:${info.column} [${info.fragment}]`;
+      });
+    }
+
+  };
+
+  return NwtErrorsManager;
+
+});
+
+// @vuebundler[Proyecto_base_001][16]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-error-utils.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtErrorUtils'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtErrorUtils'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtErrorUtils = class {
+
+    static unifyMessages(errors) {
+      trace("NwtErrorUtils.unify");
+      if(errors instanceof Error) {
+        return errors;
+      }
+      assertion(Array.isArray(errors), "Parameter «errors» must be instance of Error or array on «NwtErrorUtils.unify»");
+      assertion(errors.length !== 0, "Parameter «errors» cannot be an empty array on «NwtErrorUtils.unify»");
+      if(errors.length === 1) {
+        return errors[0];
+      }
+      return errors.map((error, index) => `Error ${index}: [${error.name}] ${error.message}`).join(" + ");
+    }
+
+  };
+
+  return NwtErrorUtils;
+
+});
+
+// @vuebundler[Proyecto_base_001][17]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dialog-definition.js
 /**
  * 
  * # Nwt Dialog Definition API
@@ -17401,9 +19698,10 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
           const finalData = Object.assign({}, {
             // 1. Propiedades sobreescribibles:
             value: "",
-          }, userData, {
+          }, {
             // 2. Propiedades no sobreescribibles:
             deepness: 101,
+          }, userData, {
             state: that.$state,
             process: that.$process,
             definition: that,
@@ -17514,7 +19812,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][14]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-importer.js
+// @vuebundler[Proyecto_base_001][18]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-importer.js
 /**
  * 
  * # Nwt Importer API
@@ -17584,16 +19882,23 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     static requireNewly(subpath) {
       trace("NwtImporter.requireNewly");
-      if (NwtEnvironment.isNWJS) {
+      if(NwtEnvironment.isNode) {
         const fullpath = require("path").resolve(subpath);
         delete require.cache[fullpath];
         return require(fullpath);
       }
     }
 
+    static async asyncSource(subpath, parameters = {}, scope = window) {
+      trace("NwtImporter.asyncSource");
+      const fullpath = require("path").resolve(subpath);
+      const content = await require("fs").promises.readFile(fullpath, "utf8");
+      return this.asyncFunction(content, parameters, scope);
+    }
+
     static async vueComponentByFilesystem(subpath) {
       trace("NwtImporter.vueComponentByFilesystem");
-      if (NwtEnvironment.isNWJS) {
+      if (NwtEnvironment.hasGlobal) {
         const fs = require("fs");
         const path = require("path");
         const htmlPath = path.resolve(subpath + ".html");
@@ -17638,13 +19943,20 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return asyncFunction.call(scope, ...values);
     }
 
+    static asyncFactory(code, parameters = []) {
+      trace("NwtImporter.asyncFunction");
+      const AsyncFunction = (async () => { }).constructor;
+      const asyncFactory = new AsyncFunction(...parameters, code);
+      return asyncFactory;
+    }
+
   };
 
   return NwtImporter;
 
 });
 
-// @vuebundler[Proyecto_base_001][15]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-environment.js
+// @vuebundler[Proyecto_base_001][19]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-environment.js
 /**
  * 
  * # Nwt Environment API
@@ -17866,7 +20178,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][16]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-paths.js
+// @vuebundler[Proyecto_base_001][20]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-paths.js
 /**
  * 
  * # App Paths API
@@ -17952,7 +20264,60 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][17]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-object-utils.js
+// @vuebundler[Proyecto_base_001][21]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-strings.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtStrings'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtStrings'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtStrings = class {
+
+    static EOL = NwtEnvironment.isNode ? require("os").EOL : "\n";
+
+    static async fromAssets(stringId) {
+      trace("NwtStrings.fromAssets");
+      const stringPath = NwtPaths.global.relative("assets/app/strings", stringId);
+      const stringContent = await NwtFilesystem.readFile(stringPath);
+      return stringContent;
+    }
+
+    static getDistJsSource() {
+      trace("NwtStrings.getDistJsSource");
+      if(this.distSource) {
+        return this.distSource;
+      }
+      return require("fs").promises.readFile(NwtPaths.global.relative("assets/dist.js"), "utf8").then(output => {
+        this.distSource = output;
+        return output;
+      });
+    }
+
+    static printSurroundingLinesFromDistJs(info, linesBefore = 5, linesAfter = 5) {
+      trace("NwtStrings.printSurroundingLinesFromDistJs");
+      if(this.distSource) {
+        return NwtUtils.getSurroundingLines(this.distSource, info.line, info.column, linesBefore, linesAfter);
+      }
+      return (async() => {
+        const content = await this.getDistJsSource();
+        return NwtUtils.getSurroundingLines(content, info.line, info.column, linesBefore, linesAfter);
+      })();
+    }
+
+  };
+
+  return NwtStrings;
+
+});
+
+// @vuebundler[Proyecto_base_001][22]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-object-utils.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -17970,25 +20335,38 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     static noop() {}
 
-    static cleanMapByPairs(data, cleaner = this.noop) {
+    static cleanMapByPairs(obj, cleaner = this.noop) {
       trace("NwtObjectUtils.cleanMapByPairs");
-      const keys = Object.keys(data);
+      const keys = Object.keys(obj);
       const output = {};
       for(let index=0; index<keys.length; index++) {
         const key = keys[index];
-        const val = data[key];
+        const val = obj[key];
         const result = cleaner(key, val, index);
         if(typeof result !== "undefined") {
           if(!Array.isArray(result)) {
-            throw new Error(`Parameter «data[${JSON.stringify(key)}]» must be an array on «NwtObjectUtils.cleaMapByPairs»`);
+            throw new Error(`Parameter «obj[${JSON.stringify(key)}]» must be an array on «NwtObjectUtils.cleaMapByPairs»`);
           }
           if(result.length !== 2) {
-            throw new Error(`Parameter «data[${JSON.stringify(key)}]» must be an array of 2 elements on «NwtObjectUtils.cleaMapByPairs»`);
+            throw new Error(`Parameter «obj[${JSON.stringify(key)}]» must be an array of 2 elements on «NwtObjectUtils.cleaMapByPairs»`);
           }
           output[result[0]] = result[1];
         }
       }
       return output;
+    }
+
+    static toggleByKeyAndSetter(obj, key, setter) {
+      trace("NwtObjectUtils.toggleByKeyAndSetter");
+      const hasKey = key in obj;
+      if(!hasKey) {
+        return setter(key, obj[key], obj).then(output => {
+          obj[key] = output;
+          return output;
+        });
+      } else {
+        delete obj[key];
+      }
     }
 
   };
@@ -17997,36 +20375,128 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][18]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-strings.js
+// @vuebundler[Proyecto_base_001][23]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-array-utils.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
-    window['NwtStrings'] = mod;
+    window['NwtArrayUtils'] = mod;
   }
   if (typeof global !== 'undefined') {
-    global['NwtStrings'] = mod;
+    global['NwtArrayUtils'] = mod;
   }
   if (typeof module !== 'undefined') {
     module.exports = mod;
   }
 })(function () {
   
-  const NwtStrings = class {
+  const NwtArrayUtils = class {
 
-    static async fromAssets(stringId) {
-      trace("NwtStrings.fromAssets");
-      const stringPath = NwtPaths.global.relative("assets/app/strings", stringId);
-      const stringContent = await NwtFilesystem.readFile(stringPath);
-      return stringContent;
+    static async toggleByValue(list, val) {
+      trace("NwtArrayUtils.toggleByValue");
+      const pos = list.indexOf(val);
+      if(pos === -1) list.push(val);
+      else list.splice(pos, 1);
+      return list;
+    }
+
+    static async toggleByFirstOrValue(list, val) {
+      trace("NwtArrayUtils.toggleByValue");
+      for(let index=list.length-1; index>0; index--) {
+        const item = list[index];
+        if((Array.isArray(item) ? item[0] : item) === val) {
+          list.splice(index, 1);
+        } else {
+          list.push(false);
+        }
+      }
+      return list;
+    }
+
+    static repeatBy(reps = 1, val = undefined) {
+      trace("NwtArrayUtils.repeatBy");
+      const output = [];
+      for(let index=0; index<reps; index++) {
+        output.push(val);
+      }
+      return output;
     }
 
   };
 
-  return NwtStrings;
+  return NwtArrayUtils;
 
 });
 
-// @vuebundler[Proyecto_base_001][19]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-timer.js
+// @vuebundler[Proyecto_base_001][24]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-collection-utils.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCollectionUtils'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCollectionUtils'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtCollectionUtils = class {
+
+    static normalizeCollection(listOrObject) {
+      trace("NwtCollectionUtils.normalizeCollection");
+      if(Array.isArray(listOrObject)) {
+        return listOrObject.map((value, index) => [index, value]);
+      } else if(typeof listOrObject === "object") {
+        return Object.keys(listOrObject).map(key => [key, listOrObject[key]]);
+      }
+      throw new Error("Parameter «listOrObject» must be an array or an object on «NwtCollectionUtils.normalizeCollection»");
+    }
+
+    static toggleByFinderAndSetter(listOrObject, options = {}) {
+      trace("NwtCollectionUtils.toggleByFinderAndSetter");
+      assertion(typeof listOrObject === "object", "Parameter «listOrObject» must be an array or an object on «NwtCollectionUtils.toggleByFinderAndSetter»");
+      assertion(typeof options.finder === "function", "Parameter «options.finder» must be a function on «NwtCollectionUtils.toggleByFinderAndSetter»");
+      assertion(typeof options.setter === "function", "Parameter «options.setter» must be a function on «NwtCollectionUtils.toggleByFinderAndSetter»");
+      const data = this.normalizeCollection(listOrObject);
+      const { finder, setter } = options;
+      data.filter(finder).each(([key, val]) => {
+        const output = setter(key, val);
+        listOrObject[key] = output;
+      });
+    }
+
+    static getPositionOfFirstWhere(list, whereCallback) {
+      for(let index=0; index<list.length; index++) {
+        const item = list[index];
+        const result = whereCallback(item);
+        if(result) {
+          return index;
+        }
+      }
+      return -1;
+    }
+
+    static async toggleByFirstOrValue(list, val) {
+      trace("NwtCollectionUtils.toggleByValue");
+      for(let index=list.length-1; index>0; index--) {
+        const item = list[index];
+        if((Array.isArray(item) ? item[0] : item) === val) {
+          list.splice(index, 1);
+        } else {
+          list.push(false);
+        }
+      }
+      return list;
+    }
+
+  };
+
+  return NwtCollectionUtils;
+
+});
+
+// @vuebundler[Proyecto_base_001][25]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-timer.js
 /**
  * 
  * # Nwt Timer API
@@ -18104,7 +20574,30 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     }
 
     static secondsDiff(date1, date2) {
-      return this.fromMillisecondsToSeconds(date1 - date2);
+      return this.fromMillisecondsToSeconds(date1.getTime() - date2.getTime());
+    }
+
+    static Cronometer = class {
+
+      static create(...args) {
+        return new this(...args);
+      }
+
+      constructor(startDate = false) {
+        trace("NwtTimer.Cronometer.constructor");
+        this.startDate = startDate || new Date();
+      }
+
+      start(force = false) {
+        trace("NwtTimer.Cronometer.prototype.start");
+        this.startDate = new Date();
+      }
+
+      stop() {
+        trace("NwtTimer.Cronometer.prototype.stop");
+        return this.diff = NwtTimer.secondsDiff(new Date(), this.startDate);
+      }
+
     }
 
     static timeout(ms) {
@@ -18122,7 +20615,112 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][20]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
+// @vuebundler[Proyecto_base_001][26]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2.js
+/**
+ * 
+ * # Nwt Vue2 API
+ * 
+ * 
+ */
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtVue2'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtVue2'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtVue2 = class {
+
+    static fromTagToIdNotation(tag) {
+      trace("NwtVue2.fromTagToIdNotation");
+      let finalId = tag.replace(/(\.|\/|\\)./g, match => match.substr(1).toUpperCase());
+      finalId = finalId.substr(0, 1).toUpperCase() + finalId.substr(1).replace(/\-[a-z]/g, match => match.substr(1).toUpperCase());
+      return finalId;
+    }
+
+    static fromIdToTagNotation(id) {
+      trace("NwtVue2.fromIdToTagNotation");
+      let finalTag = id.replace(/(\.|\/|\\)./g, match => match.substr(1).toUpperCase());
+      finalTag = finalTag.substr(0, 1).toLowerCase() + finalTag.substr(1).replace(/[A-Z]/g, match => "-" + match.toLowerCase());
+      return finalTag;
+    }
+
+    static defined = {
+      components: {},
+      directives: {},
+    };
+
+    static define = {
+      component: (id, definition) => {
+        trace("Vue.component");
+        this.defined.components[id] = definition;
+        if (NwtEnvironment.hasWindow) {
+          Vue.component(id, definition);
+        }
+      },
+      directive: (id, definition) => {
+        trace("Vue.directive");
+        this.defined.directives[id] = definition;
+        if (NwtEnvironment.hasWindow) {
+          Vue.directive(id, definition);
+        }
+      },
+    };
+
+    static cross = {
+      expose: {
+        by: {
+          element: (...args) => this.exposeByElement(...args),
+          component: (...args) => this.exposeByComponent(...args),
+        }
+      }
+    }
+
+    static exposeByComponent(component, ...args) {
+      trace("NwtVue2.exposeByComponent");
+      return this.exposeByElement(component.$el, ...args);
+    }
+
+    static exposeByElement(element, properties, name = "$api", exposition = []) {
+      trace("NwtVue2.exposeByElement");
+      assertion(element instanceof HTMLElement, "Parameter «element» must be instance of «HTMLElement» on «NwtVue2.exposeByElement»");
+      assertion(typeof properties === "object", "Parameter «properties» must be object on «NwtVue2.exposeByElement»");
+      assertion(Array.isArray(exposition), "Parameter «exposition» must be array on «NwtVue2.exposeByElement»");
+      const [toElement = true, toDataset = true, toVue2 = true] = exposition;
+      if (toElement) {
+        Object.defineProperty(element, name, {
+          value: properties,
+          configurable: true
+        });
+      }
+      if (toDataset) {
+        const adaptedAttribute = NwtCommand.fromCommandIdToComponentId(name, {asTag:true});
+        element.setAttribute("data-" + adaptedAttribute, properties);
+      }
+      if (toVue2) {
+        const vm = element.__vue__;
+        if (vm) {
+          Object.defineProperty(vm, name, {
+            value: properties,
+            configurable: true
+          });
+        }
+      }
+    }
+
+  };
+
+  return NwtVue2;
+
+});
+
+// @vuebundler[Proyecto_base_001][27]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
 /**
  * 
  * # Nwt Lazy Loader API
@@ -18232,7 +20830,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][21]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
+// @vuebundler[Proyecto_base_001][28]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
 /**
  * 
  * # Nwt Json Storer API
@@ -18399,7 +20997,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][22]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
+// @vuebundler[Proyecto_base_001][29]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
 /**
  * 
  * # Nwt Settings API
@@ -18529,7 +21127,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][23]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
+// @vuebundler[Proyecto_base_001][30]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -18568,7 +21166,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][24]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
+// @vuebundler[Proyecto_base_001][31]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -18616,7 +21214,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][25]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
+// @vuebundler[Proyecto_base_001][32]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -18664,7 +21262,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][26]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
+// @vuebundler[Proyecto_base_001][33]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -18812,28 +21410,37 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         peg$c1 = "/**<?=",
         peg$c2 = peg$literalExpectation("/**<?=", false),
         peg$c3 = function(e) {
-          return { type: "eval", value: e };
+          return { type: "evaluation", value: e };
         },
-        peg$c4 = "/**<?",
-        peg$c5 = peg$literalExpectation("/**<?", false),
-        peg$c6 = "=",
-        peg$c7 = peg$literalExpectation("=", false),
-        peg$c8 = function(c) {
+        peg$c4 = "/**<?#",
+        peg$c5 = peg$literalExpectation("/**<?#", false),
+        peg$c6 = function(e) {
+          return { type: "fragment", value: e };
+        },
+        peg$c7 = "/**<?",
+        peg$c8 = peg$literalExpectation("/**<?", false),
+        peg$c9 = "=",
+        peg$c10 = peg$literalExpectation("=", false),
+        peg$c11 = "#",
+        peg$c12 = peg$literalExpectation("#", false),
+        peg$c13 = function(c) {
           return { type: "code", value: c };
         },
-        peg$c9 = "?>**/",
-        peg$c10 = peg$literalExpectation("?>**/", false),
-        peg$c11 = peg$anyExpectation(),
-        peg$c12 = function() { return text() },
-        peg$c13 = "\"!template\"",
-        peg$c14 = peg$literalExpectation("\"!template\"", false),
-        peg$c15 = "template",
-        peg$c16 = peg$literalExpectation("template", false),
-        peg$c17 = function(t) {
+        peg$c14 = "?>**/",
+        peg$c15 = peg$literalExpectation("?>**/", false),
+        peg$c16 = peg$anyExpectation(),
+        peg$c17 = function() { return text() },
+        peg$c18 = "\"!template\"",
+        peg$c19 = peg$literalExpectation("\"!template\"", false),
+        peg$c20 = /^[A-Za-z_$]/,
+        peg$c21 = peg$classExpectation([["A", "Z"], ["a", "z"], "_", "$"], false, false),
+        peg$c22 = /^[A-Za-z0-9_$]/,
+        peg$c23 = peg$classExpectation([["A", "Z"], ["a", "z"], ["0", "9"], "_", "$"], false, false),
+        peg$c24 = function(t) {
           return { type: "text", value: text() };
         },
-        peg$c18 = /^[ \t\r\n]/,
-        peg$c19 = peg$classExpectation([" ", "\t", "\r", "\n"], false, false),
+        peg$c25 = /^[ \t\r\n]/,
+        peg$c26 = peg$classExpectation([" ", "\t", "\r", "\n"], false, false),
 
         peg$currPos          = 0,
         peg$savedPos         = 0,
@@ -19003,9 +21610,12 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
       s0 = peg$parseEvaluable_block();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseCode_block();
+        s0 = peg$parseFragment_block();
         if (s0 === peg$FAILED) {
-          s0 = peg$parseText();
+          s0 = peg$parseCode_block();
+          if (s0 === peg$FAILED) {
+            s0 = peg$parseText();
+          }
         }
       }
 
@@ -19053,26 +21663,76 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return s0;
     }
 
-    function peg$parseCode_block() {
-      var s0, s1, s2, s3, s4, s5;
+    function peg$parseFragment_block() {
+      var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c4) {
+      if (input.substr(peg$currPos, 6) === peg$c4) {
         s1 = peg$c4;
-        peg$currPos += 5;
+        peg$currPos += 6;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) { peg$fail(peg$c5); }
       }
       if (s1 !== peg$FAILED) {
+        s2 = peg$parse_();
+        if (s2 !== peg$FAILED) {
+          s3 = peg$parseEvaluable_content();
+          if (s3 !== peg$FAILED) {
+            s4 = peg$parseCode_block_end();
+            if (s4 !== peg$FAILED) {
+              peg$savedPos = s0;
+              s1 = peg$c6(s3);
+              s0 = s1;
+            } else {
+              peg$currPos = s0;
+              s0 = peg$FAILED;
+            }
+          } else {
+            peg$currPos = s0;
+            s0 = peg$FAILED;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
+    function peg$parseCode_block() {
+      var s0, s1, s2, s3, s4, s5;
+
+      s0 = peg$currPos;
+      if (input.substr(peg$currPos, 5) === peg$c7) {
+        s1 = peg$c7;
+        peg$currPos += 5;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c8); }
+      }
+      if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         peg$silentFails++;
         if (input.charCodeAt(peg$currPos) === 61) {
-          s3 = peg$c6;
+          s3 = peg$c9;
           peg$currPos++;
         } else {
           s3 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c7); }
+          if (peg$silentFails === 0) { peg$fail(peg$c10); }
+        }
+        if (s3 === peg$FAILED) {
+          if (input.charCodeAt(peg$currPos) === 35) {
+            s3 = peg$c11;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c12); }
+          }
         }
         peg$silentFails--;
         if (s3 === peg$FAILED) {
@@ -19089,7 +21749,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
               s5 = peg$parseCode_block_end();
               if (s5 !== peg$FAILED) {
                 peg$savedPos = s0;
-                s1 = peg$c8(s4);
+                s1 = peg$c13(s4);
                 s0 = s1;
               } else {
                 peg$currPos = s0;
@@ -19123,12 +21783,12 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       s2 = peg$currPos;
       s3 = peg$currPos;
       peg$silentFails++;
-      if (input.substr(peg$currPos, 5) === peg$c9) {
-        s4 = peg$c9;
+      if (input.substr(peg$currPos, 5) === peg$c14) {
+        s4 = peg$c14;
         peg$currPos += 5;
       } else {
         s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c10); }
+        if (peg$silentFails === 0) { peg$fail(peg$c15); }
       }
       peg$silentFails--;
       if (s4 === peg$FAILED) {
@@ -19143,7 +21803,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c11); }
+          if (peg$silentFails === 0) { peg$fail(peg$c16); }
         }
         if (s4 !== peg$FAILED) {
           s3 = [s3, s4];
@@ -19161,12 +21821,12 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         s2 = peg$currPos;
         s3 = peg$currPos;
         peg$silentFails++;
-        if (input.substr(peg$currPos, 5) === peg$c9) {
-          s4 = peg$c9;
+        if (input.substr(peg$currPos, 5) === peg$c14) {
+          s4 = peg$c14;
           peg$currPos += 5;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c10); }
+          if (peg$silentFails === 0) { peg$fail(peg$c15); }
         }
         peg$silentFails--;
         if (s4 === peg$FAILED) {
@@ -19181,7 +21841,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c11); }
+            if (peg$silentFails === 0) { peg$fail(peg$c16); }
           }
           if (s4 !== peg$FAILED) {
             s3 = [s3, s4];
@@ -19197,7 +21857,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c12();
+        s1 = peg$c17();
       }
       s0 = s1;
 
@@ -19212,12 +21872,12 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       s2 = peg$currPos;
       s3 = peg$currPos;
       peg$silentFails++;
-      if (input.substr(peg$currPos, 5) === peg$c9) {
-        s4 = peg$c9;
+      if (input.substr(peg$currPos, 5) === peg$c14) {
+        s4 = peg$c14;
         peg$currPos += 5;
       } else {
         s4 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c10); }
+        if (peg$silentFails === 0) { peg$fail(peg$c15); }
       }
       peg$silentFails--;
       if (s4 === peg$FAILED) {
@@ -19232,7 +21892,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c11); }
+          if (peg$silentFails === 0) { peg$fail(peg$c16); }
         }
         if (s4 !== peg$FAILED) {
           s3 = [s3, s4];
@@ -19250,12 +21910,12 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         s2 = peg$currPos;
         s3 = peg$currPos;
         peg$silentFails++;
-        if (input.substr(peg$currPos, 5) === peg$c9) {
-          s4 = peg$c9;
+        if (input.substr(peg$currPos, 5) === peg$c14) {
+          s4 = peg$c14;
           peg$currPos += 5;
         } else {
           s4 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c10); }
+          if (peg$silentFails === 0) { peg$fail(peg$c15); }
         }
         peg$silentFails--;
         if (s4 === peg$FAILED) {
@@ -19270,7 +21930,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c11); }
+            if (peg$silentFails === 0) { peg$fail(peg$c16); }
           }
           if (s4 !== peg$FAILED) {
             s3 = [s3, s4];
@@ -19286,7 +21946,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c12();
+        s1 = peg$c17();
       }
       s0 = s1;
 
@@ -19297,35 +21957,75 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       var s0, s1, s2;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c9) {
-        s1 = peg$c9;
+      if (input.substr(peg$currPos, 5) === peg$c14) {
+        s1 = peg$c14;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c10); }
+        if (peg$silentFails === 0) { peg$fail(peg$c15); }
       }
       if (s1 !== peg$FAILED) {
-        if (input.substr(peg$currPos, 11) === peg$c13) {
-          s2 = peg$c13;
+        if (input.substr(peg$currPos, 11) === peg$c18) {
+          s2 = peg$c18;
           peg$currPos += 11;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c14); }
+          if (peg$silentFails === 0) { peg$fail(peg$c19); }
         }
         if (s2 === peg$FAILED) {
-          if (input.substr(peg$currPos, 8) === peg$c15) {
-            s2 = peg$c15;
-            peg$currPos += 8;
-          } else {
-            s2 = peg$FAILED;
-            if (peg$silentFails === 0) { peg$fail(peg$c16); }
-          }
+          s2 = peg$parseVariable_name();
         }
         if (s2 === peg$FAILED) {
           s2 = null;
         }
         if (s2 !== peg$FAILED) {
           s1 = [s1, s2];
+          s0 = s1;
+        } else {
+          peg$currPos = s0;
+          s0 = peg$FAILED;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+
+      return s0;
+    }
+
+    function peg$parseVariable_name() {
+      var s0, s1, s2, s3;
+
+      s0 = peg$currPos;
+      if (peg$c20.test(input.charAt(peg$currPos))) {
+        s1 = input.charAt(peg$currPos);
+        peg$currPos++;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c21); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = [];
+        if (peg$c22.test(input.charAt(peg$currPos))) {
+          s3 = input.charAt(peg$currPos);
+          peg$currPos++;
+        } else {
+          s3 = peg$FAILED;
+          if (peg$silentFails === 0) { peg$fail(peg$c23); }
+        }
+        while (s3 !== peg$FAILED) {
+          s2.push(s3);
+          if (peg$c22.test(input.charAt(peg$currPos))) {
+            s3 = input.charAt(peg$currPos);
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c23); }
+          }
+        }
+        if (s2 !== peg$FAILED) {
+          peg$savedPos = s0;
+          s1 = peg$c17();
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -19346,7 +22046,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       s1 = peg$parseText_chunk();
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c17(s1);
+        s1 = peg$c24(s1);
       }
       s0 = s1;
 
@@ -19369,7 +22069,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c12();
+        s1 = peg$c17();
       }
       s0 = s1;
 
@@ -19382,12 +22082,12 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       s0 = peg$currPos;
       s1 = peg$currPos;
       peg$silentFails++;
-      if (input.substr(peg$currPos, 5) === peg$c4) {
-        s2 = peg$c4;
+      if (input.substr(peg$currPos, 5) === peg$c7) {
+        s2 = peg$c7;
         peg$currPos += 5;
       } else {
         s2 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c5); }
+        if (peg$silentFails === 0) { peg$fail(peg$c8); }
       }
       peg$silentFails--;
       if (s2 === peg$FAILED) {
@@ -19402,7 +22102,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c11); }
+          if (peg$silentFails === 0) { peg$fail(peg$c16); }
         }
         if (s2 !== peg$FAILED) {
           s1 = [s1, s2];
@@ -19423,21 +22123,21 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       var s0, s1;
 
       s0 = [];
-      if (peg$c18.test(input.charAt(peg$currPos))) {
+      if (peg$c25.test(input.charAt(peg$currPos))) {
         s1 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
-        if (peg$silentFails === 0) { peg$fail(peg$c19); }
+        if (peg$silentFails === 0) { peg$fail(peg$c26); }
       }
       while (s1 !== peg$FAILED) {
         s0.push(s1);
-        if (peg$c18.test(input.charAt(peg$currPos))) {
+        if (peg$c25.test(input.charAt(peg$currPos))) {
           s1 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
-          if (peg$silentFails === 0) { peg$fail(peg$c19); }
+          if (peg$silentFails === 0) { peg$fail(peg$c26); }
         }
       }
 
@@ -19451,10 +22151,26 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         for (const node of ast) {
           if (node.type === "text") {
             src.push("js += " + JSON.stringify(node.value) + ";");
-          } else if (node.type === "eval") {
+          } else if (node.type === "evaluation") {
             src.push("js += " + node.value + ";");
           } else if (node.type === "code") {
             src.push(node.value);
+          } else if (node.type === "fragment") {
+            let js = "";
+            js += "js += (val => {";
+            js += `\n  if(typeof val === "function") {`;
+            js += `\n    return NwtCodeComposer.getBlankFunctionBody(val);`;
+            js += `\n  } else if (typeof val === "string") {`;
+            js += `\n    return val;`;
+            js += `\n  } else if(typeof val === "undefined") {`;
+            js += `\n    return "";`;
+            js += `\n  } else {`;
+            js += `\n    return JSON.stringify(val);`;
+            js += `\n  }`;
+            js += "\n})(NwtUtils.trify(() => ";
+            js += node.value;
+            js += ", undefined));"
+            src.push(js);
           }
         }
         src.push("return js;");
@@ -19488,7 +22204,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][27]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
+// @vuebundler[Proyecto_base_001][34]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -19501,59 +22217,206 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     module.exports = mod;
   }
 })(function () {
-  
+
   const NwtTemplates = class {
 
     static create(...args) {
+      trace("NwtTemplates.create");
       return new this(...args);
     }
 
     constructor(basedir = false) {
+      trace("NwtTemplates.constructor");
       this.basedir = basedir || NwtPaths.relative("assets/framework/nwt-templates/templates");
     }
 
-    static compileByTjs(tjsSource, parameterNames = [], settings = {}) {
-      trace("NwtTemplates.compileByTjs");
+    resolve(...subpaths) {
+      trace("NwtTemplates.prototype.resolve");
+      return require("path").resolve(this.basedir, ...subpaths);
+    }
+
+    static defaultCompileSettings = {
+      async: false,
+    };
+
+    static compileByTjsSource(tjsSource, parameterNames = [], settings = this.defaultCompileSettings) {
+      trace("NwtTemplates.compileByTjsSource");
+      assertion(typeof tjsSource === "string", "Parameter «tjsSource» must be a string on «NwtTemplates.compileByTjsSource»");
+      assertion(typeof parameterNames === "object", "Parameter «parameterNames» must be an object on «NwtTemplates.compileByTjsSource»");
+      assertion(Array.isArray(parameterNames), "Parameter «parameterNames» must be an array on «NwtTemplates.compileByTjsSource»");
+      assertion(typeof settings === "object", "Parameter «settings» must be an object on «NwtTemplates.compileByTjsSource»");
+      assertion(!Array.isArray(settings), "Parameter «settings» must be an object and not an array on «NwtTemplates.compileByTjsSource»");
+      assertion(typeof settings.async === "boolean", "Parameter «settings.async» must be a boolean on «NwtTemplates.compileByTjsSource»");
       const jsSource = TjsParser.parse(tjsSource);
-      if(settings.async) {
-        const AsyncFunction = (async () => {}).constructor;
-        return new AsyncFunction(...parameterNames, jsSource);
+      if (settings.async) {
+        return NwtCodeComposer.createAsyncFunction(jsSource, parameterNames);
       } else {
-        return new Function(...parameterNames, jsSource);
+        return NwtCodeComposer.createSyncFunction(jsSource, parameterNames);
       }
     }
 
-    static renderByTjs(source, injectedParameters = {}, settings = {}) {
-      trace("NwtTemplates.renderByTjs");
+    static renderByTjsSource(source, injectedParameters = {}, settings = this.defaultCompileSettings) {
+      trace("NwtTemplates.renderByTjsSource");
+      assertion(typeof source === "string", "Parameter «source» must be a string on «NwtTemplates.renderByTjsSource»");
+      assertion(typeof injectedParameters === "object", "Parameter «injectedParameters» must be an object on «NwtTemplates.renderByTjsSource»");
+      assertion(!Array.isArray(injectedParameters), "Parameter «injectedParameters» must be an object and not an array on «NwtTemplates.renderByTjsSource»");
+      assertion(typeof settings === "object", "Parameter «settings» must be an object on «NwtTemplates.renderByTjsSource»");
+      assertion(!Array.isArray(settings), "Parameter «settings» must be an object and not an array on «NwtTemplates.renderByTjsSource»");
+      assertion(typeof settings.async === "boolean", "Parameter «settings.async» must be a boolean on «NwtTemplates.renderByTjsSource»");
       const parameterNames = Object.keys(injectedParameters);
       const parameterValues = Object.values(injectedParameters);
-      const callback = this.compileByTjs(source, parameterNames, settings);
+      const callback = this.compileByTjsSource(source, parameterNames, settings);
       return callback(...parameterValues);
     }
 
-    async compileByTjsFile(tjsSubpath, parameterNames = [], settings = {}) {
-      trace("NwtTemplates.prototype.compileByTjsFile");
-      const path = require("path");
-      const subpath = path.resolve(this.basedir, tjsSubpath);
-      const tjsSource = await NwtFilesystem.readFile(subpath);
-      const callback = this.constructor.compileByTjs(tjsSource, parameterNames, settings);
-      return callback;
+    render = {
+      ejs: {
+        source: (...args) => ejs.render(...args),
+        file: async (subpath, ...args) => {
+          const content = await NwtFilesystem.readFile(this.resolve(subpath));
+          return ejs.render(content, ...args);
+        }
+      },
+      tjs: {
+        source: (...args) => {
+          trace("NwtTemplates.prototype.render.tjs.source");
+          this.constructor.renderByTjsSource(...args);
+        },
+        file: (...args) => {
+          trace("NwtTemplates.prototype.render.tjs.file");
+          this.renderByTjsFile(...args);
+        },
+      }
+    };
+
+    compile = {
+      ejs: {
+        source: (...args) => ejs.compile(...args),
+        file: async (subpath, ...args) => {
+          const content = await NwtFilesystem.readFile(this.resolve(subpath));
+          return ejs.compile(content, ...args);
+        }
+      },
+      tjs: {
+        function: {
+          to: {
+            string: (callback, templateInjectedParameters = {}, settings = this.constructor.defaultCompileSettings) => {
+              trace("NwtTemplates.prototype.compile.tjs.function.to.string");
+              const templateSource = NwtCodeComposer.getBlankFunctionBody(callback);
+              return this.compile.tjs.source.to.string(templateSource, templateInjectedParameters, settings);
+            },
+            renderer: (callback, argnames = [], settings = this.constructor.defaultCompileSettings) => {
+              trace("NwtTemplates.prototype.compile.tjs.function.to.renderer");
+              const templateSource = NwtCodeComposer.getBlankFunctionBody(callback);
+              return this.compile.tjs.source.to.renderer(templateSource, argnames, settings);
+            },
+            async: (callback, templateInjectedParameters, argnames = [], settings) => {
+              trace("NwtTemplates.prototype.compile.tjs.function.to.async");
+              const templateSource = NwtCodeComposer.getBlankFunctionBody(callback);
+              return this.compile.tjs.source.to.async(templateSource, templateInjectedParameters, argnames, settings);
+            },
+            sync: (callback, templateInjectedParameters = {}, argnames = [], settings = this.constructor.defaultCompileSettings) => {
+              trace("NwtTemplates.prototype.compile.tjs.function.to.sync");
+              const templateSource = NwtCodeComposer.getBlankFunctionBody(callback);
+              return this.compile.tjs.source.to.sync(templateSource, templateInjectedParameters, argnames, settings);
+            },
+          }
+        },
+        source: {
+          to: {
+            string: (source, templateInjectedParameters = {}, settings = this.constructor.defaultCompileSettings) => {
+              trace("NwtTemplates.prototype.compile.tjs.source.to.string");
+              return this.constructor.renderByTjsSource(source, templateInjectedParameters, settings);
+            },
+            renderer: (source, argnames = [], settings = this.constructor.defaultCompileSettings) => {
+              trace("NwtTemplates.prototype.compile.tjs.source.to.renderer");
+              return this.constructor.compileByTjsSource(source, argnames, settings);
+            },
+            async: (source, templateInjectedParameters = {}, argnames = [], settings = this.constructor.defaultCompileSettings) => {
+              trace("NwtTemplates.prototype.compile.tjs.source.to.async");
+              const functionSource = this.constructor.renderByTjsSource(source, templateInjectedParameters, settings);
+              if (!settings.async) {
+                return NwtCodeComposer.createAsyncFunction(functionSource, argnames);
+              }
+              return functionSource.then(src => NwtCodeComposer.createAsyncFunction(src, argnames));
+            },
+            sync: (source, templateInjectedParameters = {}, argnames = [], settings = this.constructor.defaultCompileSettings) => {
+              trace("NwtTemplates.prototype.compile.tjs.source.to.sync");
+              const functionSource = this.constructor.renderByTjsSource(source, templateInjectedParameters, settings);
+              if (!settings.async) {
+                return NwtCodeComposer.createAsyncFunction(functionSource, argnames);
+              }
+              return functionSource.then(src => NwtCodeComposer.createSyncFunction(src, argnames));
+            },
+          }
+        },
+        file: {
+          to: {
+            string: async (subpath, ...args) => {
+              trace("NwtTemplates.prototype.compile.tjs.file.to.string");
+              const templateSource = await NwtFilesystem.readFile(this.resolve(subpath));
+              return this.compile.tjs.source.to.string(templateSource, ...args);
+            },
+            renderer: async (subpath, ...args) => {
+              trace("NwtTemplates.prototype.compile.tjs.file.to.renderer");
+              const templateSource = await NwtFilesystem.readFile(this.resolve(subpath));
+              return this.compile.tjs.source.to.renderer(templateSource, ...args);
+            },
+            async: async (subpath, ...args) => {
+              trace("NwtTemplates.prototype.compile.tjs.file.to.async");
+              const templateSource = await NwtFilesystem.readFile(this.resolve(subpath));
+              return this.compile.tjs.source.to.async(templateSource, ...args);
+            },
+            sync: async (subpath, ...args) => {
+              trace("NwtTemplates.prototype.compile.tjs.file.to.sync");
+              const templateSource = await NwtFilesystem.readFile(this.resolve(subpath));
+              return this.compile.tjs.source.to.sync(templateSource, ...args);
+            },
+          }
+        }
+      }
     }
 
-    async renderByTjsFile(tjsSubpath, injectedParameters = {}, settings = {}) {
+    async renderByTjsFile(tjsSubpath, injectedParameters = {}, settings = this.constructor.defaultCompileSettings) {
       trace("NwtTemplates.prototype.renderByTjsFile");
+      assertion(typeof tjsSubpath === "string", "Parameter «tjsSubpath» must be a string on «NwtTemplates.prototype.renderByTjsFile»");
+      assertion(typeof injectedParameters === "object", "Parameter «injectedParameters» must be an object on «NwtTemplates.prototype.renderByTjsFile»");
+      assertion(!Array.isArray(injectedParameters), "Parameter «injectedParameters» must be an object and not an array on «NwtTemplates.prototype.renderByTjsFile»");
+      assertion(typeof settings === "object", "Parameter «settings» must be an object on «NwtTemplates.prototype.renderByTjsFile»");
+      assertion(!Array.isArray(settings), "Parameter «settings» must be an object and not an array on «NwtTemplates.prototype.renderByTjsFile»");
+      assertion(typeof settings.async === "boolean", "Parameter «settings.async» must be a boolean on «NwtTemplates.prototype.renderByTjsFile»");
       const parameterNames = Object.keys(injectedParameters);
       const parameterValues = Object.values(injectedParameters);
       const callback = await this.compileByTjsFile(tjsSubpath, parameterNames, settings);
       return callback(...parameterValues);
     }
 
-    async evaluateByTjsFile(tjsSubpath, injectedParameters = [], settings = {}) {
+    async compileByTjsFile(tjsSubpath, parameterNames = [], settings = this.constructor.defaultCompileSettings) {
+      trace("NwtTemplates.prototype.compileByTjsFile");
+      assertion(typeof tjsSubpath === "string", "Parameter «tjsSubpath» must be a string on «NwtTemplates.prototype.compileByTjsFile»");
+      assertion(Array.isArray(parameterNames), "Parameter «parameterNames» must be an array on «NwtTemplates.prototype.compileByTjsFile»");
+      assertion(typeof settings === "object", "Parameter «settings» must be an object on «NwtTemplates.prototype.compileByTjsFile»");
+      assertion(!Array.isArray(settings), "Parameter «settings» must be an object and not an array on «NwtTemplates.prototype.compileByTjsFile»");
+      assertion(typeof settings.async === "boolean", "Parameter «settings.async» must be a boolean on «NwtTemplates.prototype.compileByTjsFile»");
+      const path = require("path");
+      const subpath = path.resolve(this.basedir, tjsSubpath);
+      const tjsSource = await NwtFilesystem.readFile(subpath);
+      const callback = this.constructor.compileByTjsSource(tjsSource, parameterNames, settings);
+      return callback;
+    }
+
+    async evaluateByTjsFile(tjsSubpath, injectedParameters = [], settings = this.constructor.defaultCompileSettings) {
       trace("NwtTemplates.prototype.evaluateByTjsFile");
+      assertion(typeof tjsSubpath === "string", "Parameter «tjsSubpath» must be a string on «NwtTemplates.prototype.evaluateByTjsFile»");
+      assertion(typeof injectedParameters === "object", "Parameter «injectedParameters» must be an object on «NwtTemplates.prototype.evaluateByTjsFile»");
+      assertion(!Array.isArray(injectedParameters), "Parameter «injectedParameters» must be an object and not an array on «NwtTemplates.prototype.evaluateByTjsFile»");
+      assertion(typeof settings === "object", "Parameter «settings» must be an object on «NwtTemplates.prototype.evaluateByTjsFile»");
+      assertion(!Array.isArray(settings), "Parameter «settings» must be an object and not an array on «NwtTemplates.prototype.evaluateByTjsFile»");
+      assertion(typeof settings.async === "boolean", "Parameter «settings.async» must be a boolean on «NwtTemplates.prototype.evaluateByTjsFile»");
       const callbackSource = await this.renderByTjsFile(tjsSubpath, injectedParameters, settings);
       let callback = false;
-      if(settings.async) {
-        const AsyncFunction = (async () => {}).constructor;
+      if (settings.async) {
+        const AsyncFunction = (async () => { }).constructor;
         callback = new AsyncFunction(callbackSource);
       } else {
         callback = new Function(callbackSource);
@@ -19569,7 +22432,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][28]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
+// @vuebundler[Proyecto_base_001][35]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
 /**
  * 
  * # Nwt Utils API
@@ -19626,6 +22489,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     static noop() { }
 
     static trify(callback, onFail) {
+      trace("NwtUtils.trify");
       try {
         return callback();
       } catch (error) {
@@ -19646,11 +22510,21 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
             return undefined; // "[Circular]";
           }
           seen.add(value);
-        } else if(typeof value === "function") {
-          return {$type:"function",source:value.toString()};
+        } else if (typeof value === "function") {
+          return { $type: "function", source: value.toString() };
         }
         return value;
       }, space);
+    }
+
+    static getSignatureOfArray(array) {
+      trace("NwtPersister.low.getSignatureOfArray");
+      const signature = [];
+      for(let index=0; index<array.length; index++) {
+        const item = array[index];
+        signature.push(typeof item);
+      }
+      return signature.join(",");
     }
 
     static sortObjectByKeys(obj) {
@@ -19667,12 +22541,12 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       trace("NwtUtils.filterObjectProperties");
       const keys = Object.keys(obj);
       const output = {};
-      for(let index=0; index<keys.length; index++) {
+      for (let index = 0; index < keys.length; index++) {
         const key = keys[index];
         const value = obj[key];
         try {
           const result = filter(key, value);
-          if(result) {
+          if (result) {
             output[key] = value;
           }
         } catch (error) {
@@ -19685,7 +22559,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     static extractPathsFromFiles(files) {
       trace("NwtUtils.extractPathsFromFiles");
       const paths = [];
-      for(let index=0; index<files.length; index++) {
+      for (let index = 0; index < files.length; index++) {
         const file = files[index];
         paths.push(file.path);
       }
@@ -19701,13 +22575,287 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       });
     }
 
+    static getSurroundingLines(content, line, column, linesBefore = 3, linesAfter = 3) {
+      trace("NwtUtils.getSurroundingLines");
+      try {
+        const lines = content.split(/\r?\n/);
+        const start = Math.max(0, line - 1 - linesBefore);
+        const end = Math.min(lines.length, line + linesAfter);
+        const result = [];
+        for (let i = start; i < end; i++) {
+          const lineNumber = i + 1;
+          let text = lines[i];
+          if (lineNumber === line) {
+            result.push(`!${column}:${lineNumber.toString().padStart(8 - (column+"").length)} | ${text}`);
+          } else {
+            result.push(`${lineNumber.toString().padStart(10)} | ${text}`);
+          }
+        }
+        return result;
+      } catch (err) {
+        return [`Error leyendo archivo: ${err.message}`];
+      }
+    }
+
   };
 
   return NwtUtils;
 
 });
 
-// @vuebundler[Proyecto_base_001][29]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
+// @vuebundler[Proyecto_base_001][36]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtInterruptible'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtInterruptible'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtInterruptible = class {
+
+    static Parallel = class extends Array { };
+
+    static Serial = class extends Array { };
+
+    static buildParallel(reductible) {
+      return async ctx => {
+        const callbacks = [];
+        for (let index = 0; index < reductible.length; index++) {
+          const item = reductible[index];
+          const callback = this.make(item);
+          callbacks.push(callback(ctx));
+        }
+        return Promise.all(callbacks);
+      };
+    }
+
+    static buildSerial(reductible) {
+      return async ctx => {
+        const output = [];
+        for (let index = 0; index < reductible.length; index++) {
+          const item = reductible[index];
+          const callback = this.make(item);
+          const result = await callback(ctx, index, item);
+          output.push(result);
+        }
+        return output;
+      };
+    }
+
+    static buildTryBlock(reductible) {
+      const {
+        id: id = false,
+        start: startBlock = false,
+        try: tryBlock = false,
+        catch: catchBlock = false,
+        if: ifBlock = false,
+        consequence: consequenceBlock = false,
+        while: whileBlock = false,
+        iteration: iterationBlock = false,
+        success: successBlock = false,
+        finally: finallyBlock = false,
+        end: endBlock = false,
+      } = reductible;
+      const tryCallback = this.make(tryBlock);
+      const catchCallback = this.make(catchBlock);
+      const ifCallback = this.make(ifBlock);
+      const consequenceCallback = this.make(consequenceBlock);
+      const whileCallback = this.make(whileBlock);
+      const iterationCallback = this.make(iterationBlock);
+      const successCallback = this.make(successBlock);
+      const finallyCallback = this.make(finallyBlock);
+      const startCallback = this.make(startBlock);
+      const endCallback = this.make(endBlock);
+      assertion(tryBlock !== false, "Parameter «reductible.try» must be set on «NwtInterruptible.buildTryBlock»");
+      return async ctx => {
+        await startCallback(ctx);
+        try {
+          await tryCallback(ctx);
+          if (await ifCallback(ctx)) {
+            await consequenceCallback(ctx);
+          }
+          while (await whileCallback(ctx)) {
+            await iterationCallback(ctx);
+          }
+          await successCallback(ctx);
+        } catch (error) {
+          if (NwtInterruptionHandler.isHandlableOrThrow(id, error, ctx)) {
+            await catchCallback(error, ctx);
+          }
+        } finally {
+          await finallyCallback(ctx);
+        }
+        await endCallback(ctx);
+      };
+    }
+
+    static make(reductible) {
+      if (reductible === false) {
+        return () => { };
+      } else if (typeof reductible === "function") {
+        return reductible;
+      } else if (reductible instanceof NwtInterruptible.Parallel) {
+        return this.buildParallel(reductible);
+      } else if (reductible instanceof NwtInterruptible.Serial) {
+        return this.buildSerial(reductible);
+      } else if (Array.isArray(reductible)) {
+        return this.buildSerial(reductible);
+      } else if (typeof reductible === "object") {
+        return this.buildTryBlock(reductible);
+      } else {
+        throw new Error("Not supported reductible: " + typeof reductible);
+      }
+    }
+
+  };
+
+  return NwtInterruptible;
+
+});
+
+// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtInterruption'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtInterruption'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtInterruption = class {
+
+    static create(...args) {
+      return new this(...args);
+    }
+
+    static return(value, idOrLevels, payload) {
+      return new this(idOrLevels, value, payload);
+    }
+
+    static levels(level, value, payload) {
+      assertion(typeof level === "number", "Parameter «level» must be number on «NwtInterruption.levels»");
+      return new this(level, value, payload);
+    }
+
+    static id(id, value, payload) {
+      assertion(typeof id === "string", "Parameter «id» must be string on «NwtInterruption.id»");
+      return new this(id, value, payload);
+    }
+
+    constructor(idOrLevels = undefined, returnValue = undefined, payload = NwtUtils.noop) {
+      trace("NwtInterruption.constructor");
+      this.id = undefined;
+      this.levels = undefined;
+      this.simple = false;
+      this.payload = payload;
+      this.return = returnValue;
+      if (typeof idOrLevels === "string") {
+        this.id = idOrLevels;
+      } else if (typeof idOrLevels === "number") {
+        this.levels = idOrLevels;
+      } else if (typeof idOrLevels === "undefined") {
+        this.simple = true;
+      } else {
+        throw new Error(`Parameter «idOrLevels» must be string or number on «NwtInterruption.constructor»`);
+      }
+      assertion(typeof this.payload === "function", "Parameter «payload» must be a function on «NwtInterruption.constructor»");
+    }
+
+  };
+
+  return NwtInterruption;
+
+});
+
+// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtInterruptionHandler'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtInterruptionHandler'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtInterruptionHandler = class {
+
+    static isHandlable(id, error) {
+      if (!(error instanceof NwtInterruption)) {
+        return false;
+      }
+      let broker;
+      if (error.id !== undefined) broker = error.id;
+      else if (error.levels !== undefined) broker = error.levels;
+      else broker = error.simple;
+      if (typeof broker === "string") {
+        return id === broker;
+      } else if (typeof broker === "number") {
+        error.levels--;
+        return error.levels < 0;
+      } else if (broker === true) {
+        return true;
+      }
+      return false;
+    }
+
+    static isHandlableOrThrow(id, error, context = {}) {
+      if (!this.isHandlable(id, error)) {
+        throw error;
+      }
+      if (typeof error.payload === "function") {
+        error.payload(context);
+      }
+      return true;
+    }
+
+  };
+
+  return NwtInterruptionHandler;
+
+});
+
+// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
+/**
+ * 
+ * # Nwt Code Composer
+ * 
+ * API para componer fragmentos de JavaScript para plantillas y código.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtCodeComposer
+ * NwtFramework.CodeComposer
+ * Vue.prototype.CodeComposer
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtCodeComposer.getBlankFunctionBody(fn)
+ * NwtCodeComposer.getBlankFunctionBodies([fn,fn,fn])
+ * NwtCodeComposer.createAsyncFunction(js, argnames = [])
+ * NwtCodeComposer.createSyncFunction(js, argnames = [])
+ * NwtCodeComposer.createFunctionByBodies([fn,fn,fn])
+ * ```
+ * 
+ */
+
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -19732,11 +22880,17 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return NwtLazyLoader.loadJsBeautify();
     }
 
-    static beautifyJs(code, options = {}) {
+    static defaultBeautifyJsOptions = {
+      indent_size: 1,
+      preserve_newlines: false,
+    };
+
+    static beautifyJs(code, userOptions = {}) {
       trace("NwtCodeComposer.beautifyJs");
       if ((typeof window === "undefined") || (typeof window.beautifier === "undefined")) {
         return code;
       }
+      const options = Object.assign({}, this.defaultBeautifyJsOptions, userOptions);
       return window.beautifier.js(code, options);
     }
 
@@ -19748,10 +22902,33 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     static RX_TRAILING_BRACE = /[ \t\r\n]*\}[ \t\r\n]*$/;
 
-    static createAsyncFunction(js) {
+    static injectLinesToString(txt) {
+      trace("NwtCodeComposer.injectLinesToString");
+      assertion(typeof txt === "string", "Parameter «txt» must be a strong on «NwtCodeComposer.injectLinesToString»");
+      const lines = txt.split(/\n/g);
+      let output = "";
+      for(let index=0; index<lines.length; index++) {
+        const line = lines[index];
+        if(index !== 0) {
+          output += "\n";
+        }
+        output += ("" + index).padStart(4,"0");
+        output += " | ";
+        output += line;
+      }
+      return output;
+    }
+
+    static createAsyncFunction(js, argnames = []) {
+      trace("NwtCodeComposer.createAsyncFunction");
+      assertion(typeof js === "string", "Parameter «js» must be a string on «NwtCodeComposer.createAsyncFunction»");
+      assertion(Array.isArray(argnames), "Parameter «argnames» must be an array on «NwtCodeComposer.createAsyncFunction»");
       const AsyncFunction = (async function () { }).constructor;
       try {
-        const asyncFunction = new AsyncFunction(js);
+        console.log(`[nwt-code-composer][compiled][async]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
+        const jsBeautified = this.beautifyJs(js);
+        console.log(`[nwt-code-composer][compiled][async]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
+        const asyncFunction = new AsyncFunction(...argnames, jsBeautified);
         return asyncFunction;
       } catch (error) {
         console.log(error);
@@ -19759,166 +22936,80 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       }
     }
 
-    static defaultInterlude = async function () {
-
-    }
-
-    static blankFunction = {
-      getBodyOnly: (fnUser) => {
-        if (fnUser === false) return "";
-        else if (typeof fnUser === "function") { }
-        else if (typeof fnUser === "string") { }
-        else if (typeof fnUser === "object") {
-          if (!Array.isArray(fnUser)) {
-            return this.blankFunction.getBodyOnly(this.composeFunctionByFunctions(fnUser.composition, fnUser.parameters || undefined, fnUser.settings || {}));
-          }
-          return this.blankFunction.getBodyOnly(this.composeFunctionByFunctions(fnUser));
-        }
-        else {
-          throw new Error("Not supported type on «blankFunction.getBodyOnly»");
-        }
-        let s = typeof fnUser === "function" ? fnUser.toString().trim() : fnUser.trim();
-        // 1. quitar wrapper arrow o function
-        let isArrowPrefix = false;
-        let isMethodPrefix = false;
-        s = s.replace(this.RX_FUNCTION_PREFIX, "");
-        s = s.replace(this.RX_ARROW_PREFIX, () => {
-          isArrowPrefix = true;
-          return "";
-        });
-        s = s.replace(this.RX_METHOD_PREFIX, () => {
-          isMethodPrefix = true;
-          return "";
-        });
-        // 2. si empieza con "{", quitarlo
-        let hasOpeningBrace = isMethodPrefix;
-        if (s.startsWith("{")) {
-          hasOpeningBrace = true;
-          s = s.slice(1).trimStart();
-        } else if (isArrowPrefix) {
-          s = "return " + s;
-        }
-        // 3. solo si había "{", quitar "}" final
-        if (hasOpeningBrace) {
-          s = s.replace(this.RX_TRAILING_BRACE, "");
-        }
-        s = this.beautifyJs(s);
-        return s;
-      },
-      toInjection: (list) => {
-        if(!list.length) return "";
-        let output = "";
-        for (let index = 0; index < list.length; index++) {
-          const item = list[index];
-          const [key, value] = item;
-          output += `let `;
-          output += `${key}`;
-          output += ` = `;
-          if(typeof value === "string") {
-            output += `${value};`;
-          } else {
-            output += `${JSON.stringify(value)};`;
-          }
-          output += "\n";
-        }
-        return output;
-      },
-      toTryCatch: (options = {}) => {
-        const { injection = [], onStart = false, onTry = false, onSuccess = false, onFinally = false, onError = false, onInterlude = false } = options;
-        let output = "";
-        if (options.injection) {
-          output += this.blankFunction.toInjection(injection);
-        }
-        output += `${this.blankFunction.getBodyOnly(onStart)}\n`;
-        output += `try {\n`;
-        output += `  ${this.blankFunction.getBodyOnly(onTry)}\n`;
-        output += `  ${this.blankFunction.getBodyOnly(onSuccess)}\n`;
-        output += `} catch(error) {\n`;
-        output += `  ${this.blankFunction.getBodyOnly(onError) || "throw error;\n"}`;
-        output += `} finally {\n`;
-        output += `  ${this.blankFunction.getBodyOnly(onFinally)}`;
-        output += `}`;
-        return output;
-      },
-      toEach: (options = {}) => {
-        const { injection = [], onStart = false, onCondition = false, onIteration = false, onProgression = false, onLineProgression = false, onSuccess = false, onFinally = false, onError = false, onInterlude = false } = options;
-        let output = "";
-        output += `Scope_of_while_${NwtRandomizer.fromAlphabet(10)}: {\n`;
-        if (options.injection) {
-          output += this.blankFunction.toInjection(injection);
-        }
-        output += `  try {\n`;
-        output += `    const dimensionLine = dimensionMatrix[dimensionIndex];\n`;
-        output += `    let lineIndex = 0;\n`;
-        output += `    while(${this.blankFunction.getBodyOnly(onCondition)}) {\n`;
-        output += `      while(lineIndex < dimensionLine.length) {\n`;
-        output += `        ${this.blankFunction.getBodyOnly(onStart)}\n`;
-        output += `        Inner_scope_of_while_${NwtRandomizer.fromAlphabet(10)}: {\n`;
-        output += `          ${this.blankFunction.getBodyOnly(onIteration)}\n`;
-        output += `          ${this.blankFunction.getBodyOnly(onInterlude)}\n`;
-        output += `          ${this.blankFunction.getBodyOnly(onLineProgression || "lineIndex++;")}\n`;
-        output += `        }\n`;
-        output += `      }\n`;
-        output += `      ${this.blankFunction.getBodyOnly(onProgression) || "dimensionIndex++;"}\n`;
-        output += `    }`;
-        output += `    ${this.blankFunction.getBodyOnly(onSuccess)}\n`;
-        output += `  } catch(error) {\n`;
-        output += `    ${this.blankFunction.getBodyOnly(onError) || "throw error;\n"}`;
-        output += `  } finally {\n`;
-        output += `    ${this.blankFunction.getBodyOnly(onFinally)}\n`;
-        output += `  }\n`;
-        output += `}`;
-        return output;
+    static createSyncFunction(js, argnames = []) {
+      trace("NwtCodeComposer.createSyncFunction");
+      assertion(typeof js === "string", "Parameter «js» must be a string on «NwtCodeComposer.createSyncFunction»");
+      assertion(Array.isArray(argnames), "Parameter «argnames» must be an array on «NwtCodeComposer.createSyncFunction»");
+      try {
+        console.log(`[nwt-code-composer][compiled][sync]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
+        const jsBeautified = this.beautifyJs(js);
+        console.log(`[nwt-code-composer][compiled][sync]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
+        const syncFunction = new Function(...argnames, js);
+        return syncFunction;
+      } catch (error) {
+        console.log(error);
+        throw error;
       }
     }
 
-    static composeFunctionByFunctions(fns, ...args) {
-      trace("NwtCodeComposer.composeFunctionByFunctions");
-      const argf = Array.from(args);
-      const lastItem = argf[args.length-1];
-      const options = typeof lastItem === "object" && (!(Array.isArray(lastItem))) ? argf.pop() : {};
-      const parameters = argf.concat([]);
-      let script = "";
-      for (let indexFunction = 0; indexFunction < fns.length; indexFunction++) {
-        const fnOrString = fns[indexFunction];
-        const fnBody = this.blankFunction.getBodyOnly(fnOrString);
-        script += fnBody + "\n";
-        if (options.onInterlude) {
-          script += this.blankFunction.getBodyOnly(options.onInterlude);
-        }
-      }
+    static getBlankFunctionBodies(allFns) {
+      trace("NwtCodeComposer.getBlankFunctionBodies");
       let output = "";
-      Wrap_output: {
-        if (!parameters.length) {
-          output = this.blankFunction.toTryCatch({
-            onStart: options.onStart,
-            onTry: script,
-            onSuccess: options.onSuccess,
-            onError: options.onError,
-            onFinally: options.onFinally,
-            onInterlude: options.onInterlude,
-          });
-        } else {
-          output = this.blankFunction.toEach({
-            onStart: () => { },
-            onCondition: () => { dimensionIndex < dimensionMatrix.length },
-            onIteration: script,
-            onProgression: () => { dimensionIndex++; },
-            onLineProgression: () => { lineIndex++; },
-            onSuccess: options.onSuccess,
-            onError: options.onError,
-            onFinally: options.onFinally,
-            onInterlude: options.onInterlude,
-            injection: [
-              ["dimensionIndex", 0],
-              ["dimensionMatrix", parameters],
-            ],
-          });
-        }
+      for (let index = 0; index < allFns.length; index++) {
+        const fnOrString = allFns[index];
+        const result = this.getBlankFunctionBody(fnOrString);
+        output += result;
+        output += "\n";
       }
-      output = this.beautifyJs(output);
-      console.log(output);
-      return this.createAsyncFunction(output, parameters);
+      return output;
+    }
+
+    static getBlankFunctionBody(fnUser) {
+      trace("NwtCodeComposer.getBlankFunctionBody");
+      if (fnUser === false) {
+        return "";
+      } else if (typeof fnUser === "function") {
+        // @OK, handled later.
+      } else if (typeof fnUser === "string") {
+        // @OK, handled later.
+      } else if (typeof fnUser === "object") {
+        throw new Error("Not supported object type on «NwtCodeComposer.getBlankFunctionBody»");
+      } else {
+        throw new Error(`Not supported «${typeof fnUser}» type on «NwtCodeComposer.getBlankFunctionBody»`);
+      }
+      let s = typeof fnUser === "function" ? fnUser.toString().trim() : fnUser.trim();
+      // 1. quitar wrapper arrow o function
+      let isArrowPrefix = false;
+      let isMethodPrefix = false;
+      s = s.replace(this.RX_FUNCTION_PREFIX, "");
+      s = s.replace(this.RX_ARROW_PREFIX, () => {
+        isArrowPrefix = true;
+        return "";
+      });
+      s = s.replace(this.RX_METHOD_PREFIX, () => {
+        isMethodPrefix = true;
+        return "";
+      });
+      // 2. si empieza con "{", quitarlo
+      let hasOpeningBrace = isMethodPrefix;
+      if (s.startsWith("{")) {
+        hasOpeningBrace = true;
+        s = s.slice(1).trimStart();
+      } else if (isArrowPrefix) {
+        s = "return " + s;
+      }
+      // 3. solo si había "{", quitar "}" final
+      if (hasOpeningBrace) {
+        s = s.replace(this.RX_TRAILING_BRACE, "");
+      }
+      s = this.beautifyJs(s);
+      return s;
+    }
+
+    static createFunctionByBodies(fns, argnames = [], isAsync = true) {
+      trace("NwtCodeComposer.createFunctionByBodies");
+      const source = this.getBlankFunctionBodies(fns);
+      return isAsync ? this.createAsyncFunction(source, argnames) : this.createSyncFunction(source, argnames);
     }
 
 
@@ -19928,7 +23019,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][30]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
+// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
 /**
  * 
  * # Nwt Randomizer API
@@ -20017,7 +23108,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][31]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
+// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
 /**
  * 
  * # Nwt Progress Bar API
@@ -20144,7 +23235,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][32]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
+// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
 /**
  * 
  * # Nwt Globalizer API
@@ -20204,7 +23295,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][33]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
+// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
 /**
  * 
  * # Nwt Tester API
@@ -20563,7 +23654,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][34]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
+// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
 /**
  * 
  * # Nwt Process API
@@ -20710,7 +23801,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][35]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
+// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
 /**
  * 
  * # NwtProcessManager
@@ -20781,7 +23872,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][36]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
+// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -20839,7 +23930,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
+// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -20878,6 +23969,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
           form: path.resolve(directory, "form/form"),
           viewer: path.resolve(directory, "viewer/viewer"),
           definition: path.resolve(directory, "definition.js"),
+          iterable: path.resolve(directory, "iterable.js"),
         });
       }
     }
@@ -21002,7 +24094,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
+// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21063,7 +24155,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
+// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21106,7 +24198,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
+// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21169,7 +24261,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-submemory.js
+// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-submemory.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21774,7 +24866,406 @@ Test_de_ejemplo: {
 
 }
 
-// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
+// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtIterableFunction'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtIterableFunction'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtIterableFunction = class {
+
+    static run(it) {
+      trace("NwtIterableFunction.run");
+      const obj = new this(it);
+      return obj.run();
+    }
+
+    static utils = {
+      fromFunctionToBodyString: callback => {
+        trace("NwtIterableFunction.utils.fromFunctionToBodyString");
+        assertion(typeof callback === "function", "Parameter «callback» must be an function on «NwtIterableFunction.utils.fromFunctionToBodyString»");
+        return NwtCodeComposer.getBlankFunctionBody(callback);
+      },
+      fromCollectionToArray: (collection) => {
+        trace("NwtIterableFunction.utils.fromCollectionToArray");
+        assertion(typeof collection === "object", "Parameter «collection» must be an object on «NwtIterableFunction.utils.fromCollectionToArray»");
+        return Object.keys(collection).map(key => {
+          const val = collection[key];
+          return [key, val];
+        });
+      }
+    }
+
+    static defaultIterable = {
+      onWasStarted: false,
+      onIndex: undefined,
+      onItem: undefined,
+      onKey: undefined,
+      onValue: undefined,
+      onIdentifier: "Nwt_iterable_function_loop",
+      onCollection: [],
+      onCompiledArguments: {},
+      onNextIteration: async function () {
+        trace("NwtIterableFunction.defaultIterable.onNextIteration");
+        this.iterable.onIndex = typeof this.iterable.onIndex === "number" ? this.iterable.onIndex + 1 : 0;
+        if((!Array.isArray(this.iterable.onCollection)) || (this.iterable.onIndex >= this.iterable.onCollection.length)) {
+          this.iterable.onItem = [undefined, undefined];
+          this.iterable.onKey = undefined;
+          this.iterable.onValue = undefined;
+      } else if(this.iterable.onIndex < this.iterable.onCollection.length) {
+          this.iterable.onItem = this.iterable.onCollection[this.iterable.onIndex];
+          this.iterable.onKey = this.iterable.onItem[0];
+          this.iterable.onValue = this.iterable.onItem[1];
+        }
+      },
+      onInterlapse() {
+        trace("NwtIterableFunction.defaultIterable.onInterlapse");
+      },
+      onCompileCollection: async function() {
+        trace("NwtIterableFunction.defaultIterable.onCompileCollection");
+        this.iterable.onCollection = this.constructor.utils.fromCollectionToArray(this.iterable.onCollection);
+      },
+      onCompileCode: async function() {
+        trace("NwtIterableFunction.defaultIterable.onCompileCode");
+        this.iterable.onRun = await NwtTemplates.global.compile.tjs.file.to.async(
+          "nwt/nwt-iterable-function/template.js",
+          { ...this.iterable.onCompiledArguments, iterable: this.iterable },
+          Object.keys({ ...this.iterable.onCompiledArguments, iterable: this.iterable }),
+        );
+      },
+      onCondition: async function () {
+        trace("NwtIterableFunction.defaultIterable.onCondition");
+        if(typeof this.iterable.onKey !== "undefined") {
+          return true;
+        }
+      },
+      onProgression: async function () {
+        trace("NwtIterableFunction.defaultIterable.onProgression");
+        // Además de this.iterable.onItem
+        // Además de this.iterable.onIndex
+        // Además de this.iterable.onKey
+        // Además de this.iterable.onValue
+        // Aquí puedes poner más cosas.
+      },
+      onIteration: async function() {
+        trace("NwtIterableFunction.defaultIterable.onIteration");
+        console.log(this.iterable.onIndex);   // Prints index!
+        console.log(this.iterable.onItem);    // Prints key and value!
+        console.log(this.iterable.onKey);     // Prints key!
+        console.log(this.iterable.onValue);   // Prints value!
+      },
+      onRun() {
+        throw new Error("Lifecycle is not compiled yet");
+      },
+      onFunctionStart: async function () {
+        trace("NwtIterableFunction.defaultIterable.onFunctionStart");
+      },
+      onFunctionSuccess: async function () {
+        trace("NwtIterableFunction.defaultIterable.onFunctionSuccess");
+      },
+      onFunctionError: async function () {
+        trace("NwtIterableFunction.defaultIterable.onFunctionError");
+        Vue.prototype.$toasts.showError(error);
+      },
+      onFunctionFinally: async function () {
+        trace("NwtIterableFunction.defaultIterable.onFunctionFinally");
+      },
+      onFunctionEnd: async function () {
+        trace("NwtIterableFunction.defaultIterable.onFunctionEnd");
+      },
+      onIterationStart: async function () {
+        trace("NwtIterableFunction.defaultIterable.onIterationStart");
+      },
+      onIterationSuccess: async function () {
+        trace("NwtIterableFunction.defaultIterable.onIterationSuccess");
+      },
+      onIterationError: async function () {
+        trace("NwtIterableFunction.defaultIterable.onIterationError");
+        Vue.prototype.$toasts.showError(error);
+      },
+      onIterationFinally: async function () {
+        trace("NwtIterableFunction.defaultIterable.onIterationFinally");
+      },
+      onIterationEnd: async function () {
+        trace("NwtIterableFunction.defaultIterable.onIterationEnd");
+      },
+      onAbortion: async function() {
+        trace("NwtIterableFunction.defaultIterable.onAbortion");
+      }
+    };
+
+    constructor(iterable = {}) {
+      trace("NwtIterableFunction.constructor");
+      this.iterable = {};
+      Object.assign(this.iterable, this.constructor.defaultIterable, iterable);
+    }
+
+    async run() {
+      trace("NwtIterableFunction.prototype.run");
+      assertion(!this.iterable.onWasStarted, "Cannot run iterable-function process more than once on «NwtIterableFunction.prototype.run»");
+      this.iterable.onWasStarted = true;
+      await this.iterable.onCompileCollection.call(this);
+      await this.iterable.onCompileCode.call(this);
+      NwtToasts.show({
+        title: "Evaluando ciclo de vida en JS",
+        code: this.iterable.onRun.toString(),
+        timeout: 5000 * 5,
+      });
+      return await this.iterable.onRun.call(this, ...Object.values({ ...this.iterable.onCompiledArguments, iterable: this.iterable }));
+    }
+
+    async abort(output = undefined) {
+      trace("NwtIterableFunction.prototype.abort");
+      this.iterable.NWT_LIFECYCLE_CONDITION_FLAG = false;
+      if(typeof output !== "undefined") {
+        this.iterable.NWT_LIFECYCLE_CONDITION_OUTPUT = output;
+      }
+      await this.iterable.onAbortion(output);
+      return this.iterable.NWT_LIFECYCLE_CONDITION_OUTPUT;
+    }
+
+  }
+
+  return NwtIterableFunction;
+
+});
+
+// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtIterableClass'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtIterableClass'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtIterableClass = class {
+
+    static create(...args) {
+      trace("NwtIterableClass.create");
+      return new this(...args);
+    }
+
+    static run(injections = {}) {
+      trace("NwtIterableClass.run");
+      return (new this(injections)).run();
+    }
+
+    constructor(injections = {}) {
+      trace("NwtIterableClass.constructor");
+      Flag_related: {
+        this.wasStarted = false;
+      }
+      Collection_related: {
+        this.collection = undefined;
+        this.collectionInitialized = undefined;
+        this.collectionIndex = undefined;
+        this.collectionPair = undefined;
+        this.collectionKey = undefined;
+        this.collectionValue = undefined;
+      }
+      Output_related: {
+        this.output = undefined;
+      }
+      Object.assign(this, injections);
+    }
+
+    onEvaluateCondition() {
+      trace("NwtIterableClass.prototype.onEvaluateCondition");
+      const hasIndex = typeof this.collectionIndex === "number";
+      const hasKey = typeof this.collectionKey !== "undefined";
+      if (hasIndex && hasKey) {
+        return true;
+      }
+      return false;
+    }
+
+    onInitializeCollection() {
+      trace("NwtIterableClass.prototype.onInitializeCollection");
+      this.collectionInitialized = [];
+      const allKeys = Object.keys(this.collection || {});
+      for (let index = 0; index < allKeys.length; index++) {
+        const key = allKeys[index];
+        const val = this.collection[key];
+        this.collectionInitialized[index] = [key, val];
+      }
+    }
+
+    onPrepareNextIteration() {
+      trace("NwtIterableClass.prototype.onPrepareNextIteration");
+      Inicializar_o_skipear: {
+        const setIndex = (index) => {
+          this.collectionIndex = index;
+          this.collectionPair = (this.collectionInitialized && (this.collectionIndex in this.collectionInitialized)) ? this.collectionInitialized[this.collectionIndex] : undefined;
+          this.collectionKey = this.collectionPair ? this.collectionPair[0] : undefined;
+          this.collectionValue = this.collectionPair ? this.collectionPair[1] : undefined;
+        };
+        const hasCollection = (typeof this.collectionInitialized !== "undefined") && this.collectionInitialized.length;
+        if(!hasCollection) {
+          return setIndex(undefined);
+        }
+        const hasIndex = typeof this.collectionIndex !== "undefined";
+        if(!hasIndex) {
+          return setIndex(0);
+        }
+        const hasPair = typeof this.collectionPair !== "undefined";
+        if(!hasPair) {
+          return;
+        }
+        setIndex(this.collectionIndex + 1);
+      }
+    }
+
+    noop() { }
+
+    async onStep(method, args = []) {
+      trace(`NwtIterableClass.prototype.onStep:${method}`);
+      const methodFunction = this[method] || this.noop;
+      const result = await methodFunction.call(this.scope || this, ...args);
+      return typeof this.output !== "undefined";
+    }
+
+    abort(output) {
+      trace("NwtIterableClass.prototy.abort");
+      this.output = output;
+    }
+
+    onReturn() {
+      trace("NwtIterableClass.prototype.onReturn");
+      return this.output;
+    }
+
+    async onRun() {
+      trace("NwtIterableClass.prototype.onRun");
+      try {
+        if (await this.onInitializeCollection()) return this.onReturn();
+        if (await this.onPrepareNextIteration()) return this.onReturn();
+        this.wasStarted = true;
+        if (await this.onStep("onStart")) return this.onReturn();
+        if (await this.onStep("onInitialized")) return this.onReturn();
+        if (await this.onStep("onCondition")) return this.onReturn();
+        while (this.onEvaluateCondition()) {
+          try {
+            if (await this.onStep("onIterationStart", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onStep("onIteration", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onStep("onIterationSuccess", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onStep("onIterationEnd", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onStep("onProgression", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onPrepareNextIteration()) return this.onReturn();
+          } catch (error) {
+            if (await this.onStep("onIterationError", [error])) return this.onReturn();
+          } finally {
+            if (await this.onStep("onIterationFinally")) return this.onReturn();
+          }
+        }
+        if (await this.onStep("onEnd")) return this.onReturn();
+      } catch (error) {
+        if (await this.onStep("onError", [error])) return this.onReturn();
+      } finally {
+        if (await this.onStep("onFinally")) return this.onReturn();
+      }
+      return this.output;
+    }
+
+    run() {
+      trace("NwtIterableClass.prototype.run");
+      return this.onRun();
+    }
+
+  };
+
+  return NwtIterableClass;
+
+});
+
+// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtIterableCommandClass'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtIterableCommandClass'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtIterableCommandClass = class extends NwtIterableClass {
+
+    constructor(injections = {}) {
+      super(injections);
+      trace("NwtIterableCommandClass.constructor");
+      Flag_related: {
+        this.wasStarted = false;
+      }
+      Collection_related: {
+        this.collection = undefined;
+        this.collectionInitialized = undefined;
+        this.collectionIndex = undefined;
+        this.collectionPair = undefined;
+        this.collectionKey = undefined;
+        this.collectionValue = undefined;
+      }
+      Output_related: {
+        this.output = undefined;
+      }
+      Object.assign(this, injections);
+    }
+
+    async onRun() {
+      trace("NwtIterableCommandClass.prototype.onRun");
+      try {
+        if (await this.onInitializeCollection()) return this.onReturn();
+        if (await this.onPrepareNextIteration()) return this.onReturn();
+        this.wasStarted = true;
+        if (await this.onStep("onStart")) return this.onReturn();
+        if (await this.onStep("onInitialized")) return this.onReturn();
+        if (await this.onStep("onCondition")) return this.onReturn();
+        while (this.onEvaluateCondition()) {
+          try {
+            if (await this.onStep("onIterationStart", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onStep("onIteration", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onStep("onIterationSuccess", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onStep("onIterationEnd", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onStep("onProgression", [this.collectionValue, this.collectionKey, this.collectionIndex])) return this.onReturn();
+            if (await this.onPrepareNextIteration()) return this.onReturn();
+          } catch (error) {
+            if (await this.onStep("onIterationError", [error])) return this.onReturn();
+          } finally {
+            if (await this.onStep("onIterationFinally")) return this.onReturn();
+          }
+        }
+        if (await this.onStep("onEnd")) return this.onReturn();
+      } catch (error) {
+        if (await this.onStep("onError", [error])) return this.onReturn();
+      } finally {
+        if (await this.onStep("onFinally")) return this.onReturn();
+      }
+      return this.output;
+    }
+
+  };
+
+  return NwtIterableCommandClass;
+
+});
+
+// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22157,7 +25648,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
+// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22240,7 +25731,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
+// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
 /**
  * 
  * # Nwt Shell API
@@ -22290,27 +25781,33 @@ Test_de_ejemplo: {
 
     static defaultExecOptions = {
       stdio: "inherit",
+      shell: true,
+    };
+
+    static defaultSpawnOptions = {
+      stdio: "inherit",
+      shell: true,
     };
 
     constructor(dirpath = false) {
-      this.cwd = dirpath || process.cwd();
+      this.cwd = require("path").resolve(dirpath) || process.cwd();
+      this._children = new Set();
     }
 
     async exec(command, userOptions = {}) {
       const { exec } = require("child_process");
       const { promisify } = require("util");
       const execAsync = promisify(exec);
-      const options = Object.assign({}, this.constructor.defaultExecOptions, { cwd: this.cwd || process.cwd() }, userOptions);
+      const options = Object.assign({}, this.constructor.defaultExecOptions, {
+        cwd: this.cwd || process.cwd()
+      }, userOptions);
       NwtToasts.show({
         title: "Ejecutando comando de consola",
         text: command,
         timeout: 5000,
       });
-      const { stdout, stderr } = await execAsync(command, options);
-      return {
-        output: stdout,
-        error: stderr
-      };
+      const subprocess = await execAsync(command, options);
+      return subprocess;
     }
 
     cd(...subpaths) {
@@ -22326,13 +25823,182 @@ Test_de_ejemplo: {
       return files.map(file => path.resolve(this.cwd, file));
     }
 
+    subprocess(command, args = [], userOptions = {}) {
+      const options = Object.assign({}, {
+        cwd: this.cwd || process.cwd(),
+        shell: true,
+        stdio: ["ignore", "pipe", "pipe"],
+      }, userOptions);
+      const { spawn } = require("child_process");
+      const child = spawn(command, args, options);
+      this._children.add(child);
+      let out = "";
+      let err = "";
+      if (child.stdout) {
+        child.stdout.on("data", chunk => {
+          const s = chunk.toString();
+          out += s;
+          process.stdout.write(s);
+          if (NwtEnvironment.hasWindow) console.log(s);
+        });
+      }
+      if (child.stderr) {
+        child.stderr.on("data", chunk => {
+          const s = chunk.toString();
+          err += s;
+          process.stderr.write(s);
+          if (NwtEnvironment.hasWindow) console.error(s);
+        });
+      }
+      child.on("exit", () => this._children.delete(child));
+      const promise = new Promise((resolve, reject) => {
+        child.on("error", reject); // solo spawn errors
+        child.on("close", (code, signal) => {
+          if (code !== 0) {
+            const e = new Error("Command failed");
+            e.code = code;
+            e.signal = signal;
+            e.stdout = out;
+            e.stderr = err;
+            return reject(e);
+          }
+          return resolve({
+            subprocess: child,
+            code,
+            signal,
+            output: out,
+            error: err,
+          });
+        });
+      });
+      return Object.assign(promise, { subprocess: child });
+    }
+
+
+    subprocessManual(command, args = [], userOptions = {}) {
+      const options = Object.assign({}, this.constructor.defaultSpawnOptions, {
+        cwd: this.cwd || process.cwd(),
+        stdio: ["ignore", "pipe", "pipe"],
+      }, userOptions);
+      const child = require("child_process").spawn(command, args, options);
+      this._children.add(child);
+      child.accumulatedOutput = "";
+      child.accumulatedError = "";
+      const handleOutput = chunk => {
+        const s = chunk.toString();
+        child.accumulatedOutput += s;
+        process.stdout.write(s);
+        if (NwtEnvironment.hasWindow) {
+          console.log(s);
+        }
+      };
+      const handleError = chunk => {
+        const s = chunk.toString();
+        child.accumulatedError += s;
+        process.stderr.write(s);
+        if (NwtEnvironment.hasWindow) {
+          console.error(s);
+        }
+      };
+      if (child.stdout) {
+        child.stdout.on("data", handleOutput);
+      }
+      if (child.stderr) {
+        child.stderr.on("data", handleError);
+      }
+      child.on("exit", () => this._children.delete(child));
+      const promise = new Promise((resolve, reject) => {
+        child.on("exit", (code, signal) => {
+          if (code !== 0) {
+            return reject(new Error(child.accumulatedOutput + "\n\n\n\nERROR: " + child.accumulatedError));
+          }
+          return resolve({
+            subprocess,
+            code,
+            signal,
+            output: child.accumulatedOutput,
+            error: child.accumulatedError
+          });
+        });
+        child.on("error", reject);
+      });
+      return Object.assign(promise, { subprocess: child });
+    }
+
+    terminate(signal = "SIGTERM") {
+      for (const child of this._children) {
+        try {
+          process.kill(-child.pid, signal);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      this._children.clear();
+    }
+
   };
 
   return NwtShell;
 
 });
 
-// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
+// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtLiveInjector'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtLiveInjector'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtLiveInjector = class {
+
+    static currentInjector = false;
+
+    static lastInjection = new Date();
+    
+    static lastInjectionMinDiff = 1000;
+
+    static async start(force = false) {
+      trace("NwtLiveInjector.start");
+      if (this.currentInjector && !force) {
+        return this.currentInjector;
+      }
+      const fs = require("fs");
+      const injectorPath = NwtPaths.global.relative("injector.js");
+      this.currentInjector = fs.watch(injectorPath, {}, async (event, filename, filepath) => {
+        try {
+          Skip_if_diff_is_less_than_minimum: {
+            const diff = (new Date()) - this.lastInjection;
+            if(diff < this.lastInjectionMinDiff) return;
+            this.lastInjection = new Date();
+          }
+          const evaluable = await NwtFilesystem.readFile(injectorPath);
+          const beautified = NwtCodeComposer.beautifyJs(evaluable);
+          // console.log("[nwt-live-injector][question]\n", beautified);
+          const callback = NwtCodeComposer.createAsyncFunction(beautified);
+          const output = await callback();
+          if(typeof output !== "undefined") {
+            console.log("[nwt-live-injector][answer]\n", output);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      });
+    }
+
+  };
+
+  return NwtLiveInjector;
+
+});
+
+// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
 /**
  * 
  * # Nwt Prompt Manager API
@@ -22428,7 +26094,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
+// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22571,61 +26237,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-function-composer.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFunctionComposer'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFunctionComposer'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-
-  const NwtFunctionComposer = class {
-
-    static noop = function() {
-      trace("NwtFunctionComposer.noop");
-    }
-
-    static fromFunctions(fns, ...args) {
-      trace("NwtFunctionComposer.fromFunctions");
-      return NwtCodeComposer.composeFunctionByFunctions(fns, ...args);
-    }
-
-  };
-
-  return NwtFunctionComposer;
-
-});
-
-(async function () {
-
-  /*
-  const callback = await NwtFunctionComposer.fromFunctions([
-    async () => { const { message } = arguments[0]; },
-    async () => { console.log(message) },
-    async () => { console.log("Hola!") },
-    async () => { await console.log("Hola!") },
-    async () => { console.log("Hola!") },
-    async () => { console.log("Hola!") },
-    async () => { console.log("Hola!") },
-  ], {
-    onStart: async () => { },
-    onInterlude: async () => { console.log("Interludio!") },
-    onSuccess: async () => { },
-    onFail: async () => { },
-    onEnd: async () => { },
-  });
-  callback({ message: "GO!" });
-  //*/
-
-})();
-
-// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener.js
+// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22734,7 +26346,891 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
+// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtJsonPersister'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtJsonPersister'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtJsonPersister = class {
+
+    static noop = () => {};
+
+    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+      if(!condition) {
+        throw new Error(errorMessage);
+      }
+    };
+
+    static trace = typeof trace === "function" ? trace : (traceMessage) => {
+      console.log("[trace][local] " + traceMessage);
+    };
+
+    static low = {
+      availableOperations: [
+        "get",
+        "set",
+        "has",
+        "init",
+        "delete",
+      ],
+      noop: () => { },
+      default: {
+        settings: {
+          file: undefined,
+          prop: undefined,
+          hooks: {},
+          dataset: undefined,
+        },
+        hooks: {
+          onFileError: this.noop,
+          onJsonError: this.noop,
+          onPropertyError: this.noop,
+          onError: (error, ctx) => { throw error },
+        },
+      },
+      persistJson: async (file, data, softly = false) => {
+        this.trace("NwtJsonPersister.persistJson");
+        const fs = require("fs");
+        if(softly) {
+          const lstat = await fs.promises.lstat(file);
+          if(lstat.isFile()) {
+            return false;
+          }
+        }
+        await fs.promises.writeFile(file, JSON.stringify(data, null, 2), "utf8");
+        return true;
+      },
+      async deleteFileOrDirectory(file) {
+        this.trace("NwtJsonPersister.deleteFileOrDirectory");
+        const fs = require("fs");
+        const fileStat = await fs.promises.lstat(file);
+        const isFile = fileStat.isFile();
+        const isDirectory = fileStat.isDirectory();
+        if (isFile) {
+          return fs.promises.unlink(file);
+        } else if (isDirectory) {
+          return fs.promises.rmdir(file);
+        } else {
+          throw new Error(`File at «${file}» is not a file nor a directory on «NwtJsonPersister.deleteFileOrDirectory»`);
+        }
+      },
+      extractSettingsFromArgsAndOperation: (args, operation) => {
+        this.trace("NwtJsonPersister.extractSettingsFromArgsAndOperation");
+        const settings = { operation };
+        this.assertion(args.length > 0, `Operation «${operation}» needs more than 0 arguments on «NwtJsonPersister.${operation}»`);
+        let argsDone = 0;
+        File_and_prop: {
+          if (typeof args[0] === "string") {
+            settings.file = args[0];
+            settings.dataset = undefined;
+            settings.prop = undefined;
+            argsDone++;
+          } else if ((typeof args[0] === "object") || (typeof args[0] === "function")) {
+            settings.file = undefined;
+            settings.dataset = args[0];
+            settings.prop = undefined;
+            argsDone++;
+          }
+          const nextPos = 0 + argsDone;
+          if(Array.isArray(args[nextPos])) {
+            settings.prop = args[nextPos];
+            argsDone++;
+          }
+          this.assertion(typeof settings.file !== "undefined" || typeof settings.dataset !== "undefined", `Parameter «settings.file» or «settings.dataset» must be defined on «NwtJsonPersister.${operation}»`);
+        }
+        Specific_operation_checks: {
+          const hasEnoughInputs = typeof settings.prop !== "undefined" || typeof settings.file !== "undefined" || typeof settings.dataset !== "undefined";
+          if (["has"].indexOf(operation) !== -1) {
+            this.assertion(args.length >= argsDone, `Operation «${operation}» does not admit more parameters on «NwtJsonPersister.${operation}»`);
+            this.assertion(hasEnoughInputs, `Operation «${operation}» requires «settings.prop» or «settings.file» or «settings.dataset» to be defined on «NwtJsonPersister.${operation}»`);
+            
+          }
+          if (["get"].indexOf(operation) !== -1) {
+            if (typeof args[argsDone] !== "undefined") {
+              settings.defaultReturn = args[argsDone];
+              argsDone++;
+            }
+            this.assertion(hasEnoughInputs, `Operation «${operation}» requires «settings.prop» or «settings.file» or «settings.dataset» to be defined on «NwtJsonPersister.${operation}»`);
+          }
+          if (["set", "init"].indexOf(operation) !== -1) {
+            this.assertion(typeof args[argsDone] !== "undefined", `Operation «${operation}» requires «arguments[${argsDone}]» to be defined on «NwtJsonPersister.${operation}»`);
+            settings.value = args[argsDone];
+            argsDone++;
+            this.assertion(hasEnoughInputs, `Operation «${operation}» requires «settings.prop» or «settings.file» or «settings.dataset» to be defined on «NwtJsonPersister.${operation}»`);
+          }
+        }
+        return settings;
+      }
+    }
+
+    static async iterate(settings = {}) {
+      this.trace("NwtJsonPersister.iterate");
+      const { operation, file, prop, hooks, dataset, value } = Object.assign({}, this.low.default.settings, settings);
+      const hasProp = Array.isArray(prop);
+      const hasFile = typeof file === "string";
+      const hasData = typeof dataset === "function" || typeof dataset === "object";
+      this.assertion(typeof operation === "string", "Parameter «operation» must be string on «NwtJsonPersister.iterate»");
+      this.assertion(this.low.availableOperations.indexOf(operation) !== -1, "Parameter «operation» must match any of the available operations on «NwtJsonPersister.iterate»");
+      this.assertion(hasFile || hasData || hasProp, "Parameter «settings.prop» must be array or «settings.file» string or «settings.dataset» function or object on «NwtJsonPersister.iterate»");
+      this.assertion(typeof hooks === "object", "Parameter «settings.hooks» must be object on «NwtJsonPersister.iterate»");
+      const { onFileError, onPropertyError, onJsonError, onError } = Object.assign({}, this.low.default.hooks, hooks);
+      this.assertion(typeof onFileError === "function", "Parameter «settings.hooks.onFileError» must be function on «NwtJsonPersister.iterate»");
+      this.assertion(typeof onJsonError === "function", "Parameter «settings.hooks.onJsonError» must be function on «NwtJsonPersister.iterate»");
+      this.assertion(typeof onPropertyError === "function", "Parameter «settings.hooks.onPropertyError» must be function on «NwtJsonPersister.iterate»");
+      this.assertion(typeof onError === "function", "Parameter «settings.hooks.onError» must be function on «NwtJsonPersister.iterate»");
+      this.assertion(hasFile || hasData, "Parameter «settings.file» can only be replaced with parameter «settings.dataset» on «NwtJsonPersister.iterate»");
+      // @TODO: aquí empezaría la cosa
+      // console.log({ operation, file, prop, hooks, dataset, });
+      const memo = { dataset };
+      Proceso_de_lectura_de_fichero:
+      if (hasFile) {
+        try {
+          memo.fileContent = await require("fs").promises.readFile(file, "utf8");
+        } catch (error) {
+          console.error(`Error leyendo fichero «${file}»:`, error);
+          await onFileError(error);
+          await onError(error, "FileError");
+        }
+        this.assertion(typeof memo.fileContent === "string", "Parameter «settings.file» could not be read on «NwtJsonPersister.iterate»");
+        try {
+          memo.fileJson = JSON.parse(memo.fileContent);
+        } catch (error) {
+          console.error(`Error parseando fichero a JSON «${file}»:`, error);
+          await onJsonError(error);
+          await onError(error, "JsonError");
+        }
+        this.assertion(typeof memo.fileJson !== "undefined", "Parameter «settings.file» could not be parsed as JSON on «NwtJsonPersister.iterate»");
+        memo.dataset = memo.fileJson;
+      }
+      // console.log("Leido fichero:", memo.dataset);
+      Proceso_de_lectura_de_propiedad:
+      if (!hasProp) {
+        if (operation === "get") {
+          return memo.dataset;
+        } else {
+          throw new Error(`Operation «${operation}» is missing «settings.prop» on «NwtJsonPersister.iterate»`);
+        }
+      } else {
+        for (let index = 0; index < prop.length; index++) {
+          const key = prop[index];
+          this.assertion(["string", "number"].indexOf(typeof key) !== -1, `Parameter «settings.prop[${index}]» must be string or number on «NwtJsonPersister.iterate»`);
+        }
+        this.assertion(typeof memo.dataset !== "undefined", "Parameter «memo.dataset» should be defined at this point on «NwtJsonPersister.iterate»");
+        let pivoter = memo.dataset;
+        if (prop.length === 0) {
+          El_paso_previo_a_la_iteracion_cuando_hay_0_props: {
+            if (operation === "get") {
+              // GET sin props devuelve todo el dataset:
+              return memo.dataset;
+            } else if (operation === "set") {
+              // SET sin props...
+              if(file) {
+                // ...si hay fichero: persiste todo el dataset
+                await this.low.persistJson(file, value);
+                return true;
+              } else {
+                // ...si no hay fichero: está pidiendo que le cambie el mismo dataset que entra entero por otro valor, y eso no tiene sentido, so, error:
+                throw new Error("Operation «set» without parameters «settings.prop» or «settings.file» has no sense. I hope you know what you are doing on «NwtJsonPersister.iterate»");
+              }
+            } else if (operation === "has") {
+              // HAS sin props devuelve si dataset es un JSONable:
+              return typeof memo.dataset !== "undefined";
+            } else if (operation === "init") {
+              // INIT sin props inicializaría el fichero...
+              if (typeof memo.dataset === "undefined") {
+                // SOOOOLAMENTE, si no existe antes:
+                await this.low.persistJson(file, {});
+              }
+              return memo.dataset;
+            } else if (operation === "delete") {
+              return await this.low.persistJson(file, {});
+            } else {
+              throw new Error(`Operation «${operation}» is not recognized (at first iteration step) on «NwtJsonPersister.iterate»`);
+            }
+          }
+        }
+        const currentIndex = [];
+        const lastPropertyIndex = prop.length - 1;
+        for (let indexProp = 0; indexProp < prop.length; indexProp++) {
+          const key = prop[indexProp];
+          try {
+            currentIndex.push(key);
+            if (lastPropertyIndex !== indexProp) {
+              pivoter = pivoter[key];
+            } else {
+              El_paso_ultimo_de_la_iteracion_en_cada_operacion: {
+                if (operation === "get") {
+                  return pivoter[key];
+                } else if (operation === "set") {
+                  pivoter[key] = value;
+                  if(file) {
+                    await this.low.persistJson(file, memo.dataset);
+                  }
+                  return memo.dataset;
+                } else if (operation === "init") {
+                  if (!(key in pivoter)) {
+                    pivoter[key] = value;
+                  }
+                  if(file) {
+                    await this.low.persistJson(file, memo.dataset);
+                  }
+                  return pivoter[key];
+                } else if (operation === "has") {
+                  return key in pivoter;
+                } else if (operation === "delete") {
+                  this.assertion(typeof pivoter === "object", `Operation «delete» can only work with objects but «prop» is pointing to a «${typeof pivoter}» on «NwtJsonPersister.iterate»`);
+                  const isArray = Array.isArray(pivoter);
+                  if (!(key in pivoter)) {
+                    return false;
+                  }
+                  if (isArray) {
+                    pivoter.splice(key, 1);
+                  } else {
+                    delete pivoter[key];
+                  }
+                  if(file) {
+                    await this.low.persistJson(file, memo.dataset);
+                  }
+                  return true;
+                } else {
+                  throw new Error(`Operation «${operation}» is not recognized (at last iteration step) on «NwtJsonPersister.iterate»`);
+                }
+              }
+            }
+          } catch (error) {
+            console.error(`Error accediendo a propiedad JSON «${currentIndex.join("/")}» en fichero «${file}»:`, error);
+            await onPropertyError(error, currentIndex);
+            await onError(error, "PropertyError");
+          }
+        }
+        throw new Error("At this point, the operation should have returned already on «NwtJsonPersister.iterate»");
+      }
+    }
+
+    static get(...args) {
+      this.trace("NwtJsonPersister.get");
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "get"));
+    }
+
+    static set(...args) {
+      this.trace("NwtJsonPersister.set");
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "set"));
+    }
+
+    static has(...args) {
+      this.trace("NwtJsonPersister.has");
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "has"));
+    }
+
+    static init(...args) {
+      this.trace("NwtJsonPersister.init");
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "init"));
+    }
+
+    static delete(...args) {
+      this.trace("NwtJsonPersister.delete");
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "delete"));
+    }
+
+  };
+
+  return NwtJsonPersister;
+
+});
+
+// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtJsonlPersister'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtJsonlPersister'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtJsonlPersister = class {
+
+    static noop = () => {};
+
+    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+      if (!condition) {
+        throw new Error(errorMessage);
+      }
+    };
+
+    static trace = typeof trace === "function" ? trace : (traceMessage) => {
+      console.log("[trace][local] " + traceMessage);
+    };
+
+    static uidAlphabet = "abcdefghijklmnopqrstuvwxyz";
+
+    static generateUid() {
+      this.trace("NwtJsonlPersister.generateUid");
+      let uid = "";
+      for (let i = 0; i < 10; i++) {
+        uid += this.uidAlphabet[Math.floor(Math.random() * this.uidAlphabet.length)];
+      }
+      return uid;
+    }
+
+    static init = {
+      file: (file) => {
+        this.trace("NwtJsonlPersister.init.file");
+        return NwtFilePersister.init(file, "");
+      }
+    };
+
+    static async select(file, filter = () => true) {
+      this.trace("NwtJsonlPersister.select");
+      const fs = require("fs");
+      const readline = require("readline");
+      const dataset = [];
+      const rl = readline.createInterface({
+        input: fs.createReadStream(file, { encoding: "utf8" }),
+        crlfDelay: Infinity
+      });
+      for await (const line of rl) {
+        if (!line.trim()) continue;
+        const obj = JSON.parse(line);
+        if (filter(obj)) {
+          dataset.push(obj);
+        }
+      }
+      return dataset;
+    }
+
+    static async insert(file, value) {
+      this.trace("NwtJsonlPersister.insert");
+      const fs = require("fs");
+      this.assertion(typeof value === "object" && value !== null, "Inserted value must be an object");
+      const uid = this.generateUid();
+      const record = Object.assign({}, value, { uid });
+      const line = JSON.stringify(record) + "\n";
+      await fs.promises.appendFile(file, line, "utf8");
+      return uid;
+    }
+
+    static async update(file, filter, value) {
+      this.trace("NwtJsonlPersister.update");
+      const fs = require("fs");
+      const readline = require("readline");
+      const path = require("path");
+      this.assertion(typeof filter === "function", "Update requires a filter function");
+      this.assertion(typeof value === "object" && value !== null, "Update value must be an object");
+      const tmpFile = file + ".tmp";
+      const updatedUids = [];
+      const readStream = fs.createReadStream(file, { encoding: "utf8" });
+      const writeStream = fs.createWriteStream(tmpFile, { encoding: "utf8" });
+      const rl = readline.createInterface({
+        input: readStream,
+        crlfDelay: Infinity
+      });
+      for await (const line of rl) {
+        if (!line.trim()) continue;
+        const obj = JSON.parse(line);
+        if (filter(obj)) {
+          const updated = Object.assign({}, obj, value);
+          updatedUids.push(updated.uid);
+          writeStream.write(JSON.stringify(updated) + "\n");
+        } else {
+          writeStream.write(line + "\n");
+        }
+      }
+      await new Promise(resolve => writeStream.end(resolve));
+      await fs.promises.rename(tmpFile, file);
+      return updatedUids;
+    }
+
+    static async delete(file, filter) {
+      this.trace("NwtJsonlPersister.delete");
+      const fs = require("fs");
+      const readline = require("readline");
+      this.assertion(typeof filter === "function", "Argument «filter» must be a function on «NwtJsonlPersister.delete»");
+      const tmpFile = file + ".tmp";
+      const deletedUids = [];
+      const readStream = fs.createReadStream(file, { encoding: "utf8" });
+      const writeStream = fs.createWriteStream(tmpFile, { encoding: "utf8" });
+      const rl = readline.createInterface({
+        input: readStream,
+        crlfDelay: Infinity
+      });
+      for await (const line of rl) {
+        if (!line.trim()) continue;
+        const obj = JSON.parse(line);
+        if (filter(obj)) {
+          if (obj.uid) deletedUids.push(obj.uid);
+          continue;
+        }
+        writeStream.write(line + "\n");
+      }
+      await new Promise(resolve => writeStream.end(resolve));
+      await fs.promises.rename(tmpFile, file);
+      return deletedUids;
+    }
+
+  };
+
+  return NwtJsonlPersister;
+
+});
+
+// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFilePersister'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFilePersister'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtFilePersister = class {
+
+    static noop = () => {};
+
+    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+      if(!condition) {
+        throw new Error(errorMessage);
+      }
+    };
+
+    static trace = typeof trace === "function" ? trace : (traceMessage) => {
+      console.log("[trace][local] " + traceMessage);
+    };
+
+    static low = {
+      availableOperations: ["get", "set", "has", "init", "delete"],
+      default: {
+        settings: {
+          file: undefined,
+          hooks: {},
+          value: undefined,
+        },
+        hooks: {
+          onFileError: this.noop,
+          onError: (e) => { throw e },
+        },
+      },
+      extractSettingsFromArgsAndOperation: (args, operation) => {
+        const settings = { operation };
+        let argsDone = 0;
+        this.assertion(typeof args[argsDone] === "string", `Argument «${argsDone}» must be string on «NwtFilePersister.${operation}»`);
+        settings.file = args[argsDone++];
+        if (operation === "get" && typeof args[argsDone] !== "undefined") {
+          settings.defaultReturn = args[argsDone++];
+        }
+        if (["set", "init"].includes(operation)) {
+          this.assertion(typeof args[argsDone] === "string", `Argument «${argsDone}» must be string on «NwtFilePersister.${operation}»`);
+          settings.value = args[argsDone++];
+        }
+        this.assertion(argsDone === args.length, `Argument «${argsDone + 1}» is not accepted on «NwtFilePersister.${operation}»`);
+        return settings;
+      }
+    };
+
+    static async iterate(settings = {}) {
+      const fs = require("fs");
+      const { operation, file, hooks, value, defaultReturn } = Object.assign({}, this.low.default.settings, settings);
+      const { onFileError, onError } = Object.assign({}, this.low.default.hooks, hooks);
+      try {
+        if (operation === "get") {
+          try {
+            return await fs.promises.readFile(file, "utf8");
+          } catch (error) {
+            if (typeof defaultReturn !== "undefined") return defaultReturn;
+            throw error;
+          }
+        }
+        if (operation === "has") {
+          try {
+            const lstat = await fs.promises.lstat(file);
+            return lstat.isFile();
+          } catch {
+            return false;
+          }
+        }
+        if (operation === "set") {
+          await fs.promises.writeFile(file, value, "utf8");
+          return true;
+        }
+        if (operation === "init") {
+          try {
+            const content = await fs.promises.readFile(file, "utf8");
+            return content;
+          } catch {
+            await fs.promises.writeFile(file, value ?? "", "utf8");
+            return value ?? "";
+          }
+        }
+        if (operation === "delete") {
+          try {
+            await fs.promises.unlink(file);
+            return true;
+          } catch {
+            return false;
+          }
+        }
+        throw new Error(`Unknown operation «${operation}» on «NwtFilePersister.iterate»`);
+      } catch (error) {
+        await onFileError(error);
+        await onError(error);
+      }
+      throw new Error("At this point, the operation should have returned already on «NwtFilePersister.iterate»");
+    }
+
+    static get(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "get"));
+    }
+    static set(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "set"));
+    }
+    static has(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "has"));
+    }
+    static init(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "init"));
+    }
+    static delete(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "delete"));
+    }
+
+  };
+
+  return NwtFilePersister;
+});
+
+
+// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtDirectoryPersister'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtDirectoryPersister'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtDirectoryPersister = class {
+
+    static noop = () => {};
+
+    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+      if(!condition) {
+        throw new Error(errorMessage);
+      }
+    };
+
+    static trace = typeof trace === "function" ? trace : (traceMessage) => {
+      console.log("[trace][local] " + traceMessage);
+    };
+
+    static low = {
+      availableOperations: ["get", "set", "has", "init", "delete"],
+      default: {
+        settings: {
+          directory: undefined,
+          hooks: {},
+        },
+        hooks: {
+          onDirectoryError: this.noop,
+          onError: (e) => { throw e },
+        },
+      },
+      extractSettingsFromArgsAndOperation: (args, operation) => {
+        const settings = { operation };
+        let argsDone = 0;
+        this.assertion(typeof args[argsDone] === "string", `Operation «${operation}» requires «directory» as first argument on «NwtDirectoryPersister»`);
+        settings.directory = args[argsDone++];
+        this.assertion(argsDone === args.length, `Operation «${operation}» does not admit more parameters on «NwtDirectoryPersister»`);
+        return settings;
+      }
+
+    };
+
+    static async iterate(settings = {}) {
+      const fs = require("fs");
+      const path = require("path");
+      const { operation, directory, hooks } = Object.assign({}, this.low.default.settings, settings);
+      const { onDirectoryError, onError } = Object.assign({}, this.low.default.hooks, hooks);
+      try {
+        if (operation === "get") {
+          return await fs.promises.readdir(directory);
+        }
+        if (operation === "has") {
+          try {
+            const stat = await fs.promises.stat(directory);
+            return stat.isDirectory();
+          } catch {
+            return false;
+          }
+        }
+        if (operation === "set") {
+          await fs.promises.mkdir(directory);
+          return true;
+        }
+        if (operation === "init") {
+          let stat = undefined;
+          try {
+            stat = await fs.promises.stat(directory);
+          } catch {}
+          if(typeof stat === "undefined") {
+            await fs.promises.mkdir(directory);
+            return true;
+          } else if(stat.isDirectory()) {
+            return false;
+          } else {
+            throw new Error(`Path «${directory}» exists but it is a file already on «NwtDirectoryPersister.${operation}»`);
+          }
+        }
+        if (operation === "ensure") {
+          let stat = undefined;
+          try {
+            stat = await fs.promises.stat(directory);
+          } catch {}
+          if(typeof stat === "undefined") {
+            await fs.promises.mkdir(directory, { recursive: true });
+            return true;
+          } else if(stat.isDirectory()) {
+            return false;
+          } else {
+            throw new Error(`Path «${directory}» exists but it is a file already on «NwtDirectoryPersister.${operation}»`);
+          }
+        }
+        if (operation === "delete") {
+          try {
+            await fs.promises.rm(directory);
+            return true;
+          } catch {
+            return false;
+          }
+        }
+        if (operation === "destroy") {
+          try {
+            await fs.promises.rm(directory, { recursive: true, force: true });
+            return true;
+          } catch {
+            return false;
+          }
+        }
+        throw new Error(`Unknown operation «${operation}» on «NwtDirectoryPersister.${operation}»`);
+      } catch (error) {
+        await onDirectoryError(error);
+        await onError(error);
+      }
+      throw new Error(`At this point, the operation should have returned already on «NwtDirectoryPersister.${operation}»`);
+    }
+
+    static get(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "get"));
+    }
+
+    static set(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "set"));
+    }
+
+    static has(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "has"));
+    }
+
+    static init(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "init"));
+    }
+
+    static ensure(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "ensure"));
+    }
+
+    static delete(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "delete"));
+    }
+
+    static destroy(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "destroy"));
+    }
+
+  };
+
+  return NwtDirectoryPersister;
+
+});
+
+// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtPersister'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtPersister'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtPersister = class {
+    
+    static json = NwtJsonPersister;
+    
+    static jsonl = NwtJsonlPersister;
+
+    static file = NwtFilePersister;
+
+    static directory = NwtDirectoryPersister;
+
+  };
+
+  return NwtPersister;
+
+});
+
+// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
+(function (factory) {
+      const mod = factory();
+      if (typeof window !== 'undefined') {
+        window['NwtAstTreeTemplateSource'] = mod;
+      }
+      if (typeof global !== 'undefined') {
+        global['NwtAstTreeTemplateSource'] = mod;
+      }
+      if (typeof module !== 'undefined') {
+        module.exports = mod;
+      }
+    })(function () {
+      return "{\n  const /**<?=localMemoryName?>**/localMemory = {};\n  /**<?#onFunctionStart?>**/\n  /**<?#onInitializeCollection?>**/\n  /**<?#onInitializeDimensions?>**/\n  try {\n    /**<?#onNextIteration?>**/\n    /**<?=localMemoryName?>**/localMemory.conditionalCallback = async () => {\n      /**<?#onCondition?>**/\n    };\n    /**<?=localMemoryName?>**/localMemory.output = undefined;\n    /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n    /**<?=onIdentifier + \":\"?>**/\n    while (/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n      /**<?#onIterationStart?>**/\n      try {\n        /**<?#onIteration?>**/\n        /**<?#onIterationSuccess?>**/\n      } catch (error) {\n        /**<?#onIterationError?>**/\n      } finally {\n        /**<?#onIterationFinally?>**/\n      }\n      /**<?#onIterationEnd?>**/\n      /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n      if (!/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n        break /**<?=onIdentifier?>**/;\n      }\n      /**<?#onInterlapse?>**/\n      /**<?#onNextIteration?>**/\n      /**<?#onProgression?>**/\n    }\n    /**<?#onFunctionSuccess?>**/\n  } catch (error) {\n    /**<?#onFunctionError?>**/\n  } finally {\n    /**<?#onFunctionFinally?>**/\n  }\n  /**<?#onFunctionEnd?>**/\n  return /**<?=localMemoryName?>**/localMemory.output;\n}"
+    });
+
+// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtAstTreeClass'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtAstTreeClass'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtAstTreeClass = class {
+
+    static create(...args) {
+      return new this(...args);
+    }
+
+    static defaultInjections = {
+      onFunctionStart: () => {
+        trace("NwtAstTreeClass.defaultInjections.onFunctionStart");
+      },
+      onInitializeCollection: () => {
+        trace("NwtAstTreeClass.defaultInjections.onInitializeCollection");
+      },
+      onCollection: [],
+      onInitializeDimensions: () => {
+        trace("NwtAstTreeClass.defaultInjections.onInitializeDimensions");
+      },
+      onDimensions: [],
+      onNextIteration: () => {
+        trace("NwtAstTreeClass.defaultInjections.onNextIteration");
+      },
+      onCondition: () => {
+        trace("NwtAstTreeClass.defaultInjections.onCondition");
+      },
+      onIterationStart: () => {
+        trace("NwtAstTreeClass.defaultInjections.onIterationStart");
+      },
+      onIteration: () => {
+        trace("NwtAstTreeClass.defaultInjections.onIteration");
+      },
+      onIterationSuccess: () => {
+        trace("NwtAstTreeClass.defaultInjections.onIterationSuccess");
+      },
+      onIterationError: () => {
+        trace("NwtAstTreeClass.defaultInjections.onIterationError");
+      },
+      onIterationFinally: () => {
+        trace("NwtAstTreeClass.defaultInjections.onIterationFinally");
+      },
+      onIterationEnd: () => {
+        trace("NwtAstTreeClass.defaultInjections.onIterationEnd");
+      },
+      onInterlapse: () => {
+        trace("NwtAstTreeClass.defaultInjections.onInterlapse");
+      },
+      onProgression: () => {
+        trace("NwtAstTreeClass.defaultInjections.onProgression");
+      },
+      onFunctionSuccess: () => {
+        trace("NwtAstTreeClass.defaultInjections.onFunctionSuccess");
+      },
+      onFunctionError: () => {
+        trace("NwtAstTreeClass.defaultInjections.onFunctionError");
+      },
+      onFunctionFinally: () => {
+        trace("NwtAstTreeClass.defaultInjections.onFunctionFinally");
+      },
+      onFunctionEnd: () => {
+        trace("NwtAstTreeClass.defaultInjections.onFunctionEnd");
+      },
+    }
+
+    constructor(injections = {}, argumentNames = []) {
+      trace("NwtAstTreeClass.constructor");
+      this.injections = {};
+      this.argumentNames = argumentNames;
+      Object.assign(this.injections, this.constructor.defaultInjections, injections);
+    }
+
+    static compile = {
+      to: {
+        async: (...args) => this.create(...args).compile.to.async(),
+        sync: (...args) => this.create(...args).compile.to.sync(),
+      }
+    }
+
+    compile = {
+      to: {
+        async: () => {
+          trace("NwtAstTreeClass.prototype.compile.to.async");
+          return NwtTemplates.global.compile.tjs.source.to.async(NwtAstTreeTemplateSource, this.injections, this.argumentNames)
+        },
+        sync: () => {
+          trace("NwtAstTreeClass.prototype.compile.to.sync");
+          return NwtTemplates.global.compile.tjs.source.to.sync(NwtAstTreeTemplateSource, this.injections, this.argumentNames)
+        }
+      }
+    };
+
+  };
+
+  return NwtAstTreeClass;
+
+});
+
+// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -24089,6 +28585,7 @@ Test_de_ejemplo: {
       const formatAst = function(ast, text) {
         
       	let output = {
+          $type: "nfs-object",
           isDirectory: null,
           isFile: null,
           isJson: null,
@@ -24185,7 +28682,7 @@ Test_de_ejemplo: {
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
+// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24213,7 +28710,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
+// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24239,13 +28736,15 @@ Test_de_ejemplo: {
       return tokens.map(element => element.to).join("");
     }
 
-    static async interpret(fullpathOrAst, parameters = false, shortener = true) {
+    static async interpret(fullpathOrAst, userParameters = false, shortener = true) {
       trace("NwtFiletreeSelectorInterpreter.interpret");
-      const ast = typeof fullpathOrAst === "object" ? fullpathOrAst : NwtFiletreeSelector.parse(fullpath);
-      if(parameters === false) {
-        return ast;
+      const isObject = typeof fullpathOrAst === "object";
+      if(isObject) {
+        assertion(fullpathOrAst.$type === "nfs-object", "Parameter «fullpathOrAst» only accepts «nfs-object» types on «NwtFiletreeSelector.interpret»");
       }
+      const ast = isObject ? fullpathOrAst : NwtFiletreeSelector.parse(fullpathOrAst);
       ast.hasInterpretedTokens = NwtUtils.copify(ast.hasTokens);
+      const parameters = userParameters || {};
       Add_parametric_ids: {
         const parametricIds = Object.keys(ast.hasParametricIds);
         for(let index = 0; index < parametricIds.length; index++) {
@@ -24298,7 +28797,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
+// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24321,6 +28820,13 @@ Test_de_ejemplo: {
     constructor(...args) {
       const [filetree] = args;
       this.filetree = filetree;
+    }
+
+    static async list(fullpath, arg1) {
+      trace("NwtFiletreeNode.list");
+      const info = await NwtFiletreeSelectorInterpreter.interpret(fullpath);
+      console.log(info);
+      // @TODO
     }
 
     static async init(fullpath, arg1) {
@@ -24349,6 +28855,12 @@ Test_de_ejemplo: {
       const info = await NwtFiletreeSelectorInterpreter.interpret(fullpath);
       console.log(info);
       // @TODO
+    }
+
+    list(subpath, arg1) {
+      trace("NwtFiletreeNode.prototype.init");
+      const fullpath = this.filetree.resolve(subpath);
+      return this.constructor.list(fullpath);
     }
 
     init(subpath, arg1) {
@@ -24381,7 +28893,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
+// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24399,7 +28911,18 @@ Test_de_ejemplo: {
 
     constructor(...args) {
       super(...args);
-      // Property this.filtree is already set here.
+      // Property this.filetree is already set here.
+    }
+
+    static find(fullpath, ...args) {
+      trace("NwtFiletreeGlob.find");
+      console.log(fullpath);
+    }
+
+    find(subpaths = [], ...args) {
+      trace("NwtFiletreeGlob.prototype.find");
+      const fullpath = this.filetree.resolve(...subpaths);
+      return this.constructor.find(fullpath, ...args);
     }
 
   };
@@ -24408,7 +28931,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
+// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24426,7 +28949,17 @@ Test_de_ejemplo: {
 
     constructor(...args) {
       super(...args);
-      // Property this.filtree is already set here.
+      // Property this.filetree is already set here.
+    }
+
+    static async read(fullpath, parameters, shortener) {
+      trace("NwtFiletreeDirectory.read");
+      const info = await NwtFiletreeSelectorInterpreter.interpret(fullpath, parameters, shortener);
+      console.log(info);
+      console.log(info);
+      console.log(info);
+      // @TODO
+      return info;
     }
 
   };
@@ -24435,7 +28968,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
+// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24453,7 +28986,7 @@ Test_de_ejemplo: {
 
     constructor(...args) {
       super(...args);
-      // Property this.filtree is already set here.
+      // Property this.filetree is already set here.
     }
 
   };
@@ -24462,7 +28995,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
+// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24480,7 +29013,7 @@ Test_de_ejemplo: {
 
     constructor(...args) {
       super(...args);
-      // Property this.filtree is already set here.
+      // Property this.filetree is already set here.
     }
 
   };
@@ -24489,7 +29022,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
+// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24507,7 +29040,7 @@ Test_de_ejemplo: {
 
     constructor(...args) {
       super(...args);
-      // Property this.filtree is already set here.
+      // Property this.filetree is already set here.
     }
 
   };
@@ -24516,7 +29049,259 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree.js
+// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtDom'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtDom'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtDom = class {
+
+    static utils = {
+      iterateParentUntil: (element, filter) => {
+        trace("NwtDom.utils.iterateParentUntil");
+        assertion(element instanceof HTMLElement, "Parameter «element» must be instance of HTMLElement on «NwtDom.iterateParentUntil»");
+        assertion(typeof filter === "function", "Parameter «filter» must be function on «NwtDom.iterateParentUntil»");
+        if(!element.parentElement) {
+          return null;
+        }
+        const isValid = filter(element.parentElement);
+        if(isValid) {
+          return element.parentElement;
+        }
+        return this.utils.iterateParentUntil(element.parentElement, filter);
+      },
+      iterateChildrenUntil: (element, filter) => {
+        trace("NwtDom.utils.iterateChildrenUntil");
+        assertion(element instanceof HTMLElement, "Parameter «element» must be instance of HTMLElement on «NwtDom.iterateChildrenUntil»");
+        assertion(typeof filter === "function", "Parameter «filter» must be function on «NwtDom.iterateChildrenUntil»");
+        if(!element.children) {
+          return null;
+        }
+        for(let index=0; index<element.children.length; index++) {
+          const child = element.children[index];
+          const isValid = filter(child);
+          if(isValid) {
+            return child;
+          }
+          const subchild = this.utils.iterateChildrenUntil(element.children[index], filter);
+          if(subchild) {
+            return subchild;
+          }
+        }
+        return null;
+      },
+      collectFirstChildrenWhere: (element, filter, output = []) => {
+        trace("NwtDom.utils.collectFirstChildrenWhere");
+        assertion(element instanceof HTMLElement, "Parameter «element» must be instance of HTMLElement on «NwtDom.collectFirstChildrenWhere»");
+        assertion(typeof filter === "function", "Parameter «filter» must be function on «NwtDom.collectFirstChildrenWhere»");
+        assertion(Array.isArray(output), "Parameter «output» must be array on «NwtDom.collectFirstChildrenWhere»");
+        if(!element.children) {
+          return null;
+        }
+        Iterating_level:
+        for(let index=0; index<element.children.length; index++) {
+          const child = element.children[index];
+          const isValid = filter(child);
+          if(isValid) {
+            output.push(child);
+            continue Iterating_level;
+          }
+          this.utils.collectFirstChildrenWhere(element.children[index], filter, output);
+        }
+        return output;
+      },
+    };
+
+    static findFirstChildWhere(element, ...args) {
+      trace("NwtDom.findFirstChildWhere");
+      assertion(element instanceof HTMLElement, "Parameter «element» must be instance of HTMLElement on «NwtDom.findFirstChildWhere»");
+      let selector = "*";
+      let filter = () => true;
+      if(typeof args[0] === "string") {
+        selector = args[0];
+        if(typeof args[1] === "function") {
+          args[1](element)
+        }
+      } else if(typeof args[0] === "function") {
+        filter = args[0];
+      } else {
+        throw new Error("Parameter «args[0]» must be string or function on «NwtDom.findFirstChildWhere»");
+      }
+      return this.utils.iterateChildrenUntil(element, el => {
+        const matchesSelector = el.matches(selector);
+        const matchesFilter = filter(el);
+        return matchesSelector && matchesFilter;
+      });
+    }
+
+    static findFirstChildrenWhere(element, ...args) {
+      trace("NwtDom.findFirstChildrenWhere");
+      assertion(element instanceof HTMLElement, "Parameter «element» must be instance of HTMLElement on «NwtDom.findFirstChildrenWhere»");
+      let selector = "*";
+      let filter = () => true;
+      if(typeof args[0] === "string") {
+        selector = args[0];
+        if(typeof args[1] === "function") {
+          args[1](element)
+        }
+      } else if(typeof args[0] === "function") {
+        filter = args[0];
+      } else {
+        throw new Error("Parameter «args[0]» must be string or function on «NwtDom.findFirstChildrenWhere»");
+      }
+      return this.utils.collectFirstChildrenWhere(element, el => {
+        const matchesSelector = el.matches(selector);
+        const matchesFilter = filter(el);
+        return matchesSelector && matchesFilter;
+      });
+    }
+
+    static findClosestParentWhere(element, ...args) {
+      trace("NwtDom.findClosestParentWhere");
+      assertion(element instanceof HTMLElement, "Parameter «element» must be instance of HTMLElement on «NwtDom.findClosestParentWhere»");
+      let selector = "*";
+      let filter = () => true;
+      if(typeof args[0] === "string") {
+        selector = args[0];
+        if(typeof args[1] === "function") {
+          args[1](element)
+        }
+      } else if(typeof args[0] === "function") {
+        filter = args[0];
+      } else {
+        throw new Error("Parameter «args[0]» must be string or function on «NwtDom.findClosestParentWhere»");
+      }
+      return this.utils.iterateParentUntil(element, el => {
+        const matchesSelector = el.matches(selector);
+        const matchesFilter = filter(el);
+        return matchesSelector && matchesFilter;
+      });
+    }
+
+    static removeTextContentSpaces(text) {
+      trace("NwtDom.removeTextContentSpaces");
+      return text.replace(/[\r\n]+[ \t]+[\r\n]+/g, NwtStrings.EOL).replace(/[ ]*[\r\n]+/g, NwtStrings.EOL).replace(/[ ]*[\r\n]+/g, NwtStrings.EOL);
+    }
+
+    static find = {
+      closest: {
+        parent: {
+          where: (...args) => this.findClosestParentWhere(...args),
+        }
+      },
+      first: {
+        children: {
+          where: (...args) => this.findFirstChildrenWhere(...args),
+        },
+        child: {
+          where: (...args) => this.findFirstChildWhere(...args),
+        }
+      }
+    }
+
+  };
+
+  return NwtDom;
+
+});
+
+// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
+/**
+ * 
+ */
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtExporter'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtExporter'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtExporter = class {
+
+    static exportable = {
+      api: {
+        read: {
+          file: (...args) => NwtFilesystem.readFile(...args),
+          directory: (...args) => NwtFilesystem.readDirectory(...args),
+          tree: (...args) => NwtFilesystem.readTree(...args),
+          json: (...args) => NwtFilesystem.readJson(...args),
+          property: (...args) => NwtFilesystem.readProperty(...args),
+        },
+        write: {
+          file: (...args) => NwtFilesystem.writeFile(...args),
+          directory: (...args) => NwtFilesystem.mkdir(...args),
+          tree: (...args) => NwtFilesystem.writeTree(...args),
+          json: (...args) => NwtFilesystem.writeJson(...args),
+          property: (...args) => NwtFilesystem.writeProperty(...args),
+        },
+        ensure: {
+          file: (...args) => NwtFilesystem.ensureFile(...args),
+          directory: (...args) => NwtFilesystem.mkdir(...args),
+          tree: (...args) => NwtFilesystem.ensureTree(...args),
+          json: (...args) => NwtFilesystem.ensureJson(...args),
+          property: (...args) => NwtFilesystem.ensureProperty(...args),
+        }
+      }
+    }
+
+    static export = {
+      api: () => this.exportable.api
+    };
+
+  };
+
+  return NwtExporter;
+
+});
+
+// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtClipboard'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtClipboard'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtClipboard = class {
+
+    static copyText(text) {
+      trace("NwtClipboard.copyText");
+      assertion(typeof text === "string", "Parameter «text» must be a string on «NwtClipboard.copyText»");
+      window.navigator.clipboard.writeText(text);
+      NwtToasts.show({
+        title: "Texto copiado correctamente",
+        text: `El texto de ${text.length} caracteres fue copiado correctamente.`
+      });
+    }
+
+  };
+
+  return NwtClipboard;
+
+});
+
+// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24541,7 +29326,8 @@ Test_de_ejemplo: {
     }
 
     static async parse(fullpath, interpretationParams = {}, shortener = false) {
-      const urldata = this.Selector.parse(fullpath);
+      const urldata = await this.Selector.parse(fullpath);
+      console.log(urldata);
       const url = await this.Interpreter.interpret(urldata, interpretationParams, shortener);
       return url;
     }
@@ -24555,13 +29341,21 @@ Test_de_ejemplo: {
       }
     }
 
+    static io = {
+      dir: NwtFiletreeDirectory,
+      file: NwtFiletreeFile,
+      json: NwtFiletreeJson,
+      prop: NwtFiletreeProperty,
+    };
+
     io = {
-      directory: new NwtFiletreeDirectory(this),
+      dir: new NwtFiletreeDirectory(this),
       file: new NwtFiletreeFile(this),
       json: new NwtFiletreeJson(this),
-      property: new NwtFiletreeProperty(this),
-      glob: new NwtFiletreeGlob(this),
+      prop: new NwtFiletreeProperty(this),
     };
+
+    glob = new NwtFiletreeGlob(this);
 
     constructor(basedir) {
       const path = require("path");
@@ -24570,21 +29364,28 @@ Test_de_ejemplo: {
     }
 
     resolve(...subpaths) {
-      return require("path").resolve(this.basedir, ...subpaths);
+      const finaldir = require("path").resolve(this.basedir, ...subpaths);
+      const isBoundariesIn = (finaldir === this.basedir) || finaldir.startsWith(this.basedir + "/");
+      if(!isBoundariesIn) {
+        throw new Error(`Parameter «subpaths» must be built inside «this.basedir» scope on «NwtFiletree.prototype.resolve»`);
+      }
+      return finaldir;
     }
 
     parse(subpaths = [], interpretationParams = {}, shortener = false) {
-      const fullpath = this.resolve(...subpaths);
+      const fullpath = this.resolve(...typeof subpaths === "string" ? [subpaths] : subpaths);
       return this.constructor.parse(fullpath, interpretationParams, shortener);
     }
 
   }
 
+  NwtFiletree.global = NwtFiletree.create(NwtPaths.global.projectRoot);
+
   return NwtFiletree;
 
 });
 
-// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
+// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24608,6 +29409,16 @@ Test_de_ejemplo: {
       super(basedir);
     }
 
+    async saveStep(keys, result = {done:true}) {
+      trace("NwtCacheDirectory.prototype.saveStep");
+      // @TODO:
+    }
+
+    async loadStep(keys, initializer = {done:false}) {
+      trace("NwtCacheDirectory.prototype.loadStep");
+      // @TODO:
+    }
+
   };
 
   
@@ -24619,7 +29430,61 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
+// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtProxyChain'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtProxyChain'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtProxyChainFactory = (builder = p => p) => {
+    const proxyChainable = {
+      find(path) {
+        trace("NwtProxyChainFactory.prototype.find");
+        return builder(path);
+      },
+      $: new Proxy({}, {
+        get(target, prop) {
+          trace("NwtProxyChainFactory.prototype.$:get");
+          if (prop === Symbol.toPrimitive) return undefined;
+          const path = [];
+          const handler = {
+            get(_, key) {
+              if (key === '$') {
+                return proxyChainable.find(path);
+              }
+              path.push(key);
+              return new Proxy({}, handler);
+            }
+          };
+          path.push(prop);
+          return new Proxy({}, handler);
+        }
+      }),
+    };
+    return proxyChainable;
+  };
+
+  const NwtProxyChain = class {
+
+    static fromFactory(builder = undefined) {
+      return NwtProxyChainFactory(builder);
+    }
+
+  };
+
+  return NwtProxyChain;
+
+});
+
+// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
 /**
  * 
  * # Nwt Framework API
@@ -24717,7 +29582,7 @@ Test_de_ejemplo: {
 
 })();
 
-// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
+// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
 /**
  * 
  * # Nwt Injection API
@@ -24751,7 +29616,7 @@ if (typeof window !== "undefined") {
     });
 }
 
-// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/directives/v-resizable.js
+// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
 /**
  * 
  * # Nwt V-Resizable Directive - Vue directive
@@ -24858,7 +29723,7 @@ Vue.directive("resizable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/directives/v-draggable.js
+// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
 /**
  * 
  * 
@@ -24928,7 +29793,7 @@ Vue.directive("draggable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/directives/v-focus.js
+// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
 /**
  * 
  * # Nwt V-Focus Directive - Vue directive
@@ -24953,9 +29818,27 @@ Vue.directive("focus", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-dialogs/common-dialogs.html
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
+Vue.directive("forms", {
+  bind(el, binding, vnode) {
+    const value = binding.value || {};
+    const modifiers = binding.modifiers;
+    if (modifiers.form) {
+      NwtFormUtils.from.element.to.form(el, value, vnode);
+    } else if (modifiers.control) {
+      NwtFormUtils.from.element.to.control(el, value, vnode);
+    } else if (modifiers.handler) {
+      NwtFormUtils.from.element.to.handler(el, value, vnode);
+    } else {
+      throw new Error("Directive «v-forms» must be attached to one modifier at least «form», «control» or «handler» on «vForms.bind»");
+    }
+  }
+});
 
-// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-dialogs/common-dialogs.js
+
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
+
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
 /**
  * 
  * # Nwt Dialogs API
@@ -25021,7 +29904,7 @@ Vue.component("CommonDialogs", {
                             v-on:click="() => closeDialog(processItem)"></button>
                     </div>
                 </div>
-                <div class="window-body pad_1 pad_right_2">
+                <div class="window-body pad_1">
                     <nwt-box-viewer :component="processItem.definition.\$factory" />
                 </div>
             </div>
@@ -25077,11 +29960,11 @@ Vue.component("CommonDialogs", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-dialogs/common-dialogs.css
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
 
-// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-toasts/common-toasts.html
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
 
-// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-toasts/common-toasts.js
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
 /**
  * 
  * # Nwt Toasts API
@@ -25125,7 +30008,8 @@ Vue.component("CommonToasts", {
                             </div>
                         </div>
                         <div class="window-body has-space">
-                            {{ toast.text }}
+                            <pre v-if="toast.code">{{ toast.code }}</pre>
+                            <div v-else>{{ toast.text }}</div>
                         </div>
                         <div class="status-bar"
                             v-if="toast.footer">
@@ -25149,7 +30033,8 @@ Vue.component("CommonToasts", {
       trace("CommonToasts.methods.expandToastsDefinition");
       const toastDefinition = {};
       toastDefinition.title = userToastDefinition.title;
-      toastDefinition.text = userToastDefinition.text;
+      toastDefinition.text = userToastDefinition.text || false;
+      toastDefinition.code = userToastDefinition.code || false;
       toastDefinition.footer = userToastDefinition.footer || "";
       toastDefinition.timeout = userToastDefinition.timeout || 3000;
       return toastDefinition;
@@ -25159,7 +30044,7 @@ Vue.component("CommonToasts", {
       const toastDefinition = this.expandToastDefinition(userToastDefinition);
       assertion(typeof toastDefinition === "object", `Parameter «toastDefinition» must be an object on «CommonToasts.prototype.validateToast»`);
       assertion(typeof toastDefinition.title === "string", `Parameter «toastDefinition.title» must be a string on «CommonToasts.prototype.validateToast»`);
-      assertion(typeof toastDefinition.text === "string", `Parameter «toastDefinition.text» must be a string on «CommonToasts.prototype.validateToast»`);
+      assertion((typeof toastDefinition.text === "string") || (typeof toastDefinition.code === "string"), `Parameter «toastDefinition.text» or «toastDefinition.code» must be a string on «CommonToasts.prototype.validateToast»`);
       assertion(typeof toastDefinition.footer === "string", `Parameter «toastDefinition.footer» must be a string on «CommonToasts.prototype.validateToast»`);
       assertion(typeof toastDefinition.timeout === "number", `Parameter «toastDefinition.timeout» must be a number on «CommonToasts.prototype.validateToast»`);
       setTimeout(() => {
@@ -25193,238 +30078,52 @@ Vue.component("CommonToasts", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-toasts/common-toasts.css
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
 
-// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-errors/common-errors.html
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.html
 
-// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-errors/common-errors.js
-/**
- * 
- * # Nwt Errors API
- * 
- * ## Exposición
- * 
- * Está expuesta en las globales:
- * 
- * ```js
- * CommonErrors
- * NwtErrors
- * NwtFramework.Errors
- * Vue.prototype.$nwt.Errors
- * Vue.prototype.$errors
- * ```
- * 
- * ## Mostrar un error
- * 
- * ```js
- * CommonErrors.showError(new Error("Cualquier cosa"));
- * ```
- * 
- * ## Captura automática de aserciones globales
- * 
- * El componente hace:
- * 
- * ```js
- * assertion.setErrorCallback(error => this.showError(error))
- * ```
- * 
- * Esto implica que las aserciones globales mostrarán su error en este widget.
- * 
- */
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.js
 Vue.component("CommonErrors", {
-  template: `<div class="common_errors_container">
-    <div class="common_errors_container_2"
-        v-if="activeErrors.length">
-        <div class="window common_errors_window">
-            <div class="title-bar">
-                <div class="title-bar-text">Lista de errores</div>
-                <div class="title-bar-controls">
-                    <button aria-label="Close"
-                        v-on:click="closeAllErrors"></button>
-                </div>
-            </div>
-            <div class="window-body has-space window_box_container">
-                <div class="window_box pad_1">
-                    <div>
-                        <div>Selecciona un error:</div>
-                        <hr />
-                        <div>
-                            <div class="display_inline_block pad_right_1 pad_bottom_1">
-                                <button class=""
-                                    :class="{active: selectedError === -1}"
-                                    style="min-width: 10px;"
-                                    v-on:click="() => selectedError = -1">
-                                    *
-                                </button>
-                            </div>
-                            <div class="display_inline_block pad_right_1 pad_bottom_1"
-                                v-bind:key="'error_option_' + errorIndex"
-                                v-for="error, errorIndex in activeErrors">
-                                <button class="mini"
-                                    :class="{active: selectedError === errorIndex}"
-                                    v-on:click="() => selectedError = errorIndex">
-                                    ❗️ {{ abbreviateMessage(error.message) }}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="intermediate_row" v-if="(selectedError === -1) && (activeErrors.length > 1)">
-                        <hr />
-                        <button class="width_100" v-on:click="copyAllErrorsToClipboard">📄 Copiar todos los errores</button>
-                    </div>
-                    <div class="error_panel_container" 
-                        v-show="(selectedError === errorIndex) || (selectedError === -1)"
-                        v-bind:key="'error_panel_' + errorIndex"
-                        v-for="error, errorIndex in activeErrors">
-                        <hr />
-                        <div class="error_panel">
-                            <div class="error_name">
-                                <div class="flex_row centered">
-                                    <div class="flex_100">
-                                        <div class="display_inline_block">Id: {{ error.message }}</div>
-                                    </div>
-                                    <div class="flex_1">
-                                        <button class="no_wrap"
-                                            v-on:click="() => closeErrorByIndex(errorIndex)">Cerrar ❎</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="error_name">Tipo: {{ error.name }}</div>
-                            <hr />
-                            <div class="error_message">Mensaje: {{ error.message }}</div>
-                            <hr />
-                            <div class="float_right position_relative">
-                                <button class="position_absolute_top_right no_wrap"
-                                    style="top:4px; right:4px;"
-                                    v-on:click="() => copyErrorToClipboard(error)">📄 Copiar error</button>
-                            </div>
-                            <div class="error_stack"
-                                ref="stack_tracer">Traza completa del error:\n\n{{ error.name }} » {{ error.message }}\n\n{{ error.stack
-                                }}\n\n\n
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <hr />
-                        <p class="no_wrap">Momento del error: {{ \$nwt.Timer.fromDateToString(currentDate) }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`,
+  name: "CommonErrors",
+  template: `<div class="common_errors"></div>`,
   props: {},
   data() {
     trace("CommonErrors.data");
     return {
-      currentDate: new Date(),
-      stackSplitter: new RegExp("[\r\n\t ]+at[\r\n\t ]+", "g"),
-      activeErrors: [],
-      selectedError: -1,
+      manager: false,
     };
   },
   methods: {
-    abbreviateMessage(message) {
-      trace("CommonErrors.methods.abbreviateMessage");
-      if(message.length > 20) {
-        return message.substr(0,20) + "...";
-      }
-      return message;
-    },
-    validateError(errorDefinition) {
-      trace("CommonErrors.methods.validateError");
-      assertion(typeof errorDefinition === "object", `Parameter «errorDefinition» must be an object on «CommonErrors.prototype.validateError»`);
-      assertion(typeof errorDefinition.name === "string", `Parameter «errorDefinition.name» must be a string on «CommonErrors.prototype.validateError»`);
-      assertion(typeof errorDefinition.message === "string", `Parameter «errorDefinition.message» must be a string on «CommonErrors.prototype.validateError»`);
-      assertion(typeof errorDefinition.stack === "string", `Parameter «errorDefinition.stack» must be a string on «CommonErrors.prototype.validateError»`);
-    },
-    showError(error) {
+    showError(...args) {
       trace("CommonErrors.methods.showError");
-      this.validateError(error);
-      this.activeErrors.push(error);
+      return this.manager.showError(...args);
     },
-    closeErrorByIndex(errorIndex) {
-      trace("CommonErrors.methods.closeErrorByIndex");
-      this.activeErrors.splice(errorIndex, 1);
-      if(this.selectedError >= this.activeErrors.length) {
-        this.selectedError = this.activeErrors.length - 1;
-      }
+    reload(...args) {
+      trace("CommonErrors.methods.reload");
+      return this.manager.reload(...args);
     },
-    closeAllErrors() {
-      trace("CommonErrors.methods.closeAllErrors");
-      this.activeErrors = [];
+    clearErrors(...args) {
+      trace("CommonErrors.methods.clearErrors");
+      return this.manager.clearErrors(...args);
     },
-    copyErrorToClipboard(error) {
-      trace("CommonErrors.methods.copyErrorToClipboard");
-      const text = `Traza completa del error:\n\n${ error.name } » ${ error.message }\n\n${ error.stack }`;
-      navigator.clipboard.writeText(text);
-    },
-    copyAllErrorsToClipboard() {
-      trace("CommonErrors.methods.copyAllErrorsToClipboard");
-      let all = "";
-      for(let index=0; index<this.activeErrors.length; index++) {
-        const error = this.activeErrors[index];
-        const text = `Traza completa del error ${ index + 1} de ${ this.activeErrors.length }:\n\n${ error.name } » ${ error.message }\n\n${ error.stack }`;
-        all += text + "\n\n";
-      }
-      all = all.trimEnd();
-      navigator.clipboard.writeText(all);
+    clearError(...args) {
+      trace("CommonErrors.methods.clearError");
+      return this.manager.clearError(...args);
     }
   },
-  mounted() {
+  created() {},
+  async mounted() {
     trace("CommonErrors.mounted");
-    NwtGlobalizer.exportTo("CommonErrors", this);
-    NwtGlobalizer.exportTo("NwtErrors", this);
-    Vue.prototype.$errors = this;
-    Bind_error_handlers: {
-      // For assertions globally:
-      assertion.setErrorCallback(error => this.showError(error));
-      // For vue errors globally:
-      //*
-      Vue.config.errorHandler = (...args) => {
-        const [message, component, trace] = args;
-        const error = new Error(`Component «${component.$options._componentTag}» send error «${message}» with the following trace: «${trace}»`);
-        this.showError(error);
-        console.log(args);
-        console.error(error);
-      };
-      //*/
-      // For vue warnings globally:
-      /*
-      Vue.config.warnHandler = (message, component, trace) => {
-        const error = new Error(`Component «${component.$options._componentTag}» send warning «${message}» with the following trace: «${trace}»`);
-        this.showError(error);
-        console.error(error);
-      };
-      //*/
-      // For window errors:
-      /*
-      window.addEventListener("error", (event) => {
-        const error = new Error(event.message);
-        this.showError(event.error || error);
-        console.error(error);
-      });
-      //*/
-      // For window unhandled rejections:
-      /*
-      window.addEventListener("unhandledrejection", (event) => {
-        const error = new Error(event.reason);
-        this.showError(error);
-        console.error(error);
-      });
-      //*/
-    }
-  }
-})
+    this.manager = await NwtErrorsManager.create(this).initialize();
+    
+  },
+});
 
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.css
 
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
 
-// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-errors/common-errors.css
-
-// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-injections/common-injections.html
-
-// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-injections/common-injections.js
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
 /**
  * 
  * # Nwt Common Injections API
@@ -25489,6 +30188,7 @@ Vue.component("CommonInjections", {
           this.$dialogs.open({
             title: "Procesos activos",
             template: `<nwt-process-manager-viewer />`,
+            deepness: 1000,
           });
         }
       });
@@ -25500,6 +30200,7 @@ Vue.component("CommonInjections", {
           this.$dialogs.open({
             title: "Configuraciones globales",
             template: `<nwt-settings-viewer :settings="$nwt.Settings.global" :dialog="this" />`,
+            deepness: 1000,
           });
         }
       });
@@ -25514,11 +30215,11 @@ Vue.component("CommonInjections", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/common-injections/common-injections.css
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
 
-// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-tester-viewer/nwt-tester-viewer.html
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
 
-// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-tester-viewer/nwt-tester-viewer.js
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
 /**
  * 
  * # Nwt Tester Viewer API / Componente Vue2
@@ -25603,11 +30304,11 @@ Vue.component("NwtTesterViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-tester-viewer/nwt-tester-viewer.css
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
 
-// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-tester-node/nwt-tester-node.html
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
 
-// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-tester-node/nwt-tester-node.js
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
 Vue.component("NwtTesterNode", {
   template: `<div class="nwt_tester_node">
     <template v-if="node instanceof \$nwt.Tester.Assertion">
@@ -25714,11 +30415,11 @@ Vue.component("NwtTesterNode", {
 });
 
 
-// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-tester-node/nwt-tester-node.css
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
 
-// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
 
-// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
 /**
  * 
  * # Nwt Progress Bar Viewer API / Componente Vue2
@@ -25780,11 +30481,11 @@ Vue.component("NwtProgressBarViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
 
-// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-box-viewer/nwt-box-viewer.html
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html
 
-// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-box-viewer/nwt-box-viewer.js
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js
 /**
  * 
  * # Nwt Box Viewer API / Componente Vue2
@@ -25861,11 +30562,11 @@ Vue.component("NwtBoxViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-box-viewer/nwt-box-viewer.css
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css
 
-// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-source-viewer/nwt-source-viewer.html
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html
 
-// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-source-viewer/nwt-source-viewer.js
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
 /**
  * 
  */
@@ -25923,11 +30624,11 @@ Vue.component("NwtSourceViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-source-viewer/nwt-source-viewer.css
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css
 
-// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
 /**
  * 
  * # Nwt Process Manager Viewer API / Componente Vue2
@@ -26071,11 +30772,11 @@ Vue.component("NwtProcessManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-settings-viewer/nwt-settings-viewer.html
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html
 
-// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-settings-viewer/nwt-settings-viewer.js
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js
 /**
  * 
  * # Nwt Settings Viewer API / Componente Vue2
@@ -26371,11 +31072,11 @@ Vue.component("NwtSettingsViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-settings-viewer/nwt-settings-viewer.css
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css
 
-// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
 Vue.component("NwtProceduresManagerViewer", {
   template: `<div class="app_procedures_manager_viewer">
     <div class="title">
@@ -26534,11 +31235,11 @@ Vue.component("NwtProceduresManagerViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
 
-// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
 Vue.component("AppProcedureDocumentationViewer", {
   template: `<div class="app_procedure_documentation_viewer">
     <template v-if="markdownContentToHtml">
@@ -26580,11 +31281,11 @@ Vue.component("AppProcedureDocumentationViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
 
-// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-file-explorer/nwt-file-explorer.html
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
 
-// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-file-explorer/nwt-file-explorer.js
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
 Vue.component("NwtFileExplorer", {
   name: "NwtFileExplorer",
   template: `<div class="nwt_file_explorer">
@@ -26915,11 +31616,11 @@ Vue.component("NwtFileExplorer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-file-explorer/nwt-file-explorer.css
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css
 
-// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-code-highlighter/nwt-code-highlighter.html
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html
 
-// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-code-highlighter/nwt-code-highlighter.js
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js
 /**
  * 
  * # Nwt Code Highlighter API / Componente Vue2
@@ -27000,11 +31701,11 @@ Vue.component("NwtCodeHighlighter", {
 });
 
 
-// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-code-highlighter/nwt-code-highlighter.css
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css
 
-// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
 /**
  * 
  */
@@ -27276,11 +31977,11 @@ Vue.component("NwtPromptsManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
 /**
  * 
  * # Nwt Chatgpt Files Manager Viewer API / Componente Vue2
@@ -27499,9 +32200,1784 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
+// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-utils.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormUtils'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormUtils'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtFormUtils = class {
+
+    static fromControlTypeToFullpath(controlType) {
+      trace("NwtVue2.fromControlTypeToFullpath");
+      return NwtPaths.global.relative("assets/framework/nwt-form/control-for", controlType, "control");
+    }
+
+    static validateControlButtons(component) {
+      trace("NwtFormUtils.validateControlButtons");
+      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateControlButtons»");
+      assertion(Array.isArray(component.buttons), "Parameter «buttons» must be array on «NwtFormUtils.validateControlButtons»");
+      for(let index=0; index<component.buttons.length; index++) {
+        const button = component.buttons[index];
+        assertion(typeof button.text === "string", `Parameter «component.buttons[${index}].text» must be string on «NwtFormUtils.validateControlButtons»`);
+        assertion(typeof button.click === "function", `Parameter «component.buttons[${index}].click» must be function on «NwtFormUtils.validateControlButtons»`);
+      }
+    }
+    static validateControlPlaceholder(component) {
+      trace("NwtFormUtils.validateControlPlaceholder");
+      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateControlPlaceholder»");
+      assertion(typeof component.placeholder === "string", "Parameter «component.placeholder» must be string on «NwtFormUtils.validateControlPlaceholder»");
+    }
+    static validateControlExtraClasses(component) {
+      trace("NwtFormUtils.validateControlExtraClasses");
+      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateControlExtraClasses»");
+      assertion(typeof component.extraClasses === "string", "Parameter «component.extraClasses» must be string on «NwtFormUtils.validateControlExtraClasses");
+    }
+    static validateControlValue(component) {
+      trace("NwtFormUtils.validateControlValue");
+      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateControlValue»");
+      assertion(typeof component.value === "string", "Parameter «component.value» must be string on «NwtFormUtils.validateControlValue»");
+    }
+    static validateIsControl(component) {
+      trace("NwtFormUtils.validateIsControl");
+      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateIsControl»");
+      assertion(typeof component.isControl === "string", "Parameter «component.isControl» must be string on «NwtFormUtils.validateIsControl»");
+    }
+
+    static validate = {
+      control: {
+        isControl: (...args) => this.validateIsControl(...args),
+        buttons: (...args) => this.validateControlButtons(...args),
+        placeholder: (...args) => this.validateControlPlaceholder(...args),
+        extraClasses: (...args) => this.validateControlExtraClasses(...args),
+        value: (...args) => this.validateControlValue(...args),
+      }
+    };
+
+    static from = {
+      element: {
+        to: {
+          form: (...args) => NwtFormElementToForm.create(...args).initialize(),
+          control: (...args) => NwtFormElementToControl.create(...args).initialize(),
+          handler: (...args) => NwtFormElementToHandler.create(...args).initialize(),
+        }
+      }
+    };
+
+  };
+
+  return NwtFormUtils;
+
+});
+
+// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormElementToAny'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormElementToAny'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormElementToAny = class {
+
+    static create(element, value, virtualNode) {
+      trace("NwtFormElementToAny.create");
+      return new this(element, value, virtualNode);
+    }
+
+    static vformType = "any";
+
+    constructor(element, value, virtualNode) {
+      trace("NwtFormElementToAny.constructor");
+      assertion(element instanceof HTMLElement, "Parameter «element» must be HTMLElement on «NwtFormElementToAny.constructor»");
+      assertion(typeof value === "object", "Parameter «value» must be object on «NwtFormElementToAny.constructor»");
+      assertion(typeof virtualNode === "object", "Parameter «virtualNode» must be object on «NwtFormElementToAny.constructor»");
+      this.element = element;
+      this.value = value;
+      this.virtualNode = virtualNode;
+      this.component = undefined;
+    }
+
+    initialize() {
+      trace("NwtFormElementToAny.prototype.initialize");
+      NwtVue2.cross.expose.by.element(this.element, this, "vformsPrototype");
+      return this;
+    }
+
+    getValue() {
+      trace("NwtFormElementToAny.prototype.getValue");
+      throw new Error(`Method «getValue» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny.prototype.getValue»`);
+    }
+
+    validate() {
+      trace("NwtFormElementToAny.prototype.validate");
+      throw new Error(`Method «validate» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny»`);
+    }
+
+    propagateSuccess() {
+      trace("NwtFormElementToAny.prototype.propagateSuccess");
+      throw new Error(`Method «propagateSuccess» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny»`);
+    }
+
+    propagateErrors(error) {
+      trace("NwtFormElementToAny.prototype.propagateErrors");
+      throw new Error(`Method «propagateErrors» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny»`);
+    }
+
+    submit() {
+      trace("NwtFormElementToAny.prototype.submit");
+      throw new Error(`Method «submit» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny»`);
+    }
+
+  };
+
+  return NwtFormElementToAny;
+
+});
+
+// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-form.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormElementToForm'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormElementToForm'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtFormElementToForm = class extends NwtFormElementToAny {
+
+    constructor(...args) {
+      super(...args);
+      trace("NwtFormElementToForm.prototype.constructor");
+      const [element, value, virtualNode] = args;
+      assertion(typeof value.onSubmit === "function", "Parameter «onSubmit» must be function on «NwtFormElementToForm.constructor»");
+
+    }
+
+    initialize() {
+      trace("NwtFormElementToForm.prototype.initialize");
+      NwtVue2.cross.expose.by.element(this.element, this, "vformsForm");
+      return this;
+    }
+
+    getValue() {
+      trace("NwtFormElementToForm.prototype.getValue");
+      const controls = NwtDom.find.first.children.where(this.element, "[data-vforms-control]");
+      const formValue = {};
+      for (let index = 0; index < controls.length; index++) {
+        const control = controls[index];
+        formValue[control.vformsControl.getName()] = control.vformsControl.getValue();
+      }
+      return formValue;
+    }
+
+    async validate(notify = false) {
+      trace("NwtFormElementToForm.prototype.validate");
+      const controls = NwtDom.find.first.children.where(this.element, "[data-vforms-control]");
+      const formValue = {};
+      const validationErrors = [];
+      for (let index = 0; index < controls.length; index++) {
+        const control = controls[index];
+        try {
+          const value = await control.vformsControl.validate();
+          formValue[control.vformsControl.getName()] = value;
+        } catch (error) {
+          validationErrors.push(error);
+        }
+      }
+      if (validationErrors.length) {
+        if (notify) {
+          NwtToasts.showError(new Error(NwtErrorUtils.unifyMessages(validationErrors)));
+        }
+        return {
+          isValid: false,
+          errors: validationErrors,
+        };
+      } else {
+        if (notify) {
+          NwtToasts.show({
+            title: "Formulario validado",
+            text: "El formulario está cumplimentado válidamente",
+          });
+        }
+        return {
+          isValid: true,
+          output: formValue,
+        };
+      }
+    }
+
+    async submit(notify = false) {
+      trace("NwtFormElementToForm.prototype.submit");
+      const validation = await this.validate();
+      if (validation.isValid) {
+        await this.value.onSubmit(validation.output);
+        if (notify) {
+          NwtToasts.show({
+            title: "Formulario gestionado correctamente",
+            text: "El formulario fue gestionado correctamente",
+          });
+        }
+        if (typeof this.value.onSuccess === "function") {
+          await this.value.onSuccess(validation.output);
+        }
+      } else {
+        if (notify) {
+          NwtToasts.showError(new Error(NwtErrorUtils.unifyMessages(validation.errors)));
+        }
+        if (typeof this.value.onError === "function") {
+          await this.value.onError(validation.errors);
+        }
+      }
+    }
+
+  };
+
+  return NwtFormElementToForm;
+
+});
+
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-control.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormElementToControl'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormElementToControl'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormElementToControl = class extends NwtFormElementToAny {
+
+    constructor(...args) {
+      super(...args);
+      trace("NwtFormElementToControl.prototype.constructor");
+      const [element, value, virtualNode] = args;
+      assertion(typeof value.name === "string", "Parameter «value.name» must be string on «NwtFormElementToControl.constructor»");
+    }
+
+    initialize() {
+      trace("NwtFormElementToControl.prototype.initialize");
+      assertion(typeof this.element.__vue__ === "object", "Parameter «element» must match a vue component element on «NwtFormElementToHandler.prototype.initialize»");
+      assertion(typeof this.element.__vue__.isControl === "string", "Parameter «element» must match a vue component element that is a «NwtFormControlFor~» instance on «NwtFormElementToHandler.prototype.initialize»");
+      this.component = this.element.__vue__;
+      NwtVue2.cross.expose.by.element(this.element, this, "vformsControl");
+      return this;
+    }
+
+    getName() {
+      trace("NwtFormElementToControl.prototype.getName");
+      return this.value.name;
+    }
+
+    getValue() {
+      trace("NwtFormElementToControl.prototype.getValue");
+      const componentId = this.element.__vue__.$options._componentTag;
+      const tagId = NwtVue2.fromIdToTagNotation(this.element.__vue__.$options._componentTag);
+      assertion("__vue__" in this.element, `Property «element» must match HTMLElement containing vue2 component on «NwtFormElementToControl.prototype.getValue»`);
+      assertion("getValue" in this.element.__vue__, `Property «element.__vue__» instance of «<${tagId}>» must implement «getValue» on «NwtFormElementToControl.prototype.getValue»`);
+      assertion(typeof this.element.__vue__.getValue === "function", `Property «element.__vue__» instance of «<${tagId}>» must implement function «getValue» on «NwtFormElementToControl.prototype.getValue»`);
+      return this.element.__vue__.getValue();
+    }
+
+    validate(notify = false, mustThrow = true) {
+      trace("NwtFormElementToControl.prototype.validate");
+      let value = this.getValue();
+      const validationErrors = [];
+      const scopedAssertion = NwtAsserter.createAssertionFunction(() => {}, error => {
+        console.error(error);
+        throw error
+      });
+      On_valite_by_component: {
+        // BINDING CON NWT-FORM-CONTROL-PROTOTYPE:
+        if(this.component.onValidate) {
+          try {
+            this.component.onValidate(value, scopedAssertion);
+          } catch (error) {
+            validationErrors.push(error);
+          }
+        }
+      }
+      On_validate_by_directive: {
+        if(this.value.onValidate) {
+          try {
+            this.value.onValidate(value, scopedAssertion);
+          } catch (error) {
+            validationErrors.push(error);
+          }
+        }
+      }
+      if(validationErrors.length) {
+        if(notify) {
+          validationErrors.forEach(error => NwtToasts.showError(error));
+        }
+        this.propagateErrors(validationErrors);
+        if(mustThrow) {
+          throw new Error(NwtErrorUtils.unifyMessages(validationErrors));
+        }
+      } else {
+        if(notify) {
+          const controlName = this.getName();
+          NwtToasts.show({
+            title: `Control «${controlName}» validado`,
+            text: `El control para «${controlName}» fue validado correctamente`,
+          });
+        }
+        this.propagateSuccess();
+      }
+      return value;
+    }
+
+    propagateSuccess() {
+      trace("NwtFormElementToControl.prototype.propagateSuccess");
+      Clean_control_errors: {
+        this.component.validationErrors = [];
+      }
+      Clean_handler_errors: {
+        const subhandler = this.element.querySelector("[data-vforms-handler]");
+        if(subhandler) {
+          subhandler.vformsHandler.setErrors([]);
+        }
+      }
+    }
+
+    propagateErrors(errors) {
+      trace("NwtFormElementToControl.prototype.propagateErrors");
+      Update_control_errors: {
+        this.component.validationErrors = errors;
+      }
+      Update_handler_errors: {
+        const subhandler = this.element.querySelector("[data-vforms-handler]");
+        if(subhandler) {
+          subhandler.vformsHandler.setErrors(errors);
+        }
+      }
+    }
+
+  };
+
+  return NwtFormElementToControl;
+
+});
+
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-handler.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormElementToHandler'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormElementToHandler'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormElementToHandler = class extends NwtFormElementToAny {
+
+    initialize() {
+      trace("NwtFormElementToHandler.prototype.initialize");
+      NwtVue2.cross.expose.by.element(this.element, this, "vformsHandler");
+      assertion(typeof this.value === "object", "Parameter «handler» must be object on «NwtFormElementToHandler.prototype.initialize»");
+      assertion(typeof this.value.component === "object", "Parameter «handler.component» must be object on «NwtFormElementToHandler.prototype.initialize»");
+      assertion(this.value.component instanceof Vue, "Parameter «handler.component» must be instance of Vue on «NwtFormElementToHandler.prototype.initialize»");
+      assertion(typeof this.value.component.isControl === "string", "Parameter «handler.component» must be a «NwtFormControlFor~» instance (error:1) on «NwtFormElementToHandler.prototype.initialize»");
+      assertion(typeof this.value.component.validationErrors === "object", "Parameter «handler.component» must be a «NwtFormControlFor~» instance (error:2) on «NwtFormElementToHandler.prototype.initialize»");
+      this.component = this.value.component;
+      return this;
+    }
+
+    setErrors(errors) {
+      trace("NwtFormElementToHandler.prototype.setErrors");
+      this.value.component.validationErrors = errors;
+    }
+
+    getValue() {
+      trace("NwtFormElementToHandler.prototype.getValue");
+      throw new Error(`Method «getValue» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler.prototype.getValue»`);
+    }
+
+    validate() {
+      trace("NwtFormElementToHandler.prototype.validate");
+      throw new Error(`Method «validate» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler»`);
+    }
+
+    propagateSuccess() {
+      trace("NwtFormElementToHandler.prototype.propagateSuccess");
+      throw new Error(`Method «propagateSuccess» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler»`);
+    }
+
+    propagateErrors(error) {
+      trace("NwtFormElementToHandler.prototype.propagateErrors");
+      throw new Error(`Method «propagateErrors» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler»`);
+    }
+
+    submit() {
+      trace("NwtFormElementToHandler.prototype.submit");
+      throw new Error(`Method «submit» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler»`);
+    }
+
+  };
+
+  return NwtFormElementToHandler;
+
+});
+
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.html
+
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.js
+Vue.component("NwtFormBuilder", {
+  name: "NwtFormBuilder",
+  template: `<div class="nwt_form_builder" v-forms.form="{
+        onSubmit: events.onSubmit || \$nwt.Utils.noop,
+        onSuccess: events.onSuccess || console.log,
+        onError: events.onError || console.error,
+    }">
+    <div class="form">
+        <div class="table built_form_table">
+            <div class="thead">
+                <div class="row">
+                    <div class="hcell">
+                        <button class="mini" v-on:click="toggleAllControls">🔓*</button>
+                    </div>
+                    <div class="hcell">
+                        <b>{{ title }}</b>
+                    </div>
+                    <div class="hcell" style="padding-right: 0px;">
+                        <button class="mini" v-on:click="submitForm">▶️</button>
+                    </div>
+                    <div class="hcell">
+                        <button class="mini" v-on:click="validateForm">*✅</button>
+                    </div>
+                </div>
+            </div>
+            <div class="tbody">
+                <div class="row no_hover_row"
+                    v-for="control, controlIndex in formattedControls"
+                    v-bind:key="'form_control_' + controlIndex">
+                    <div class="cell" style="display: block; align-content: start; padding: 2px;">
+                        <button class="mini display_inline_block expanded_vertically_button_1 text_align_top"
+                            :class="{active:control.isOpened}"
+                            v-on:click="() => toggleControlInForm(control)">
+                            {{ control.isOpened ? "🔓" : "🔒" }}
+                        </button>
+                    </div>
+                    <div class="cell" style="align-content: start; padding: 2px;">
+                        <div v-show="control.isOpened === true">
+                            <component :is="control.componentId"
+                                ref="subcontrols"
+                                v-bind="control.props"
+                                v-on="control.listeners"
+                                v-forms.control="{name:control.name || 'control_' + controlIndex}"
+                            />
+                        </div>
+                        <div v-show="control.isOpened === false">
+                            <div class="flex_row centered">
+                                <div class="flex_1">
+                                    <button class="display_inline_block mini" v-on:click="() => toggleControlInForm(control)">
+                                        {{ \$refs.subcontrols && \$refs.subcontrols[controlIndex]?.validationErrors?.length ? "⛔️" : control.props?.isRequired ? "*️⃣" : "❓" }}
+                                    </button>
+                                </div>
+                                <div class="flex_1 pad_left_1">
+                                    <div class="display_inline_block">{{ control.props?.statement }}</div>
+                                </div>
+                                <div class="flex_1 pad_left_1">
+                                    <div class="control_type display_inline_block">{{ control.type }}</div>
+                                </div>
+                                <div class="flex_100 pad_left_1">
+                                </div>
+                                <div class="flex_1 pad_left_1">
+                                    <button class="mini" v-on:click="() => validateControl(controlIndex, control)">✅</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no_hover_row">
+                    <div class="cell empty_cell"></div>
+                    <div class="cell empty_cell"></div>
+                    <div class="cell empty_cell"></div>
+                </div>
+            </div>
+            <div class="tfooter">
+                <div class="row">
+                    <div class="hcell">
+                        <button class="mini" v-on:click="toggleAllControls">🔓*</button>
+                    </div>
+                    <div class="hcell footer_text">
+                        {{ footer }}
+                    </div>
+                    <div class="hcell" style="padding-right: 0px;">
+                        <button class="mini" v-on:click="submitForm">▶️</button>
+                    </div>
+                    <div class="hcell">
+                        <button class="mini" v-on:click="validateForm">*✅</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`,
+  props: {
+    from: {
+      type: Object,
+      default: () => ({})
+    },
+  },
+  data() {
+    trace("NwtFormBuilder.data");
+    assertion(["undefined","string"].indexOf(typeof this.from.title) !== -1, "Parameter «from.title» must be undefined or string on «NwtFormBuilder.data»");
+    assertion(["undefined","string"].indexOf(typeof this.from.footer) !== -1, "Parameter «from.footer» must be undefined or string on «NwtFormBuilder.data»");
+    assertion(["object"].indexOf(typeof this.from.controls) !== -1, "Parameter «from.controls» must be object on «NwtFormBuilder.data»");
+    assertion(["object"].indexOf(typeof this.from.events) !== -1, "Parameter «from.events» must be object on «NwtFormBuilder.data»");
+    return {
+      formattedControls: [],
+      title: this.from.title || undefined,
+      footer: this.from.footer || undefined,
+      controls: this.from.controls || [],
+      events: this.from.events || {},
+    };
+  },
+  methods: {
+    loadControls() {
+      this.formattedControls = this.controls.map(control => {
+        control.componentId = this.getComponentNameForControl(control.type, 'nwt-form-control-for-text-oneline');
+        if(!control.props) control.props = {};
+        if(!control.listeners) control.listeners = {};
+        if(typeof control.isOpened === "undefined") control.isOpened = false;
+        return control;
+      });
+    },
+    getComponentNameForControl(controlSubpath = undefined, ifMissing = undefined) {
+      trace("NwtFormBuilder.methods.getComponentNameForControl");
+      if(typeof controlSubpath === "undefined") {
+        return NwtVue2.fromTagToIdNotation(ifMissing);
+      }
+      assertion(typeof controlSubpath === "string", "Parameter «controlSubpath» must be a string on «NwtFormBuilder.methods.getComponentNameForControl»");
+      return NwtVue2.fromTagToIdNotation(`nwt-form-control-for-${controlSubpath}`);
+    },
+    toggleControlInForm(control) {
+      trace("NwtFormBuilder.methods.toggleControlInForm");
+      control.isOpened = !control.isOpened;
+      this.$forceUpdate(true);
+    },
+    showControlInForm(control) {
+      trace("NwtFormBuilder.methods.showControlInForm");
+      control.isOpened = true;
+      this.$forceUpdate(true);
+    },
+    toggleAllControls() {
+      trace("NwtFormBuilder.methods.toggleAllControls");
+      let hasOpened = false;
+      Iterating_controls_1:
+      for(let index=0; index<this.formattedControls.length; index++) {
+        const formattedControl = this.formattedControls[index];
+        if(formattedControl.isOpened) {
+          hasOpened = true;
+          break Iterating_controls_1;
+        }
+      }
+      Iterating_controls_2: 
+      for(let index=0; index<this.formattedControls.length; index++) {
+        const formattedControl = this.formattedControls[index];
+        formattedControl.isOpened = hasOpened ? false : true;
+      }
+      this.$forceUpdate(true);
+    },
+    async validateForm() {
+      trace("NwtFormBuilder.methods.validateForm");
+      return await this.$el.vformsForm.validate(false);
+    },
+    async submitForm() {
+      trace("NwtFormBuilder.methods.submitForm");
+      return await this.$el.vformsForm.submit(false);
+    },
+    async validateControl(controlIndex, control) {
+      trace("NwtFormBuilder.methods.validateControl");
+      assertion(typeof this.$refs.subcontrols === "object", "No controls to validate were found on «NwtFormBuilder.methods.validateControl»");
+      assertion(controlIndex in this.$refs.subcontrols, `No control by index ${controlIndex} was found on «NwtFormBuilder.methods.validateControl»`);
+      assertion(this.$refs.subcontrols[controlIndex] instanceof Vue, `No vue component on control by index ${controlIndex} was found on «NwtFormBuilder.methods.validateControl»`);
+      assertion(this.$refs.subcontrols[controlIndex].$el instanceof HTMLElement, `No element corresponding to vue component on control by index ${controlIndex} was found on «NwtFormBuilder.methods.validateControl»`);
+      if(control) {
+        this.showControlInForm(control);
+      }
+      return await this.$refs.subcontrols[controlIndex].$el.vformsControl.validate(false, false);
+    }
+  },
+  created() {},
+  mounted() {
+    this.loadControls();
+  },
+});
+
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.css
+
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-prototype.js
+Vue.component("NwtFormControlPrototype", {
+  name: "NwtFormControlPrototype",
+  props: {
+    initialValue: {
+      type: [Boolean,Number,String,Array,Object,Function,undefined],
+      default: () => "",
+    },
+    statement: {
+      type: String,
+      default: () => "",
+    },
+    extraInfo: {
+      type: String,
+      default: () => "",
+    },
+    isRequired: {
+      type: Boolean,
+      default: () => false,
+    },
+    onChange: {
+      type: Function,
+      default: function(event) {
+        trace("NwtFormControlPrototype.props.onChange");
+        return this.$emit("input", event);
+      },
+    },
+    onFormat: {
+      type: Function,
+      default: value => value,
+    },
+    onValidate: {
+      type: Function,
+      default: () => NwtUtils.noop()
+    },
+  },
+  data() {
+    return {
+      isControl: "prototype",
+      isShowingExtraInfo: false,
+      value: this.initialValue,
+      validationErrors: [],
+    };
+  },
+  methods: {
+    toggleExtraInfo() {
+      trace("NwtFormControlPrototype.methods.toggleExtraInfo");
+      this.isShowingExtraInfo = !this.isShowingExtraInfo;
+    },
+    getValue() {
+      trace("NwtFormControlPrototype.methods.getValue");
+      const formattedValue = this.onFormat(this.value);
+      return formattedValue;
+    },
+  }
+});
+
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.html
+
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.js
+Vue.component("NwtFormControlStatement", {
+  name: "NwtFormControlStatement",
+  template: `<div class="nwt_form_control_statement">
+    <div class="pad_bottom_1" v-if="control.statement">
+        <div class="flex_row centered">
+            <div class="flex_100">
+                <button class="display_inline_block mini"
+                    :class="{active:control.isShowingExtraInfo}"
+                    v-on:click="() => control.toggleExtraInfo()">❓</button>
+                <div class="control_statement display_inline_block">{{ control.statement }}</div>
+                <div class="control_type display_inline_block">text/oneline</div>
+            </div>
+            <div class="flex_1">
+                <button class="mini" v-on:click="validateControl">✅</button>
+            </div>
+        </div>
+        <div class="control_extra_info" v-if="control.isShowingExtraInfo">{{ control.extraInfo }}</div>
+    </div>
+</div>`,
+  props: {
+    control: {
+      type: Vue,
+      required: true,
+    }
+  },
+  mixins: [],
+  data() {
+    trace("NWtFormControlStatement.data");
+    return {};
+  },
+  methods: {
+    validateControl() {
+      trace("NwtFormControlStatement.methods.validateControl");
+      if(this.control.vformsControl) {
+        return this.control.vformsControl.validate(false, false);
+      } else {
+        return this.control.validate();
+      }
+    }
+  },
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.css
+
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.html
+
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.js
+Vue.component("NwtFormControlButtons", {
+  name: "NwtFormControlButtons",
+  template: `<div class="nwt_form_control_buttons">
+    <div v-for="button, buttonIndex in control.buttons">
+        <div class="flex_1 pad_left_1"
+            v-bind:key="'button_' + buttonIndex">
+            <button class="mini no_wrap width_100"
+                v-on:click="e => button.click(e)">{{ button.text }}</button>
+        </div>
+    </div>
+</div>`,
+  props: {
+    control: {
+      type: Vue,
+      required: true,
+    }
+  },
+  mixins: [],
+  data() {
+    trace("NwtFormControlButtons.data");
+    return {};
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.css
+
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.html
+
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.js
+Vue.component("NwtFormControlHandler", {
+  name: "NwtFormControlHandler",
+  template: `<div class="nwt_form_control_handler"
+    v-forms.handler="{component:control}">
+    <div class="pad_top_1" v-if="control.validationErrors.length">
+        <div class="handler_message error_message">
+            <div v-if="control.validationErrors.length === 1">
+                <div>⛔️ Error: {{ control.validationErrors[0].message }} ({{ control.validationErrors[0].name }})</div>
+            </div>
+            <div v-else>
+                <div>⛔️ Errores:</div>
+                <div v-for="error, errorIndex in control.validationErrors" v-bind:key="'error_' + errorIndex">
+                    <div>❗️ Razón {{ errorIndex + 1 }}. {{ error.message }} ({{ error.name }})</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`,
+  props: {
+    control: {
+      type: Vue,
+      required: true,
+    }
+  },
+  mixins: [],
+  data() {
+    trace("NwtFormControlHandler.data");
+    return {};
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.css
+
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.html
+
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.js
+Vue.component("NwtFormControlForFileChooserDirectory", {
+  name: "NwtFormControlForFileChooserDirectory",
+  extends: Vue.options.components.NwtFormControlPrototype.options,
+  template: `<div class="nwt_form_control_for_file_chooser directory">
+    File chooser/directory
+</div>`,
+  data() {
+    trace("NwtFormControlForFileChooserDirectory.data");
+    return {};
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.css
+
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.html
+
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.js
+Vue.component("NwtFormControlForFileChooserFile", {
+  name: "NwtFormControlForFileChooserFile",
+  extends: Vue.options.components.NwtFormControlPrototype.options,
+  template: `<div class="nwt_form_control_for_file_chooser file">
+    File chooser/file
+</div>`,
+  data() {
+    trace("NwtFormControlForFileChooserFile.data");
+    return {};
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.css
+
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.html
+
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.js
+Vue.component("NwtFormControlForTextEmail", {
+  name: "NwtFormControlForTextEmail",
+  extends: Vue.options.components.NwtFormControlPrototype.options,
+  template: `<div class="nwt_form_control_for_text email">
+    Text/email
+</div>`,
+  data() {
+    trace("NwtFormControlForTextEmail.data");
+    return {
+      isControl: "text/email",
+    };
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.css
+
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.html
+
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.js
+Vue.component("NwtFormControlForTextPassword", {
+  name: "NwtFormControlForTextPassword",
+  extends: Vue.options.components.NwtFormControlPrototype.options,
+  template: `<div class="nwt_form_control_for_text password">
+    Text/password
+</div>`,
+  data() {
+    trace("NwtFormControlForTextPassword.data");
+    return {
+      isControl: "text/password"
+    };
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.css
+
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.html
+
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.js
+Vue.component("NwtFormControlForTextOneline", {
+  name: "NwtFormControlForTextOneline",
+  extends: Vue.options.components.NwtFormControlPrototype.options,
+  template: `<div class="nwt_form_control for_text oneline" :class="extraClasses">
+    <nwt-form-control-statement :control="this" />
+    <div class="flex_row centered">
+        <div class="flex_100">
+            <input
+                class="width_100"
+                type="text"
+                :placeholder="placeholder"
+                v-model="value"
+                v-on:input="e => onChange(e, this)"
+            />
+        </div>
+        <div class="flex_1 align_self_start" v-if="buttons.length">
+            <nwt-form-control-buttons :control="this" />
+        </div>
+    </div>
+    <nwt-form-control-handler :control="this" />
+</div>`,
+  props: {
+    buttons: {
+      type: Array,
+      default: () => [],
+    },
+    extraClasses: {
+      type: [String],
+      default: () => "",
+    },
+    placeholder: {
+      type: String,
+      default: () => "",
+    },
+  },
+  data() {
+    trace("NwtFormControlForTextOneline.data");
+    return {
+      isControl: "text/oneline",
+    };
+  },
+  methods: {
+    
+  },
+  created() {
+    trace("NwtFormControlForTextOneline.created");
+    NwtFormUtils.validate.control.isControl(this);
+    NwtFormUtils.validate.control.buttons(this);
+    NwtFormUtils.validate.control.extraClasses(this);
+    NwtFormUtils.validate.control.placeholder(this);
+    NwtFormUtils.validate.control.value(this);
+  },
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.css
+
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.html
+
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.js
+Vue.component("NwtFormControlForTextMultiline", {
+  name: "NwtFormControlForTextMultiline",
+  extends: Vue.options.components.NwtFormControlPrototype.options,
+  template: `<div class="nwt_form_control for_text multiline" :class="extraClasses">
+    <div class="pad_bottom_1" v-if="statement">
+        <div>
+            <button class="display_inline_block mini" :class="{active:isShowingExtraInfo}" v-on:click="toggleExtraInfo">
+                {{ isRequired ? "*️⃣" : "❓" }}
+            </button>
+            <div class="control_statement display_inline_block">{{ statement }}</div>
+            <div class="control_type display_inline_block">text/multiline</div>
+        </div>
+        <div class="control_extra_info" v-if="isShowingExtraInfo">{{ extraInfo }}</div>
+    </div>
+    <div class="flex_row centered">
+        <div class="flex_100">
+            <textarea
+                class="width_100"
+                type="text"
+                :placeholder="placeholder"
+                v-model="value"
+                v-on:input="e => onChange(e, this)"
+            />
+        </div>
+        <div class="flex_1 align_self_start">
+            <template v-for="button, buttonIndex in buttons">
+                <div class="flex_1 pad_left_1" v-bind:key="'button_' + buttonIndex">
+                    <button class="mini no_wrap width_100" v-on:click="e => button.click(e)">{{ button.text }}</button>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>`,
+  props: {
+    buttons: {
+      type: Array,
+      default: () => [],
+    },
+    extraClasses: {
+      type: [String],
+      default: () => "",
+    },
+    placeholder: {
+      type: String,
+      default: () => "",
+    },
+  },
+  data() {
+    trace("NwtFormControlForTextMultiline.data");
+    return {
+      isControl: "text/oneline",
+    };
+  },
+  methods: {
+    
+  },
+  created() {
+    trace("NwtFormControlForTextMultiline.created");
+    NwtFormUtils.validate.control.isControl(this);
+    NwtFormUtils.validate.control.buttons(this);
+    NwtFormUtils.validate.control.extraClasses(this);
+    NwtFormUtils.validate.control.placeholder(this);
+    NwtFormUtils.validate.control.value(this);
+  },
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.css
+
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+Vue.component("NwtStarsBackground", {
+  name: "NwtStarsBackground",
+  template: `<div class="nwt_stars_background">
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+</div>`,
+  props: {},
+  mixins: [],
+  data() {
+    return {};
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+Vue.component("NwtMatrixBackground", {
+  name: "NwtMatrixBackground",
+  template: `<div class="nwt_matrix_background">
+    <canvas ref="canvas"></canvas>
+</div>`,
+  props: {},
+  mixins: [],
+  data() {
+    return {};
+  },
+  methods: {
+    load() {
+      trace("NwtMatrixBackground.methods.load");
+      // Initialising the canvas
+      var canvas = this.$refs.canvas, ctx = canvas.getContext('2d');
+      // Setting the width and height of the canvas
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      // Setting up the letters
+      var letters = 'ABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZABCDEFGHIJKLMNOPQRSTUVXYZ';
+      letters = letters.split('');
+      // Setting up the columns
+      var fontSize = 10, columns = canvas.width / fontSize;
+      // Setting up the drops
+      var drops = [];
+      for (var i = 0; i < columns; i++) {
+        drops[i] = 1;
+      }
+      // Setting up the draw function
+      function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, .1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (var i = 0; i < drops.length; i++) {
+          var text = letters[Math.floor(Math.random() * letters.length)];
+          ctx.fillStyle = '#0f0';
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          drops[i]++;
+          if (drops[i] * fontSize > canvas.height && Math.random() > .95) {
+            drops[i] = 0;
+          }
+        }
+      }
+      // Loop the animation
+      setInterval(draw, 33);
+    }
+  },
+  created() { },
+  mounted() {
+    this.load();
+  },
+});
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
+
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCommandContextInterface'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCommandContextInterface'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtCommandContextInterface = {
+    name: "NwtCommandContextInterface",
+    props: {
+      dialog: {
+        type: Object,
+        required: true,
+      },
+      command: {
+        type: Object,
+        required: true,
+      },
+    },
+    data() {
+      trace("NwtCommandContextInterface.data");
+      return {
+        enunciado: "Esto es un enunciado general",
+        tester: false,
+      };
+    },
+    methods: {
+      close() {
+        trace("NwtCommandContextInterface.methods.close");
+        return this.dialog.close();
+      }
+    },
+    created() {
+      trace("NwtCommandContextInterface.created");
+    },
+    mounted() {
+      trace("NwtCommandContextInterface.mounted");
+    },
+  };
+  return NwtCommandContextInterface;
+
+});
+
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCommandFormInterface'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCommandFormInterface'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtCommandFormInterface = {
+    name: "NwtCommandFormInterface",
+    extends: NwtCommandContextInterface,
+    props: {},
+    data() {
+      trace("NwtCommandFormInterface.data");
+      return {
+        questions: []
+      };
+    },
+    methods: {
+      async loadQuestions() {
+        trace("NwtCommandFormInterface.methods.loadQuestions");
+        const questions = await NwtImporter.asyncSource(this.command.resolve("questions.js"));
+        this.questions = questions;
+      }
+    },
+    created() {},
+    async mounted() {
+      trace("NwtCommandFormInterface.mounted");
+      await this.loadQuestions();
+    },
+  };
+
+  return NwtCommandFormInterface;
+
+});
+
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCommandViewInterface'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCommandViewInterface'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtCommandViewInterface = {
+    name: "NwtCommandViewInterface",
+    extends: NwtCommandContextInterface,
+    props: {},
+    data() {
+      trace("NwtCommandViewInterface.data");
+      return {
+        tester: undefined
+      };
+    },
+    methods: {
+      prepareTester() {
+        trace("NwtCommandViewInterface.methods.prepareTester");
+        this.tester = NwtTester.create(`Ejecutando comando «${this.command.getCommandName()}»`, async (tester, assertion) => {
+          await this.command.start.function({ component: this, tester, assertion });
+        });
+      }
+    },
+    created() {
+      trace("NwtCommandViewInterface.created");
+      this.prepareTester();
+    },
+    mounted() {
+      trace("NwtCommandViewInterface.mounted");
+      this.tester.start();
+    },
+  };
+
+  return NwtCommandViewInterface;
+
+});
+
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
+
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
+Vue.component("NwtAnonymousCommandForm", {
+  name: "NwtAnonymousCommandForm",
+  template: `<div class="nwt_anonymous_command_form">
+    <div class="card" v-if="questions && questions.length">
+        <nwt-form-builder
+            :title="\`Formulario de comando «\${command.getCommandName()}»\`"
+            :controls="questions"
+            footer="No olvides enviar el formulario antes de irte"
+        />
+    </div>
+</div>`,
+  props: {},
+  extends: NwtCommandFormInterface,
+  data() {
+    trace("NwtAnonymousCommandForm.data");
+    return {};
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
+
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
+
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
+Vue.component("NwtAnonymousCommandView", {
+  name: "NwtAnonymousCommandView",
+  template: `<div class="nwt_anonymous_command_view">
+    <nwt-tester-viewer :tester="tester" />
+</div>`,
+  props: {},
+  extends: NwtCommandViewInterface,
+  data() {
+    trace("NwtAnonymousCommandView.data");
+    return {};
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
+
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
+
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
+Vue.component("NwtCommandsManagerViewer", {
+  name: "NwtCommandsManagerViewer",
+  template: `<div class="nwt_commands_manager_viewer">
+    <div class="title">
+        <div class="flex_row centered">
+            <div class="flex_100">
+                Comandos disponibles
+            </div>
+            <div class="flex_1">
+                <div class="pad_left_1">
+                    <button class="mini no_wrap" v-on:click="openCommandsDirectory">📂↗️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="pad_1 pad_bottom_0">
+            <div class="flex_row centered">
+                <div class="flex_100">
+                    <input class="width_100 searcher_box"
+                        :class="{is_searching:isSearching}"
+                        type="text"
+                        v-model="searchText"
+                        v-on:input="delayReload"
+                        v-on:keypress.enter="loadCommands"
+                    />
+                </div>
+                <div class="flex_1 pad_left_1">
+                    <button class="mini" v-on:click="loadCommands">
+                        <template v-if="isSearching">⏳</template>
+                        <template v-else>🔎</template>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="pad_1 pad_bottom_0">
+            <div class="table commands_table" :class="{mode_selectable: mode === 'selectable'}">
+                <div class="thead">
+                    <div class="row">
+                        <div class="hcell" v-if="mode === 'selectable'"></div>
+                        <div class="hcell">Comando:</div>
+                        <div class="hcell"></div>
+                    </div>
+                </div>
+                <div class="tbody">
+                    <template v-if="!filteredCommands.length">
+                        <div class="row unicell">
+                            <div class="cell">
+                                <template v-if="!commands.length">No hay comandos actualmente.</template>
+                                <template v-else>No se encontraron comandos coincidentes.</template>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-for="command, commandIndex in filteredCommands" v-else>
+                        <div class="row"
+                            v-bind:key="'command_normal_row_' + commandIndex">
+                            <div class="cell" v-if="mode === 'selectable'"></div>
+                            <div class="cell">{{ command.name }}</div>
+                            <div class="cell">
+                                <div class="flex_row centered">
+                                    <div class="flex_100"></div>
+                                    <div class="flex_1 pad_left_1">
+                                        <button class="mini"
+                                            v-on:click="() => toggleReadme(command.name)">📖</button>
+                                    </div>
+                                    <div class="flex_1 pad_left_1">
+                                        <button class="mini"
+                                            v-on:click="() => startForm(command.name)">📋</button>
+                                    </div>
+                                    <div class="flex_1 pad_left_1">
+                                        <button class="mini"
+                                            v-on:click="() => startView(command.name)">▶️</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no_cells"
+                            v-if="openedReadmes.indexOf(command.name) !== -1"
+                            v-bind:key="'command_readme_row_' + commandIndex">
+                            <div class="cell">
+                                <nwt-source-viewer :source="openedReadmeContents[command.name]" />
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>`,
+  props: {
+    manager: {
+      type: Object,
+      default: () => NwtCommandsManager.global,
+    }
+  },
+  mixins: [],
+  data() {
+    return {
+      mode: "default", // also: selectable
+      reloadTimeout: 1000,
+      reloadTimeoutId: undefined,
+      searchText: "",
+      isSearching: false,
+      commands: [],
+      filteredCommands: [],
+      openedReadmes: [],
+      openedReadmeContents: {},
+    };
+  },
+  methods: {
+    async loadCommands() {
+      trace("NwtCommandsManagerViewer.methods.loadCommands");
+      clearTimeout(this.reloadTimeoutId);
+      this.isSearching = false;
+      this.commands = (await this.manager.listCommands()).map(fullpath => {
+        return {
+          fullpath,
+          name: fullpath.replace(this.manager.basedir, "").replace(/^(\\|\/)+/g, "").replace(/(\\|\/)+COMMAND\.md$/g, "")
+        };
+      });
+      const searchTextLowered = this.searchText.toLowerCase();
+      if(!searchTextLowered) {
+        this.filteredCommands = this.commands.concat([]);
+        return;
+      }
+      this.filteredCommands = this.commands.filter(command => {
+        return command.name.toLowerCase().indexOf(searchTextLowered) !== -1;
+      });
+    },
+    delayReload() {
+      trace("NwtCommandsManagerViewer.methods.delayReload");
+      clearTimeout(this.reloadTimeoutId);
+      this.isSearching = true;
+      this.reloadTimeoutId = setTimeout(() => this.loadCommands(), this.reloadTimeout);
+    },
+    startForm(command) {
+      trace("NwtCommandsManagerViewer.methods.startForm");
+      return this.manager.command(command).start.form();
+    },
+    startView(command) {
+      trace("NwtCommandsManagerViewer.methods.startView");
+      return this.manager.command(command).start.view();
+    },
+    async getReadmeContent(command) {
+      trace("NwtCommandsManagerViewer.methods.getReadmeContent");
+      const commandFile = this.manager.resolve(command, "COMMAND.md");
+      const mdContent = await NwtFilesystem.readFile(commandFile);
+      const htmlContent = marked.parse(mdContent);
+      return htmlContent;
+    },
+    async toggleReadme(command) {
+      trace("NwtCommandsManagerViewer.methods.toggleReadme");
+      const pos = this.openedReadmes.indexOf(command);
+      if(pos === -1) {
+        this.openedReadmeContents[command] = await this.getReadmeContent(command);
+        this.openedReadmes.push(command);
+      } else {
+        delete this.openedReadmeContents[command];
+        this.openedReadmes.splice(pos, 1);
+      }
+    },
+    async openCommandsDirectory() {
+      trace("NwtCommandsManagerViewer.methods.openCommandsDirectory");
+      const fileExplorerBinary = await NwtSettings.global.get("nwt.binary.file-explorer");
+      NwtShell.create().exec(`${JSON.stringify(fileExplorerBinary)} ${JSON.stringify(this.manager.basedir)}`);
+    }
+  },
+  created() {},
+  async mounted() {
+    await this.loadCommands();
+  },
+});
+
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
+
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
+
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCommand'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCommand'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtCommand = class {
+
+    static create(...args) {
+      trace("NwtCommand.create");
+      return new this(...args);
+    }
+
+    static fromCommandIdToComponentId(commandId, options = { asTag: false }) {
+      trace("NwtCommand.fromCommandIdToComponentId");
+      let commandFinalId = commandId.replace(/(\.|\/|\\)./g, match => {
+        return match.substr(1).toUpperCase();
+      });
+      commandFinalId = commandFinalId.substr(0,1).toUpperCase() + commandFinalId.substr(1);
+      if(options.asTag) {
+        commandFinalId = commandFinalId.substr(0,1).toLowerCase() + commandFinalId.substr(1).replace(/[A-Z]/g, match => "-" + match.toLowerCase());
+      }
+      return commandFinalId;
+    }
+
+    constructor(manager, subpaths) {
+      trace("NwtCommand.constructor");
+      this.manager = manager;
+      this.commandPath = subpaths.join("/");
+    }
+
+    resolve(...subpaths) {
+      trace("NwtCommand.prototype.resolve");
+      return this.manager.resolve(this.commandPath, ...subpaths);
+    }
+
+    getCommandName() {
+      trace("NwtCommand.prototype.getCommandName");
+      return this.commandPath;
+    }
+
+    getFormComponentName(options = { ifMissing: undefined }) {
+      trace("NwtCommand.prototype.getFormComponentName");
+      const formComponentName = this.constructor.fromCommandIdToComponentId(`NwtCommandFormFor/${this.getCommandName()}`);
+      const formComponentTag = this.constructor.fromCommandIdToComponentId(`NwtCommandFormFor/${this.getCommandName()}`, { asTag: true });
+      if(typeof options.ifMissing !== "undefined") {
+        if(!(formComponentName in Vue.options.components)) {
+          return options.ifMissing;
+        }
+      }
+      return formComponentTag;
+    }
+
+    getFormComponentPath() {
+      trace("NwtCommand.prototype.getFormComponentPath");
+      return this.resolve("form/form");
+    }
+
+    getViewComponentName(options = { ifMissing: undefined }) {
+      trace("NwtCommand.prototype.getViewComponentName");
+      const viewComponentName = this.constructor.fromCommandIdToComponentId(`NwtCommandViewFor/${this.getCommandName()}`);
+      const viewComponentTag = this.constructor.fromCommandIdToComponentId(`NwtCommandViewFor/${this.getCommandName()}`, { asTag: true });
+      if(typeof options.ifMissing !== "undefined") {
+        if(!(viewComponentName in Vue.options.components)) {
+          return options.ifMissing;
+        }
+      }
+      return viewComponentTag;
+    }
+
+    getViewComponentPath() {
+      trace("NwtCommand.prototype.getViewComponentPath");
+      return this.resolve("view/view");
+    }
+
+    getCommandPath() {
+      trace("NwtCommand.prototype.getCommandPath");
+      return this.resolve("command.js");
+    }
+
+    async installSubcomponent(componentPath = false, strongPolicy = true) {
+      const existsJs = await NwtFilesystem.existsAsFile(componentPath + ".js");
+      const existsHtml = await NwtFilesystem.existsAsFile(componentPath + ".html");
+      const isNotValid = (!existsJs) || (!existsHtml);
+      Strong_policy: {
+        if(!strongPolicy) {
+          break Strong_policy;
+        }
+        assertion(existsJs, `Parameter «\${componentPath}.js» which is now «${componentPath + ".js"}» must point to a readable «*.js» file on «NwtCommand.prototype.installSubcomponent»`);
+        assertion(existsHtml, `Parameter «\${componentPath}.js» which is now «${componentPath + ".html"}» must point to a readable «*.html» file on «NwtCommand.prototype.installSubcomponent»`);
+      }
+      if(isNotValid) {
+        return false;
+      }
+      await NwtImporter.vueComponentByFilesystem(componentPath);
+    }
+
+    async installFormComponent() {
+      trace("NwtCommand.prototype.installFormComponent");
+      return this.installSubcomponent(this.getFormComponentPath(), false);
+    }
+
+    async installViewComponent() {
+      trace("NwtCommand.prototype.installViewComponent");
+      return this.installSubcomponent(this.getViewComponentPath(), false);
+    }
+
+    async validateCommandExists(force = false) {
+      trace("NwtCommand.prototype.validateCommandExists");
+      if((!force) && this.validation) return this.validation;
+      const output = {
+        commandMd: this.resolve("COMMAND.md"),
+        commandJs: this.getCommandPath(),
+        formComponent: this.getFormComponentPath(),
+        viewComponent: this.getViewComponentPath(),
+      };
+      Object.assign(output, {
+        hasCommandMd: await NwtFilesystem.existsAsFile(output.commandMd),
+        hasFormJs: await NwtFilesystem.existsAsFile(output.formComponent + ".js"),
+        hasFormHtml: await NwtFilesystem.existsAsFile(output.formComponent + ".html"),
+        hasViewJs: await NwtFilesystem.existsAsFile(output.viewComponent + ".js"),
+        hasViewHtml: await NwtFilesystem.existsAsFile(output.viewComponent + ".html"),
+        hasCommandJs: await NwtFilesystem.existsAsFile(output.commandJs),
+      });
+      assertion(output.hasCommandMd, `Command «${this.getCommandName()}» must have a «COMMAND.md» file on «NwtCommand.prototype.validateCommandExists»`);
+      assertion(output.hasCommandJs, `Command «${this.getCommandName()}» must have a «command.js» file on «NwtCommand.prototype.validateCommandExists»`);
+      this.validation = output;
+      return output;
+    }
+
+    start = {
+      form: async (parameters = {}) => {
+        trace("NwtCommand.prototype.start.form");
+        await this.validateCommandExists();
+        const commandName = this.getCommandName();
+        await this.installFormComponent();
+        await NwtDialogs.open({
+          title: `Formulario de comando: ${commandName}`,
+          template: `
+            <div>
+              <${this.getFormComponentName({ ifMissing: "nwt-anonymous-command-form" })}
+                :dialog="this"
+                :command="comando"
+                :parameters="parameters"
+              />
+            </div>
+          `,
+          factory: {
+            data: {
+              comando: this,
+              parameters,
+            }
+          }
+        });
+      },
+      view: async (parameters = {}) => {
+        trace("NwtCommand.prototype.start.view");
+        await this.validateCommandExists();
+        const commandName = this.getCommandName();
+        await this.installViewComponent();
+        await NwtDialogs.open({
+          title: `Ejecución de comando: ${commandName}`,
+          template: `
+            <${this.getViewComponentName({ ifMissing: "nwt-anonymous-command-view" })}
+              :dialog="this"
+              :command="comando"
+              :parameters="parameters"
+            />
+          `,
+          factory: {
+            data: {
+              comando: this,
+              parameters,
+            }
+          }
+        });
+      },
+      function: async (injections = {}) => {
+        trace("NwtCommand.prototype.start.function");
+        await this.validateCommandExists();
+        const commandFile = this.resolve("command.js");
+        const commandDefinition = await NwtImporter.asyncSource(commandFile, { command: this, ...injections });
+        return await NwtIterableCommandClass.run(commandDefinition);
+      },
+    };
+
+  };
+
+  return NwtCommand;
+
+});
+
+// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCommandsManager'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCommandsManager'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtCommandsManager = class {
+
+    static create(...args) {
+      return new this(...args);
+    }
+
+    constructor(basedir) {
+      trace("NwtCommandsManager.constructor");
+      this.basedir = basedir;
+    }
+
+    getCommandNameFromMd(commandMd) {
+      return commandMd.replace(this.resolve("") + "/", "").replace(/\/COMMAND\.md$/g, "")
+    }
+
+    resolve(...subpaths) {
+      trace("NwtCommandsManager.prototype.resolve");
+      const path = require("path");
+      return path.resolve(this.basedir, ...subpaths);
+    }
+
+    async listCommands() {
+      trace("NwtCommandsManager.prototype.listCommands");
+      const filepaths = await NwtFilesystem.selectByGlob(this.resolve("**/COMMAND.md"));
+      return filepaths;
+    }
+
+    command = (...subpaths) => NwtCommand.create(this, subpaths);
+
+  };
+
+  NwtCommandsManager.global = NwtCommandsManager.create(NwtPaths.global.relative("assets/framework/nwt-command/registry"));
+
+  return NwtCommandsManager;
+
+});
+
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
 /**
  * 
  * # App Root API
@@ -27549,9 +34025,9 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
 
-// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
 /**
  * 
  * 
@@ -27599,10 +34075,10 @@ Vue.component("MainWindow", {
             </div>
         </div>
     </div>
+    <common-injections />
+    <common-errors />
     <common-dialogs />
     <common-toasts />
-    <common-errors />
-    <common-injections />
 </div>`,
   props: {},
   data() {
@@ -27639,7 +34115,7 @@ Vue.component("MainWindow", {
       trace("MainWindow.methods.startProcedimientos");
       this.$dialogs.open({
         title: "Procedimientos",
-        template: `<nwt-procedures-manager-viewer :dialog="this" />`
+        template: `<nwt-commands-manager-viewer :dialog="this" />`
       });
     },
     startConfiguraciones() {
@@ -27681,15 +34157,15 @@ Vue.component("MainWindow", {
     sortProgramsAlphabeticallyCallback() {
       return (a, b) => {
         trace("MainWindow.methods.sortProgramsAlphabeticallyCallback");
-        if(a.text < b.text) return -1;
-        if(a.text > b.text) return 1;
+        if (a.text < b.text) return -1;
+        if (a.text > b.text) return 1;
         return 0;
       };
     },
 
     reload() {
       trace("MainWindow.methods.reload");
-      if(this.searchFilter) {
+      if (this.searchFilter) {
         this.filteredPrograms = this.allPrograms.filter(program => {
           return program.text.toLowerCase().indexOf(this.searchFilter.toLowerCase()) !== -1;
         }).sort(this.sortProgramsAlphabeticallyCallback());
@@ -27706,6 +34182,92 @@ Vue.component("MainWindow", {
       this.searchTimeout = setTimeout(() => {
         this.reload();
       }, 1000);
+    },
+
+    startNewFeature() {
+      trace("MainWindow.methods.startNewFeature");
+      this.$dialogs.open({
+        title: "Nueva feature",
+        template: `<nwt-form-builder :from="{title,footer,controls,events}" />`,
+        factory: {
+          data: {
+            title: "📜 Formulario de alta de cliente",
+            footer: "❤️ Termine el formulario y envíelo para mayor seguridad.",
+            events: {
+              onSubmit: value => {
+                trace("MainWindow.startNewFeature#form-1#events.onSubmit");
+                console.log("onSubmit", value);
+              },
+              onSuccess: value => {
+                trace("MainWindow.startNewFeature#form-1#events.onSuccess");
+                console.log("onSuccess", value);
+              },
+              onError: value => {
+                trace("MainWindow.startNewFeature#form-1#events.onError");
+                console.log("onError", value);
+              },
+            },
+            controls: [
+              {
+                name: "name",
+                type: "text/oneline",
+                props: {
+                  statement: "Nombre del usuario:",
+                  extraInfo: "Con el nombre del usuario podremos dirigirnos a usted por su nombre.",
+                  placeholder: "Aquí el nombre",
+                  buttons: [
+                    {
+                      text: "Btn 1",
+                      click: NwtUtils.noop
+                    }
+                  ],
+                  onValidate: function(value, assertion) {
+                    trace("MainWindow.startNewFeature#form-1#controls[0].props.onValidate");
+                    assertion(value !== "", "El valor no puede estar vacío");
+                  }
+                },
+                listeners: {
+                  input: (event) => {
+                    trace("MainWindow.startNewFeature#form-1#controls[0].listeners.input");
+                  },
+                },
+              },
+              {
+                name: "address",
+                type: "text/multiline",
+                props: {
+                  placeholder: "Aquí el domicilio",
+                  statement: "Domicilio del usuario:",
+                  extraInfo: "Con el domicilio podremos ir a partirle las piernas.",
+                  initialValue: "Un valor\nDe varias líneas",
+                  isRequired: true,
+                  buttons: [
+                    {
+                      text: "Btn 1",
+                      click: NwtUtils.noop
+                    },{
+                      text: "Btn 2",
+                      click: NwtUtils.noop
+                    }, {
+                      text: "Btn 3",
+                      click: NwtUtils.noop
+                    }
+                  ]
+                }
+              },
+              {
+                name: "opinion",
+                type: "text/oneline",
+                props: {
+                  placeholder: "Aquí la opinión",
+                  statement: "Opinión del usuario:",
+                  extraInfo: "Con la opinión del usuario podremos averiguar si interesa partirle las piernas o no.",
+                }
+              },
+            ],
+          }
+        }
+      });
     }
 
   },
@@ -27720,9 +34282,9 @@ Vue.component("MainWindow", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
 
-// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
 /**
  * 
  * # App Payload API
@@ -27748,15 +34310,27 @@ Vue.component("MainWindow", {
   const AppPayload = class {
 
     static inject() {
-      window.addEventListener("app-mounted", function (event) {
+      window.addEventListener("app-mounted", async function (event) {
         trace("AppPayload.inject@app-mounted");
-        setTimeout(async () => {
-          // event.detail.component.startConfiguraciones();
-          // event.detail.component.startGestorDePrompts();
-          // event.detail.component.startExploradorDeFicheros();
-          // event.detail.component.startGestorDeFicherosDeChatgpt();
-          event.detail.component.startProcedimientos();
-        }, 400);
+        On_development: {
+          await NwtCodeComposer.loadBeautifyJs();
+        }
+        await NwtTimer.timeout(400);
+        // event.detail.component.startConfiguraciones();
+        // event.detail.component.startGestorDePrompts();
+        // event.detail.component.startExploradorDeFicheros();
+        // event.detail.component.startGestorDeFicherosDeChatgpt();
+        // event.detail.component.startProcedimientos();
+        event.detail.component.startNewFeature();
+        window.dispatchEvent(new CustomEvent("app-started"));
+      });
+      window.addEventListener("app-started", async function(event) {
+        trace("AppPayload.inject@app-started");
+        await NwtLiveInjector.start();
+        await NwtTimer.timeout(400);
+        Final_payload: {
+          
+        }
       });
     }
 

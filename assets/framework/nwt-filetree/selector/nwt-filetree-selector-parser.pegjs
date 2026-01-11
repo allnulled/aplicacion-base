@@ -7,6 +7,7 @@
   const formatAst = function(ast, text) {
     
   	let output = {
+      $type: "nfs-object",
       isDirectory: null,
       isFile: null,
       isJson: null,

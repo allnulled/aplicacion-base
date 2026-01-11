@@ -22,6 +22,13 @@
       this.filetree = filetree;
     }
 
+    static async list(fullpath, arg1) {
+      trace("NwtFiletreeNode.list");
+      const info = await NwtFiletreeSelectorInterpreter.interpret(fullpath);
+      console.log(info);
+      // @TODO
+    }
+
     static async init(fullpath, arg1) {
       trace("NwtFiletreeNode.init");
       const info = await NwtFiletreeSelectorInterpreter.interpret(fullpath);
@@ -48,6 +55,12 @@
       const info = await NwtFiletreeSelectorInterpreter.interpret(fullpath);
       console.log(info);
       // @TODO
+    }
+
+    list(subpath, arg1) {
+      trace("NwtFiletreeNode.prototype.init");
+      const fullpath = this.filetree.resolve(subpath);
+      return this.constructor.list(fullpath);
     }
 
     init(subpath, arg1) {

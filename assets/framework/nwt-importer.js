@@ -67,16 +67,23 @@
 
     static requireNewly(subpath) {
       trace("NwtImporter.requireNewly");
-      if (NwtEnvironment.isNWJS) {
+      if(NwtEnvironment.isNode) {
         const fullpath = require("path").resolve(subpath);
         delete require.cache[fullpath];
         return require(fullpath);
       }
     }
 
+    static async asyncSource(subpath, parameters = {}, scope = window) {
+      trace("NwtImporter.asyncSource");
+      const fullpath = require("path").resolve(subpath);
+      const content = await require("fs").promises.readFile(fullpath, "utf8");
+      return this.asyncFunction(content, parameters, scope);
+    }
+
     static async vueComponentByFilesystem(subpath) {
       trace("NwtImporter.vueComponentByFilesystem");
-      if (NwtEnvironment.isNWJS) {
+      if (NwtEnvironment.hasGlobal) {
         const fs = require("fs");
         const path = require("path");
         const htmlPath = path.resolve(subpath + ".html");
@@ -119,6 +126,13 @@
       const values = Object.values(parameters);
       const asyncFunction = new AsyncFunction(...keys, code);
       return asyncFunction.call(scope, ...values);
+    }
+
+    static asyncFactory(code, parameters = []) {
+      trace("NwtImporter.asyncFunction");
+      const AsyncFunction = (async () => { }).constructor;
+      const asyncFactory = new AsyncFunction(...parameters, code);
+      return asyncFactory;
     }
 
   };

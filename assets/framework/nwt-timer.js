@@ -75,7 +75,30 @@
     }
 
     static secondsDiff(date1, date2) {
-      return this.fromMillisecondsToSeconds(date1 - date2);
+      return this.fromMillisecondsToSeconds(date1.getTime() - date2.getTime());
+    }
+
+    static Cronometer = class {
+
+      static create(...args) {
+        return new this(...args);
+      }
+
+      constructor(startDate = false) {
+        trace("NwtTimer.Cronometer.constructor");
+        this.startDate = startDate || new Date();
+      }
+
+      start(force = false) {
+        trace("NwtTimer.Cronometer.prototype.start");
+        this.startDate = new Date();
+      }
+
+      stop() {
+        trace("NwtTimer.Cronometer.prototype.stop");
+        return this.diff = NwtTimer.secondsDiff(new Date(), this.startDate);
+      }
+
     }
 
     static timeout(ms) {

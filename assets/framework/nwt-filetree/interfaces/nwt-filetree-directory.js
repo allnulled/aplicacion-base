@@ -15,7 +15,17 @@
 
     constructor(...args) {
       super(...args);
-      // Property this.filtree is already set here.
+      // Property this.filetree is already set here.
+    }
+
+    static async read(fullpath, parameters, shortener) {
+      trace("NwtFiletreeDirectory.read");
+      const info = await NwtFiletreeSelectorInterpreter.interpret(fullpath, parameters, shortener);
+      console.log(info);
+      console.log(info);
+      console.log(info);
+      // @TODO
+      return info;
     }
 
   };

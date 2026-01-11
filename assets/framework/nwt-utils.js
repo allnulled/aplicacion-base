@@ -54,6 +54,7 @@
     static noop() { }
 
     static trify(callback, onFail) {
+      trace("NwtUtils.trify");
       try {
         return callback();
       } catch (error) {
@@ -74,11 +75,21 @@
             return undefined; // "[Circular]";
           }
           seen.add(value);
-        } else if(typeof value === "function") {
-          return {$type:"function",source:value.toString()};
+        } else if (typeof value === "function") {
+          return { $type: "function", source: value.toString() };
         }
         return value;
       }, space);
+    }
+
+    static getSignatureOfArray(array) {
+      trace("NwtPersister.low.getSignatureOfArray");
+      const signature = [];
+      for(let index=0; index<array.length; index++) {
+        const item = array[index];
+        signature.push(typeof item);
+      }
+      return signature.join(",");
     }
 
     static sortObjectByKeys(obj) {
@@ -95,12 +106,12 @@
       trace("NwtUtils.filterObjectProperties");
       const keys = Object.keys(obj);
       const output = {};
-      for(let index=0; index<keys.length; index++) {
+      for (let index = 0; index < keys.length; index++) {
         const key = keys[index];
         const value = obj[key];
         try {
           const result = filter(key, value);
-          if(result) {
+          if (result) {
             output[key] = value;
           }
         } catch (error) {
@@ -113,7 +124,7 @@
     static extractPathsFromFiles(files) {
       trace("NwtUtils.extractPathsFromFiles");
       const paths = [];
-      for(let index=0; index<files.length; index++) {
+      for (let index = 0; index < files.length; index++) {
         const file = files[index];
         paths.push(file.path);
       }
@@ -127,6 +138,28 @@
         title: "Texto copiado",
         text: "El texto fue copiado con éxito"
       });
+    }
+
+    static getSurroundingLines(content, line, column, linesBefore = 3, linesAfter = 3) {
+      trace("NwtUtils.getSurroundingLines");
+      try {
+        const lines = content.split(/\r?\n/);
+        const start = Math.max(0, line - 1 - linesBefore);
+        const end = Math.min(lines.length, line + linesAfter);
+        const result = [];
+        for (let i = start; i < end; i++) {
+          const lineNumber = i + 1;
+          let text = lines[i];
+          if (lineNumber === line) {
+            result.push(`!${column}:${lineNumber.toString().padStart(8 - (column+"").length)} | ${text}`);
+          } else {
+            result.push(`${lineNumber.toString().padStart(10)} | ${text}`);
+          }
+        }
+        return result;
+      } catch (err) {
+        return [`Error leyendo archivo: ${err.message}`];
+      }
     }
 
   };

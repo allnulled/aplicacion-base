@@ -41,7 +41,7 @@ Vue.component("MainWindow", {
       trace("MainWindow.methods.startProcedimientos");
       this.$dialogs.open({
         title: "Procedimientos",
-        template: `<nwt-procedures-manager-viewer :dialog="this" />`
+        template: `<nwt-commands-manager-viewer :dialog="this" />`
       });
     },
     startConfiguraciones() {
@@ -83,15 +83,15 @@ Vue.component("MainWindow", {
     sortProgramsAlphabeticallyCallback() {
       return (a, b) => {
         trace("MainWindow.methods.sortProgramsAlphabeticallyCallback");
-        if(a.text < b.text) return -1;
-        if(a.text > b.text) return 1;
+        if (a.text < b.text) return -1;
+        if (a.text > b.text) return 1;
         return 0;
       };
     },
 
     reload() {
       trace("MainWindow.methods.reload");
-      if(this.searchFilter) {
+      if (this.searchFilter) {
         this.filteredPrograms = this.allPrograms.filter(program => {
           return program.text.toLowerCase().indexOf(this.searchFilter.toLowerCase()) !== -1;
         }).sort(this.sortProgramsAlphabeticallyCallback());
@@ -108,6 +108,92 @@ Vue.component("MainWindow", {
       this.searchTimeout = setTimeout(() => {
         this.reload();
       }, 1000);
+    },
+
+    startNewFeature() {
+      trace("MainWindow.methods.startNewFeature");
+      this.$dialogs.open({
+        title: "Nueva feature",
+        template: `<nwt-form-builder :from="{title,footer,controls,events}" />`,
+        factory: {
+          data: {
+            title: "📜 Formulario de alta de cliente",
+            footer: "❤️ Termine el formulario y envíelo para mayor seguridad.",
+            events: {
+              onSubmit: value => {
+                trace("MainWindow.startNewFeature#form-1#events.onSubmit");
+                console.log("onSubmit", value);
+              },
+              onSuccess: value => {
+                trace("MainWindow.startNewFeature#form-1#events.onSuccess");
+                console.log("onSuccess", value);
+              },
+              onError: value => {
+                trace("MainWindow.startNewFeature#form-1#events.onError");
+                console.log("onError", value);
+              },
+            },
+            controls: [
+              {
+                name: "name",
+                type: "text/oneline",
+                props: {
+                  statement: "Nombre del usuario:",
+                  extraInfo: "Con el nombre del usuario podremos dirigirnos a usted por su nombre.",
+                  placeholder: "Aquí el nombre",
+                  buttons: [
+                    {
+                      text: "Btn 1",
+                      click: NwtUtils.noop
+                    }
+                  ],
+                  onValidate: function(value, assertion) {
+                    trace("MainWindow.startNewFeature#form-1#controls[0].props.onValidate");
+                    assertion(value !== "", "El valor no puede estar vacío");
+                  }
+                },
+                listeners: {
+                  input: (event) => {
+                    trace("MainWindow.startNewFeature#form-1#controls[0].listeners.input");
+                  },
+                },
+              },
+              {
+                name: "address",
+                type: "text/multiline",
+                props: {
+                  placeholder: "Aquí el domicilio",
+                  statement: "Domicilio del usuario:",
+                  extraInfo: "Con el domicilio podremos ir a partirle las piernas.",
+                  initialValue: "Un valor\nDe varias líneas",
+                  isRequired: true,
+                  buttons: [
+                    {
+                      text: "Btn 1",
+                      click: NwtUtils.noop
+                    },{
+                      text: "Btn 2",
+                      click: NwtUtils.noop
+                    }, {
+                      text: "Btn 3",
+                      click: NwtUtils.noop
+                    }
+                  ]
+                }
+              },
+              {
+                name: "opinion",
+                type: "text/oneline",
+                props: {
+                  placeholder: "Aquí la opinión",
+                  statement: "Opinión del usuario:",
+                  extraInfo: "Con la opinión del usuario podremos averiguar si interesa partirle las piernas o no.",
+                }
+              },
+            ],
+          }
+        }
+      });
     }
 
   },

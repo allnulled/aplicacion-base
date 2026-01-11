@@ -15,7 +15,7 @@
 
     constructor(...args) {
       super(...args);
-      // Property this.filtree is already set here.
+      // Property this.filetree is already set here.
     }
 
   };

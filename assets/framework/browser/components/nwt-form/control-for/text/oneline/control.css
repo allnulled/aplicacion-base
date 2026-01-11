@@ -1,0 +1,18 @@
+.nwt_form_control {}
+
+.nwt_form_builder .control_extra_info,
+.nwt_form_control .control_extra_info {
+    color: #666;
+    font-size: 9px;
+}
+
+.nwt_form_builder .control_type,
+.nwt_form_control .control_type {
+    font-size: 8px;
+    background-color: rgb(202, 202, 238);
+    color: #444;
+    border-radius: 3pt;
+    padding-left: 8px;
+    padding-right: 8px;
+    border: 1px solid #BBB;
+}

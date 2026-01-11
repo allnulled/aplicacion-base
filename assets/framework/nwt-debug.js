@@ -22,7 +22,7 @@
       for(let index=0; index<args.length; index++) {
         const arg = args[index];
         try {
-          const data = NwtUtils.jsonify(arg, 2);
+          const data = typeof arg === "string" ? arg : NwtUtils.jsonify(arg, 2);
           console.log(`[debug][global] Parameter ${index+1}/${args.length} of type ${typeof data}: ${data}`);
           output.push(data);
         } catch (error) {

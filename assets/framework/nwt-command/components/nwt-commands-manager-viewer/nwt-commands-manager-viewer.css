@@ -1,0 +1,13 @@
+.commands_table > .thead > .row,
+.commands_table > .tbody > .row {
+    display: grid;
+    grid-template-columns: 100fr auto;
+    align-items: center;
+}
+
+.commands_table > .tbody > .row.no_cells {
+    grid-template-columns: 100%;
+}
+.commands_table.mode_selectable > .tbody > .row {
+    grid-template-columns: 30px 100fr auto;
+}

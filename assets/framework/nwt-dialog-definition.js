@@ -145,9 +145,10 @@
           const finalData = Object.assign({}, {
             // 1. Propiedades sobreescribibles:
             value: "",
-          }, userData, {
+          }, {
             // 2. Propiedades no sobreescribibles:
             deepness: 101,
+          }, userData, {
             state: that.$state,
             process: that.$process,
             definition: that,

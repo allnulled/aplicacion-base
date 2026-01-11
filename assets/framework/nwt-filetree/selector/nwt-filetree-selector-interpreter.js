@@ -23,13 +23,15 @@
       return tokens.map(element => element.to).join("");
     }
 
-    static async interpret(fullpathOrAst, parameters = false, shortener = true) {
+    static async interpret(fullpathOrAst, userParameters = false, shortener = true) {
       trace("NwtFiletreeSelectorInterpreter.interpret");
-      const ast = typeof fullpathOrAst === "object" ? fullpathOrAst : NwtFiletreeSelector.parse(fullpath);
-      if(parameters === false) {
-        return ast;
+      const isObject = typeof fullpathOrAst === "object";
+      if(isObject) {
+        assertion(fullpathOrAst.$type === "nfs-object", "Parameter «fullpathOrAst» only accepts «nfs-object» types on «NwtFiletreeSelector.interpret»");
       }
+      const ast = isObject ? fullpathOrAst : NwtFiletreeSelector.parse(fullpathOrAst);
       ast.hasInterpretedTokens = NwtUtils.copify(ast.hasTokens);
+      const parameters = userParameters || {};
       Add_parametric_ids: {
         const parametricIds = Object.keys(ast.hasParametricIds);
         for(let index = 0; index < parametricIds.length; index++) {

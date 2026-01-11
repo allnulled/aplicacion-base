@@ -13,6 +13,36 @@ Vue.component("ProcedureConcatenarFicherosCsvPorNodejsViewer", {
     };
   },
   methods: {},
+  async created2() {
+    const files = this.dialog.context.parameters.files;
+    const output = this.dialog.context.parameters.output;
+    this.tester = NwtTester.create("Concatenar blabla", async (tester, assertion) => {
+      assertion(true, "Procedimiento iniciado");
+      await NwtIterableProcedure.run({
+        // Datos:
+        collection: files,
+        // Inyecciones:
+        dialog: this.dialog,
+        process: this.dialog.process,
+        component: this,
+        tester: this.tester,
+        progressBar: tester.progressBar,
+        // Hooks:
+        onFunctionStart: async function() {
+          this.progressBar.total = this.collection.length;
+        },
+        onIteration: async function () {
+          assertion(true, `Iterating for ${this.index} time`);
+          const { data: csvRows } = await NwtCsv.fromCsvFileToJson(this.item);
+          console.log(csvRows);
+        },
+        onFunctionEnd: async function() {
+
+        }
+      });
+      assertion(true, "Procedimiento finalizado");
+    });
+  },
   async created() {
     trace("ProcedureConcatenarFicherosCsvPorNodejsViewer.created");
     try {
