@@ -3,7 +3,7 @@
 ## Instalar
 
 ```sh
-git clone https://github.com/allnulled/tentuputosoftwarehombreten.git .
+git clone https://github.com/allnulled/aplicacion-base.git .
 npm run install:all
 ```
 
