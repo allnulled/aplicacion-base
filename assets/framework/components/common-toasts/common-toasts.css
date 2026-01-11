@@ -1,0 +1,30 @@
+.common_toasts_container {}
+.common_toasts_container_2 {
+    position: fixed;
+    top: auto;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    opacity: 0.8;
+}
+.common_toasts {}
+.common_toasts_container_3 {
+    max-height: 250px;
+    overflow-y: scroll;
+    padding-top: 4px;
+    border: 1px solid #888;
+    background-color: #EEE;
+    box-shadow: 2px 2px 0px black;
+    background-color: transparent;
+}
+.common_toasts_container_4 {
+    padding-bottom: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.common_toasts_window.window {
+    
+}
+.common_toasts_window.window > .window-body {
+    height: 100%;
+}

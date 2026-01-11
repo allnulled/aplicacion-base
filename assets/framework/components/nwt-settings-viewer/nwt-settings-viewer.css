@@ -1,0 +1,27 @@
+.nwt_settings_viewer {}
+
+.nwt_settings_viewer .settings_table {
+    
+}
+
+.nwt_settings_viewer .settings_table > .thead > .row,
+.nwt_settings_viewer .settings_table > .tbody > .row {
+    display: grid;
+    grid-template-columns: 30px 100fr 50fr auto;
+    align-items: center;
+}
+
+.nwt_settings_viewer .settings_table > .thead > .row > .hcell,
+.nwt_settings_viewer .settings_table > .tbody > .row > .cell {
+    display: grid;
+    align-items: center;
+    
+}
+
+.nwt_settings_viewer .settings_table > .thead > .row > .hcell.buttons_cell {
+    min-width: 50px;
+}
+
+.nwt_settings_viewer .settings_table > .tbody > .row.last_row_of_list > .cell {
+    
+}

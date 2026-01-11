@@ -1,0 +1,21 @@
+Olvida contextos anteriores.
+
+Te voy a pasar un texto en japonés, necesito un CSV con las columnas:
+
+    página
+    línea
+    contexto
+    actor
+    texto
+
+Los requisitos son:
+
+    Limpiar el texto.
+    Extraer nombres y diálogos.
+    Obtener un CSV con las columnas especificadas.
+
+Y ya está, hasta aquí.
+
+El OCR está hecho con Tesseract jpn pero está muy dañado, haz lo que puedas.
+
+Solo CSV, sin explicaciones.

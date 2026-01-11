@@ -1,0 +1,77 @@
+<div class="procedure_form">
+    <div class="title">Formulario para concatenar ficheros por node.js</div>
+    <div class="card">
+        <div>
+            <div><b>Parámetro 1.</b> Ficheros a concatenar:</div>
+            <div>
+                <div class="">
+                    <button class="width_100 text_align_left" v-on:click="selectFiles">Seleccionar ficheros</button>
+                </div>
+                <div class="text_align_center">
+                    o
+                </div>
+                <div class="">
+                    <div class="dropzone"
+                        v-on:dragover.prevent
+                        v-on:dragleave="() => isDragging = false"
+                        v-on:drop.prevent="onDrop"
+                        :class="{ dragover: isDragging }">
+                        Arrastrar aquí los ficheros
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="pad_vertical_1">
+            <div><b>Parámetro 2.</b> Fichero de salida:</div>
+            <button class="width_100 text_align_left" v-on:click="selectOutputFile">Seleccionar fichero de salida</button>
+        </div>
+        <hr />
+        <div class="pad_vertical_1">
+            <div><b>Parámetro 3.</b> Separador de ficheros:</div>
+            <textarea class="width_100" spellcheck="false" v-model="value.separator" placeholder="Texto separador entre ficheros aquí" v-on:input="reloadCode"></textarea>
+        </div>
+        <template v-if="value.files && value.files.length">
+            <hr />
+            <div class="pad_vertical_1">
+                <div class="pad_bottom_2"><b>Respuesta 1.</b> Ficheros seleccionados:</div>
+                <div class="scrollable no_wrap">
+                    <div v-for="file, fileIndex in value.files" v-bind:key="'file_' + fileIndex">
+                        <div> 📃 {{ fileIndex + 1 }}. {{ file }} </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template v-if="value.output">
+            <hr />
+            <div class="pad_vertical_1">
+                <div class="pad_bottom_2"><b>Respuesta 2.</b> Fichero de salida seleccionado:</div>
+                <div>📂 {{ value.output }}</div>
+            </div>
+        </template>
+        <template v-if="true">
+            <hr />
+            <div class="pad_vertical_1">
+                <div class="pad_bottom_2"><b>Respuesta 3.</b> Separador entre ficheros:</div>
+                <pre>{{ JSON.stringify(value.separator) }}</pre>
+            </div>
+        </template>
+        <hr />
+        <div>
+            <b>Código equivalente:</b>
+        </div>
+        <template v-if="!isLoadingCode">
+            <nwt-code-highlighter syntax="javascript">NwtProceduresManager.global.findById("Concatenar ficheros por node.js").startViewer({{ $nwt.Utils.jsonify(value, 2) }});</nwt-code-highlighter>
+            <hr />
+        </template>
+        <div class="flex_row centered">
+            <div class="flex_100"></div>
+            <div class="flex_1 pad_left_1">
+                <button class="" v-on:click="() => dialog.accept(value)" :disabled="(value.files.length && value.output) ? false : true">Aceptar</button>
+            </div>
+            <div class="flex_1 pad_left_1">
+                <button class="" v-on:click="() => dialog.cancel()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>

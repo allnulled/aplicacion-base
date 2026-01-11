@@ -1,0 +1,28 @@
+.main_window_container {}
+.main_window {}
+
+table>tbody>tr>* {
+    padding: 0px;
+}
+
+.width_30px {
+    width: 30px;
+}
+
+.main_window .programs_table {
+    width: 100%;
+}
+
+.main_window .table.programs_table {
+    display: block;
+}
+.main_window .table.programs_table > .thead > .row,
+.main_window .table.programs_table > .tbody > .row {
+    display: grid;
+    grid-template-columns: auto 100fr auto;
+    align-items: center;
+}
+
+.main_window .table.programs_table > .tbody > .row > .cell {
+    height: auto;
+}

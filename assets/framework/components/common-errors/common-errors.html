@@ -1,0 +1,82 @@
+<div class="common_errors_container">
+    <div class="common_errors_container_2"
+        v-if="activeErrors.length">
+        <div class="window common_errors_window">
+            <div class="title-bar">
+                <div class="title-bar-text">Lista de errores</div>
+                <div class="title-bar-controls">
+                    <button aria-label="Close"
+                        v-on:click="closeAllErrors"></button>
+                </div>
+            </div>
+            <div class="window-body has-space window_box_container">
+                <div class="window_box pad_1">
+                    <div>
+                        <div>Selecciona un error:</div>
+                        <hr />
+                        <div>
+                            <div class="display_inline_block pad_right_1 pad_bottom_1">
+                                <button class=""
+                                    :class="{active: selectedError === -1}"
+                                    style="min-width: 10px;"
+                                    v-on:click="() => selectedError = -1">
+                                    *
+                                </button>
+                            </div>
+                            <div class="display_inline_block pad_right_1 pad_bottom_1"
+                                v-bind:key="'error_option_' + errorIndex"
+                                v-for="error, errorIndex in activeErrors">
+                                <button class="mini"
+                                    :class="{active: selectedError === errorIndex}"
+                                    v-on:click="() => selectedError = errorIndex">
+                                    ❗️ {{ abbreviateMessage(error.message) }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="intermediate_row" v-if="(selectedError === -1) && (activeErrors.length > 1)">
+                        <hr />
+                        <button class="width_100" v-on:click="copyAllErrorsToClipboard">📄 Copiar todos los errores</button>
+                    </div>
+                    <div class="error_panel_container" 
+                        v-show="(selectedError === errorIndex) || (selectedError === -1)"
+                        v-bind:key="'error_panel_' + errorIndex"
+                        v-for="error, errorIndex in activeErrors">
+                        <hr />
+                        <div class="error_panel">
+                            <div class="error_name">
+                                <div class="flex_row centered">
+                                    <div class="flex_100">
+                                        <div class="display_inline_block">Id: {{ error.message }}</div>
+                                    </div>
+                                    <div class="flex_1">
+                                        <button class="no_wrap"
+                                            v-on:click="() => closeErrorByIndex(errorIndex)">Cerrar ❎</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="error_name">Tipo: {{ error.name }}</div>
+                            <hr />
+                            <div class="error_message">Mensaje: {{ error.message }}</div>
+                            <hr />
+                            <div class="float_right position_relative">
+                                <button class="position_absolute_top_right no_wrap"
+                                    style="top:4px; right:4px;"
+                                    v-on:click="() => copyErrorToClipboard(error)">📄 Copiar error</button>
+                            </div>
+                            <div class="error_stack"
+                                ref="stack_tracer">Traza completa del error:\n\n{{ error.name }} » {{ error.message }}\n\n{{ error.stack
+                                }}\n\n\n
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <hr />
+                        <p class="no_wrap">Momento del error: {{ $nwt.Timer.fromDateToString(currentDate) }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

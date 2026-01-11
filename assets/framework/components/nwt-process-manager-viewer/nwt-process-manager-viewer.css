@@ -1,0 +1,6 @@
+.process_manager_viewer_table > .thead > .row,
+.process_manager_viewer_table > .tbody > .row {
+    display: grid;
+    grid-template-columns: 100fr 160px 80px 80px 40px auto;
+    align-items: center;
+}

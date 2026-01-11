@@ -1,0 +1,1 @@
+npx nodemon -w nwt-filetree-selector-parser.pegjs -x "bash nwt-filetree-selector-parser.build.sh"

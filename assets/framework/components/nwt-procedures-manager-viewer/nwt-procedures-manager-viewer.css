@@ -1,0 +1,55 @@
+.app_procedures_manager_viewer .table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.app_procedures_manager_viewer .table.procedures_table .row {
+    display: grid;
+    grid-template-columns: 40px 100fr auto;
+    /* ajusta anchos */
+    align-items: center;
+}
+
+.app_procedures_manager_viewer .table.procedures_table .row.documentation_row {
+    grid-template-columns: 1fr;
+}
+
+.app_procedures_manager_viewer .table > .thead > .row > .hcell {
+    padding: 3px;
+}
+
+.app_procedures_manager_viewer .table > .tbody > .row > .cell {
+    white-space: nowrap;
+    vertical-align: middle;
+    font-size: 10px;
+}
+
+.app_procedures_manager_viewer .table > .tbody > .row > .cell.cell_3 {
+    padding-top: 0px;
+}
+
+.app_procedures_manager_viewer .cell_1 {
+    text-align: right;
+}
+
+.app_procedures_manager_viewer .cell_2 {
+    text-align: left;
+}
+
+.app_procedures_manager_viewer .cell_3 {
+    text-align: left;
+}
+
+.app_procedures_manager_viewer .table.procedures_table .row.procedure_type_workflow {
+    background-color: #afcaf9;
+}
+
+.app_procedures_manager_viewer .table.procedures_table .row.procedure_type_prototype {
+    background-color: #e2d5bd;
+}
+
+.app_procedures_manager_viewer .table.procedures_table .row.procedure_type_converter {
+    background-color: #e1d3d3;
+}

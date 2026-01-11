@@ -1,0 +1,9 @@
+<div class="progress_bar_viewer">
+    <div role="progressbar" :class="{animate: progressBar.percent !== '100.00%'}">
+        <div :style="{width: progressBar.percent}">
+            <div class="progress_bar_message">
+                <div>{{ progressBar.percent }}</div>
+            </div>
+        </div>
+    </div>
+</div>

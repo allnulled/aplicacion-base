@@ -1,0 +1,41 @@
+.common_errors_container {}
+.common_errors_container_2 {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.common_errors {}
+.common_errors_window.window {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 20px;
+    left: 10px;
+    right: 10px;
+    bottom: 20px;
+}
+.common_errors_window.window:before,
+.common_errors_window.window > .title-bar {
+    background-color: #cb3c3c;
+}
+.common_errors_window.window > .window-body {
+    height: 100%;
+}
+.error_stack {
+    border: 1px solid black;
+    padding: 4px;
+    white-space: pre;
+    overflow: scroll;
+    background-color: #e98d8d;
+    color: black;
+}
+.error_panel_container {
+    padding: 0px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.error_panel {
+    
+}

@@ -1,0 +1,37 @@
+const projectRoot = require("path").resolve(__dirname, "..", "..");
+const bundlelistExternal = require(__dirname + "/bundlelist-external.js");
+const bundlelistCommon = require(__dirname + "/bundlelist-common.js");
+
+module.exports = [
+  `${projectRoot}/assets/framework/win7/win7.css`,
+  `${projectRoot}/assets/framework/win7/win7-patches.css`,
+  `${projectRoot}/assets/framework/css/one-framework/one-framework.css`,
+  `${projectRoot}/assets/framework/css/custom/custom.css`,
+  `${projectRoot}/assets/framework/vue2/vue2.js`,
+  `${projectRoot}/assets/framework/socket.io-client/socket.io-client.js`,
+  `${projectRoot}/assets/framework/marked/marked.js`,
+  `${projectRoot}/assets/framework/papaparse/papaparse.min.js`,
+  `${projectRoot}/assets/framework/reloader/reloadable.js`,
+  ...bundlelistCommon,
+  `${projectRoot}/assets/framework/directives/v-resizable.js`,
+  `${projectRoot}/assets/framework/directives/v-draggable.js`,
+  `${projectRoot}/assets/framework/directives/v-focus.js`,
+  `${projectRoot}/assets/framework/components/common-dialogs/common-dialogs`,
+  `${projectRoot}/assets/framework/components/common-toasts/common-toasts`,
+  `${projectRoot}/assets/framework/components/common-errors/common-errors`,
+  `${projectRoot}/assets/framework/components/common-injections/common-injections`,
+  `${projectRoot}/assets/framework/components/nwt-tester-viewer/nwt-tester-viewer`,
+  `${projectRoot}/assets/framework/components/nwt-tester-node/nwt-tester-node`,
+  `${projectRoot}/assets/framework/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer`,
+  `${projectRoot}/assets/framework/components/nwt-box-viewer/nwt-box-viewer`,
+  `${projectRoot}/assets/framework/components/nwt-source-viewer/nwt-source-viewer`,
+  `${projectRoot}/assets/framework/components/nwt-process-manager-viewer/nwt-process-manager-viewer`,
+  `${projectRoot}/assets/framework/components/nwt-settings-viewer/nwt-settings-viewer`,
+  `${projectRoot}/assets/framework/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer`,
+  `${projectRoot}/assets/framework/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer`,
+  `${projectRoot}/assets/framework/components/nwt-file-explorer/nwt-file-explorer`,
+  `${projectRoot}/assets/framework/components/nwt-code-highlighter/nwt-code-highlighter`,
+  `${projectRoot}/assets/framework/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer`,
+  `${projectRoot}/assets/framework/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer`,
+  ...bundlelistExternal,
+];

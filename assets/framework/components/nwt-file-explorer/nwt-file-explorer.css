@@ -1,0 +1,23 @@
+.file_explorer_table > .tbody > .row {
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 32px 32px 100fr 70px;
+    align-items: center;
+}
+.file_explorer_table > .tbody > .row > .cell.clickable {
+    cursor: pointer;
+}
+
+.file_explorer_selected_nodes_container {
+    height: 120px;
+    overflow: scroll;
+    border: 1px solid #333;
+    padding: 4px;
+    resize: vertical;
+}
+
+.file_explorer_selected_nodes_table > .tbody > .row {
+    display: grid;
+    grid-template-columns: 32px 100fr;
+    align-items: center;
+}
