@@ -33,6 +33,10 @@ Está el framework y la aplicación (sobre él):
 
 ## Pendientes
 
+- Hay que normalizar todavía la API de forms:
+   - Incorporar controles de formulario suficientes
+   - v-forms.control
+   - v-forms.form
 - Simular los procesos de un sistema operativo para que no se quede funcionando un procedimiento.
 - Cachear los resultados de cada parte del procedimiento para que no repita pasos que ya se hicieron.
 - Completar los comandos iniciales
