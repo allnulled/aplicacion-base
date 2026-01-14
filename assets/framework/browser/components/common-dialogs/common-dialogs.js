@@ -1,6 +1,8 @@
 /**
  * 
- * # Nwt Dialogs API
+ * # Common Dialogs
+ * 
+ * API para diálogos.
  * 
  * ## Exposición
  * 

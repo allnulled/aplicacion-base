@@ -1,3 +1,58 @@
+/**
+ * 
+ * # NwtFormBuilder
+ * 
+ * Componente vue2 que construye formularios.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtFormBuilder
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-form-builder
+ *   :from="{
+ *     title: "Título del formulario",
+ *     footer: "Pie del formulario",
+ *     controls: [{
+ *       type: "text/oneline", # El {tipo/subtipo} de control que están en assets/framework/browser/components/nwt-form/control-for/{tipo/subtipo}
+ *       props: {},            # Propiedades que se le pasan como parámetros. Son parámetros específicos del control en sí.
+ *       listeners: {},        # Eventos que se le pasan como parámetros. Son parámetros específicos del control en sí también.
+ *     },{
+ *       ...
+ *     }]
+ *     events: {
+ *       onSubmit: (data) => {},
+ *       onSuccess: (data) => {},
+ *       onError: (data) => {},
+ *     }
+ *   }"
+ * />
+ * ```
+ * 
+ * Esta API se cruza con varias APIs:
+ * 
+ * - `assets/framework/browser/components/nwt-form/control-prototype.js`:
+ *    - este es el componente base de todos los controles de formulario (heredan de él)
+ * - `assets/framework/browser/directives/v-forms.js`:
+ *    - utiliza las directivas de v-forms para componer un formulario paralelo que respeta la jerarquía del DOM
+ *    - ese formulario paralelo permite composición de campos, validación y envío automáticamente
+ * 
+ * Y luego están todos los controles que hay bajo:
+ * 
+ * - `assets/framework/browser/components/nwt-form/control-for/{tipo/subtipo}/control.{html,css,js}`
+ *    - file-chooser/directory
+ *    - file-chooser/file
+ *    - file-chooser/new-file
+ *    - text/oneline
+ *    - text/multiline
+ * 
+ * En el momento de documentar esto, estos son los controles disponibles. Para estar actualizado, revisar el directorio.
+ * 
+ */
 Vue.component("NwtFormBuilder", {
   name: "NwtFormBuilder",
   template: $template,

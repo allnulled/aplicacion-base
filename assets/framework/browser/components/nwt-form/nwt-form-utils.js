@@ -1,3 +1,39 @@
+/**
+ * 
+ * # NwtFormUtils
+ * 
+ * API de utilidades varias de un formulario.
+ * 
+ * Esta API se utiliza por:
+ * 
+ *  - La directiva de v-forms, para no poner toda la lógica dentro de la directiva, y tenerla reutilizable desde fuera
+ *  - El control prototipo base, para algunas validaciones que deberían hacerse para cumplir los estándares de los Form Controls.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormUtils
+ * NwtFramework.FormUtils
+ * Vue.prototype.$nwt.FormUtils
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Usados por la API de Form Controls:
+ * NwtFormUtils.fromControlTypeToFullpath("text/oneline");          // returns "assets/framework/browser/components/nwt-form/control-for/{tipo/subtipo}/control"
+ * NwtFormUtils.validateControlButtons(componenteControlVue2);      // lanzará error si el componente no cumple con la opción de buttons
+ * NwtFormUtils.validateControlPlaceholder(componenteControlVue2);  // lanzará error si el componente no cumple con la opción de placeholder
+ * NwtFormUtils.validateControlExtraClasses(componenteControlVue2); // lanzará error si el componente no cumple con la opción de extraClasses
+ * NwtFormUtils.validateControlValue(componenteControlVue2);        // lanzará error si el componente no cumple con la opción de value
+ * NwtFormUtils.validateIsControl(componenteControlVue2);           // lanzará error si el componente no cumple con la opción de isControl
+ * // Usados por la API de v-forms:
+ * NwtFormUtils.from.element.to.form(htmlElement);     // se aplica cuando v-forms.form y equivale a:    NwtFormElementToForm.create(...args).initialize()
+ * NwtFormUtils.from.element.to.control(htmlElement);  // se aplica cuando v-forms.control y equivale a: NwtFormElementToControl.create(...args).initialize()
+ * NwtFormUtils.from.element.to.handler(htmlElement);  // se aplica cuando v-forms.handler y equivale a: NwtFormElementToHandler.create(...args).initialize()
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -15,7 +51,7 @@
 
     static fromControlTypeToFullpath(controlType) {
       trace("NwtVue2.fromControlTypeToFullpath");
-      return NwtPaths.global.relative("assets/framework/nwt-form/control-for", controlType, "control");
+      return NwtPaths.global.relative("assets/framework/browser/components/nwt-form/control-for", controlType, "control");
     }
 
     static validateControlButtons(component) {

@@ -1,3 +1,33 @@
+/**
+ * 
+ * # NwtFormElementToControl
+ * 
+ * API de los elementos que usan la directiva `v-forms.control`.
+ * 
+ * Hereda de `NwtFormElementToAny`.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormElementToControl
+ * NwtFramework.FormElementToControl
+ * Vue.prototype.$nwt.FormElementToControl
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Métodos sobreescritos de padre:
+ * NwtFormElementToControl.prototype.initialize()
+ * NwtFormElementToControl.prototype.getValue()
+ * NwtFormElementToControl.prototype.validate(notify = false, mustThrow = true)
+ * NwtFormElementToControl.prototype.propagateSuccess()
+ * NwtFormElementToControl.prototype.propagateErrors(errors)
+ * // Métodos propios:
+ * NwtFormElementToControl.prototype.getName()
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {

@@ -17,7 +17,8 @@
     "ui": "nw .",
     "ui:desktop": "nw .",
     "ui:server": "npx http-server -c-1 . -o",
-    "ui:own": "~/.node-webkit/nw/nwjs-sdk-v0.82.0-linux-x64/nw ."
+    "ui:own": "~/.node-webkit/nw/nwjs-sdk-v0.82.0-linux-x64/nw .",
+    "tree:generate": "tree -I node_modules -I 'trash*' -I temporary . > tree.txt"
   },
   "devDependencies": {
     "@allnulled/javadoc-brute": "^1.0.4"

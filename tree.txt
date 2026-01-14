@@ -1,0 +1,588 @@
+.
+├── assets
+│   ├── app
+│   │   ├── app-payload.js
+│   │   ├── app-root.js
+│   │   ├── components
+│   │   │   └── main-window
+│   │   │       ├── main-window.css
+│   │   │       ├── main-window.html
+│   │   │       └── main-window.js
+│   │   ├── files
+│   │   │   └── chatgpt-calls.txt
+│   │   ├── procedures
+│   │   │   ├── Concatenar ficheros CSV por node.js
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Concatenar ficheros por node.js
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Convertir de CSV a CSV expandido especificación 1 por chatgpt
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Convertir de CSV a CSV paginado por node.js
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Convertir de PDF a PNG por imagemagick
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Convertir de PNG a PNG recortado por imagemagick
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Convertir de PNG a TXT en japonés por yomitoku
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Convertir de TXT en japonés a CSV especificación 1 por chatgpt
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Flujo desde PDF en japonés especificación 1 hasta CSV con traducción y análisis gramatical
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Prototipo básico
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   ├── Prototipo para subprocedimientos
+│   │   │   │   ├── definition.js
+│   │   │   │   ├── form
+│   │   │   │   │   ├── form.css
+│   │   │   │   │   ├── form.html
+│   │   │   │   │   └── form.js
+│   │   │   │   ├── PROCEDURE.md
+│   │   │   │   └── viewer
+│   │   │   │       ├── viewer.css
+│   │   │   │       ├── viewer.html
+│   │   │   │       └── viewer.js
+│   │   │   └── Prototipo para tester y progressBar
+│   │   │       ├── definition.js
+│   │   │       ├── form
+│   │   │       │   ├── form.css
+│   │   │       │   ├── form.html
+│   │   │       │   └── form.js
+│   │   │       ├── PROCEDURE.md
+│   │   │       └── viewer
+│   │   │           ├── viewer.css
+│   │   │           ├── viewer.html
+│   │   │           └── viewer.js
+│   │   └── strings
+│   │       ├── Prompt para expandir CSV con traducción y análisis gramatical especificación 1.txt
+│   │       └── Prompt para obtener CSV a partir de TXT en japonés especificación 1.txt
+│   ├── builder
+│   │   ├── build-docs.js
+│   │   ├── bundle.js
+│   │   ├── bundlelist-common.js
+│   │   ├── bundlelist-external.js
+│   │   ├── bundlelist.js
+│   │   └── vuebundler.js
+│   ├── dist.css
+│   ├── dist.js
+│   ├── external
+│   │   ├── highlight.js
+│   │   │   ├── highlight.min.js
+│   │   │   ├── styles
+│   │   │   │   └── default.min.css
+│   │   │   └── syntaxes
+│   │   │       ├── css.min.js
+│   │   │       ├── javascript.min.js
+│   │   │       └── xml.min.js
+│   │   ├── js-beautify
+│   │   │   ├── js-beautify.js
+│   │   │   └── js-beautify.min.js
+│   │   └── qunit
+│   │       ├── qunit.css
+│   │       ├── qunit.js
+│   │       ├── qunit.min.css
+│   │       └── qunit.min.js
+│   └── framework
+│       ├── browser
+│       │   ├── components
+│       │   │   ├── common-dialogs
+│       │   │   │   ├── common-dialogs.css
+│       │   │   │   ├── common-dialogs.html
+│       │   │   │   └── common-dialogs.js
+│       │   │   ├── common-errors
+│       │   │   │   ├── common-errors.css
+│       │   │   │   ├── common-errors.html
+│       │   │   │   └── common-errors.js
+│       │   │   ├── common-injections
+│       │   │   │   ├── common-injections.css
+│       │   │   │   ├── common-injections.html
+│       │   │   │   └── common-injections.js
+│       │   │   ├── common-toasts
+│       │   │   │   ├── common-toasts.css
+│       │   │   │   ├── common-toasts.html
+│       │   │   │   └── common-toasts.js
+│       │   │   ├── nwt-box-viewer
+│       │   │   │   ├── nwt-box-viewer.css
+│       │   │   │   ├── nwt-box-viewer.html
+│       │   │   │   └── nwt-box-viewer.js
+│       │   │   ├── nwt-chatgpt-files-manager-viewer
+│       │   │   │   ├── nwt-chatgpt-files-manager-viewer.css
+│       │   │   │   ├── nwt-chatgpt-files-manager-viewer.html
+│       │   │   │   └── nwt-chatgpt-files-manager-viewer.js
+│       │   │   ├── nwt-code-highlighter
+│       │   │   │   ├── nwt-code-highlighter.css
+│       │   │   │   ├── nwt-code-highlighter.html
+│       │   │   │   └── nwt-code-highlighter.js
+│       │   │   ├── nwt-file-explorer
+│       │   │   │   ├── nwt-file-explorer.css
+│       │   │   │   ├── nwt-file-explorer.html
+│       │   │   │   └── nwt-file-explorer.js
+│       │   │   ├── nwt-form
+│       │   │   │   ├── builder
+│       │   │   │   │   ├── builder.css
+│       │   │   │   │   ├── builder.html
+│       │   │   │   │   └── builder.js
+│       │   │   │   ├── control-buttons
+│       │   │   │   │   ├── nwt-form-control-buttons.css
+│       │   │   │   │   ├── nwt-form-control-buttons.html
+│       │   │   │   │   └── nwt-form-control-buttons.js
+│       │   │   │   ├── control-for
+│       │   │   │   │   ├── file-chooser
+│       │   │   │   │   │   ├── directory
+│       │   │   │   │   │   │   ├── control.css
+│       │   │   │   │   │   │   ├── control.html
+│       │   │   │   │   │   │   └── control.js
+│       │   │   │   │   │   ├── file
+│       │   │   │   │   │   │   ├── control.css
+│       │   │   │   │   │   │   ├── control.html
+│       │   │   │   │   │   │   └── control.js
+│       │   │   │   │   │   └── new-file
+│       │   │   │   │   │       ├── control.css
+│       │   │   │   │   │       ├── control.html
+│       │   │   │   │   │       └── control.js
+│       │   │   │   │   └── text
+│       │   │   │   │       ├── email
+│       │   │   │   │       │   ├── control.css
+│       │   │   │   │       │   ├── control.html
+│       │   │   │   │       │   └── control.js
+│       │   │   │   │       ├── multiline
+│       │   │   │   │       │   ├── control.css
+│       │   │   │   │       │   ├── control.html
+│       │   │   │   │       │   └── control.js
+│       │   │   │   │       ├── oneline
+│       │   │   │   │       │   ├── control.css
+│       │   │   │   │       │   ├── control.html
+│       │   │   │   │       │   └── control.js
+│       │   │   │   │       └── password
+│       │   │   │   │           ├── control.css
+│       │   │   │   │           ├── control.html
+│       │   │   │   │           └── control.js
+│       │   │   │   ├── control-handler
+│       │   │   │   │   ├── nwt-form-control-handler.css
+│       │   │   │   │   ├── nwt-form-control-handler.html
+│       │   │   │   │   └── nwt-form-control-handler.js
+│       │   │   │   ├── control-prototype.js
+│       │   │   │   ├── control-statement
+│       │   │   │   │   ├── nwt-form-control-statement.css
+│       │   │   │   │   ├── nwt-form-control-statement.html
+│       │   │   │   │   └── nwt-form-control-statement.js
+│       │   │   │   ├── nwt-form-element-to-any.js
+│       │   │   │   ├── nwt-form-element-to-control.js
+│       │   │   │   ├── nwt-form-element-to-form.js
+│       │   │   │   ├── nwt-form-element-to-handler.js
+│       │   │   │   └── nwt-form-utils.js
+│       │   │   ├── nwt-matrix-background
+│       │   │   │   ├── nwt-matrix-background.css
+│       │   │   │   ├── nwt-matrix-background.html
+│       │   │   │   └── nwt-matrix-background.js
+│       │   │   ├── nwt-procedure-documentation-viewer
+│       │   │   │   ├── nwt-procedure-documentation-viewer.css
+│       │   │   │   ├── nwt-procedure-documentation-viewer.html
+│       │   │   │   └── nwt-procedure-documentation-viewer.js
+│       │   │   ├── nwt-procedures-manager-viewer
+│       │   │   │   ├── nwt-procedures-manager-viewer.css
+│       │   │   │   ├── nwt-procedures-manager-viewer.html
+│       │   │   │   └── nwt-procedures-manager-viewer.js
+│       │   │   ├── nwt-process-manager-viewer
+│       │   │   │   ├── nwt-process-manager-viewer.css
+│       │   │   │   ├── nwt-process-manager-viewer.html
+│       │   │   │   └── nwt-process-manager-viewer.js
+│       │   │   ├── nwt-progress-bar-viewer
+│       │   │   │   ├── nwt-progress-bar-viewer.css
+│       │   │   │   ├── nwt-progress-bar-viewer.html
+│       │   │   │   └── nwt-progress-bar-viewer.js
+│       │   │   ├── nwt-prompts-manager-viewer
+│       │   │   │   ├── nwt-prompts-manager-viewer.css
+│       │   │   │   ├── nwt-prompts-manager-viewer.html
+│       │   │   │   └── nwt-prompts-manager-viewer.js
+│       │   │   ├── nwt-settings-viewer
+│       │   │   │   ├── nwt-settings-viewer.css
+│       │   │   │   ├── nwt-settings-viewer.html
+│       │   │   │   └── nwt-settings-viewer.js
+│       │   │   ├── nwt-source-viewer
+│       │   │   │   ├── nwt-source-viewer.css
+│       │   │   │   ├── nwt-source-viewer.html
+│       │   │   │   └── nwt-source-viewer.js
+│       │   │   ├── nwt-stars-background
+│       │   │   │   ├── nwt-stars-background.css
+│       │   │   │   ├── nwt-stars-background.html
+│       │   │   │   └── nwt-stars-background.js
+│       │   │   ├── nwt-tester-node
+│       │   │   │   ├── nwt-tester-node.css
+│       │   │   │   ├── nwt-tester-node.html
+│       │   │   │   └── nwt-tester-node.js
+│       │   │   └── nwt-tester-viewer
+│       │   │       ├── nwt-tester-viewer.css
+│       │   │       ├── nwt-tester-viewer.html
+│       │   │       └── nwt-tester-viewer.js
+│       │   ├── css
+│       │   │   ├── custom
+│       │   │   │   └── custom.css
+│       │   │   └── one-framework
+│       │   │       └── one-framework.css
+│       │   ├── directives
+│       │   │   ├── v-draggable.js
+│       │   │   ├── v-focus.js
+│       │   │   ├── v-forms.js
+│       │   │   ├── v-resizable.js
+│       │   │   └── v-resizable-simple.js
+│       │   ├── ejs
+│       │   │   ├── ejs.js
+│       │   │   └── ejs.min.js
+│       │   ├── marked
+│       │   │   └── marked.js
+│       │   ├── papaparse
+│       │   │   ├── papaparse.js
+│       │   │   └── papaparse.min.js
+│       │   ├── reloader
+│       │   │   ├── package.json
+│       │   │   ├── package-lock.json
+│       │   │   ├── reloadable.js
+│       │   │   ├── reloader.js
+│       │   │   └── starter.js
+│       │   ├── socket.io-client
+│       │   │   └── socket.io-client.js
+│       │   ├── vue2
+│       │   │   ├── vue2.js
+│       │   │   └── vue2.min.js
+│       │   └── win7
+│       │       ├── win7.css
+│       │       └── win7-patches.css
+│       ├── nwt-argumenter.js
+│       ├── nwt-array-utils.js
+│       ├── nwt-asserter.js
+│       ├── nwt-ast-tree-class.js
+│       ├── nwt-ast-tree-template-source.js
+│       ├── nwt-boot.js
+│       ├── nwt-cache-directory.js
+│       ├── nwt-chatgpt.js
+│       ├── nwt-clipboard.js
+│       ├── nwt-code-composer.js
+│       ├── nwt-collection-utils.js
+│       ├── nwt-command
+│       │   ├── components
+│       │   │   ├── mixins
+│       │   │   │   ├── nwt-command-context-interface.js
+│       │   │   │   ├── nwt-command-form-interface.js
+│       │   │   │   └── nwt-command-view-interface.js
+│       │   │   ├── nwt-anonymous-command-form
+│       │   │   │   ├── nwt-anonymous-command-form.css
+│       │   │   │   ├── nwt-anonymous-command-form.html
+│       │   │   │   └── nwt-anonymous-command-form.js
+│       │   │   ├── nwt-anonymous-command-view
+│       │   │   │   ├── nwt-anonymous-command-view.css
+│       │   │   │   ├── nwt-anonymous-command-view.html
+│       │   │   │   └── nwt-anonymous-command-view.js
+│       │   │   └── nwt-commands-manager-viewer
+│       │   │       ├── nwt-commands-manager-viewer.css
+│       │   │       ├── nwt-commands-manager-viewer.html
+│       │   │       └── nwt-commands-manager-viewer.js
+│       │   ├── interfaces
+│       │   ├── nwt-command.js
+│       │   ├── nwt-commands-manager.js
+│       │   └── registry
+│       │       └── nwt
+│       │           ├── util.csv.concatenation
+│       │           │   ├── command.js
+│       │           │   ├── COMMAND.md
+│       │           │   ├── form
+│       │           │   │   ├── form.css
+│       │           │   │   ├── form.html
+│       │           │   │   └── form.js
+│       │           │   ├── questions.js
+│       │           │   └── view
+│       │           │       ├── view.css
+│       │           │       ├── view.html
+│       │           │       └── view.js
+│       │           └── util.txt.concatenation
+│       │               ├── command.js
+│       │               ├── COMMAND.md
+│       │               └── questions.js
+│       ├── nwt-csv.js
+│       ├── nwt-debug.js
+│       ├── nwt-dialog-definition.js
+│       ├── nwt-dom.js
+│       ├── nwt-environment.js
+│       ├── nwt-errors-manager.js
+│       ├── nwt-error-utils.js
+│       ├── nwt-exporter.js
+│       ├── nwt-file-chooser.js
+│       ├── nwt-filesystem.js
+│       ├── nwt-filetree
+│       │   ├── interfaces
+│       │   │   ├── nwt-filetree-directory.js
+│       │   │   ├── nwt-filetree-file.js
+│       │   │   ├── nwt-filetree-glob.js
+│       │   │   ├── nwt-filetree-json.js
+│       │   │   ├── nwt-filetree-node.js
+│       │   │   └── nwt-filetree-property.js
+│       │   ├── nwt-filetree.js
+│       │   └── selector
+│       │       ├── nwt-filetree-selector-interpreter.js
+│       │       ├── nwt-filetree-selector.js
+│       │       ├── nwt-filetree-selector-parser.build.sh
+│       │       ├── nwt-filetree-selector-parser.dev.sh
+│       │       ├── nwt-filetree-selector-parser.fix.js
+│       │       ├── nwt-filetree-selector-parser.js
+│       │       └── nwt-filetree-selector-parser.pegjs
+│       ├── nwt-globalizer.js
+│       ├── nwt-importer.js
+│       ├── nwt-injection.js
+│       ├── nwt-interruption
+│       │   ├── nwt-interruptible.js
+│       │   ├── nwt-interruption-handler.js
+│       │   ├── nwt-interruption.js
+│       │   └── test.js
+│       ├── nwt-iterable-class.js
+│       ├── nwt-iterable-command-class.js
+│       ├── nwt-iterable-function.js
+│       ├── nwt-js-controllers
+│       │   ├── nwt-js-controller.js
+│       │   ├── nwt-js-return-controller.js
+│       │   └── nwt-js-throw-controller.js
+│       ├── nwt-json-storer.js
+│       ├── nwt-lazy-loader.js
+│       ├── nwt-live-injector.js
+│       ├── nwt-object-utils.js
+│       ├── nwt-pack.js
+│       ├── nwt-paths.js
+│       ├── nwt-persister
+│       │   ├── api.js
+│       │   ├── nwt-directory-persister.js
+│       │   ├── nwt-file-persister.js
+│       │   ├── nwt-jsonl-persister.js
+│       │   ├── nwt-json-persister.js
+│       │   ├── nwt-persister.js
+│       │   ├── README.md
+│       │   ├── test
+│       │   │   ├── dir1
+│       │   │   ├── dir2
+│       │   │   ├── file-2.jsonl
+│       │   │   └── file.json
+│       │   └── test.js
+│       ├── nwt-procedure-definition.js
+│       ├── nwt-procedure-injections.js
+│       ├── nwt-procedure-seed.js
+│       ├── nwt-procedures-manager.js
+│       ├── nwt-process.js
+│       ├── nwt-process-manager.js
+│       ├── nwt-progress-bar.js
+│       ├── nwt-prompts-manager.js
+│       ├── nwt-proxy-chain.js
+│       ├── nwt-randomizer.js
+│       ├── nwt-settings.js
+│       ├── nwt-shell.js
+│       ├── nwt-string-shortener
+│       │   └── global.json
+│       ├── nwt-string-shortener.js
+│       ├── nwt-strings.js
+│       ├── nwt-templates
+│       │   ├── nwt-templates.js
+│       │   ├── templates
+│       │   │   └── nwt
+│       │   │       ├── controller-to-return.js
+│       │   │       ├── controller-to-throw.js
+│       │   │       ├── hello-user.js
+│       │   │       ├── nwt-ast-tree
+│       │   │       │   └── template.js
+│       │   │       ├── nwt-errors-manager
+│       │   │       │   ├── error-details
+│       │   │       │   ├── error-header
+│       │   │       │   └── viewer
+│       │   │       │       ├── template.css
+│       │   │       │       ├── template.html
+│       │   │       │       └── template.js
+│       │   │       ├── nwt-example-1
+│       │   │       │   └── template.js
+│       │   │       └── nwt-iterable-function
+│       │   │           └── template.js
+│       │   ├── tjs.build.sh
+│       │   ├── tjs-parser.fix.js
+│       │   ├── tjs-parser.js
+│       │   └── tjs-parser.pegjs
+│       ├── nwt-tester.js
+│       ├── nwt-timer.js
+│       ├── nwt-tracer.js
+│       ├── nwt-utils.js
+│       └── nwt-vue2.js
+├── documentation
+│   ├── browser.components.common-dialogs.md
+│   ├── browser.components.common-errors.md
+│   ├── browser.components.common-injections.common-injections.js.md
+│   ├── browser.components.common-toasts.md
+│   ├── browser.components.nwt-procedures-manager-viewer.nwt-procedures-manager-viewer.js.md
+│   ├── browser.components.nwt-process-manager-viewer.nwt-process-manager-viewer.js.md
+│   ├── browser.components.nwt-progress-bar-viewer.nwt-progress-bar-viewer.js.md
+│   ├── browser.components.nwt-settings-viewer.nwt-settings-viewer.js.md
+│   ├── browser.components.nwt-source-viewer.nwt-source-viewer.js.md
+│   ├── browser.components.nwt-tester-ui.nwt-tester-viewer.nwt-tester-viewer.js.md
+│   ├── nwt-argumenter.js.md
+│   ├── nwt-array-utils.js.md
+│   ├── nwt-asserter.js.md
+│   ├── nwt-ast-tree-class.js.md
+│   ├── nwt-ast-tree-template-source.js.md
+│   ├── nwt-boot.js.md
+│   ├── nwt-cache-directory.js.md
+│   ├── nwt-chatgpt.js.md
+│   ├── nwt-clipboard.js.md
+│   ├── nwt-code-composer.js.md
+│   ├── nwt-collection-utils.js.md
+│   ├── nwt-command.nwt-command.js.md
+│   ├── nwt-command.nwt-commands-manager.js.md
+│   ├── nwt-csv.js.md
+│   ├── nwt-debug.js.md
+│   ├── nwt-dialog-definition.js.md
+│   ├── nwt-dom.js.md
+│   ├── nwt-environment.js.md
+│   ├── nwt-errors-manager.js.md
+│   ├── nwt-error-utils.js.md
+│   ├── nwt-exporter.js.md
+│   ├── nwt-file-chooser.js.md
+│   ├── nwt-filesystem.js.md
+│   ├── nwt-filetree.md
+│   ├── nwt-globalizer.js.md
+│   ├── nwt-importer.js.md
+│   ├── nwt-injection.js.md
+│   ├── nwt-interruption.md
+│   ├── nwt-iterable-class.js.md
+│   ├── nwt-iterable-command-class.js.md
+│   ├── nwt-iterable-function.js.md
+│   ├── nwt-js-controllers.md
+│   ├── nwt-json-storer.js.md
+│   ├── nwt-lazy-loader.js.md
+│   ├── nwt-live-injector.js.md
+│   ├── nwt-object-utils.js.md
+│   ├── nwt-pack.js.md
+│   ├── nwt-paths.js.md
+│   ├── nwt-persister.md
+│   ├── nwt-persister.nwt-directory-persister.js.md
+│   ├── nwt-persister.nwt-file-persister.js.md
+│   ├── nwt-persister.nwt-jsonl-persister.js.md
+│   ├── nwt-persister.nwt-json-persister.js.md
+│   ├── nwt-persister.nwt-persister.js.md
+│   ├── nwt-procedure-definition.js.md
+│   ├── nwt-procedure-injections.js.md
+│   ├── nwt-procedure-seed.js.md
+│   ├── nwt-procedures-manager.js.md
+│   ├── nwt-process.js.md
+│   ├── nwt-process-manager.js.md
+│   ├── nwt-progress-bar.js.md
+│   ├── nwt-prompts-manager.js.md
+│   ├── nwt-proxy-chain.js.md
+│   ├── nwt-randomizer.js.md
+│   ├── nwt-settings.js.md
+│   ├── nwt-shell.js.md
+│   ├── nwt-string-shortener.js.md
+│   ├── nwt-string-shortener.md
+│   ├── nwt-strings.js.md
+│   ├── nwt-submemory.md
+│   ├── nwt-templates.md
+│   ├── nwt-templates.nwt-templates.js.md
+│   ├── nwt-tester.js.md
+│   ├── nwt-timer.js.md
+│   ├── nwt-tracer.js.md
+│   ├── nwt-utils.js.md
+│   └── nwt-vue2.js.md
+├── heaper.js
+├── heap.json
+├── index.html
+├── injector.js
+├── package.json
+├── package-lock.json
+├── README-APP.md
+├── README.md
+├── README-NWT.md
+├── TODO.md
+└── tree.txt
+
+132 directories, 453 files

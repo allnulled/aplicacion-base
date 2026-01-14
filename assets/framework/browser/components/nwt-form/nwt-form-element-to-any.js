@@ -1,3 +1,40 @@
+/**
+ * 
+ * # NwtFormElementToAny
+ * 
+ * API común de los elementos que usan la directiva `v-forms.{form,control,handler}`.
+ * 
+ * De esta clase heredan las clases:
+ * 
+ *  - NwtFormElementToForm
+ *  - NwtFormElementToControl
+ *  - NwtFormElementToHandler
+ * 
+ * Pero es una clase abstracta: no se debe instanciar desde ella misma, sino desde una de estas descendientes.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormElementToAny
+ * NwtFramework.FormElementToAny
+ * Vue.prototype.$nwt.FormElementToAny
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtFormElementToAny.create(element:HTMLElement, value:Object, virtualNode);
+ * // Propiedades y métodos que deben sobreescribirse:
+ * NwtFormElementToAny.vformType === "any";
+ * NwtFormElementToAny.prototype.initialize(); // NwtVue2.cross.expose.by.element(this.element, this, "vformsPrototype"); Pero vformsPrototype no debería aparecer nunca
+ * NwtFormElementToAny.prototype.getValue(); // lanza un error porque es una clase abstracta
+ * NwtFormElementToAny.prototype.validate(); // lanza un error porque es una clase abstracta
+ * NwtFormElementToAny.prototype.propagateSuccess(); // lanza un error porque es una clase abstracta
+ * NwtFormElementToAny.prototype.propagateErrors(error); // lanza un error porque es una clase abstracta
+ * NwtFormElementToAny.prototype.submit(); // lanza un error porque es una clase abstracta
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {

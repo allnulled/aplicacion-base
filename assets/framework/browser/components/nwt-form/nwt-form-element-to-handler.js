@@ -1,3 +1,28 @@
+/**
+ * 
+ * # NwtFormElementToHandler
+ * 
+ * API de los elementos que usan la directiva `v-forms.handler`.
+ * 
+ * Hereda de `NwtFormElementToAny`.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormElementToHandler
+ * NwtFramework.FormElementToHandler
+ * Vue.prototype.$nwt.FormElementToHandler
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Métodos sobreescritos de padre:
+ * NwtFormElementToForm.prototype.initialize()
+ * NwtFormElementToForm.prototype.setErrors(errors)
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {

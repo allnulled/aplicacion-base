@@ -1,3 +1,10 @@
+/**
+ * 
+ * # NwtTesterNode
+ * 
+ * Componente vue2 interno. No debe usarse, lo usa `NwtTesterViewer` por debajo.
+ * 
+ */
 Vue.component("NwtTesterNode", {
   template: $template,
   props: {

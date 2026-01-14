@@ -1,3 +1,30 @@
+/**
+ * 
+ * # NwtFormElementToForm
+ * 
+ * API de los elementos que usan la directiva `v-forms.form`.
+ * 
+ * Hereda de `NwtFormElementToAny`.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormElementToForm
+ * NwtFramework.FormElementToForm
+ * Vue.prototype.$nwt.FormElementToForm
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Métodos sobreescritos de padre:
+ * NwtFormElementToForm.prototype.initialize()
+ * NwtFormElementToForm.prototype.getValue()
+ * NwtFormElementToForm.prototype.validate(notify = false, mustThrow = true)
+ * NwtFormElementToForm.prototype.submit()
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
