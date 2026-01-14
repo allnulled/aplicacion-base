@@ -1,6 +1,15 @@
 # Instrucciones
 
+## Requisitos
+
+Necesitas tener accesibles desde línea de comandos:
+
+- [`npm` y `node`](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- [`nw`](https://nwjs.io/)
+
 ## Instalar
+
+Actualmente, la única forma de instalación es desde línea de comandos:
 
 ```sh
 git clone https://github.com/allnulled/aplicacion-base.git .
@@ -15,18 +24,8 @@ Teniendo `nw` disponible desde línea de comandos:
 npm run ui
 ```
 
-## Notas
-
-Yo no he recibido nada del dinero, si me has pagado, está totalmente fuera de mi control.
-
 ## Pendientes
 
-Ya te lo he explicado:
-
-
-- Tengo que simular los procesos de un sistema operativo para que no se quede funcionando un procedimiento.
-- Tengo que cachear los resultados de cada parte del procedimiento para que no repita pasos que ya se hicieron.
-
-Podría no hacerlo, pero sería una mierda.
-
-No es difícil, ya casi está. Pero... así no se puede trabajar.
+- Simular los procesos de un sistema operativo para que no se quede funcionando un procedimiento.
+- Cachear los resultados de cada parte del procedimiento para que no repita pasos que ya se hicieron.
+- Completar los comandos iniciales
