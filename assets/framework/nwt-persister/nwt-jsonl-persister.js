@@ -1,3 +1,21 @@
+/**
+ * 
+ * # NwtJsonlPersister
+ * 
+ * API para la persistencia de ficheros JSONL.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * await NwtJsonlPersister.select(file:String, filter:Function);
+ * await NwtJsonlPersister.insert(file:String, value:Object);
+ * await NwtJsonlPersister.update(file:String, filter:Function, value:Object);
+ * await NwtJsonlPersister.delete(file:String, filter:Function);
+ * ```
+ * 
+ * Dado que los ficheros JSONL son prácticamente una tabla (en términos SQL), los métodos son los de una tabla también.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -13,17 +31,21 @@
 
   const NwtJsonlPersister = class {
 
-    static noop = () => {};
+    static noop = () => { };
 
-    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
-      if (!condition) {
-        throw new Error(errorMessage);
-      }
-    };
+    static get assertion() {
+      return typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+        if (!condition) {
+          throw new Error(errorMessage);
+        }
+      };
+    }
 
-    static trace = typeof trace === "function" ? trace : (traceMessage) => {
-      console.log("[trace][local] " + traceMessage);
-    };
+    static get trace() {
+      return typeof trace === "function" ? trace : (traceMessage) => {
+        console.log("[trace][local] " + traceMessage);
+      };
+    }
 
     static uidAlphabet = "abcdefghijklmnopqrstuvwxyz";
 

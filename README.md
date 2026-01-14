@@ -24,6 +24,13 @@ Teniendo `nw` disponible desde línea de comandos:
 npm run ui
 ```
 
+## Documentación
+
+Está el framework y la aplicación (sobre él):
+
+- [README-NWT.md](https://github.com/allnulled/proyecto-base-001/tree/main/README-NWT.md) contiene la documentación del `NwtFramework`.
+- [README-APP.md](https://github.com/allnulled/proyecto-base-001/tree/main/README-APP.md) contiene la documentación de la aplicación.
+
 ## Pendientes
 
 - Simular los procesos de un sistema operativo para que no se quede funcionando un procedimiento.

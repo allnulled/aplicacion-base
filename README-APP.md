@@ -1,10 +1,10 @@
 # Documentación de la aplicación
 
-La `aplicacion-generica-v1` es una aplicación de escritorio basada en [`nw.js`](https://nwjs.io/).
+Esta es la documentación de la aplicación.
 
-# Comandos de aplicación
+## Comandos de aplicación
 
-La API de `aplicacion-generica-v1`, por su banda, inyecta estos eventos de teclado:
+La API de `aplicacion-base`, por su banda, inyecta estos eventos de teclado:
 
 - `ALT + J`: abre un diálogo con el buscador de procedimientos (`App Procedures API`)
 

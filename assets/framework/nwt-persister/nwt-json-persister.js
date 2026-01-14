@@ -1,3 +1,33 @@
+/**
+ * 
+ * # NwtJsonPersister
+ * 
+ * API para la persistencia de ficheros JSON.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * await NwtJsonPersister.has(base:String|Object|Function, propertyPath:Array);
+ * await NwtJsonPersister.init(base:String|Object|Function, propertyPath:Array, value:any);
+ * await NwtJsonPersister.get(base:String|Object|Function, propertyPath:Array);
+ * await NwtJsonPersister.set(base:String|Object|Function, propertyPath:Array, value:any);
+ * await NwtJsonPersister.delete(base:String|Object|Function, propertyPath:Array)
+ * ```
+ * 
+ * En cuanto a `base`:
+ * 
+ * - Cuando `base` es un String, se considera como ruta del fichero.
+ * - Cuando `base` es Object o Function, se considera ese como los datos de base.
+ * 
+ * En cuanto a `propertyPath`:
+ * 
+ * - Se espera un `Array<String>` con el índice de los nombres de las propiedades del JSON.
+ *    - Si das `["items", "0", "subitems"]` apuntas a `jsonData.items["0"].subitems`
+ * - Si omites `propertyPath`, estás apuntando al fichero entero.
+ * 
+ * En cuanto a `value`, se espera el valor a establecer en los casos de `set` e `init`.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -15,15 +45,19 @@
 
     static noop = () => {};
 
-    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
-      if(!condition) {
-        throw new Error(errorMessage);
-      }
-    };
+    static get assertion() {
+      return typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+        if (!condition) {
+          throw new Error(errorMessage);
+        }
+      };
+    }
 
-    static trace = typeof trace === "function" ? trace : (traceMessage) => {
-      console.log("[trace][local] " + traceMessage);
-    };
+    static get trace() {
+      return typeof trace === "function" ? trace : (traceMessage) => {
+        console.log("[trace][local] " + traceMessage);
+      };
+    }
 
     static low = {
       availableOperations: [
@@ -103,7 +137,6 @@
           if (["has"].indexOf(operation) !== -1) {
             this.assertion(args.length >= argsDone, `Operation «${operation}» does not admit more parameters on «NwtJsonPersister.${operation}»`);
             this.assertion(hasEnoughInputs, `Operation «${operation}» requires «settings.prop» or «settings.file» or «settings.dataset» to be defined on «NwtJsonPersister.${operation}»`);
-            
           }
           if (["get"].indexOf(operation) !== -1) {
             if (typeof args[argsDone] !== "undefined") {
@@ -139,8 +172,6 @@
       this.assertion(typeof onPropertyError === "function", "Parameter «settings.hooks.onPropertyError» must be function on «NwtJsonPersister.iterate»");
       this.assertion(typeof onError === "function", "Parameter «settings.hooks.onError» must be function on «NwtJsonPersister.iterate»");
       this.assertion(hasFile || hasData, "Parameter «settings.file» can only be replaced with parameter «settings.dataset» on «NwtJsonPersister.iterate»");
-      // @TODO: aquí empezaría la cosa
-      // console.log({ operation, file, prop, hooks, dataset, });
       const memo = { dataset };
       Proceso_de_lectura_de_fichero:
       if (hasFile) {

@@ -1,3 +1,34 @@
+/**
+ * 
+ * # NwtDirectoryPersister
+ * 
+ * API para persistencia de directorios.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtDirectoryPersister
+ * NwtFramework.DirectoryPersister
+ * Vue.prototype.$nwt.DirectoryPersister
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Métodos principales:
+ * await NwtDirectoryPersister.has(directory:String); // returns Boolean
+ * await NwtDirectoryPersister.init(directory:String); // mkdir si no existe ya
+ * await NwtDirectoryPersister.get(directory:String); // devuelve los nombres de los nodos (fichero o directorio) de dentro
+ * await NwtDirectoryPersister.set(directory:String); // mkdir
+ * await NwtDirectoryPersister.delete(directory:String); // rmdir (no recursivo)
+ * // Métodos drásticos:
+ * await NwtDirectoryPersister.ensure(directory:String); // ensureDirectory, crea todos los nodos necesarios y el directorio final
+ * await NwtDirectoryPersister.destroy(directory:String); // rmdir (recursivamente)
+ * ```
+ * 
+ * Como mucho, esta API creará o destruirá un directorio, por lo cual no hay más argumentos que la ruta al directorio.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -15,15 +46,19 @@
 
     static noop = () => {};
 
-    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
-      if(!condition) {
-        throw new Error(errorMessage);
-      }
-    };
+    static get assertion() {
+      return typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+        if (!condition) {
+          throw new Error(errorMessage);
+        }
+      };
+    }
 
-    static trace = typeof trace === "function" ? trace : (traceMessage) => {
-      console.log("[trace][local] " + traceMessage);
-    };
+    static get trace() {
+      return typeof trace === "function" ? trace : (traceMessage) => {
+        console.log("[trace][local] " + traceMessage);
+      };
+    }
 
     static low = {
       availableOperations: ["get", "set", "has", "init", "delete"],
@@ -121,14 +156,6 @@
       throw new Error(`At this point, the operation should have returned already on «NwtDirectoryPersister.${operation}»`);
     }
 
-    static get(...args) {
-      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "get"));
-    }
-
-    static set(...args) {
-      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "set"));
-    }
-
     static has(...args) {
       return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "has"));
     }
@@ -137,12 +164,20 @@
       return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "init"));
     }
 
-    static ensure(...args) {
-      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "ensure"));
+    static get(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "get"));
+    }
+
+    static set(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "set"));
     }
 
     static delete(...args) {
       return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "delete"));
+    }
+
+    static ensure(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "ensure"));
     }
 
     static destroy(...args) {

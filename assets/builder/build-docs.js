@@ -19,12 +19,15 @@ const main = async function () {
     "browser/components/nwt-settings-viewer/nwt-settings-viewer.js",
     "nwt-command/nwt-command.js",
     "nwt-command/nwt-commands-manager.js",
+    "nwt-persister/nwt-persister.js",
+    "nwt-persister/nwt-directory-persister.js",
+    "nwt-persister/nwt-file-persister.js",
+    "nwt-persister/nwt-json-persister.js",
+    "nwt-persister/nwt-jsonl-persister.js",
     "nwt-filetree",
     "nwt-interruption",
     "nwt-js-controllers",
-    "nwt-persister",
     "nwt-string-shortener",
-    "nwt-submemory",
     "nwt-templates/nwt-templates.js",
     "nwt-argumenter.js",
     "nwt-array-utils.js",
@@ -159,7 +162,7 @@ ${llmMd}
 
 `;
 
-  fs.writeFileSync(`${PROJECT_ROOT}/llm.md`, llmMd, "utf8");
+  fs.writeFileSync(`${PROJECT_ROOT}/README-NWT.md`, llmMd, "utf8");
 
 };
 
