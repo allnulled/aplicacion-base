@@ -13,7 +13,70 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
   - [Crear un diálogo con formulario y extraer la respuesta](#crear-un-dilogo-con-formulario-y-extraer-la-respuesta)
 - [Nwt Toasts API](#nwt-toasts-api)
   - [Mostrar un mensaje emergente:](#mostrar-un-mensaje-emergente)
+- [Nwt Common Injections API](#nwt-common-injections-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Progress Bar Viewer API / Componente Vue2](#nwt-progress-bar-viewer-api-componente-vue2)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Process Manager Viewer API / Componente Vue2](#nwt-process-manager-viewer-api-componente-vue2)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Settings Viewer API / Componente Vue2](#nwt-settings-viewer-api-componente-vue2)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtTemplates](#nwttemplates)
+- [NwtArgumentes](#nwtargumentes)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtArrayUtils](#nwtarrayutils)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
 - [Nwt Asserter API](#nwt-asserter-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtCacheDirectory](#nwtcachedirectory)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtChatgpt](#nwtchatgpt)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtClipboard](#nwtclipboard)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Code Composer](#nwt-code-composer)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtCollectionUtils](#nwtcollectionutils)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtCsv](#nwtcsv)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtDebug](#nwtdebug)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Dialog Definition API](#nwt-dialog-definition-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtDom](#nwtdom)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Environment API](#nwt-environment-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtErrorUtils](#nwterrorutils)
+  - [Exposición](#exposicin)
+- [NwtErrorsManager](#nwterrorsmanager)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtExporter](#nwtexporter)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtFileChooser](#nwtfilechooser)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtFilesystem](#nwtfilesystem)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 - [Nwt Globalizer API](#nwt-globalizer-api)
@@ -22,19 +85,60 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
 - [Nwt Importer API](#nwt-importer-api)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [Nwt Randomizer API](#nwt-randomizer-api)
+- [Nwt Injection API](#nwt-injection-api)
+- [NwtIterableClass](#nwtiterableclass)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [Nwt Environment API](#nwt-environment-api)
+- [NwtIterableCommandClass](#nwtiterablecommandclass)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtIterableFunction](#nwtiterablefunction)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 - [Nwt Json Storer API](#nwt-json-storer-api)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
+- [Nwt Lazy Loader API](#nwt-lazy-loader-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtLiveInjector](#nwtliveinjector)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtObjectUtils](#nwtobjectutils)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Framework API](#nwt-framework-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [App Paths API](#app-paths-api)
+- [NwtProcessManager](#nwtprocessmanager)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Process API](#nwt-process-api)
+  - [Exposición](#exposicin)
+  - [Permite cosas como](#permite-cosas-como)
+- [Nwt Progress Bar API](#nwt-progress-bar-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Prompt Manager API](#nwt-prompt-manager-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtProxyChain](#nwtproxychain)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Randomizer API](#nwt-randomizer-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
 - [Nwt Settings API](#nwt-settings-api)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [Nwt Settings Viewer API / Componente Vue2](#nwt-settings-viewer-api-componente-vue2)
+- [Nwt Shell API](#nwt-shell-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtStringShortener](#nwtstringshortener)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [NwtStrings](#nwtstrings)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 - [Nwt Tester API](#nwt-tester-api)
@@ -42,898 +146,18 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
   - [Ventajas](#ventajas)
   - [API](#api)
   - [Test de ejemplo](#test-de-ejemplo)
-- [Nwt Process API](#nwt-process-api)
-  - [Exposición](#exposicin)
-  - [Permite cosas como](#permite-cosas-como)
-- [NwtProcessManager](#nwtprocessmanager)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
-- [Nwt Process Manager Viewer API / Componente Vue2](#nwt-process-manager-viewer-api-componente-vue2)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
-- [Nwt Dialog Definition API](#nwt-dialog-definition-api)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
 - [Nwt Timer API](#nwt-timer-api)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
+- [Nwt Tracer API](#nwt-tracer-api)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 - [Nwt Utils API](#nwt-utils-api)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [Nwt Lazy Loader API](#nwt-lazy-loader-api)
+- [Nwt Vue2 API](#nwt-vue2-api)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [Nwt Framework API](#nwt-framework-api)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
-- [Nwt Progress Bar API](#nwt-progress-bar-api)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
-- [Nwt Progress Bar Viewer API / Componente Vue2](#nwt-progress-bar-viewer-api-componente-vue2)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
-- [Nwt Common Injections API](#nwt-common-injections-api)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
-- [Nwt Injection API](#nwt-injection-api)
-- [Nwt Shell API](#nwt-shell-api)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
-
-# Estructura del proyecto
-
-- 📁 trash71
-  - 📄 1.json
-  - 📄 2.txt
-- 📁 trash70
-  - 📄 throw-error.js
-- 📁 trash7
-- 📁 trash6
-  - 📄 salida-0000.csv
-  - 📄 salida-0001.csv
-  - 📄 salida-0002.csv
-  - 📄 salida-0003.csv
-  - 📄 salida-0004.csv
-  - 📄 salida-0005.csv
-  - 📄 salida-0006.csv
-  - 📄 salida-0007.csv
-  - 📄 salida-0008.csv
-  - 📄 salida-0009.csv
-  - 📄 salida-0010.csv
-  - 📄 salida-0011.csv
-  - 📄 salida-0012.csv
-  - 📄 salida-0013.csv
-  - 📄 salida-0014.csv
-  - 📄 salida-0015.csv
-  - 📄 salida-0016.csv
-  - 📄 salida-0017.csv
-  - 📄 salida-0018.csv
-  - 📄 salida-0019.csv
-- 📁 trash5
-  - 📄 salida.csv
-  - 📄 salida.txt
-- 📁 trash4
-  - 📄 trash3_僕とロボコ #02-0.part-001.md
-  - 📄 trash3_僕とロボコ #02-0.part-002.md
-  - 📄 trash3_僕とロボコ #02-1.part-001.md
-  - 📄 trash3_僕とロボコ #02-1.part-002.md
-- 📁 trash3
-  - 📄 僕とロボコ #02-0.part-001.png
-  - 📄 僕とロボコ #02-0.part-002.png
-  - 📄 僕とロボコ #02-1.part-001.png
-  - 📄 僕とロボコ #02-1.part-002.png
-  - 📄 僕とロボコ #02-10.part-001.png
-  - 📄 僕とロボコ #02-10.part-002.png
-  - 📄 僕とロボコ #02-11.part-001.png
-  - 📄 僕とロボコ #02-11.part-002.png
-  - 📄 僕とロボコ #02-12.part-001.png
-  - 📄 僕とロボコ #02-12.part-002.png
-  - 📄 僕とロボコ #02-13.part-001.png
-  - 📄 僕とロボコ #02-13.part-002.png
-  - 📄 僕とロボコ #02-2.part-001.png
-  - 📄 僕とロボコ #02-2.part-002.png
-  - 📄 僕とロボコ #02-3.part-001.png
-  - 📄 僕とロボコ #02-3.part-002.png
-  - 📄 僕とロボコ #02-4.part-001.png
-  - 📄 僕とロボコ #02-4.part-002.png
-  - 📄 僕とロボコ #02-5.part-001.png
-  - 📄 僕とロボコ #02-5.part-002.png
-  - 📄 僕とロボコ #02-6.part-001.png
-  - 📄 僕とロボコ #02-6.part-002.png
-  - 📄 僕とロボコ #02-7.part-001.png
-  - 📄 僕とロボコ #02-7.part-002.png
-  - 📄 僕とロボコ #02-8.part-001.png
-  - 📄 僕とロボコ #02-8.part-002.png
-  - 📄 僕とロボコ #02-9.part-001.png
-  - 📄 僕とロボコ #02-9.part-002.png
-  - 📄 僕とロボコ #13-0.part-001.png
-  - 📄 僕とロボコ #13-0.part-002.png
-  - 📄 僕とロボコ #13-1.part-001.png
-  - 📄 僕とロボコ #13-1.part-002.png
-  - 📄 僕とロボコ #13-10.part-001.png
-  - 📄 僕とロボコ #13-10.part-002.png
-  - 📄 僕とロボコ #13-11.part-001.png
-  - 📄 僕とロボコ #13-11.part-002.png
-  - 📄 僕とロボコ #13-12.part-001.png
-  - 📄 僕とロボコ #13-12.part-002.png
-  - 📄 僕とロボコ #13-13.part-001.png
-  - 📄 僕とロボコ #13-13.part-002.png
-  - 📄 僕とロボコ #13-14.part-001.png
-  - 📄 僕とロボコ #13-14.part-002.png
-  - 📄 僕とロボコ #13-15.part-001.png
-  - 📄 僕とロボコ #13-15.part-002.png
-  - 📄 僕とロボコ #13-2.part-001.png
-  - 📄 僕とロボコ #13-2.part-002.png
-  - 📄 僕とロボコ #13-3.part-001.png
-  - 📄 僕とロボコ #13-3.part-002.png
-  - 📄 僕とロボコ #13-4.part-001.png
-  - 📄 僕とロボコ #13-4.part-002.png
-  - 📄 僕とロボコ #13-5.part-001.png
-  - 📄 僕とロボコ #13-5.part-002.png
-  - 📄 僕とロボコ #13-6.part-001.png
-  - 📄 僕とロボコ #13-6.part-002.png
-  - 📄 僕とロボコ #13-7.part-001.png
-  - 📄 僕とロボコ #13-7.part-002.png
-  - 📄 僕とロボコ #13-8.part-001.png
-  - 📄 僕とロボコ #13-8.part-002.png
-  - 📄 僕とロボコ #13-9.part-001.png
-  - 📄 僕とロボコ #13-9.part-002.png
-- 📁 trash2
-  - 📄 僕とロボコ #02-0.png
-  - 📄 僕とロボコ #02-1.png
-  - 📄 僕とロボコ #02-10.png
-  - 📄 僕とロボコ #02-11.png
-  - 📄 僕とロボコ #02-12.png
-  - 📄 僕とロボコ #02-13.png
-  - 📄 僕とロボコ #02-2.png
-  - 📄 僕とロボコ #02-3.png
-  - 📄 僕とロボコ #02-4.png
-  - 📄 僕とロボコ #02-5.png
-  - 📄 僕とロボコ #02-6.png
-  - 📄 僕とロボコ #02-7.png
-  - 📄 僕とロボコ #02-8.png
-  - 📄 僕とロボコ #02-9.png
-  - 📄 僕とロボコ #13-0.png
-  - 📄 僕とロボコ #13-1.png
-  - 📄 僕とロボコ #13-10.png
-  - 📄 僕とロボコ #13-11.png
-  - 📄 僕とロボコ #13-12.png
-  - 📄 僕とロボコ #13-13.png
-  - 📄 僕とロボコ #13-14.png
-  - 📄 僕とロボコ #13-15.png
-  - 📄 僕とロボコ #13-2.png
-  - 📄 僕とロボコ #13-3.png
-  - 📄 僕とロボコ #13-4.png
-  - 📄 僕とロボコ #13-5.png
-  - 📄 僕とロボコ #13-6.png
-  - 📄 僕とロボコ #13-7.png
-  - 📄 僕とロボコ #13-8.png
-  - 📄 僕とロボコ #13-9.png
-- 📁 trash1
-  - 📄 僕とロボコ #02.pdf
-  - 📄 僕とロボコ #13.pdf
-- 📁 trash-x-100
-  - 📄 fichero 2.txt
-  - 📄 fichero de ejemplo.txt
-- 📁 documentation
-  - 📄 asserter-api.md
-  - 📄 common-injections-api.md
-  - 📄 csv-api.md
-  - 📄 dialog-definition-api.md
-  - 📄 dialogs-api.md
-  - 📄 environment-api.md
-  - 📄 errors-api.md
-  - 📄 globalizer-api.md
-  - 📄 globals-api.md
-  - 📄 importer-api.md
-  - 📄 injection-api.md
-  - 📄 json-storer-api.md
-  - 📄 lazy-loader-api.md
-  - 📄 procedure-definition-api.md
-  - 📄 procedure-documentation-viewer-api.md
-  - 📄 procedure-injections-api.md
-  - 📄 procedure-seed-api.md
-  - 📄 procedures-manager-api.md
-  - 📄 procedures-manager-viewer-api.md
-  - 📄 process-api.md
-  - 📄 process-manager-api.md
-  - 📄 process-manager-viewer-api.md
-  - 📄 progress-bar-api.md
-  - 📄 progress-bar-viewer-api.md
-  - 📄 project-commands.md
-  - 📄 randomizer-api.md
-  - 📄 settings-api.md
-  - 📄 settings-viewer-api.md
-  - 📄 shell-api.md
-  - 📄 source-viewer-api.md
-  - 📄 tester-api.md
-  - 📄 tester-viewer-api.md
-  - 📄 timer-api.md
-  - 📄 toasts-api.md
-  - 📄 utils-api.md
-  - 📄 v-draggable-api.md
-  - 📄 v-resizable-api.md
-- 📁 assets
-  - 📁 framework
-    - 📁 nwt-templates
-      - 📁 templates
-        - 📁 nwt
-          - 📁 nwt-iterable-function
-            - 📄 template.js
-          - 📁 nwt-example-1
-            - 📄 template.js
-          - 📁 nwt-errors-manager
-            - 📁 viewer
-              - 📄 template.css
-              - 📄 template.html
-              - 📄 template.js
-            - 📁 error-header
-            - 📁 error-details
-          - 📁 nwt-ast-tree
-            - 📄 template.js
-          - 📄 controller-to-return.js
-          - 📄 controller-to-throw.js
-          - 📄 hello-user.js
-      - 📄 nwt-templates.js
-      - 📄 tjs-parser.fix.js
-      - 📄 tjs-parser.js
-      - 📄 tjs-parser.pegjs
-      - 📄 tjs.build.sh
-    - 📁 nwt-submemory
-      - 📁 global
-        - 📁 kfxtrxzzqt
-          - 📁 proc
-            - 📄 state.json
-        - 📄 submemory-ids.json
-    - 📁 nwt-string-shortener
-      - 📄 global.json
-    - 📁 nwt-persister
-      - 📁 test
-        - 📁 dir2
-        - 📁 dir1
-        - 📄 file-2.jsonl
-        - 📄 file.json
-      - 📄 README.md
-      - 📄 api.js
-      - 📄 nwt-directory-persister.js
-      - 📄 nwt-file-persister.js
-      - 📄 nwt-json-persister.js
-      - 📄 nwt-jsonl-persister.js
-      - 📄 nwt-persister.js
-      - 📄 test.js
-    - 📁 nwt-js-controllers
-      - 📄 nwt-js-controller.js
-      - 📄 nwt-js-return-controller.js
-      - 📄 nwt-js-throw-controller.js
-    - 📁 nwt-interruption
-      - 📄 nwt-interruptible.js
-      - 📄 nwt-interruption-handler.js
-      - 📄 nwt-interruption.js
-      - 📄 test.js
-    - 📁 nwt-filetree
-      - 📁 selector
-        - 📄 nwt-filetree-selector-interpreter.js
-        - 📄 nwt-filetree-selector-parser.build.sh
-        - 📄 nwt-filetree-selector-parser.dev.sh
-        - 📄 nwt-filetree-selector-parser.fix.js
-        - 📄 nwt-filetree-selector-parser.js
-        - 📄 nwt-filetree-selector-parser.pegjs
-        - 📄 nwt-filetree-selector.js
-      - 📁 interfaces
-        - 📄 nwt-filetree-directory.js
-        - 📄 nwt-filetree-file.js
-        - 📄 nwt-filetree-glob.js
-        - 📄 nwt-filetree-json.js
-        - 📄 nwt-filetree-node.js
-        - 📄 nwt-filetree-property.js
-      - 📄 nwt-filetree.js
-    - 📁 nwt-command
-      - 📁 registry
-        - 📁 nwt
-          - 📁 util.txt.concatenation
-            - 📄 COMMAND.md
-            - 📄 command.js
-            - 📄 questions.js
-          - 📁 util.csv.concatenation
-            - 📁 view
-              - 📄 view.css
-              - 📄 view.html
-              - 📄 view.js
-            - 📁 form
-              - 📄 form.css
-              - 📄 form.html
-              - 📄 form.js
-            - 📄 COMMAND.md
-            - 📄 command.js
-            - 📄 questions.js
-      - 📁 interfaces
-      - 📁 components
-        - 📁 nwt-commands-manager-viewer
-          - 📄 nwt-commands-manager-viewer.css
-          - 📄 nwt-commands-manager-viewer.html
-          - 📄 nwt-commands-manager-viewer.js
-        - 📁 nwt-anonymous-command-view
-          - 📄 nwt-anonymous-command-view.css
-          - 📄 nwt-anonymous-command-view.html
-          - 📄 nwt-anonymous-command-view.js
-        - 📁 nwt-anonymous-command-form
-          - 📄 nwt-anonymous-command-form.css
-          - 📄 nwt-anonymous-command-form.html
-          - 📄 nwt-anonymous-command-form.js
-        - 📁 mixins
-          - 📄 nwt-command-context-interface.js
-          - 📄 nwt-command-form-interface.js
-          - 📄 nwt-command-view-interface.js
-      - 📄 nwt-command.js
-      - 📄 nwt-commands-manager.js
-    - 📁 browser
-      - 📁 win7
-        - 📄 win7-patches.css
-        - 📄 win7.css
-      - 📁 vue2
-        - 📄 vue2.js
-        - 📄 vue2.min.js
-      - 📁 socket.io-client
-        - 📄 socket.io-client.js
-      - 📁 reloader
-        - 📄 .gitignore
-        - 📄 package-lock.json
-        - 📄 package.json
-        - 📄 reloadable.js
-        - 📄 reloader.js
-        - 📄 starter.js
-      - 📁 papaparse
-        - 📄 papaparse.js
-        - 📄 papaparse.min.js
-      - 📁 marked
-        - 📄 marked.js
-      - 📁 ejs
-        - 📄 ejs.js
-        - 📄 ejs.min.js
-      - 📁 directives
-        - 📄 v-draggable.js
-        - 📄 v-focus.js
-        - 📄 v-forms.js
-        - 📄 v-resizable-simple.js
-        - 📄 v-resizable.js
-      - 📁 css
-        - 📁 one-framework
-          - 📄 one-framework.css
-        - 📁 custom
-          - 📄 custom.css
-      - 📁 components
-        - 📁 nwt-tester-viewer
-          - 📄 nwt-tester-viewer.css
-          - 📄 nwt-tester-viewer.html
-          - 📄 nwt-tester-viewer.js
-        - 📁 nwt-tester-node
-          - 📄 nwt-tester-node.css
-          - 📄 nwt-tester-node.html
-          - 📄 nwt-tester-node.js
-        - 📁 nwt-stars-background
-          - 📄 nwt-stars-background.css
-          - 📄 nwt-stars-background.html
-          - 📄 nwt-stars-background.js
-        - 📁 nwt-source-viewer
-          - 📄 nwt-source-viewer.css
-          - 📄 nwt-source-viewer.html
-          - 📄 nwt-source-viewer.js
-        - 📁 nwt-settings-viewer
-          - 📄 nwt-settings-viewer.css
-          - 📄 nwt-settings-viewer.html
-          - 📄 nwt-settings-viewer.js
-        - 📁 nwt-prompts-manager-viewer
-          - 📄 nwt-prompts-manager-viewer.css
-          - 📄 nwt-prompts-manager-viewer.html
-          - 📄 nwt-prompts-manager-viewer.js
-        - 📁 nwt-progress-bar-viewer
-          - 📄 nwt-progress-bar-viewer.css
-          - 📄 nwt-progress-bar-viewer.html
-          - 📄 nwt-progress-bar-viewer.js
-        - 📁 nwt-process-manager-viewer
-          - 📄 nwt-process-manager-viewer.css
-          - 📄 nwt-process-manager-viewer.html
-          - 📄 nwt-process-manager-viewer.js
-        - 📁 nwt-procedures-manager-viewer
-          - 📄 nwt-procedures-manager-viewer.css
-          - 📄 nwt-procedures-manager-viewer.html
-          - 📄 nwt-procedures-manager-viewer.js
-        - 📁 nwt-procedure-documentation-viewer
-          - 📄 nwt-procedure-documentation-viewer.css
-          - 📄 nwt-procedure-documentation-viewer.html
-          - 📄 nwt-procedure-documentation-viewer.js
-        - 📁 nwt-matrix-background
-          - 📄 nwt-matrix-background.css
-          - 📄 nwt-matrix-background.html
-          - 📄 nwt-matrix-background.js
-        - 📁 nwt-form
-          - 📁 control-statement
-            - 📄 nwt-form-control-statement.css
-            - 📄 nwt-form-control-statement.html
-            - 📄 nwt-form-control-statement.js
-          - 📁 control-handler
-            - 📄 nwt-form-control-handler.css
-            - 📄 nwt-form-control-handler.html
-            - 📄 nwt-form-control-handler.js
-          - 📁 control-for
-            - 📁 text
-              - 📁 password
-                - 📄 control.css
-                - 📄 control.html
-                - 📄 control.js
-              - 📁 oneline
-                - 📄 control.css
-                - 📄 control.html
-                - 📄 control.js
-              - 📁 multiline
-                - 📄 control.css
-                - 📄 control.html
-                - 📄 control.js
-              - 📁 email
-                - 📄 control.css
-                - 📄 control.html
-                - 📄 control.js
-            - 📁 file-chooser
-              - 📁 new-file
-                - 📄 control.css
-                - 📄 control.html
-                - 📄 control.js
-              - 📁 file
-                - 📄 control.css
-                - 📄 control.html
-                - 📄 control.js
-              - 📁 directory
-                - 📄 control.css
-                - 📄 control.html
-                - 📄 control.js
-          - 📁 control-buttons
-            - 📄 nwt-form-control-buttons.css
-            - 📄 nwt-form-control-buttons.html
-            - 📄 nwt-form-control-buttons.js
-          - 📁 builder
-            - 📄 builder.css
-            - 📄 builder.html
-            - 📄 builder.js
-          - 📄 control-prototype.js
-          - 📄 nwt-form-element-to-any.js
-          - 📄 nwt-form-element-to-control.js
-          - 📄 nwt-form-element-to-form.js
-          - 📄 nwt-form-element-to-handler.js
-          - 📄 nwt-form-utils.js
-        - 📁 nwt-file-explorer
-          - 📄 nwt-file-explorer.css
-          - 📄 nwt-file-explorer.html
-          - 📄 nwt-file-explorer.js
-        - 📁 nwt-code-highlighter
-          - 📄 nwt-code-highlighter.css
-          - 📄 nwt-code-highlighter.html
-          - 📄 nwt-code-highlighter.js
-        - 📁 nwt-chatgpt-files-manager-viewer
-          - 📄 nwt-chatgpt-files-manager-viewer.css
-          - 📄 nwt-chatgpt-files-manager-viewer.html
-          - 📄 nwt-chatgpt-files-manager-viewer.js
-        - 📁 nwt-box-viewer
-          - 📄 nwt-box-viewer.css
-          - 📄 nwt-box-viewer.html
-          - 📄 nwt-box-viewer.js
-        - 📁 common-toasts
-          - 📄 common-toasts.css
-          - 📄 common-toasts.html
-          - 📄 common-toasts.js
-        - 📁 common-injections
-          - 📄 common-injections.css
-          - 📄 common-injections.html
-          - 📄 common-injections.js
-        - 📁 common-errors
-          - 📄 common-errors.css
-          - 📄 common-errors.html
-          - 📄 common-errors.js
-        - 📁 common-dialogs
-          - 📄 common-dialogs.css
-          - 📄 common-dialogs.html
-          - 📄 common-dialogs.js
-    - 📄 nwt-argumenter.js
-    - 📄 nwt-array-utils.js
-    - 📄 nwt-asserter.js
-    - 📄 nwt-ast-tree-class.js
-    - 📄 nwt-ast-tree-template-source.js
-    - 📄 nwt-boot.js
-    - 📄 nwt-cache-directory.js
-    - 📄 nwt-chatgpt.js
-    - 📄 nwt-clipboard.js
-    - 📄 nwt-code-composer.js
-    - 📄 nwt-collection-utils.js
-    - 📄 nwt-csv.js
-    - 📄 nwt-debug.js
-    - 📄 nwt-dialog-definition.js
-    - 📄 nwt-dom.js
-    - 📄 nwt-environment.js
-    - 📄 nwt-error-utils.js
-    - 📄 nwt-errors-manager.js
-    - 📄 nwt-exporter.js
-    - 📄 nwt-file-chooser.js
-    - 📄 nwt-filesystem.js
-    - 📄 nwt-globalizer.js
-    - 📄 nwt-importer.js
-    - 📄 nwt-injection.js
-    - 📄 nwt-iterable-class.js
-    - 📄 nwt-iterable-command-class.js
-    - 📄 nwt-iterable-function.js
-    - 📄 nwt-json-storer.js
-    - 📄 nwt-lazy-loader.js
-    - 📄 nwt-live-injector.js
-    - 📄 nwt-object-utils.js
-    - 📄 nwt-pack.js
-    - 📄 nwt-paths.js
-    - 📄 nwt-procedure-definition.js
-    - 📄 nwt-procedure-injections.js
-    - 📄 nwt-procedure-seed.js
-    - 📄 nwt-procedures-manager.js
-    - 📄 nwt-process-manager.js
-    - 📄 nwt-process.js
-    - 📄 nwt-progress-bar.js
-    - 📄 nwt-prompts-manager.js
-    - 📄 nwt-proxy-chain.js
-    - 📄 nwt-randomizer.js
-    - 📄 nwt-settings.js
-    - 📄 nwt-shell.js
-    - 📄 nwt-string-shortener.js
-    - 📄 nwt-strings.js
-    - 📄 nwt-submemory.js
-    - 📄 nwt-submemory.prev.js
-    - 📄 nwt-subpathable.js
-    - 📄 nwt-tester.js
-    - 📄 nwt-timer.js
-    - 📄 nwt-tracer.js
-    - 📄 nwt-utils.js
-    - 📄 nwt-vue2.js
-  - 📁 external
-    - 📁 qunit
-      - 📄 qunit.css
-      - 📄 qunit.js
-      - 📄 qunit.min.css
-      - 📄 qunit.min.js
-    - 📁 js-beautify
-      - 📄 js-beautify.js
-      - 📄 js-beautify.min.js
-    - 📁 highlight.js
-      - 📁 syntaxes
-        - 📄 css.min.js
-        - 📄 javascript.min.js
-        - 📄 xml.min.js
-      - 📁 styles
-        - 📄 default.min.css
-      - 📄 highlight.min.js
-  - 📁 builder
-    - 📄 build-docs.js
-    - 📄 bundle.js
-    - 📄 bundlelist-common.js
-    - 📄 bundlelist-external.js
-    - 📄 bundlelist.js
-    - 📄 vuebundler.js
-  - 📁 app
-    - 📁 temporary
-      - 📁 directory
-        - 📁 zlvlmenorg
-          - 📁 step_8_csv_to_csv_unificado
-          - 📁 step_7_csv_to_csv_expandido
-          - 📁 step_6_csv_to_csv_paginado
-          - 📁 step_5_txt_to_csv
-          - 📁 step_4_txt_to_txt_unificado
-          - 📁 step_3_png_to_txt
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-0.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-0.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-1.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-1.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-10.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-10.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-11.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-11.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-12.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-12.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-13.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-13.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-2.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-2.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-3.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-3.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-4.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-4.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-5.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-5.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-6.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-6.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-7.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-7.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-8.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-8.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-9.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #02-9.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-0.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-0.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-1.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-1.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-10.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-10.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-11.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-11.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-12.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-12.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-13.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-13.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-14.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-14.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-15.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-15.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-2.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-2.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-3.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-3.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-4.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-4.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-5.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-5.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-6.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-6.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-7.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-7.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-8.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-8.part-002.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-9.part-001.md
-            - 📄 step_2_png_to_png_recortado_僕とロボコ #13-9.part-002.md
-          - 📁 step_2_png_to_png_recortado
-            - 📄 僕とロボコ #02-0.part-001.png
-            - 📄 僕とロボコ #02-0.part-002.png
-            - 📄 僕とロボコ #02-1.part-001.png
-            - 📄 僕とロボコ #02-1.part-002.png
-            - 📄 僕とロボコ #02-10.part-001.png
-            - 📄 僕とロボコ #02-10.part-002.png
-            - 📄 僕とロボコ #02-11.part-001.png
-            - 📄 僕とロボコ #02-11.part-002.png
-            - 📄 僕とロボコ #02-12.part-001.png
-            - 📄 僕とロボコ #02-12.part-002.png
-            - 📄 僕とロボコ #02-13.part-001.png
-            - 📄 僕とロボコ #02-13.part-002.png
-            - 📄 僕とロボコ #02-2.part-001.png
-            - 📄 僕とロボコ #02-2.part-002.png
-            - 📄 僕とロボコ #02-3.part-001.png
-            - 📄 僕とロボコ #02-3.part-002.png
-            - 📄 僕とロボコ #02-4.part-001.png
-            - 📄 僕とロボコ #02-4.part-002.png
-            - 📄 僕とロボコ #02-5.part-001.png
-            - 📄 僕とロボコ #02-5.part-002.png
-            - 📄 僕とロボコ #02-6.part-001.png
-            - 📄 僕とロボコ #02-6.part-002.png
-            - 📄 僕とロボコ #02-7.part-001.png
-            - 📄 僕とロボコ #02-7.part-002.png
-            - 📄 僕とロボコ #02-8.part-001.png
-            - 📄 僕とロボコ #02-8.part-002.png
-            - 📄 僕とロボコ #02-9.part-001.png
-            - 📄 僕とロボコ #02-9.part-002.png
-            - 📄 僕とロボコ #13-0.part-001.png
-            - 📄 僕とロボコ #13-0.part-002.png
-            - 📄 僕とロボコ #13-1.part-001.png
-            - 📄 僕とロボコ #13-1.part-002.png
-            - 📄 僕とロボコ #13-10.part-001.png
-            - 📄 僕とロボコ #13-10.part-002.png
-            - 📄 僕とロボコ #13-11.part-001.png
-            - 📄 僕とロボコ #13-11.part-002.png
-            - 📄 僕とロボコ #13-12.part-001.png
-            - 📄 僕とロボコ #13-12.part-002.png
-            - 📄 僕とロボコ #13-13.part-001.png
-            - 📄 僕とロボコ #13-13.part-002.png
-            - 📄 僕とロボコ #13-14.part-001.png
-            - 📄 僕とロボコ #13-14.part-002.png
-            - 📄 僕とロボコ #13-15.part-001.png
-            - 📄 僕とロボコ #13-15.part-002.png
-            - 📄 僕とロボコ #13-2.part-001.png
-            - 📄 僕とロボコ #13-2.part-002.png
-            - 📄 僕とロボコ #13-3.part-001.png
-            - 📄 僕とロボコ #13-3.part-002.png
-            - 📄 僕とロボコ #13-4.part-001.png
-            - 📄 僕とロボコ #13-4.part-002.png
-            - 📄 僕とロボコ #13-5.part-001.png
-            - 📄 僕とロボコ #13-5.part-002.png
-            - 📄 僕とロボコ #13-6.part-001.png
-            - 📄 僕とロボコ #13-6.part-002.png
-            - 📄 僕とロボコ #13-7.part-001.png
-            - 📄 僕とロボコ #13-7.part-002.png
-            - 📄 僕とロボコ #13-8.part-001.png
-            - 📄 僕とロボコ #13-8.part-002.png
-            - 📄 僕とロボコ #13-9.part-001.png
-            - 📄 僕とロボコ #13-9.part-002.png
-          - 📁 step_1_pdf_to_png
-            - 📄 僕とロボコ #02-0.png
-            - 📄 僕とロボコ #02-1.png
-            - 📄 僕とロボコ #02-10.png
-            - 📄 僕とロボコ #02-11.png
-            - 📄 僕とロボコ #02-12.png
-            - 📄 僕とロボコ #02-13.png
-            - 📄 僕とロボコ #02-2.png
-            - 📄 僕とロボコ #02-3.png
-            - 📄 僕とロボコ #02-4.png
-            - 📄 僕とロボコ #02-5.png
-            - 📄 僕とロボコ #02-6.png
-            - 📄 僕とロボコ #02-7.png
-            - 📄 僕とロボコ #02-8.png
-            - 📄 僕とロボコ #02-9.png
-            - 📄 僕とロボコ #13-0.png
-            - 📄 僕とロボコ #13-1.png
-            - 📄 僕とロボコ #13-10.png
-            - 📄 僕とロボコ #13-11.png
-            - 📄 僕とロボコ #13-12.png
-            - 📄 僕とロボコ #13-13.png
-            - 📄 僕とロボコ #13-14.png
-            - 📄 僕とロボコ #13-15.png
-            - 📄 僕とロボコ #13-2.png
-            - 📄 僕とロボコ #13-3.png
-            - 📄 僕とロボコ #13-4.png
-            - 📄 僕とロボコ #13-5.png
-            - 📄 僕とロボコ #13-6.png
-            - 📄 僕とロボコ #13-7.png
-            - 📄 僕とロボコ #13-8.png
-            - 📄 僕とロボコ #13-9.png
-    - 📁 strings
-      - 📄 Prompt para expandir CSV con traducción y análisis gramatical especificación 1.txt
-      - 📄 Prompt para obtener CSV a partir de TXT en japonés especificación 1.txt
-    - 📁 procedures
-      - 📁 Prototipo para tester y progressBar
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Prototipo para subprocedimientos
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Prototipo básico
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Flujo desde PDF en japonés especificación 1 hasta CSV con traducción y análisis gramatical
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Convertir de TXT en japonés a CSV especificación 1 por chatgpt
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Convertir de PNG a TXT en japonés por yomitoku
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Convertir de PNG a PNG recortado por imagemagick
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Convertir de PDF a PNG por imagemagick
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Convertir de CSV a CSV paginado por node.js
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Convertir de CSV a CSV expandido especificación 1 por chatgpt
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Concatenar ficheros por node.js
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-      - 📁 Concatenar ficheros CSV por node.js
-        - 📁 viewer
-          - 📄 viewer.css
-          - 📄 viewer.html
-          - 📄 viewer.js
-        - 📁 form
-          - 📄 form.css
-          - 📄 form.html
-          - 📄 form.js
-        - 📄 PROCEDURE.md
-        - 📄 definition.js
-    - 📁 files
-      - 📄 chatgpt-calls.txt
-    - 📁 components
-      - 📁 main-window
-        - 📄 main-window.css
-        - 📄 main-window.html
-        - 📄 main-window.js
-    - 📄 app-payload.js
-    - 📄 app-root.js
-  - 📄 dist.css
-  - 📄 dist.js
-- 📄 .gitignore
-- 📄 README-APP.md
-- 📄 README-NWT.md
-- 📄 README.md
-- 📄 TODO.md
-- 📄 heap.json
-- 📄 heaper.js
-- 📄 index.html
-- 📄 injector.js
-- 📄 llm.md
-- 📄 package-lock.json
-- 📄 package.json
-- 📄 timeline-heap.json
-
 
 
 
@@ -1011,6 +235,231 @@ CommonToasts.show({
 
 
 
+# Nwt Common Injections API
+
+API para inyecciones globales. Se inyecta 1 componente global, `<common-injections />`.
+
+## Exposición
+
+Esta API no se expone, solo se inyecta en el DOM.
+
+Pero se hace a través del componente vue2 `CommonInjections`.
+
+## Ventajas
+
+- Función 1 / `injectTouchability`
+   - Hace que los eventos de touch (móvil) funcionen también como eventos click (PC) sin tener que cambiar el código.
+- Función 2 / `injectKeyEventForProcessManager`
+   - Hace que CTRL+SUPR abra un diálogo con un gestor de procesos
+- Función 3 / `injectKeyEventForSettings`
+   - Hace que ALT+S abra un diálogo de configuraciones globales
+
+# Nwt Progress Bar Viewer API / Componente Vue2
+
+La Nwt Progress Bar Viewer API permite sincronizar un widget gráfico con una instancia de `NwtProgressBar`.
+
+## Exposición
+
+La API se expone a través del componente Vue2:
+
+```js
+Vue.options.components.NwtProgressBarViewer
+```
+
+## Ventajas
+
+La API permite cosas como:
+
+```html
+<nwt-progress-bar-viewer :progress-bar="progressBar" />
+```
+
+Donde `progressBar` tiene que ser una instancia de `NwtProgressBar`.
+
+
+
+
+
+# Nwt Process Manager Viewer API / Componente Vue2
+
+La Nwt Process Manager Viewer API permite sincronizar un widget gráfico con una instancia de `NwtProcessManager`.
+
+## Exposición
+
+La API se expone a través del componente Vue2:
+
+```js
+Vue.options.components.NwtProcessManagerViewer
+```
+
+## Ventajas
+
+La API permite cosas como:
+
+```html
+<nwt-process-manager-viewer :process-manager="processManager" />
+```
+
+Donde `processManager` tiene que ser una instancia de `NwtProcessManager`.
+
+Hay 2 gestores de procesos principales:
+
+```js
+NwtProcessManager.dialogs instanceof NwtProcessManager
+NwtProcessManager.boxes instanceof NwtProcessManager
+```
+
+# Nwt Settings Viewer API / Componente Vue2
+
+La Nwt Settings Viewer API permite sincronizar un widget gráfico con una instancia de `NwtSettings`.
+
+## Exposición
+
+La API se expone a través del componente Vue2:
+
+```js
+Vue.options.components.NwtSettingsViewer
+```
+
+## Ventajas
+
+La API permite cosas como:
+
+```html
+<nwt-settings-viewer :settings="settings" :dialog="this" />
+```
+
+Donde `dialog` tiene que ser una instancia de `NwtDialog`, pero dentro de la template del diálogo la accedemos con el `this`:
+
+```js
+this.$dialogs.open({
+  title: "Configuraciones globales",
+  template: `<nwt-settings-viewer :settings="$nwt.Settings.global" :dialog="this" />`,
+});
+```
+
+Donde `settings` tiene que ser una instancia de `NwtSettings`.
+
+Por ejemplo:
+
+```js
+NwtSettings.global // instancia
+```
+
+Se enciende un NwtSettingsViewer si pulsas ALT+L.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# NwtTemplates
+
+API para la gestión de plantillas.
+
+# NwtArgumentes
+
+API para la normalización de argumentos.
+
+## Exposición
+
+```js
+NwtArgumenter
+NwtFramework.Argumenter
+Vue.prototype.$nwt.Argumenter
+```
+
+## Ventajas
+
+No es una API estable hasta que no produzca código legible.
+
+# NwtArrayUtils
+
+API para utilidades relacionadas con la clase Array.
+
+## Exposición
+
+```js
+NwtArrayUtils
+NwtFramework.ArrayUtils
+Vue.prototype.$nwt.ArrayUtils
+```
+
+## Ventajas
+
+```js
+NwtArrayUtils.repeatBy(3, true); // returns: [true, true, true]
+// Este método elimina el valor si lo encuentra, o lo añade si no lo encuentra:
+NwtArrayUtils.toggleByValue(lista:Array, value:any);
+```
+
 # Nwt Asserter API
 
 API para aserciones y comprobaciones de test a nivel más elemental.
@@ -1058,74 +507,238 @@ otherAssertion(true, "Assertion 2");
 otherAssertion(false, "Assertion 3");
 ```
 
-# Nwt Globalizer API
 
-API para globalizar variables en todos los entornos.
+
+
+
+# NwtCacheDirectory
+
+API para gestionar un directorio de cacheo.
 
 ## Exposición
 
-La API se expone a través de:
-
 ```js
-NwtGlobalizer
-NwtFramework.Globalizer
-Vue.prototype.$nwt.Globalizer
+NwtCacheDirectory
+NwtFramework.CacheDirectory
+Vue.prototype.$nwt.CacheDirectory
+// Instancias:
+NwtCacheDirectory.local // Cache de AppData, que vive más allá de los git clones
+NwtCacheDirectory.installation // Cache que no vive más allá de los git clones
 ```
 
 ## Ventajas
 
-La API permite algunas cosas como:
-
 ```js
-NwtGlobalizer.exportTo("NombreDeGlobal", {});
+// Esta API está en desarrollo
 ```
 
-# Nwt Importer API
+# NwtChatgpt
 
-API para importar scripts y estilos.
+API de utilidades relacionadas con ChatGPT.
+
+## Exposición
+
+```js
+NwtChatgpt
+NwtFramework.Chatgpt
+Vue.prototype.$nwt.Chatgpt
+```
+
+## Ventajas
+
+Todas las operaciones utilizan la API key que se debe colocar en:
+
+```js
+NwtSettings.global.get("nwt.api.chatgpt-plus.key");
+```
+
+Sabiendo esto, quedan los métodos:
+
+```js
+await NwtChatgpt.listFiles()
+await NwtChatgpt.uploadFile(filepath:String)
+await NwtChatgpt.uploadFiles(filepaths:Array<String>)
+await NwtChatgpt.deleteFiles(fileIds:Array<String>)
+await NwtChatgpt.callToAction(systemPrompt:String, userPrompt:String)
+```
+
+# NwtClipboard
+
+API para copiar al clipboard solamente.
+
+## Exposición
+
+```js
+NwtClipboard
+NwtFramework.Clipboard
+Vue.prototype.$nwt.Clipboard
+```
+
+## Ventajas
+
+```js
+NwtClipboard.copyText(text:String);
+```
+
+# Nwt Code Composer
+
+API para componer fragmentos de JavaScript para plantillas y código.
+
+## Exposición
+
+```js
+NwtCodeComposer
+NwtFramework.CodeComposer
+Vue.prototype.CodeComposer
+```
+
+## Ventajas
+
+```js
+NwtCodeComposer.getBlankFunctionBody(fn)
+NwtCodeComposer.getBlankFunctionBodies([fn,fn,fn])
+NwtCodeComposer.createAsyncFunction(js, argnames = [])
+NwtCodeComposer.createSyncFunction(js, argnames = [])
+NwtCodeComposer.createFunctionByBodies([fn,fn,fn])
+```
+
+# NwtCollectionUtils
+
+API para utilidades relacionadas con colecciones.
+
+## Exposición
+
+```js
+NwtCollectionUtils
+NwtFramework.CollectionUtils
+Vue.prototype.$nwt.CollectionUtils
+```
+
+## Ventajas
+
+```js
+NwtCollectionUtils.normalizeCollection(data:Array|Object); // normaliza colecciones
+```
+
+# NwtCsv
+
+API para utilidades relacionadas con el formato de ficheros CSV.
+
+## Exposición
+
+```js
+NwtCsv
+NwtFramework.Csv
+Vue.prototype.$nwt.Csv
+```
+
+## Ventajas
+
+Principalmente, se usa para intercambiar de CSV a JSON y viceversa:
+
+```js
+await NwtCsv.fromCsvFileToJson(file);
+NwtCsv.fromJsonToCsv(data, options = this.defaultParseOptions);
+NwtCsv.fromCsvToJson(text, options = this.defaultUnparseOptions, asObjects = true);
+NwtCsv.csvCellsToObjects(rows);
+```
+
+# NwtDebug
+
+API para utilidades de debugging.
+
+## Exposición
+
+```js
+NwtDebug
+NwtFramework.Debug
+Vue.prototype.$nwt.Debug
+```
+
+## Ventajas
+
+```js
+NwtDebug.d(...args); // solo console.log
+NwtDebug.j(...args); // NwtUtils.stringify + console.log
+NwtDebug.k(...args); // Object.keys + NwtUtils.stringify + console.log
+```
+
+# Nwt Dialog Definition API
+
+API de uso interno.
+
+Permite crear definiciones abstractas de diálogos.
+
+Sirve para vincular:
+
+ - `$original`: Definición de usuario de diálogo
+ - `$factory`: Definición validada de diálogo
+ - `$process`: Proceso representativo del diaĺogo
+
 
 ## Exposición
 
 Se expone a través de:
 
 ```js
-NwtImporter
-NwtFramework.Importer
-Vue.prototype.$nwt.Importer
+NwtDialogDefinition
+NwtFramework.DialogDefinition
+Vue.prototype.$nwt.DialogDefinition
 ```
 
 ## Ventajas
 
-Puede usarse así:
+Permite crear definiciones de diálogo validadas:
 
 ```js
-await NwtImporter.scriptSrc("https://domain.com/script.js");
-await NwtImporter.linkStylesheet("https://domain.com/styles.css");
+const dialogDefinition = NwtDialogDefinition.create({
+  title: "Título del diálogo",
+  template: `
+    <div>
+      <div>En el body del diálogo</div>
+    </div>
+  `,
+  factory: {
+    data: {},
+    methods: {},
+    watch: {},
+    created: {},
+    mounted: {},
+    ...
+  }
+});
 ```
 
-# Nwt Randomizer API
+Esto nos permite luego acceder a:
 
-API para gestionar aleatoriedad.
+```js
+dialogDefinition.$original; // Parámetros originales
+dialogDefinition.$factory; // Parámetros finales
+dialogDefinition.$process; // Proceso vinculado al diálogo
+await CommonDialogs.open(dialogDefinition.$factory);
+```
+
+# NwtDom
+
+API para utilidades relacionadas con el DOM.
 
 ## Exposición
 
-La API se expone a través de:
-
 ```js
-NwtRandomizer
-NwtFramework.Randomizer
-Vue.prototype.$nwt.Randomizer
+NwtDom
+NwtFramework.Dom
+Vue.prototype.$nwt.Dom
 ```
 
 ## Ventajas
 
-Permite algunas cosas como:
-
 ```js
-NwtRandomizer.fromNumbers(0,10);
-NwtRandomizer.fromList([0,1,2,3,4,5]);
-NwtRandomizer.fromAlphabet(10);
-NwtRandomizer.fromAlphabet(10, "abcdef".split(""));
+// Métodos de selección:
+// (donde String permite css selector, y Function permite js filter)
+NwtDom.findFirstChildWhere(element [, String], Function);
+NwtDom.findFirstChildrenWhere(element [, String], Function);
+NwtDom.findClosestParentWhere(element [, String], Function);
+NwtDom.removeTextContentSpaces(text);
 ```
 
 # Nwt Environment API
@@ -1171,6 +784,322 @@ NwtEnvironment.hasGlobal // Boolean
 NwtEnvironment.hasRequire // Boolean
 ```
 
+# NwtErrorUtils
+
+API para utilidades relacionadas con errores.
+
+RECOMENDACIÓN: no usar para nada, de momento no tiene una estabilidad.
+
+## Exposición
+
+```js
+NwtErrorUtils
+NwtFramework.ErrorUtils
+Vue.prototype.$nwt.ErrorUtils
+```
+
+# NwtErrorsManager
+
+API para gestión GLOBAL de errores.
+
+CUIDADO: Solo instanciar 1 vez en toda la aplicación. Actualmente se instancia por `<common-errors />`
+
+## Exposición
+
+```js
+NwtErrorsManager
+NwtFramework.ErrorsManager
+Vue.prototype.$nwt.ErrorsManager
+```
+
+## Ventajas
+
+Tiene varias utilidades internas. Pero la utilidad pública principal es:
+
+```js
+NwtErrorsManager.global.showError(new Error("Whatever"));
+```
+
+# NwtExporter
+
+API para exportar APIs exportables.
+
+Se trata de concentrar y reducir los nombres de las funciones que están esparcidas por toda la API.
+
+Aunque principalmente se centra en la API de NwtFilesystem.
+
+## Exposición
+
+```js
+NwtExporter
+NwtFramework.Exporter
+Vue.prototype.$nwt.Exporter
+```
+
+## Ventajas
+
+```js
+// Uso pensado es:
+const $ = NwtExporter.export.api();
+await $.read.file(...);
+await $.read.directory(...);
+await $.read.tree(...);
+await $.read.json(...);
+await $.read.property(...);
+await $.write.file(...);
+await $.write.directory(...);
+await $.write.tree(...);
+await $.write.json(...);
+await $.write.property(...);
+await $.ensure.file(...);
+await $.ensure.directory(...);
+await $.ensure.tree(...);
+await $.ensure.json(...);
+await $.ensure.property(...);
+```
+
+De momento, es preferible la API de Persister.
+
+# NwtFileChooser
+
+API para seleccionar ficheros y carpetas.
+
+## Exposición
+
+```js
+NwtFileChooser
+NwtFramework.FileChooser
+Vue.prototype.$nwt.FileChooser
+```
+
+## Ventajas
+
+```js
+await NwtFileChooser.pickFile({ ... });
+await NwtFileChooser.pickDirectory({ ... });
+await NwtFileChooser.pickFileToSave({ ... });
+```
+
+# NwtFilesystem
+
+API para ficheros.
+
+## Exposición
+
+```js
+NwtFilesystem
+NwtFramework.Filesystem
+Vue.prototype.$nwt.Filesystem
+```
+
+## Ventajas
+
+A continuación se exponen todos los métodos y propiedades:
+
+```js
+NwtFilesystem.fs = NwtEnvironment.isNode ? require("fs") : null;
+NwtFilesystem.readFile(filepath, encoding = "utf8");
+NwtFilesystem.writeFile(filepath, content, encoding = "utf8");
+NwtFilesystem.appendFile(filepath, content, encoding = "utf8");
+NwtFilesystem.lstat(filepath);
+await NwtFilesystem.exists(filepath);
+await NwtFilesystem.existsAsFile(filepath);
+await NwtFilesystem.existsAsDirectory(dirpath);
+await NwtFilesystem.ensureDirectory(dirpath);
+await NwtFilesystem.readdir(dirpath, options = {});
+await NwtFilesystem.readdirStats(dirpath, sortByType = false);
+NwtFilesystem.rmdir(dirpath);
+NwtFilesystem.mkdir(dirpath);
+NwtFilesystem.unlink(filepath);
+await NwtFilesystem.ensureFile(filepath, contents);
+await NwtFilesystem.ensureJson(filepath, data);
+await NwtFilesystem.existsProperty(filepath, propertypath, defaultValue = undefined);
+await NwtFilesystem.ensureProperty(filepath, propertypath, value = undefined);
+await NwtFilesystem.readProperty(filepath, propertypath, defaultValue = undefined);
+await NwtFilesystem.writeProperty(filepath, propertypath, value = undefined);
+NwtFilesystem.formatBytes(bytes);
+NwtFilesystem.clearFileSeparatorOnExtremes(filepath);
+await NwtFilesystem.createTemporaryDirectory(name = false);
+await NwtFilesystem.clearTemporaryDirectories();
+NwtFilesystem.selectByGlob(globPatterns, options = {});
+await NwtFilesystem.initializeFile(filepath, content = "");
+await NwtFilesystem.readJson(filepath);
+await NwtFilesystem.writeJson(filepath, data, beautify = false);
+await NwtFilesystem.readTree(dirPath, options = {});
+NwtFilesystem.THROW_ERROR_FLAG = {};
+NwtFilesystem.accessFrom(data, propertyPath = [], force = false, value = undefined, errorValue = this.THROW_ERROR_FLAG);
+NwtFilesystem.setFrom(data, propertyPath = [], value = undefined, force = true);
+```
+
+# Nwt Globalizer API
+
+API para globalizar variables en todos los entornos.
+
+## Exposición
+
+La API se expone a través de:
+
+```js
+NwtGlobalizer
+NwtFramework.Globalizer
+Vue.prototype.$nwt.Globalizer
+```
+
+## Ventajas
+
+La API permite algunas cosas como:
+
+```js
+NwtGlobalizer.exportTo("NombreDeGlobal", {});
+```
+
+# Nwt Importer API
+
+API para importar scripts y estilos.
+
+## Exposición
+
+Se expone a través de:
+
+```js
+NwtImporter
+NwtFramework.Importer
+Vue.prototype.$nwt.Importer
+```
+
+## Ventajas
+
+Puede usarse así:
+
+```js
+// Básicos:
+await NwtImporter.scriptSrc("https://domain.com/script.js");
+await NwtImporter.linkStylesheet("https://domain.com/styles.css");
+// Es un require pero eliminando caché:
+await NwtImporter.requireNewly(subpath);
+// Lee el fichero, crea una AsyncFunction y la llama:
+await NwtImporter.asyncSource(subpath, parameters = {}, scope = window)
+// Importa un componente Vue (.html + .js + .css) a partir de la ruta común (en runtime):
+await NwtImporter.vueComponentByFilesystem(subpath)
+// Inyecta estilos CSS (usando un ID para singletonear):
+await NwtImporter.styleTag(cssString, id = null)
+// Como asyncSource pero no usa un fichero, sino el código directamente:
+await NwtImporter.asyncFunction(code, parameters = {}, scope = window)
+// Como asyncFunction y asyncSource, pero solo crea la función, no la llama:
+await NwtImporter.asyncFactory(code, parameters = [])
+```
+
+# Nwt Injection API
+
+La `Nwt Injection API` consiste en la inyección al DOM.
+
+En este paso:
+
+- Se espera al evento `load` de la `window`
+- Se inyectan las APIs en `Vue.prototype`
+   - `Vue.prototype.$window`
+   - `Vue.prototype.$nwt`
+   - `Vue.prototype.$tracer`
+   - `Vue.prototype.$trace`
+- Se inicia la aplicación basándose en el componente:
+   - `Vue.options.components.MainWindow`
+
+Pero no se expone una API como tal en este punto.
+
+# NwtIterableClass
+
+API para crear iterables. Object-oriented approach (no templated-code approach).
+
+## Exposición
+
+```js
+NwtIterableClass
+NwtFramework.IterableClass
+Vue.prototype.$nwt.IterableClass
+```
+
+## Ventajas
+
+```js
+await NwtIterableClass.create({
+  // Inyecciones: por documentar
+}).run();
+```
+
+# NwtIterableCommandClass
+
+API para el iterable de un comando. Object-oriented approach.
+
+## Exposición
+
+```js
+NwtIterableCommandClass
+NwtFramework.IterableCommandClass
+Vue.prototype.$nwt.IterableCommandClass
+```
+
+## Ventajas
+
+Extiende NwtIterableClass para dar una implementación concreta aplicable a la API de comandos.
+
+# NwtIterableFunction
+
+API para crear funciones iterables. Templated-code approach.
+
+Esta API usa por debajo:
+
+```js
+await NwtTemplates.global.compile.tjs.file.to.async(
+  "nwt/nwt-iterable-function/template.js", // Que está aquí: assets/framework/nwt-templates/templates/nwt/nwt-iterable-function/template.js
+  { ...this.iterable.onCompiledArguments, iterable: this.iterable },
+  Object.keys({ ...this.iterable.onCompiledArguments, iterable: this.iterable }),
+);
+```
+
+## Exposición
+
+```js
+NwtIterableFunction
+NwtFramework.IterableFunction
+Vue.prototype.$nwt.IterableFunction
+```
+
+## Ventajas
+
+```js
+NwtIterableFunction.utils.fromFunctionToBodyString(callback:Function):String; // usa por debajo NwtCodeComposer.getBlankFunctionBody(...)
+NwtIterableFunction.utils.fromCollectionToArray(collection:Array|Object):Array; // homogeneiza arrays y objetos
+await NwtIterableFunction.run({
+  onWasStarted: ...,
+  onIndex: ...,
+  onItem: ...,
+  onKey: ...,
+  onValue: ...,
+  onIdentifier: ...,
+  onCollection: ...,
+  onCompiledArguments: ...,
+  onNextIteration: ...,
+  onInterlapse: ...,
+  onCompileCollection: ...,
+  onCompileCode: ...,
+  onCondition: ...,
+  onProgression: ...,
+  onIteration: ...,
+  onRun: ...,
+  onFunctionStart: ...,
+  onFunctionSuccess: ...,
+  onFunctionError: ...,
+  onFunctionFinally: ...,
+  onFunctionEnd: ...,
+  onIterationStart: ...,
+  onIterationSuccess: ...,
+  onIterationError: ...,
+  onIterationFinally: ...,
+  onIterationEnd: ...,
+  onAbortion: ...,
+});
+```
+
 # Nwt Json Storer API
 
 La `Nwt Json Storer API` consiste en la gestión de 1 JSON para PC con **filesystem** y para navegador con **localStorage**.
@@ -1200,6 +1129,328 @@ await storer.initialize(key, value);
 await storer.get(key, defaultValue);
 await storer.set(key, value);
 await storer.delete(key);
+```
+
+# Nwt Lazy Loader API
+
+API para carga cacheable de recursos JS y CSS.
+
+## Exposición
+
+La API se expone a través de:
+
+```js
+NwtLazyLoader
+NwtFramework.LazyLoader
+Vue.prototype.$nwt.LazyLoader
+```
+
+## Ventajas
+
+La API permite algunas cosas como:
+
+```js
+await NwtLazyLoader.lazyLoad({
+  id: "jquery",
+  type: "scriptSrc",
+  url: "https://cdn.js/jquery.js",
+  checker: typeof jQuery !== "undefined",
+});
+await NwtLazyLoader.lazyLoad({
+  id: "styles",
+  type: "linkStylesheet",
+  url: "https://cdn.js/styles.css",
+});
+await NwtLazyLoader.loadHighlightJs(); // carga highlight.js
+await NwtLazyLoader.loadJsBeautify(); // carga js-beautify
+```
+
+# NwtLiveInjector
+
+API para inyectar código en runtime. API para debugging.
+
+## Exposición
+
+```js
+NwtLiveInjector
+NwtFramework.LiveInjector
+Vue.prototype.$nwt.LiveInjector
+```
+
+## Ventajas
+
+```js
+NwtLiveInjector.start();
+// El fichero que está en el root del proyecto: `injector.js`
+// se queda a la escucha de cambios
+// y cuando guardas, inyecta el código que en él haya
+```
+
+# NwtObjectUtils
+
+API para utilidades con Object.
+
+## Exposición
+
+```js
+NwtObjectUtils
+NwtFramework.ObjectUtils
+Vue.prototype.$nwt.ObjectUtils
+```
+
+## Ventajas
+
+```
+NwtObjectUtils.cleanMapByPairs(object, cleaner);
+// El «cleaner» recibirá (key, value, index) por cada entrada de «object»
+// Si el «cleaner» devuelve «undefined», esa entrada no se devolverá
+// Si el «cleaner» devuelve Array<Clave,Valor>, esa entrada será substituida por lo especificado
+// Si el «cleaner» devuelve otra cosa, lanzará error
+
+# Nwt Framework API
+
+API de acceso global.
+
+## Exposición
+
+Está expuesta en:
+
+```js
+NwtFramework
+Vue.prototype.$nwt
+```
+## Ventajas
+
+Dejar accesible desde 1 objeto todas las APIs de Nwt.
+
+Se conforma a partir de:
+
+```js
+Object.assign(NwtFramework, {
+  // BOOT
+  Asserter: NwtAsserter,
+  Globalizer: NwtGlobalizer,
+  Importer: NwtImporter,
+  LazyLoader: NwtLazyLoader,
+  ProcessManager: NwtProcessManager,
+  Process: NwtProcess,
+  ProgressBar: NwtProgressBar,
+  Randomizer: NwtRandomizer,
+  Settings: NwtSettings,
+  Tester: NwtTester,
+  Timer: NwtTimer,
+  Utils: NwtUtils,
+  Tracer: NwtTracer,
+  // Last APIs:
+  ProcedureDefinition: NwtProcedureDefinition,
+  ProcedureInjections: NwtProcedureInjections,
+  ProcedureSeed: NwtProcedureSeed,
+  Csv: NwtCsv,
+  Shell: NwtShell,
+  Filesystem: NwtFilesystem,
+  // Injected later:
+  Errors: null,
+  Dialogs: null,
+  Toasts: null,
+  // PACK
+});
+```
+
+# App Paths API
+
+Sirve como ejemplo de API de aplicación.
+
+Funcionalmente, solo deja acceso a:
+
+- `NwtPaths.projectRoot`.
+- `NwtPaths.registeredProcedures`.
+
+Pero puede usarse para añadir las rutas interesantes de la aplicación.
+
+
+
+
+
+
+
+
+
+# NwtProcessManager
+
+API para la gestión de procesos internos de la aplicación.
+
+## Exposición
+
+```js
+NwtProcessManager
+NwtFramework.ProcessManager
+Vue.prototype.$nwt.ProcessManager
+NwtProcessManager.dialogs // instancia
+NwtProcessManager.boxes // instancia
+```
+
+## Ventajas
+
+Esta API permite crear subprocesos dependientes de procesos padre, y todos gestionados por 1 mismo `ProcessManager`.
+
+```js
+const dialogProcess = NwtProcessManager.dialogs.createProcess();
+const dialogSubprocess1 = dialogProcess.createSubprocess();
+const dialogSubprocess2 = dialogProcess.createSubprocess();
+const dialogSubprocess3 = dialogProcess.createSubprocess();
+```
+
+# Nwt Process API
+
+Permite representar procesos.
+
+Un proceso puede:
+
+ - Guardar hijos con `$children`
+ - Vincularse con un padre con `$parent`
+ - Vincularse con un `ProcessManager` con `$manager`
+ - Recordar cuándo se creó con `$createdAt`
+ - Recordar cuándo se cerró con `$closedAt`
+ - Ocultarse con `hide()`
+ - Mostrarse con `show()`
+ - Crear un subproceso con `createSubprocess(...)`
+ - Cerrarse con `close()`
+
+## Exposición
+
+Se expone a través de:
+
+```js
+NwtProcess
+NwtFramework.Process
+Vue.prototype.$nwt.Process
+```
+
+## Permite cosas como
+
+```js
+const pr = NwtProcess.create({
+  manager: NwtProcessManager.dialogs,
+  parent: NwtProcessManager.dialogs.$list[0],
+});
+const pr2 = pr.createSubprocess({
+  extraParams: {},
+});
+pr.hide();
+pr.show();
+pr.close();
+```
+
+# Nwt Progress Bar API
+
+API para gestionar una barra de progreso.
+
+## Exposición
+
+La API se expone a través de:
+
+```js
+NwtProgressBar
+NwtFramework.ProgressBar
+Vue.prototype.$nwt.ProgressBar
+```
+
+## Ventajas
+
+Permite algunas cosas como:
+
+```js
+const progressBar = ProgressBar.create();
+const subprogressBar = progressBar.subprogress({
+  total: 5,
+  current: 0,
+});
+subprogressBar.advance(1);
+subprogressBar.advance(1);
+subprogressBar.advance(1);
+subprogressBar.advance(1);
+subprogressBar.advance(1);
+progressBar.advance(1);
+```
+
+# Nwt Prompt Manager API
+
+API para gestionar los prompts.
+
+## Exposición
+
+La API se expone a través de:
+
+```js
+NwtPromptsManager
+NwtFramework.PromptsManager
+Vue.prototype.$nwt.PromptsManager
+// instancias:
+NwtPromptsManager.global
+```
+
+## Ventajas
+
+La API permite cosas como:
+
+```js
+NwtPromptsManager.global.resolve(...subpaths=[String,...])
+await NwtPromptsManager.global.list(); // Busca todos los "** /PROMPT.MD"
+await NwtPromptsManager.global.save(path:String,prompt:String); // guarda un "/PROMPT.md" en la ruta especificada
+await NwtPromptsManager.global.pickPrompt(); // abre un <nwt-prompts-manager-viewer> en un diálogo que permite escoger un prompt ya existente
+```
+
+# NwtProxyChain
+
+API para encadenar llamadas a métodos personalizados pasándole strings construídos con acceso a propiedades.
+
+API experimental, no se usa en el framework.
+
+## Exposición
+
+La API se expone a través de:
+
+```js
+NwtProxyChain
+NwtFramework.ProxyChain
+Vue.prototype.$nwt.ProxyChain
+```
+
+## Ventajas
+
+```js
+proxyChain = NwtProxyChain.fromFactory(text => customActionWith(text));
+proxyChain.com.utils.Array.whatever.$; // Aquí, está haciendo: customActionWith("com.utils.Array.whatever");
+proxyChain.find("com.utils.Array.whatever") // Lo mismo pero con llamada explícita
+```
+
+# Nwt Randomizer API
+
+API para gestionar aleatoriedad.
+
+## Exposición
+
+La API se expone a través de:
+
+```js
+NwtRandomizer
+NwtFramework.Randomizer
+Vue.prototype.$nwt.Randomizer
+```
+
+## Ventajas
+
+Permite algunas cosas como:
+
+```js
+NwtRandomizer.fromNumbers(0,10);
+NwtRandomizer.fromList([0,1,2,3,4,5]);
+NwtRandomizer.fromAlphabet(10);
+NwtRandomizer.fromAlphabet(10, "abcdef".split(""));
+// Propiedaes estáticas:
+NwtRandomizer.alphabet
+NwtRandomizer.numerical
+NwtRandomizer.alphanumerical
 ```
 
 # Nwt Settings API
@@ -1238,44 +1489,88 @@ NwtSettings.global.set(key, value)
 NwtSettings.global.delete(key)
 ```
 
-# Nwt Settings Viewer API / Componente Vue2
+# Nwt Shell API
 
-La Nwt Settings Viewer API permite sincronizar un widget gráfico con una instancia de `NwtSettings`.
+API para instanciar una consola contextualizada.
 
 ## Exposición
 
-La API se expone a través del componente Vue2:
+La API está expuesta a través de:
 
 ```js
-Vue.options.components.NwtSettingsViewer
+NwtShell
+NwtFramework.Shell
+Vue.prototype.$nwt.Shell
 ```
 
 ## Ventajas
 
 La API permite cosas como:
 
-```html
-<nwt-settings-viewer :settings="settings" :dialog="this" />
+```js
+const shell = NwtShell.create("/path/to/directory");
+await shell.exec("explorer ."); // Ejecutar comandos asíncronamente
+await shell.ls();               // Listar directorios
+shell.cd("..");                 // Cambiar de directorio
+shell.subprocess("comando", argumentos=["--flag"], opciones={cwd:...}); // returns una Promise (por si se quiere usar con await directamente) de la que cuelga una propiedad extra: «subprocess»
+shell.terminate(); // envía signal de terminado a todos los procesos hijo (de this._children)
 ```
 
-Donde `dialog` tiene que ser una instancia de `NwtDialog`, pero dentro de la template del diálogo la accedemos con el `this`:
+# NwtStringShortener
+
+API para gestionar strings acortados.
+
+## Exposición
+
+Se expone a través de:
 
 ```js
-this.$dialogs.open({
-  title: "Configuraciones globales",
-  template: `<nwt-settings-viewer :settings="$nwt.Settings.global" :dialog="this" />`,
-});
+NwtStringShortener
+NwtFramework.StringShortener
+Vue.prototype.$nwt.StringShortener
+// Instancia:
+NwtStringShortener.global // instancia creada en: "assets/framework/nwt-string-shortener/global.json"
 ```
 
-Donde `settings` tiene que ser una instancia de `NwtSettings`.
+## Ventajas
 
-Por ejemplo:
+La API permite cosas como:
 
 ```js
-NwtSettings.global // instancia
+// Estáticos:
+NwtStringShortener.create(jsonFilepath:String);
+NwtStringShortener.createUid(len=10); // returns String con un nuevo ID (PERO NO LO PERSISTE)
+// De instancia:
+await NwtStringShortener.global.initializeStore(); // inicializa (con NwtFilesystem.ensureFile, cuidado) el JSON si no existe
+await NwtStringShortener.global.init(id, initialValue = undefined); // Inicializa un ID si no existe ya + retorna su shorteneado
+await NwtStringShortener.global.get(id, defaultValue = undefined); // Devuelve el ID shorteneado de un ID, o en su defecto `defaultValue`
+await NwtStringShortener.global.deleteById(id); // Elimina el ID no shorteneado proporcionado
+await NwtStringShortener.global.deleteAllExceptValues(values=[]); // Elimina todos los IDs **shorteneados** que NO aparezcan en el `values=[...]`. Se usa para eliminar directorios-caché obsoletos.
+await NwtStringShortener.global.add(id, value = false, silently = false); // añade el ID como nuevo shortener + si value no es false lo usa como ID shorteneado + si silently no es false no lanza error de existir ya + retorna el ID shorteneado correspondiente
 ```
 
-Se enciende un NwtSettingsViewer si pulsas ALT+L.
+# NwtStrings
+
+API de utilidades relacionadas con **obtener** algunos strings específicos.
+
+Se distingue de la API de `NwtStringUtils` (puede que todavía no exista) en que esta segunda serían métodos y utilidades relacionadas con cualquier string. `NwtStringUtils` sería para métodos de extensión de `String.prototype`.
+
+## Exposición
+
+```js
+NwtStrings
+NwtFramework.Strings
+Vue.prototype.$nwt.Strings
+```
+
+## Ventajas
+
+```js
+NwtStrings.EOL; // fin de línea en el sistema operativo actual (usa node.js)
+await NwtStrings.fromAssets(filename); // returns el contenido de `assets/app/strings/${filename}`
+await NwtStrings.getDistJsSource(); // returns el contenido de `assets/dist.js` (que se cachea y luego puede obtenerse en sync)
+await NwtStrings.getSurroundingLinesFromDistJs({line:Integer,column:Integer}, linesBefore=5, linesAfter=5); // returns as String el contenido especificado dentro de `assets/dist.js`
+```
 
 # Nwt Tester API
 
@@ -1464,156 +1759,6 @@ NwtTester.global.define("1 - Test", async test => {
 });
 ```
 
-# Nwt Process API
-
-Permite representar procesos.
-
-Un proceso puede:
-
- - Guardar hijos con `$children`
- - Vincularse con un padre con `$parent`
- - Vincularse con un `ProcessManager` con `$manager`
- - Recordar cuándo se creó con `$createdAt`
- - Recordar cuándo se cerró con `$closedAt`
- - Ocultarse con `hide()`
- - Mostrarse con `show()`
- - Crear un subproceso con `createSubprocess(...)`
- - Cerrarse con `close()`
-
-## Exposición
-
-Se expone a través de:
-
-```js
-NwtProcess
-NwtFramework.Process
-Vue.prototype.$nwt.Process
-```
-
-## Permite cosas como
-
-```js
-const pr = NwtProcess.create({
-  manager: NwtProcessManager.dialogs,
-  parent: NwtProcessManager.dialogs.$list[0],
-});
-const pr2 = pr.createSubprocess({
-  extraParams: {},
-});
-pr.hide();
-pr.show();
-pr.close();
-```
-
-# NwtProcessManager
-
-API para la gestión de procesos internos de la aplicación.
-
-## Exposición
-
-```js
-NwtProcessManager
-NwtFramework.ProcessManager
-Vue.prototype.$nwt.ProcessManager
-NwtProcessManager.dialogs // instancia
-NwtProcessManager.boxes // instancia
-```
-
-## Ventajas
-
-Esta API permite crear subprocesos dependientes de procesos padre, y todos gestionados por 1 mismo `ProcessManager`.
-
-```js
-const dialogProcess = NwtProcessManager.dialogs.createProcess();
-const dialogSubprocess1 = dialogProcess.createSubprocess();
-const dialogSubprocess2 = dialogProcess.createSubprocess();
-const dialogSubprocess3 = dialogProcess.createSubprocess();
-```
-
-# Nwt Process Manager Viewer API / Componente Vue2
-
-La Nwt Process Manager Viewer API permite sincronizar un widget gráfico con una instancia de `NwtProcessManager`.
-
-## Exposición
-
-La API se expone a través del componente Vue2:
-
-```js
-Vue.options.components.NwtProcessManagerViewer
-```
-
-## Ventajas
-
-La API permite cosas como:
-
-```html
-<nwt-process-manager-viewer :process-manager="processManager" />
-```
-
-Donde `processManager` tiene que ser una instancia de `NwtProcessManager`.
-
-Hay 2 gestores de procesos principales:
-
-```js
-NwtProcessManager.dialogs instanceof NwtProcessManager
-NwtProcessManager.boxes instanceof NwtProcessManager
-```
-
-# Nwt Dialog Definition API
-
-API de uso interno.
-
-Permite crear definiciones abstractas de diálogos.
-
-Sirve para vincular:
-
- - `$original`: Definición de usuario de diálogo
- - `$factory`: Definición validada de diálogo
- - `$process`: Proceso representativo del diaĺogo
-
-
-## Exposición
-
-Se expone a través de:
-
-```js
-NwtDialogDefinition
-NwtFramework.DialogDefinition
-Vue.prototype.$nwt.DialogDefinition
-```
-
-## Ventajas
-
-Permite crear definiciones de diálogo validadas:
-
-```js
-const dialogDefinition = NwtDialogDefinition.create({
-  title: "Título del diálogo",
-  template: `
-    <div>
-      <div>En el body del diálogo</div>
-    </div>
-  `,
-  factory: {
-    data: {},
-    methods: {},
-    watch: {},
-    created: {},
-    mounted: {},
-    ...
-  }
-});
-```
-
-Esto nos permite luego acceder a:
-
-```js
-dialogDefinition.$original; // Parámetros originales
-dialogDefinition.$factory; // Parámetros finales
-dialogDefinition.$process; // Proceso vinculado al diálogo
-await CommonDialogs.open(dialogDefinition.$factory);
-```
-
 # Nwt Timer API
 
 API para hacer gestiones relacionadas con el tiempo.
@@ -1636,7 +1781,45 @@ Permite algunas cosas como:
 NwtTimer.fromDateToString(new Date())
 NwtTimer.fromMillisecondsToSeconds(5500)
 NwtTimer.secondsDiff(oneDate, anotherDate)
-await NwtTimer.timeout(5000)
+await NwtTimer.timeout(5000);
+const chronometer = NwtTimer.Cronometer.create();
+chronometer.start();
+chronometer.stop(); // returns: seconds diff from created or started
+```
+
+# Nwt Tracer API
+
+API para trazar la ejecución del programa.
+
+## Exposición
+
+Se expone a través de:
+
+```js
+// La clase global
+NwtTracer
+NwtFramework.Tracer
+Vue.prototype.$nwt.Tracer
+
+// La instancia global
+NwtTracer.global // instancia
+Vue.prototype.$tracer === NwtTracer.global // instancia
+
+// La función global
+trace // Función de traceo global
+Vue.prototype.$trace === trace // Función de traceo
+```
+
+## Ventajas
+
+La API permite algunas cosas como:
+
+```js
+NwtTracer.global.activate();
+NwtTracer.global.deactivate();
+NwtTracer.global.trace();
+const traceFunction = NwtTracer.global.createTrace();
+traceFunction("method", [1,2,3]);
 ```
 
 # Nwt Utils API
@@ -1658,205 +1841,29 @@ Vue.prototype.$nwt.Utils
 Permite hacer algunas cosas como:
 
 ```js
-NwtUtils.jsonify({circular JSON is accepted too});
-// >> "{...}"
-
-NwtUtils.noop();
-// >> undefined
-
-NwtUtils.sortObjectByKeys({b:0,a:1});
-// >> {a:1,b:0}
-
-NwtUtils.filterObjectProperties({a:0,b:1,c:2}, (key, value) => ["a","b"].indexOf(key) !== -1);
-// >> {a:0,b:1}
-
-NwtUtils.extractPathsFromFiles([{path:"whatever"}]);
-// >> ["whatever"]
+NwtUtils.noop(); // >> undefined
+NwtUtils.jsonify({circular JSON is accepted too}); // >> "{...}"
+NwtUtils.copify({circular JSON is accepted too}); // >> {...}
+NwtUtils.trify(callback, valueOnFail);
+NwtUtils.sortObjectByKeys({b:0,a:1}); // >> {a:1,b:0}
+NwtUtils.filterObjectProperties({a:0,b:1,c:2}, (key, value) => ["a","b"].indexOf(key) !== -1); // >> {a:0,b:1}
+NwtUtils.extractPathsFromFiles([{path:"whatever"}]); // >> ["whatever"]
+NwtUtils.copyToClipboard(text);
+NwtUtils.getSurroundingLines(content:String, line:Number, column:Number, linesBefore = 3, linesAfter = 3);
 ```
 
-# Nwt Lazy Loader API
+# Nwt Vue2 API
 
-API para carga cacheable de recursos JS y CSS.
+API de utilidades relacionadas con Vue2.
 
 ## Exposición
 
 La API se expone a través de:
 
 ```js
-NwtLazyLoader
-NwtFramework.LazyLoader
-Vue.prototype.$nwt.LazyLoader
-```
-
-## Ventajas
-
-La API permite algunas cosas como:
-
-```js
-await NwtLazyLoader.lazyLoad({
-  id: "jquery",
-  type: "scriptSrc",
-  url: "https://cdn.js/jquery.js",
-  checker: typeof jQuery !== "undefined",
-});
-await NwtLazyLoader.lazyLoad({
-  id: "styles",
-  type: "linkStylesheet",
-  url: "https://cdn.js/styles.css",
-});
-```
-
-# Nwt Framework API
-
-API de acceso global.
-
-## Exposición
-
-Está expuesta en:
-
-```js
-NwtFramework
-Vue.prototype.$nwt
-```
-## Ventajas
-
-Dejar accesible desde 1 objeto todas las APIs de Nwt.
-
-Se conforma a partir de:
-
-```js
-Object.assign(NwtFramework, {
-  // BOOT
-  Asserter: NwtAsserter,
-  Globalizer: NwtGlobalizer,
-  Importer: NwtImporter,
-  LazyLoader: NwtLazyLoader,
-  ProcessManager: NwtProcessManager,
-  Process: NwtProcess,
-  ProgressBar: NwtProgressBar,
-  Randomizer: NwtRandomizer,
-  Settings: NwtSettings,
-  Tester: NwtTester,
-  Timer: NwtTimer,
-  Utils: NwtUtils,
-  Tracer: NwtTracer,
-  // Last APIs:
-  ProcedureDefinition: NwtProcedureDefinition,
-  ProcedureInjections: NwtProcedureInjections,
-  ProcedureSeed: NwtProcedureSeed,
-  Csv: NwtCsv,
-  Shell: NwtShell,
-  Filesystem: NwtFilesystem,
-  // Injected later:
-  Errors: null,
-  Dialogs: null,
-  Toasts: null,
-  // PACK
-});
-```
-
-# Nwt Progress Bar API
-
-API para gestionar una barra de progreso.
-
-## Exposición
-
-La API se expone a través de:
-
-```js
-NwtProgressBar
-NwtFramework.ProgressBar
-Vue.prototype.$nwt.ProgressBar
-```
-
-## Ventajas
-
-Permite algunas cosas como:
-
-```js
-const progressBar = ProgressBar.create();
-const subprogressBar = progressBar.subprogress({
-  total: 5,
-  current: 0,
-});
-subprogressBar.advance(1);
-subprogressBar.advance(1);
-subprogressBar.advance(1);
-subprogressBar.advance(1);
-subprogressBar.advance(1);
-progressBar.advance(1);
-```
-
-# Nwt Progress Bar Viewer API / Componente Vue2
-
-La Nwt Progress Bar Viewer API permite sincronizar un widget gráfico con una instancia de `NwtProgressBar`.
-
-## Exposición
-
-La API se expone a través del componente Vue2:
-
-```js
-Vue.options.components.NwtProgressBarViewer
-```
-
-## Ventajas
-
-La API permite cosas como:
-
-```html
-<nwt-progress-bar-viewer :progress-bar="progressBar" />
-```
-
-Donde `progressBar` tiene que ser una instancia de `NwtProgressBar`.
-
-# Nwt Common Injections API
-
-API para inyecciones globales. Se inyecta 1 componente global, `<common-injections />`.
-
-## Exposición
-
-Esta API no se expone, solo se inyecta en el DOM.
-
-Pero se hace a través del componente vue2 `CommonInjections`.
-
-## Ventajas
-
-- Función 1 / `injectTouchability`
-   - Hace que los eventos de touch (móvil) funcionen también como eventos click (PC) sin tener que cambiar el código.
-- Función 2 / `injectKeyEventForProcessManager`
-   - Hace que CTRL+SUPR abra un diálogo con un gestor de procesos
-- Función 3 / `injectKeyEventForSettings`
-   - Hace que ALT+S abra un diálogo de configuraciones globales
-
-# Nwt Injection API
-
-La `Nwt Injection API` consiste en la inyección al DOM.
-
-En este paso:
-
-- Se espera al evento `load` de la `window`
-- Se inyectan las APIs en `Vue.prototype`
-   - `Vue.prototype.$window`
-   - `Vue.prototype.$nwt`
-   - `Vue.prototype.$tracer`
-   - `Vue.prototype.$trace`
-- Se inicia la aplicación basándose en el componente:
-   - `Vue.options.components.MainWindow`
-
-Pero no se expone una API como tal en este punto.
-
-# Nwt Shell API
-
-API para instanciar una consola contextualizada.
-
-## Exposición
-
-La API está expuesta a través de:
-
-```js
-NwtShell
-NwtFramework.Shell
-Vue.prototype.$nwt.Shell
+NwtVue2
+NwtFramework.Vue2
+Vue.prototype.$nwt.Vue2
 ```
 
 ## Ventajas
@@ -1864,17 +1871,24 @@ Vue.prototype.$nwt.Shell
 La API permite cosas como:
 
 ```js
-const shell = NwtShell.create("/path/to/directory");
-await shell.exec("explorer ."); // Ejecutar comandos asíncronamente
-await shell.ls();               // Listar directorios
-shell.cd("..");                 // Cambiar de directorio
+// Métodos para notaciones:
+NwtVue2.fromTagToIdNotation("tag-nomenclature"); // returns: "TagNomenclature"
+NwtVue2.fromIdToTagNotation("TagNomenclature"); // returns: "tag-nomenclature"
+// Definiciones paralelas de componentes y directivas (innecesario si usas Vue.options.components y Vue.options.directives):
+NwtVue2.defined.components; // {}
+NwtVue2.defined.directives; // {}
+NwtVue2.define.component("component-name", {...});
+NwtVue2.define.directive("directive-name", {...});
+// Métodos para persistir propiedades en HTMLElement, HTMLElementDataset y Vue2Component:
+NwtVue2.cross.expose.by.element(...); // equals: NwtVue2.exposeByElement(...)
+NwtVue2.cross.expose.by.component(...); // equals: NwtVue2.exposeByComponent(...)
+NwtVue2.exposeByElement(htmlElement, {props:"values"}, "$propertyName", [toElement=true, toDataset=true, toComponent=true]);
+NwtVue2.exposeByComponent(vue2Component, {props:"values"}, "$propertyName", [toElement=true, toDataset=true, toComponent=true]);
 ```
 
+Es una API de poco uso. Los métodos estrictamente necesarios son los de notaciones. Pero los otros pueden ser útiles también en algunos casos.
 
-
-
-
-
+Los métodos de definiciones paralelas habría que eliminarlos, sin romper nada que ya esté funcionando.
 
 
 

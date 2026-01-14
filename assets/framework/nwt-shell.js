@@ -23,6 +23,8 @@
  * await shell.exec("explorer ."); // Ejecutar comandos asíncronamente
  * await shell.ls();               // Listar directorios
  * shell.cd("..");                 // Cambiar de directorio
+ * shell.subprocess("comando", argumentos=["--flag"], opciones={cwd:...}); // returns una Promise (por si se quiere usar con await directamente) de la que cuelga una propiedad extra: «subprocess»
+ * shell.terminate(); // envía signal de terminado a todos los procesos hijo (de this._children)
  * ```
  * 
  */

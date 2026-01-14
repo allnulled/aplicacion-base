@@ -67,7 +67,6 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-procedures-manager.js`,
   `${projectRoot}/assets/framework/nwt-procedure-injections.js`,
   `${projectRoot}/assets/framework/nwt-csv.js`,
-  `${projectRoot}/assets/framework/nwt-submemory.js`,
   `${projectRoot}/assets/framework/nwt-iterable-function.js`,
   `${projectRoot}/assets/framework/nwt-iterable-class.js`,
   `${projectRoot}/assets/framework/nwt-iterable-command-class.js`,

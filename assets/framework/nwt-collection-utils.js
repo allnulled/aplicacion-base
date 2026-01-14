@@ -1,3 +1,24 @@
+/**
+ * 
+ * # NwtCollectionUtils
+ * 
+ * API para utilidades relacionadas con colecciones.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtCollectionUtils
+ * NwtFramework.CollectionUtils
+ * Vue.prototype.$nwt.CollectionUtils
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtCollectionUtils.normalizeCollection(data:Array|Object); // normaliza colecciones
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -45,19 +66,6 @@
         }
       }
       return -1;
-    }
-
-    static async toggleByFirstOrValue(list, val) {
-      trace("NwtCollectionUtils.toggleByValue");
-      for(let index=list.length-1; index>0; index--) {
-        const item = list[index];
-        if((Array.isArray(item) ? item[0] : item) === val) {
-          list.splice(index, 1);
-        } else {
-          list.push(false);
-        }
-      }
-      return list;
     }
 
   };

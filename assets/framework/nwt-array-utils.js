@@ -1,3 +1,26 @@
+/**
+ * 
+ * # NwtArrayUtils
+ * 
+ * API para utilidades relacionadas con la clase Array.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtArrayUtils
+ * NwtFramework.ArrayUtils
+ * Vue.prototype.$nwt.ArrayUtils
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtArrayUtils.repeatBy(3, true); // returns: [true, true, true]
+ * // Este método elimina el valor si lo encuentra, o lo añade si no lo encuentra:
+ * NwtArrayUtils.toggleByValue(lista:Array, value:any);
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -18,19 +41,6 @@
       const pos = list.indexOf(val);
       if(pos === -1) list.push(val);
       else list.splice(pos, 1);
-      return list;
-    }
-
-    static async toggleByFirstOrValue(list, val) {
-      trace("NwtArrayUtils.toggleByValue");
-      for(let index=list.length-1; index>0; index--) {
-        const item = list[index];
-        if((Array.isArray(item) ? item[0] : item) === val) {
-          list.splice(index, 1);
-        } else {
-          list.push(false);
-        }
-      }
       return list;
     }
 

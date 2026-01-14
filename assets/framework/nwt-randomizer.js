@@ -23,6 +23,10 @@
  * NwtRandomizer.fromList([0,1,2,3,4,5]);
  * NwtRandomizer.fromAlphabet(10);
  * NwtRandomizer.fromAlphabet(10, "abcdef".split(""));
+ * // Propiedaes estáticas:
+ * NwtRandomizer.alphabet
+ * NwtRandomizer.numerical
+ * NwtRandomizer.alphanumerical
  * ```
  * 
  */

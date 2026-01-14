@@ -22,7 +22,10 @@
  * NwtTimer.fromDateToString(new Date())
  * NwtTimer.fromMillisecondsToSeconds(5500)
  * NwtTimer.secondsDiff(oneDate, anotherDate)
- * await NwtTimer.timeout(5000)
+ * await NwtTimer.timeout(5000);
+ * const chronometer = NwtTimer.Cronometer.create();
+ * chronometer.start();
+ * chronometer.stop(); // returns: seconds diff from created or started
  * ```
  * 
  */

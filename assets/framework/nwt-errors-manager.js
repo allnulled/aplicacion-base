@@ -1,3 +1,28 @@
+/**
+ * 
+ * # NwtErrorsManager
+ * 
+ * API para gestión GLOBAL de errores.
+ * 
+ * CUIDADO: Solo instanciar 1 vez en toda la aplicación. Actualmente se instancia por `<common-errors />`
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtErrorsManager
+ * NwtFramework.ErrorsManager
+ * Vue.prototype.$nwt.ErrorsManager
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * Tiene varias utilidades internas. Pero la utilidad pública principal es:
+ * 
+ * ```js
+ * NwtErrorsManager.global.showError(new Error("Whatever"));
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25,14 +50,6 @@
       this.htmlElement = vueComponent.$el;
       this.errors = [];
       this.loopbroker = undefined;
-    }
-
-    triggerLoopbroker() {
-      trace("NwtErrorsManager.prototype.triggerLoopbroker");
-      clearTimeout(this.loopbroker);
-      this.loopbroker = setTimeout(() => {
-
-      }, 1000);
     }
 
     async initialize() {
@@ -193,7 +210,7 @@
           column: Number(m[4]),
         };
         if (info.file.trim().endsWith("/assets/dist.js")) {
-          info.fragment = NwtStrings.printSurroundingLinesFromDistJs(info);
+          info.fragment = NwtStrings.getSurroundingLinesFromDistJs(info);
         }
         return info;
         return `on ${info.function}@${info.file}:${info.line}:${info.column} [${info.fragment}]`;

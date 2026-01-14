@@ -1,3 +1,10 @@
+/**
+ * 
+ * # NwtTemplates
+ * 
+ * API para la gestión de plantillas.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {

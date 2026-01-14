@@ -18825,6 +18825,25 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][12]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-argumenter.js
+/**
+ * 
+ * # NwtArgumentes
+ * 
+ * API para la normalización de argumentos.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtArgumenter
+ * NwtFramework.Argumenter
+ * Vue.prototype.$nwt.Argumenter
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * No es una API estable hasta que no produzca código legible.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -19248,6 +19267,29 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][14]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-debug.js
+/**
+ * 
+ * # NwtDebug
+ * 
+ * API para utilidades de debugging.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtDebug
+ * NwtFramework.Debug
+ * Vue.prototype.$nwt.Debug
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtDebug.d(...args); // solo console.log
+ * NwtDebug.j(...args); // NwtUtils.stringify + console.log
+ * NwtDebug.k(...args); // Object.keys + NwtUtils.stringify + console.log
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -19307,6 +19349,31 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][15]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-errors-manager.js
+/**
+ * 
+ * # NwtErrorsManager
+ * 
+ * API para gestión GLOBAL de errores.
+ * 
+ * CUIDADO: Solo instanciar 1 vez en toda la aplicación. Actualmente se instancia por `<common-errors />`
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtErrorsManager
+ * NwtFramework.ErrorsManager
+ * Vue.prototype.$nwt.ErrorsManager
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * Tiene varias utilidades internas. Pero la utilidad pública principal es:
+ * 
+ * ```js
+ * NwtErrorsManager.global.showError(new Error("Whatever"));
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -19334,14 +19401,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       this.htmlElement = vueComponent.$el;
       this.errors = [];
       this.loopbroker = undefined;
-    }
-
-    triggerLoopbroker() {
-      trace("NwtErrorsManager.prototype.triggerLoopbroker");
-      clearTimeout(this.loopbroker);
-      this.loopbroker = setTimeout(() => {
-
-      }, 1000);
     }
 
     async initialize() {
@@ -19502,7 +19561,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
           column: Number(m[4]),
         };
         if (info.file.trim().endsWith("/assets/dist.js")) {
-          info.fragment = NwtStrings.printSurroundingLinesFromDistJs(info);
+          info.fragment = NwtStrings.getSurroundingLinesFromDistJs(info);
         }
         return info;
         return `on ${info.function}@${info.file}:${info.line}:${info.column} [${info.fragment}]`;
@@ -19516,6 +19575,23 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][16]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-error-utils.js
+/**
+ * 
+ * # NwtErrorUtils
+ * 
+ * API para utilidades relacionadas con errores.
+ * 
+ * RECOMENDACIÓN: no usar para nada, de momento no tiene una estabilidad.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtErrorUtils
+ * NwtFramework.ErrorUtils
+ * Vue.prototype.$nwt.ErrorUtils
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -19834,8 +19910,21 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * Puede usarse así:
  * 
  * ```js
+ * // Básicos:
  * await NwtImporter.scriptSrc("https://domain.com/script.js");
  * await NwtImporter.linkStylesheet("https://domain.com/styles.css");
+ * // Es un require pero eliminando caché:
+ * await NwtImporter.requireNewly(subpath);
+ * // Lee el fichero, crea una AsyncFunction y la llama:
+ * await NwtImporter.asyncSource(subpath, parameters = {}, scope = window)
+ * // Importa un componente Vue (.html + .js + .css) a partir de la ruta común (en runtime):
+ * await NwtImporter.vueComponentByFilesystem(subpath)
+ * // Inyecta estilos CSS (usando un ID para singletonear):
+ * await NwtImporter.styleTag(cssString, id = null)
+ * // Como asyncSource pero no usa un fichero, sino el código directamente:
+ * await NwtImporter.asyncFunction(code, parameters = {}, scope = window)
+ * // Como asyncFunction y asyncSource, pero solo crea la función, no la llama:
+ * await NwtImporter.asyncFactory(code, parameters = [])
  * ```
  * 
  */
@@ -20265,6 +20354,33 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][21]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-strings.js
+/**
+ * 
+ * # NwtStrings
+ * 
+ * API de utilidades relacionadas con **obtener** algunos strings específicos.
+ * 
+ * Se distingue de la API de `NwtStringUtils` (puede que todavía no exista) en que esta segunda serían métodos y utilidades relacionadas con cualquier string. `NwtStringUtils` sería para métodos de extensión de `String.prototype`.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtStrings
+ * NwtFramework.Strings
+ * Vue.prototype.$nwt.Strings
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtStrings.EOL; // fin de línea en el sistema operativo actual (usa node.js)
+ * await NwtStrings.fromAssets(filename); // returns el contenido de `assets/app/strings/${filename}`
+ * await NwtStrings.getDistJsSource(); // returns el contenido de `assets/dist.js` (que se cachea y luego puede obtenerse en sync)
+ * await NwtStrings.getSurroundingLinesFromDistJs({line:Integer,column:Integer}, linesBefore=5, linesAfter=5); // returns as String el contenido especificado dentro de `assets/dist.js`
+ * ```
+ * 
+ */
+
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -20300,8 +20416,8 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       });
     }
 
-    static printSurroundingLinesFromDistJs(info, linesBefore = 5, linesAfter = 5) {
-      trace("NwtStrings.printSurroundingLinesFromDistJs");
+    static getSurroundingLinesFromDistJs(info, linesBefore = 5, linesAfter = 5) {
+      trace("NwtStrings.getSurroundingLinesFromDistJs");
       if(this.distSource) {
         return NwtUtils.getSurroundingLines(this.distSource, info.line, info.column, linesBefore, linesAfter);
       }
@@ -20318,6 +20434,30 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][22]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-object-utils.js
+/**
+ * 
+ * # NwtObjectUtils
+ * 
+ * API para utilidades con Object.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtObjectUtils
+ * NwtFramework.ObjectUtils
+ * Vue.prototype.$nwt.ObjectUtils
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```
+ * NwtObjectUtils.cleanMapByPairs(object, cleaner);
+ * // El «cleaner» recibirá (key, value, index) por cada entrada de «object»
+ * // Si el «cleaner» devuelve «undefined», esa entrada no se devolverá
+ * // Si el «cleaner» devuelve Array<Clave,Valor>, esa entrada será substituida por lo especificado
+ * // Si el «cleaner» devuelve otra cosa, lanzará error
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -20356,19 +20496,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return output;
     }
 
-    static toggleByKeyAndSetter(obj, key, setter) {
-      trace("NwtObjectUtils.toggleByKeyAndSetter");
-      const hasKey = key in obj;
-      if(!hasKey) {
-        return setter(key, obj[key], obj).then(output => {
-          obj[key] = output;
-          return output;
-        });
-      } else {
-        delete obj[key];
-      }
-    }
-
   };
 
   return NwtObjectUtils;
@@ -20376,6 +20503,29 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][23]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-array-utils.js
+/**
+ * 
+ * # NwtArrayUtils
+ * 
+ * API para utilidades relacionadas con la clase Array.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtArrayUtils
+ * NwtFramework.ArrayUtils
+ * Vue.prototype.$nwt.ArrayUtils
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtArrayUtils.repeatBy(3, true); // returns: [true, true, true]
+ * // Este método elimina el valor si lo encuentra, o lo añade si no lo encuentra:
+ * NwtArrayUtils.toggleByValue(lista:Array, value:any);
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -20399,19 +20549,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return list;
     }
 
-    static async toggleByFirstOrValue(list, val) {
-      trace("NwtArrayUtils.toggleByValue");
-      for(let index=list.length-1; index>0; index--) {
-        const item = list[index];
-        if((Array.isArray(item) ? item[0] : item) === val) {
-          list.splice(index, 1);
-        } else {
-          list.push(false);
-        }
-      }
-      return list;
-    }
-
     static repeatBy(reps = 1, val = undefined) {
       trace("NwtArrayUtils.repeatBy");
       const output = [];
@@ -20428,6 +20565,27 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][24]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-collection-utils.js
+/**
+ * 
+ * # NwtCollectionUtils
+ * 
+ * API para utilidades relacionadas con colecciones.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtCollectionUtils
+ * NwtFramework.CollectionUtils
+ * Vue.prototype.$nwt.CollectionUtils
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtCollectionUtils.normalizeCollection(data:Array|Object); // normaliza colecciones
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -20477,19 +20635,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return -1;
     }
 
-    static async toggleByFirstOrValue(list, val) {
-      trace("NwtCollectionUtils.toggleByValue");
-      for(let index=list.length-1; index>0; index--) {
-        const item = list[index];
-        if((Array.isArray(item) ? item[0] : item) === val) {
-          list.splice(index, 1);
-        } else {
-          list.push(false);
-        }
-      }
-      return list;
-    }
-
   };
 
   return NwtCollectionUtils;
@@ -20521,7 +20666,10 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * NwtTimer.fromDateToString(new Date())
  * NwtTimer.fromMillisecondsToSeconds(5500)
  * NwtTimer.secondsDiff(oneDate, anotherDate)
- * await NwtTimer.timeout(5000)
+ * await NwtTimer.timeout(5000);
+ * const chronometer = NwtTimer.Cronometer.create();
+ * chronometer.start();
+ * chronometer.stop(); // returns: seconds diff from created or started
  * ```
  * 
  */
@@ -20620,6 +20768,41 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * 
  * # Nwt Vue2 API
  * 
+ * API de utilidades relacionadas con Vue2.
+ * 
+ * ## Exposición
+ * 
+ * La API se expone a través de:
+ * 
+ * ```js
+ * NwtVue2
+ * NwtFramework.Vue2
+ * Vue.prototype.$nwt.Vue2
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * La API permite cosas como:
+ * 
+ * ```js
+ * // Métodos para notaciones:
+ * NwtVue2.fromTagToIdNotation("tag-nomenclature"); // returns: "TagNomenclature"
+ * NwtVue2.fromIdToTagNotation("TagNomenclature"); // returns: "tag-nomenclature"
+ * // Definiciones paralelas de componentes y directivas (innecesario si usas Vue.options.components y Vue.options.directives):
+ * NwtVue2.defined.components; // {}
+ * NwtVue2.defined.directives; // {}
+ * NwtVue2.define.component("component-name", {...});
+ * NwtVue2.define.directive("directive-name", {...});
+ * // Métodos para persistir propiedades en HTMLElement, HTMLElementDataset y Vue2Component:
+ * NwtVue2.cross.expose.by.element(...); // equals: NwtVue2.exposeByElement(...)
+ * NwtVue2.cross.expose.by.component(...); // equals: NwtVue2.exposeByComponent(...)
+ * NwtVue2.exposeByElement(htmlElement, {props:"values"}, "$propertyName", [toElement=true, toDataset=true, toComponent=true]);
+ * NwtVue2.exposeByComponent(vue2Component, {props:"values"}, "$propertyName", [toElement=true, toDataset=true, toComponent=true]);
+ * ```
+ * 
+ * Es una API de poco uso. Los métodos estrictamente necesarios son los de notaciones. Pero los otros pueden ser útiles también en algunos casos.
+ * 
+ * Los métodos de definiciones paralelas habría que eliminarlos, sin romper nada que ya esté funcionando.
  * 
  */
 (function (factory) {
@@ -20659,17 +20842,17 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     static define = {
       component: (id, definition) => {
         trace("Vue.component");
-        this.defined.components[id] = definition;
         if (NwtEnvironment.hasWindow) {
           Vue.component(id, definition);
         }
+        this.defined.components[id] = definition;
       },
       directive: (id, definition) => {
         trace("Vue.directive");
-        this.defined.directives[id] = definition;
         if (NwtEnvironment.hasWindow) {
           Vue.directive(id, definition);
         }
+        this.defined.directives[id] = definition;
       },
     };
 
@@ -20692,7 +20875,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       assertion(element instanceof HTMLElement, "Parameter «element» must be instance of «HTMLElement» on «NwtVue2.exposeByElement»");
       assertion(typeof properties === "object", "Parameter «properties» must be object on «NwtVue2.exposeByElement»");
       assertion(Array.isArray(exposition), "Parameter «exposition» must be array on «NwtVue2.exposeByElement»");
-      const [toElement = true, toDataset = true, toVue2 = true] = exposition;
+      const [toElement = true, toDataset = true, toComponent = true] = exposition;
       if (toElement) {
         Object.defineProperty(element, name, {
           value: properties,
@@ -20703,7 +20886,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         const adaptedAttribute = NwtCommand.fromCommandIdToComponentId(name, {asTag:true});
         element.setAttribute("data-" + adaptedAttribute, properties);
       }
-      if (toVue2) {
+      if (toComponent) {
         const vm = element.__vue__;
         if (vm) {
           Object.defineProperty(vm, name, {
@@ -20753,6 +20936,8 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  *   type: "linkStylesheet",
  *   url: "https://cdn.js/styles.css",
  * });
+ * await NwtLazyLoader.loadHighlightJs(); // carga highlight.js
+ * await NwtLazyLoader.loadJsBeautify(); // carga js-beautify
  * ```
  * 
  */
@@ -22205,6 +22390,13 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 
 // @vuebundler[Proyecto_base_001][34]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
+/**
+ * 
+ * # NwtTemplates
+ * 
+ * API para la gestión de plantillas.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22454,20 +22646,15 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * Permite hacer algunas cosas como:
  * 
  * ```js
- * NwtUtils.jsonify({circular JSON is accepted too});
- * // >> "{...}"
- * 
- * NwtUtils.noop();
- * // >> undefined
- * 
- * NwtUtils.sortObjectByKeys({b:0,a:1});
- * // >> {a:1,b:0}
- * 
- * NwtUtils.filterObjectProperties({a:0,b:1,c:2}, (key, value) => ["a","b"].indexOf(key) !== -1);
- * // >> {a:0,b:1}
- * 
- * NwtUtils.extractPathsFromFiles([{path:"whatever"}]);
- * // >> ["whatever"]
+ * NwtUtils.noop(); // >> undefined 
+ * NwtUtils.jsonify({circular JSON is accepted too}); // >> "{...}"
+ * NwtUtils.copify({circular JSON is accepted too}); // >> {...}
+ * NwtUtils.trify(callback, valueOnFail); 
+ * NwtUtils.sortObjectByKeys({b:0,a:1}); // >> {a:1,b:0} 
+ * NwtUtils.filterObjectProperties({a:0,b:1,c:2}, (key, value) => ["a","b"].indexOf(key) !== -1); // >> {a:0,b:1} 
+ * NwtUtils.extractPathsFromFiles([{path:"whatever"}]); // >> ["whatever"]
+ * NwtUtils.copyToClipboard(text);
+ * NwtUtils.getSurroundingLines(content:String, line:Number, column:Number, linesBefore = 3, linesAfter = 3);
  * ```
  * 
  */
@@ -23045,6 +23232,10 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * NwtRandomizer.fromList([0,1,2,3,4,5]);
  * NwtRandomizer.fromAlphabet(10);
  * NwtRandomizer.fromAlphabet(10, "abcdef".split(""));
+ * // Propiedaes estáticas:
+ * NwtRandomizer.alphabet
+ * NwtRandomizer.numerical
+ * NwtRandomizer.alphanumerical
  * ```
  * 
  */
@@ -24199,6 +24390,32 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
+/**
+ * 
+ * # NwtCsv
+ * 
+ * API para utilidades relacionadas con el formato de ficheros CSV.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtCsv
+ * NwtFramework.Csv
+ * Vue.prototype.$nwt.Csv
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * Principalmente, se usa para intercambiar de CSV a JSON y viceversa:
+ * 
+ * ```js
+ * await NwtCsv.fromCsvFileToJson(file);
+ * NwtCsv.fromJsonToCsv(data, options = this.defaultParseOptions);
+ * NwtCsv.fromCsvToJson(text, options = this.defaultUnparseOptions, asObjects = true);
+ * NwtCsv.csvCellsToObjects(rows);
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24261,612 +24478,69 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-submemory.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtSubmemory'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtSubmemory'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
+// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
+/**
+ * 
+ * # NwtIterableFunction
+ * 
+ * API para crear funciones iterables. Templated-code approach.
+ * 
+ * Esta API usa por debajo:
+ * 
+ * ```js
+ * await NwtTemplates.global.compile.tjs.file.to.async(
+ *   "nwt/nwt-iterable-function/template.js", // Que está aquí: assets/framework/nwt-templates/templates/nwt/nwt-iterable-function/template.js
+ *   { ...this.iterable.onCompiledArguments, iterable: this.iterable },
+ *   Object.keys({ ...this.iterable.onCompiledArguments, iterable: this.iterable }),
+ * );
+ * ```
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtIterableFunction
+ * NwtFramework.IterableFunction
+ * Vue.prototype.$nwt.IterableFunction
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtIterableFunction.utils.fromFunctionToBodyString(callback:Function):String; // usa por debajo NwtCodeComposer.getBlankFunctionBody(...)
+ * NwtIterableFunction.utils.fromCollectionToArray(collection:Array|Object):Array; // homogeneiza arrays y objetos
+ * await NwtIterableFunction.run({
+ *   onWasStarted: ...,
+ *   onIndex: ...,
+ *   onItem: ...,
+ *   onKey: ...,
+ *   onValue: ...,
+ *   onIdentifier: ...,
+ *   onCollection: ...,
+ *   onCompiledArguments: ...,
+ *   onNextIteration: ...,
+ *   onInterlapse: ...,
+ *   onCompileCollection: ...,
+ *   onCompileCode: ...,
+ *   onCondition: ...,
+ *   onProgression: ...,
+ *   onIteration: ...,
+ *   onRun: ...,
+ *   onFunctionStart: ...,
+ *   onFunctionSuccess: ...,
+ *   onFunctionError: ...,
+ *   onFunctionFinally: ...,
+ *   onFunctionEnd: ...,
+ *   onIterationStart: ...,
+ *   onIterationSuccess: ...,
+ *   onIterationError: ...,
+ *   onIterationFinally: ...,
+ *   onIterationEnd: ...,
+ *   onAbortion: ...,
+ * });
+ * ```
+ * 
+ */
 
-  /*
-
-  const NwtSubmemoryEntity = class {
-
-    static create(...args) {
-      return new this(...args);
-    }
-
-    constructor(submemory, subpath) {
-      trace("NwtSubmemoryEntity.constructor");
-      this.submemory = submemory;
-      this.subpath = subpath;
-    }
-
-    normalizeSubpath(subpath = []) {
-      trace("NwtSubmemoryEntity.prototype.normalizeSubpath");
-      const isArray = Array.isArray(subpath);
-      const subpathAsString = isArray ? subpath.length === 0 ? "" : subpath.join("/") : subpath;
-      const fullpath = require("path").resolve(this.submemory.basedir, this.subpath || "", subpathAsString);
-      return fullpath;
-    }
-
-    read() {
-      trace("NwtSubmemoryEntity.prototype.read");
-      throw new Error("SubmemoryEntity must implement «read» method for this");
-    }
-
-    exists() {
-      trace("NwtSubmemoryEntity.prototype.exists");
-      throw new Error("SubmemoryEntity must implement «exists» method for this");
-    }
-
-    equals() {
-      trace("NwtSubmemoryEntity.prototype.equals");
-      throw new Error("SubmemoryEntity must implement «equals» method for this");
-    }
-
-    fill() {
-      trace("NwtSubmemoryEntity.prototype.fill");
-      throw new Error("SubmemoryEntity must implement «fill» method for this");
-    }
-
-    save() {
-      trace("NwtSubmemoryEntity.prototype.save");
-      throw new Error("SubmemoryEntity must implement «save» method for this");
-    }
-
-    reset() {
-      trace("NwtSubmemoryEntity.prototype.reset");
-      throw new Error("SubmemoryEntity must implement «reset» method for this");
-    }
-
-    delete() {
-      trace("NwtSubmemoryEntity.prototype.delete");
-      throw new Error("SubmemoryEntity must implement «delete» method for this");
-    }
-
-    static readDirectory(dirpath) {
-      trace("NwtSubmemoryEntity.readDirectory");
-      return NwtFilesystem.readTree(dirpath);
-    }
-    
-    static existsDirectory(dirpath) {
-      trace("NwtSubmemoryEntity.existsDirectory");
-      return NwtFilesystem.existsAsDirectory(dirpath);
-    }
-    
-    static fillDirectory(dirpath) {
-      trace("NwtSubmemoryEntity.fillDirectory");
-      return false;
-      throw new Error("Static method «NwtSubmemoryEntity.fillDirectory» is not implemented in this current API");
-    }
-    
-    static saveDirectory(dirpath) {
-      trace("NwtSubmemoryEntity.saveDirectory");
-      throw new Error("Static method «NwtSubmemoryEntity.saveDirectory» is not implemented in this current API");
-    }
-    
-    static async ensureDirectory(dirpath) {
-      trace("NwtSubmemoryEntity.async");
-      await this.deleteDirectory(dirpath);
-      await this.saveDirectory(dirpath, directoryStructure);
-    }
-
-    static async deleteDirectory(dirpath) {
-      trace("NwtSubmemoryEntity.async");
-      await require("fs-extra").promises.rmdir(dirpath, {
-        recursive: true
-      });
-    }
-
-    static readFile(filepath) {
-      trace("NwtSubmemoryEntity.readFile");
-      return NwtFilesystem.readFile(filepath);
-    }
-    
-    static existsFile(filepath) {
-      trace("NwtSubmemoryEntity.existsFile");
-      return NwtFilesystem.existsAsFile(filepath);
-    }
-    
-    static async fillFile(filepath, content) {
-      trace("NwtSubmemoryEntity.async");
-      return await NwtFilesystem.ensureFile(filepath, content);
-    }
-    
-    static async saveFile(filepath, content) {
-      trace("NwtSubmemoryEntity.saveFile");
-      await NwtFilesystem.ensureFile(filepath, content);
-      await NwtFilesystem.writeFile(filepath, content);
-    }
-    
-    static ensureFile(filepath, content) {
-      trace("NwtSubmemoryEntity.ensureFile");
-      return NwtFilesystem.ensureFile(filepath, content);
-    }
-
-    static async deleteFile(filepath) {
-      trace("NwtSubmemoryEntity.async");
-      await NwtFilesystem.deleteFile(filepath);
-    }
-
-    static readJson(filepath) {
-      trace("NwtSubmemoryEntity.readJson");
-      return NwtFilesystem.readJson(filepath);
-    }
-    
-    static existsJson(filepath) {
-      trace("NwtSubmemoryEntity.existsJson");
-      return NwtFilesystem.existsAsJson(filepath);
-    }
-    
-    static async fillJson(filepath, content) {
-      trace("NwtSubmemoryEntity.async");
-      const exists = await this.existsJson(filepath);
-      if(!exists) {
-        return await NwtFilesystem.ensureJson(filepath, content);
-      }
-    }
-    
-    static saveJson(filepath, content) {
-      trace("NwtSubmemoryEntity.saveJson");
-      return NwtFilesystem.writeJson(filepath, content);
-    }
-    
-    static ensureJson(filepath, content) {
-      trace("NwtSubmemoryEntity.ensureJson");
-      return NwtFilesystem.ensureJson(filepath, content);
-    }
-
-    static async deleteJson(filepath) {
-      trace("NwtSubmemoryEntity.async");
-      await NwtFilesystem.deleteJson(filepath);
-    }
-
-    static readProperty(filepath, propertypath) {
-      trace("NwtSubmemoryEntity.readProperty");
-      return NwtFilesystem.readProperty(filepath, propertypath);
-    }
-    
-    static existsProperty(filepath, propertypath) {
-      trace("NwtSubmemoryEntity.existsProperty");
-      return NwtFilesystem.existsAsProperty(filepath, propertypath);
-    }
-    
-    static async fillProperty(filepath, propertypath, content) {
-      trace("NwtSubmemoryEntity.async");
-      const exists = await this.existsProperty(filepath, propertypath);
-      if(!exists) {
-        return await NwtFilesystem.ensureProperty(filepath, propertypath, content);
-      }
-    }
-    
-    static saveProperty(filepath, propertypath, content) {
-      trace("NwtSubmemoryEntity.saveProperty");
-      return NwtFilesystem.ensureProperty(filepath, propertypath, content);
-    }
-    
-    static ensureProperty(filepath, propertypath, content) {
-      trace("NwtSubmemoryEntity.ensureProperty");
-      return NwtFilesystem.ensureProperty(filepath, propertypath, content);
-    }
-
-    static async deleteProperty(filepath, propertypath) {
-      trace("NwtSubmemoryEntity.async");
-      return NwtFilesystem.deleteProperty(filepath, propertypath);
-    }
-
-  };
-
-  const NwtSubmemoryTree = class extends NwtSubmemoryEntity {
-
-    constructor(basedir, ...args) {
-      super(basedir, ...args);
-      trace("NwtSubmemoryTree.constructor");
-    }
-
-    read() {
-      trace("NwtSubmemoryTree.prototype.read");
-      return this.constructor.readDirectory(this.basedir);
-    }
-
-    exists() {
-      trace("NwtSubmemoryTree.prototype.exists");
-      return this.constructor.existsDirectory(this.basedir);
-    }
-
-    equals() {
-      trace("NwtSubmemoryTree.prototype.equals");
-      throw new Error("NwtSubmemoryTree does not implement «equals»");
-    }
-
-    fill(directoryStructure) {
-      trace("NwtSubmemoryTree.prototype.fill");
-      return this.constructor.fillDirectory(this.basedir, directoryStructure);
-    }
-
-    save(directoryStructure) {
-      trace("NwtSubmemoryTree.prototype.save");
-      return this.constructor.saveDirectory(this.basedir, directoryStructure);
-    }
-
-    async reset(directoryStructure) {
-      trace("NwtSubmemoryTree.prototype.reset");
-      return this.constructor.resetDirectory(this.basedir, directoryStructure);
-    }
-
-    delete() {
-      trace("NwtSubmemoryTree.prototype.delete");
-      return this.constructor.deleteDirectory(this.basedir);
-    }
-    
-  };
-
-  const NwtSubmemoryBranch = class extends NwtSubmemoryEntity {
-
-    constructor(...args) {
-      super(...args);
-      trace("NwtSubmemoryBranch.constructor");
-    }
-
-    read(subpath = []) {
-      trace("NwtSubmemoryBranch.prototype.read");
-      const fullpath = this.normalizeSubpath(subpath);
-      return NwtFilesystem.readTree(fullpath);
-    }
-
-    exists(subpath = []) {
-      trace("NwtSubmemoryBranch.prototype.exists");
-      const fullpath = this.normalizeSubpath(subpath);
-      return NwtFilesystem.existsAsDirectory(fullpath);
-    }
-
-    equals(comparer) {
-      trace("NwtSubmemoryBranch.prototype.equals");
-      const fullpath = this.normalizeSubpath(subpath);
-      return this.constructor.equalsDirectory(fullpath, comparer);
-    }
-
-    async fill(subpath, directoryStructure = {}) {
-      trace("NwtSubmemoryBranch.prototype.fill");
-      const fullpath = this.normalizeSubpath(subpath);
-      await this.constructor.fillDirectory(fullpath, directoryStructure);
-    }
-
-    save(subpath, directoryStructure = {}) {
-      trace("NwtSubmemoryBranch.prototype.save");
-      const fullpath = this.normalizeSubpath(subpath);
-      return this.constructor.saveDirectory(fullpath, directoryStructure);
-    }
-
-    async reset(subpath, directoryStructure = {}) {
-      trace("NwtSubmemoryBranch.prototype.reset");
-      const fullpath = this.normalizeSubpath(subpath);
-      return this.constructor.resetDirectory(fullpath, directoryStructure);
-    }
-
-    delete(subpath) {
-      const fullpath = this.normalizeSubpath(subpath);
-      return this.constructor.deleteDirectory(fullpath);
-    }
-
-  };
-
-  const NwtSubmemoryFile = class extends NwtSubmemoryEntity {
-
-    constructor(...args) {
-      super(...args);
-      trace("NwtSubmemoryFile.constructor");
-    }
-
-    read(subpath) {
-      trace("NwtSubmemoryFile.prototype.read");
-      const fullpath = this.normalizeSubpath(subpath);
-      return NwtFilesystem.readFile(fullpath);
-    }
-
-    exists(subpath) {
-      trace("NwtSubmemoryFile.prototype.exists");
-      const fullpath = this.normalizeSubpath(subpath);
-      return NwtFilesystem.existsAsFile(fullpath);
-    }
-
-    async equals(subpath, text) {
-      trace("NwtSubmemoryFile.prototype.equals");
-      const fullpath = this.normalizeSubpath(subpath);
-      try {
-        const content = await NwtFilesystem.readFile(fullpath);
-        return content === text;
-      } catch (error) {
-        return false;
-      }
-    }
-
-    async fill(subpath, text) {
-      trace("NwtSubmemoryFile.prototype.fill");
-      const fullpath = this.normalizeSubpath(subpath);
-      const exists = await NwtFilesystem.existsAsFile(fullpath);
-      if(!exists) {
-        await NwtFilesystem.writeFile(fullpath, text);
-      }
-    }
-
-    async save(subpath, text) {
-      trace("NwtSubmemoryFile.prototype.save");
-      const fullpath = this.normalizeSubpath(subpath);
-      await NwtFilesystem.ensureFile(fullpath, text);
-      await NwtFilesystem.writeFile(fullpath, text);
-    }
-
-    async reset(subpath, text) {
-      trace("NwtSubmemoryFile.prototype.reset");
-      const fullpath = this.normalizeSubpath(subpath);
-      await NwtFilesystem.deleteFile(fullpath);
-      await NwtFilesystem.ensureFile(fullpath, text);
-    }
-
-    async delete(subpath) {
-      trace("NwtSubmemoryFile.prototype.delete");
-      const fullpath = this.normalizeSubpath(this.basedir, subpath);
-      await NwtFilesystem.rmdir(fullpath);
-    }
-
-  };
-
-  const NwtSubmemoryJson = class extends NwtSubmemoryEntity {
-
-    constructor(...args) {
-      super(...args);
-      trace("NwtSubmemoryJson.constructor");
-    }
-
-    read(subpath) {
-      trace("NwtSubmemoryFile.prototype.read");
-      const fullpath = this.normalizeSubpath(subpath);
-      return NwtFilesystem.readJson(fullpath);
-    }
-
-    exists(subpath) {
-      trace("NwtSubmemoryFile.prototype.exists");
-      const fullpath = this.normalizeSubpath(subpath);
-      return NwtFilesystem.existsAsFile(fullpath);
-    }
-
-    async equals(subpath, value) {
-      trace("NwtSubmemoryFile.prototype.equals");
-      const fullpath = this.normalizeSubpath(subpath);
-      try {
-        const content = await NwtFilesystem.readJson(fullpath);
-        return content === value;
-      } catch (error) {
-        return false;
-      }
-    }
-
-    async fill(subpath, value) {
-      trace("NwtSubmemoryFile.prototype.fill");
-      const fullpath = this.normalizeSubpath(subpath);
-      const exists = await NwtFilesystem.existsAsFile(fullpath);
-      if(!exists) {
-        await NwtFilesystem.writeJson(fullpath, value);
-      }
-    }
-
-    async save(subpath, value) {
-      trace("NwtSubmemoryFile.prototype.save");
-      const fullpath = this.normalizeSubpath(subpath);
-      await NwtFilesystem.ensureJson(fullpath, value);
-      await NwtFilesystem.writeJson(fullpath, value);
-    }
-
-    async reset(subpath, text) {
-      trace("NwtSubmemoryFile.prototype.reset");
-      const fullpath = this.normalizeSubpath(subpath);
-      await NwtFilesystem.deleteJson(fullpath);
-      await NwtFilesystem.ensureJson(fullpath, text);
-    }
-
-    async delete(subpath) {
-      trace("NwtSubmemoryFile.prototype.delete");
-      const fullpath = this.normalizeSubpath(this.basedir, subpath);
-      await NwtFilesystem.deleteJson(fullpath);
-    }
-
-  };
-
-  const NwtSubmemoryProperty = class extends NwtSubmemoryEntity {
-
-    constructor(...args) {
-      super(...args);
-      trace("NwtSubmemoryProperty.constructor");
-    }
-
-    read(subpath, propertypath, defaultValue = undefined) {
-      
-    }
-
-    exists(subpath, propertypath) {
-      
-    }
-
-    equals(subpath, propertypath, value) {
-      
-    }
-
-    fill(subpath, propertypath, propertymap) {
-      
-    }
-
-    save(subpath, propertypath, propertymap) {
-      
-    }
-
-    async reset(subpath, propertypath, value) {
-      
-    }
-
-    async delete(subpath, propertypath) {
-      
-    }
-
-  };
-
-  const NwtSubmemoryUid = class extends NwtSubmemoryEntity {
-
-    constructor(...args) {
-      super(...args);
-      trace("NwtSubmemoryUid.constructor");
-      const [basedir, resourceId] = args;
-      this.resourceId = resourceId;
-    }
-
-    listUids() {
-      trace("NwtSubmemoryUid.prototype.listUids");
-      // @ESTO AHORA NO
-    }
-
-    removeUid(resourceId) {
-      trace("NwtSubmemoryUid.prototype.removeUid");
-      // @ESTO AHORA NO
-    }
-
-    getUid(resourceId) {
-      trace("NwtSubmemoryUid.prototype.getUid");
-      // @ESTO AHORA NO
-    }
-
-    addUid(resourceId) {
-      trace("NwtSubmemoryUid.prototype.addUid");
-      // @ESTO AHORA NO
-    }
-
-  };
-
-  const NwtSubmemory_StaticUtilities = class {
-
-    static create(...args) {
-      return new this(...args);
-    }
-
-    static Tree = NwtSubmemoryTree;
-
-    static Branch = NwtSubmemoryBranch;
-
-    static File = NwtSubmemoryFile;
-
-    static Json = NwtSubmemoryJson;
-    
-    static Property = NwtSubmemoryProperty;
-
-    static Uid = NwtSubmemoryUid;
-
-  };
-
-  const NwtSubmemory_DynamicUtilities = class extends NwtSubmemory_StaticUtilities {
-
-    resolve(...args) {
-      const path = require("path");
-      return path.resolve(this.basedir, ...args);
-    }
-
-    tree = this.constructor.Tree.create(this);
-
-    branch = this.constructor.Branch.create(this);
-
-    file = this.constructor.File.create(this);
-
-    json = this.constructor.Json.create(this);
-
-    property = this.constructor.Property.create(this);
-
-  };
-
-  const NwtSubmemory = class extends NwtSubmemory_DynamicUtilities {
-
-    constructor(basedir) {
-      super(basedir);
-      trace("NwtSubmemory.constructor");
-      this.basedir = basedir;
-    }
-
-    createUidFor(resourceId) {
-      trace("NwtSubmemory.prototype.createUidFor");
-      return this.constructor.Uid.create(this, resourceId);
-    }
-
-  };
-
-  NwtSubmemory.local = {
-    cache: NwtSubmemory.create("assets/app/procedures/cache")
-  };
-
-  //*/
-
-  return NwtUtils.trify(() => NwtSubmemory, null);
-
-});
-
-Test_de_ejemplo: {
-
-  break Test_de_ejemplo;
-
-  (async function () {
-
-
-    const memo = NwtSubmemory.create("assets/app/cache/for-procedures");
-    await memo.tree.fill();
-    await memo.branch.fill("manager/0", {
-      // Esto es un directorio porque usamos "branch":
-      "state.json": JSON.stringify({
-        status: 200,
-        demo: "branch",
-      }),
-    });
-    await memo.file.fill("manager/0/state.json", JSON.stringify({
-      // Esto es un JSON (u otro String) porque usamos "file":
-      status: 200,
-      demo: "file",
-    }));
-    await memo.json.fill("manager/0/state.json/#/property-one/property-two/property-three", {
-      // Esto es un objeto JSONable (u otro JSONable) porque usamos "json":
-      status: 200,
-      demo: "file",
-      metadata: {
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: false,
-        "some/hardcoded/subpath": {
-          message: "no problem."
-        }
-      },
-    });
-    const currentTree = await memo.tree.find();
-    const branch1 = await memo.branch.find("storage");
-    const branch2 = await memo.branch.find("storage/0");
-    const branch3 = await memo.branch.find("storage/1");
-    const branch4 = await memo.branch.find("storage/2");
-    const file1 = await memo.file.find("storage/0/state.json");
-    const file2 = await memo.file.find("storage/1/state.json");
-    const file3 = await memo.file.find("storage/2/state.json");
-    const json1 = await memo.json.find("storage/0/state.json/#/");
-    const json2 = await memo.json.find("storage/1/state.json/#/");
-    const json3 = await memo.json.find("storage/2/state.json/#/");
-    const property1 = await memo.property.find("storage/0/state.property/#/status");
-    const property2 = await memo.property.find("storage/1/state.property/#/status/metadata/createdAt");
-    const property3 = await memo.property.find("storage/2/state.property/#/status/metadata/some\\/hardcoded\\/subpath/message");
-
-  })();
-
-}
-
-// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25038,7 +24712,30 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
+// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
+/**
+ * 
+ * # NwtIterableClass
+ * 
+ * API para crear iterables. Object-oriented approach (no templated-code approach).
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtIterableClass
+ * NwtFramework.IterableClass
+ * Vue.prototype.$nwt.IterableClass
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * await NwtIterableClass.create({
+ *   // Inyecciones: por documentar
+ * }).run();
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25191,7 +24888,26 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
+// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
+/**
+ * 
+ * # NwtIterableCommandClass
+ * 
+ * API para el iterable de un comando. Object-oriented approach.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtIterableCommandClass
+ * NwtFramework.IterableCommandClass
+ * Vue.prototype.$nwt.IterableCommandClass
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * Extiende NwtIterableClass para dar una implementación concreta aplicable a la API de comandos.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25265,7 +24981,61 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
+// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
+/**
+ * 
+ * # NwtFilesystem
+ * 
+ * API para ficheros.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFilesystem
+ * NwtFramework.Filesystem
+ * Vue.prototype.$nwt.Filesystem
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * A continuación se exponen todos los métodos y propiedades:
+ * 
+ * ```js
+ * NwtFilesystem.fs = NwtEnvironment.isNode ? require("fs") : null;
+ * NwtFilesystem.readFile(filepath, encoding = "utf8");
+ * NwtFilesystem.writeFile(filepath, content, encoding = "utf8");
+ * NwtFilesystem.appendFile(filepath, content, encoding = "utf8");
+ * NwtFilesystem.lstat(filepath);
+ * await NwtFilesystem.exists(filepath);
+ * await NwtFilesystem.existsAsFile(filepath);
+ * await NwtFilesystem.existsAsDirectory(dirpath);
+ * await NwtFilesystem.ensureDirectory(dirpath);
+ * await NwtFilesystem.readdir(dirpath, options = {});
+ * await NwtFilesystem.readdirStats(dirpath, sortByType = false);
+ * NwtFilesystem.rmdir(dirpath);
+ * NwtFilesystem.mkdir(dirpath);
+ * NwtFilesystem.unlink(filepath);
+ * await NwtFilesystem.ensureFile(filepath, contents);
+ * await NwtFilesystem.ensureJson(filepath, data);
+ * await NwtFilesystem.existsProperty(filepath, propertypath, defaultValue = undefined);
+ * await NwtFilesystem.ensureProperty(filepath, propertypath, value = undefined);
+ * await NwtFilesystem.readProperty(filepath, propertypath, defaultValue = undefined);
+ * await NwtFilesystem.writeProperty(filepath, propertypath, value = undefined);
+ * NwtFilesystem.formatBytes(bytes);
+ * NwtFilesystem.clearFileSeparatorOnExtremes(filepath);
+ * await NwtFilesystem.createTemporaryDirectory(name = false);
+ * await NwtFilesystem.clearTemporaryDirectories();
+ * NwtFilesystem.selectByGlob(globPatterns, options = {});
+ * await NwtFilesystem.initializeFile(filepath, content = "");
+ * await NwtFilesystem.readJson(filepath);
+ * await NwtFilesystem.writeJson(filepath, data, beautify = false);
+ * await NwtFilesystem.readTree(dirPath, options = {});
+ * NwtFilesystem.THROW_ERROR_FLAG = {};
+ * NwtFilesystem.accessFrom(data, propertyPath = [], force = false, value = undefined, errorValue = this.THROW_ERROR_FLAG);
+ * NwtFilesystem.setFrom(data, propertyPath = [], value = undefined, force = true);
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25648,7 +25418,30 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
+// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
+/**
+ * 
+ * # NwtFileChooser
+ * 
+ * API para seleccionar ficheros y carpetas.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFileChooser
+ * NwtFramework.FileChooser
+ * Vue.prototype.$nwt.FileChooser
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * await NwtFileChooser.pickFile({ ... });
+ * await NwtFileChooser.pickDirectory({ ... });
+ * await NwtFileChooser.pickFileToSave({ ... });
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25731,7 +25524,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
+// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
 /**
  * 
  * # Nwt Shell API
@@ -25757,6 +25550,8 @@ Test_de_ejemplo: {
  * await shell.exec("explorer ."); // Ejecutar comandos asíncronamente
  * await shell.ls();               // Listar directorios
  * shell.cd("..");                 // Cambiar de directorio
+ * shell.subprocess("comando", argumentos=["--flag"], opciones={cwd:...}); // returns una Promise (por si se quiere usar con await directamente) de la que cuelga una propiedad extra: «subprocess»
+ * shell.terminate(); // envía signal de terminado a todos los procesos hijo (de this._children)
  * ```
  * 
  */
@@ -25942,7 +25737,31 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
+// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
+/**
+ * 
+ * # NwtLiveInjector
+ * 
+ * API para inyectar código en runtime. API para debugging.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtLiveInjector
+ * NwtFramework.LiveInjector
+ * Vue.prototype.$nwt.LiveInjector
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtLiveInjector.start();
+ * // El fichero que está en el root del proyecto: `injector.js`
+ * // se queda a la escucha de cambios
+ * // y cuando guardas, inyecta el código que en él haya
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25998,7 +25817,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
+// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
 /**
  * 
  * # Nwt Prompt Manager API
@@ -26022,7 +25841,10 @@ Test_de_ejemplo: {
  * La API permite cosas como:
  * 
  * ```js
- * await NwtPromptsManager.global.list();
+ * NwtPromptsManager.global.resolve(...subpaths=[String,...])
+ * await NwtPromptsManager.global.list(); // Busca todos los "** /PROMPT.MD"
+ * await NwtPromptsManager.global.save(path:String,prompt:String); // guarda un "/PROMPT.md" en la ruta especificada
+ * await NwtPromptsManager.global.pickPrompt(); // abre un <nwt-prompts-manager-viewer> en un diálogo que permite escoger un prompt ya existente
  * ```
  * 
  */
@@ -26094,7 +25916,40 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
+// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
+/**
+ * 
+ * # NwtChatgpt
+ * 
+ * API de utilidades relacionadas con ChatGPT.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtChatgpt
+ * NwtFramework.Chatgpt
+ * Vue.prototype.$nwt.Chatgpt
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * Todas las operaciones utilizan la API key que se debe colocar en:
+ * 
+ * ```js
+ * NwtSettings.global.get("nwt.api.chatgpt-plus.key");
+ * ```
+ * 
+ * Sabiendo esto, quedan los métodos:
+ * 
+ * ```js
+ * await NwtChatgpt.listFiles()
+ * await NwtChatgpt.uploadFile(filepath:String)
+ * await NwtChatgpt.uploadFiles(filepaths:Array<String>)
+ * await NwtChatgpt.deleteFiles(fileIds:Array<String>)
+ * await NwtChatgpt.callToAction(systemPrompt:String, userPrompt:String)
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26237,7 +26092,43 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener.js
+// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener.js
+/**
+ * 
+ * # NwtStringShortener
+ * 
+ * API para gestionar strings acortados.
+ * 
+ * ## Exposición
+ * 
+ * Se expone a través de:
+ * 
+ * ```js
+ * NwtStringShortener
+ * NwtFramework.StringShortener
+ * Vue.prototype.$nwt.StringShortener
+ * // Instancia:
+ * NwtStringShortener.global // instancia creada en: "assets/framework/nwt-string-shortener/global.json"
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * La API permite cosas como:
+ * 
+ * ```js
+ * // Estáticos:
+ * NwtStringShortener.create(jsonFilepath:String);
+ * NwtStringShortener.createUid(len=10); // returns String con un nuevo ID (PERO NO LO PERSISTE)
+ * // De instancia:
+ * await NwtStringShortener.global.initializeStore(); // inicializa (con NwtFilesystem.ensureFile, cuidado) el JSON si no existe
+ * await NwtStringShortener.global.init(id, initialValue = undefined); // Inicializa un ID si no existe ya + retorna su shorteneado
+ * await NwtStringShortener.global.get(id, defaultValue = undefined); // Devuelve el ID shorteneado de un ID, o en su defecto `defaultValue`
+ * await NwtStringShortener.global.deleteById(id); // Elimina el ID no shorteneado proporcionado
+ * await NwtStringShortener.global.deleteAllExceptValues(values=[]); // Elimina todos los IDs **shorteneados** que NO aparezcan en el `values=[...]`. Se usa para eliminar directorios-caché obsoletos.
+ * await NwtStringShortener.global.add(id, value = false, silently = false); // añade el ID como nuevo shortener + si value no es false lo usa como ID shorteneado + si silently no es false no lanza error de existir ya + retorna el ID shorteneado correspondiente
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26257,13 +26148,13 @@ Test_de_ejemplo: {
       return new this(...args);
     }
 
+    static createUid(len = 10) {
+      return NwtRandomizer.fromAlphabet(len);
+    }
+
     constructor(filepath) {
       trace("NwtStringShortener.constructor");
       this.filepath = filepath;
-    }
-
-    createUid(len = 10) {
-      return NwtRandomizer.fromAlphabet(len);
     }
 
     async initializeStore() {
@@ -26271,16 +26162,16 @@ Test_de_ejemplo: {
       return await NwtFilesystem.ensureJson(this.filepath, {});
     }
 
-    async add(id, value = false, silently = undefined) {
+    async add(id, value = false, silently = false) {
       trace("NwtStringShortener.add");
       const ids = await NwtFilesystem.readJson(this.filepath);
       if(id in ids) {
-        if(typeof silently !== "undefined") {
-          return silently;
+        if(!silently) {
+          return ids[id];
         }
         throw new Error("Parameter «id» cannot match a previous id on «NwtStringShortener.prototype.add»");
       }
-      ids[id] = (value === false) ? this.createUid() : value;
+      ids[id] = (value === false) ? this.constructor.createUid() : value;
       await NwtFilesystem.writeJson(this.filepath, ids);
       return ids[id];
     }
@@ -26346,7 +26237,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
+// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26647,7 +26538,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
+// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26787,7 +26678,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
+// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26917,7 +26808,7 @@ Test_de_ejemplo: {
 });
 
 
-// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
+// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -27075,7 +26966,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
+// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -27105,7 +26996,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
+// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
 (function (factory) {
       const mod = factory();
       if (typeof window !== 'undefined') {
@@ -27121,7 +27012,7 @@ Test_de_ejemplo: {
       return "{\n  const /**<?=localMemoryName?>**/localMemory = {};\n  /**<?#onFunctionStart?>**/\n  /**<?#onInitializeCollection?>**/\n  /**<?#onInitializeDimensions?>**/\n  try {\n    /**<?#onNextIteration?>**/\n    /**<?=localMemoryName?>**/localMemory.conditionalCallback = async () => {\n      /**<?#onCondition?>**/\n    };\n    /**<?=localMemoryName?>**/localMemory.output = undefined;\n    /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n    /**<?=onIdentifier + \":\"?>**/\n    while (/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n      /**<?#onIterationStart?>**/\n      try {\n        /**<?#onIteration?>**/\n        /**<?#onIterationSuccess?>**/\n      } catch (error) {\n        /**<?#onIterationError?>**/\n      } finally {\n        /**<?#onIterationFinally?>**/\n      }\n      /**<?#onIterationEnd?>**/\n      /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n      if (!/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n        break /**<?=onIdentifier?>**/;\n      }\n      /**<?#onInterlapse?>**/\n      /**<?#onNextIteration?>**/\n      /**<?#onProgression?>**/\n    }\n    /**<?#onFunctionSuccess?>**/\n  } catch (error) {\n    /**<?#onFunctionError?>**/\n  } finally {\n    /**<?#onFunctionFinally?>**/\n  }\n  /**<?#onFunctionEnd?>**/\n  return /**<?=localMemoryName?>**/localMemory.output;\n}"
     });
 
-// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
+// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -27230,7 +27121,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
+// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -28682,7 +28573,7 @@ Test_de_ejemplo: {
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
+// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28710,7 +28601,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
+// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28797,7 +28688,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
+// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28893,7 +28784,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
+// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28931,7 +28822,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
+// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28968,7 +28859,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
+// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28995,7 +28886,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
+// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29022,7 +28913,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
+// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29049,7 +28940,33 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
+// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
+/**
+ * 
+ * # NwtDom
+ * 
+ * API para utilidades relacionadas con el DOM.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtDom
+ * NwtFramework.Dom
+ * Vue.prototype.$nwt.Dom
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Métodos de selección:
+ * // (donde String permite css selector, y Function permite js filter)
+ * NwtDom.findFirstChildWhere(element [, String], Function);
+ * NwtDom.findFirstChildrenWhere(element [, String], Function);
+ * NwtDom.findClosestParentWhere(element [, String], Function);
+ * NwtDom.removeTextContentSpaces(text);
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29214,8 +29131,48 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
+// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
 /**
+ * 
+ * # NwtExporter
+ * 
+ * API para exportar APIs exportables.
+ * 
+ * Se trata de concentrar y reducir los nombres de las funciones que están esparcidas por toda la API.
+ * 
+ * Aunque principalmente se centra en la API de NwtFilesystem.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtExporter
+ * NwtFramework.Exporter
+ * Vue.prototype.$nwt.Exporter
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Uso pensado es:
+ * const $ = NwtExporter.export.api();
+ * await $.read.file(...);
+ * await $.read.directory(...);
+ * await $.read.tree(...);
+ * await $.read.json(...);
+ * await $.read.property(...);
+ * await $.write.file(...);
+ * await $.write.directory(...);
+ * await $.write.tree(...);
+ * await $.write.json(...);
+ * await $.write.property(...);
+ * await $.ensure.file(...);
+ * await $.ensure.directory(...);
+ * await $.ensure.tree(...);
+ * await $.ensure.json(...);
+ * await $.ensure.property(...);
+ * ```
+ * 
+ * De momento, es preferible la API de Persister.
  * 
  */
 (function (factory) {
@@ -29269,7 +29226,28 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
+// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
+/**
+ * 
+ * # NwtClipboard
+ * 
+ * API para copiar al clipboard solamente.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtClipboard
+ * NwtFramework.Clipboard
+ * Vue.prototype.$nwt.Clipboard
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtClipboard.copyText(text:String);
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29301,7 +29279,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
+// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29385,7 +29363,31 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
+// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
+/**
+ * 
+ * # NwtCacheDirectory
+ * 
+ * API para gestionar un directorio de cacheo.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtCacheDirectory
+ * NwtFramework.CacheDirectory
+ * Vue.prototype.$nwt.CacheDirectory
+ * // Instancias:
+ * NwtCacheDirectory.local // Cache de AppData, que vive más allá de los git clones
+ * NwtCacheDirectory.installation // Cache que no vive más allá de los git clones
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Esta API está en desarrollo
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29430,7 +29432,34 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js
+// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js
+/**
+ * 
+ * # NwtProxyChain
+ * 
+ * API para encadenar llamadas a métodos personalizados pasándole strings construídos con acceso a propiedades.
+ * 
+ * API experimental, no se usa en el framework.
+ * 
+ * ## Exposición
+ * 
+ * La API se expone a través de:
+ * 
+ * ```js
+ * NwtProxyChain
+ * NwtFramework.ProxyChain
+ * Vue.prototype.$nwt.ProxyChain
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * proxyChain = NwtProxyChain.fromFactory(text => customActionWith(text));
+ * proxyChain.com.utils.Array.whatever.$; // Aquí, está haciendo: customActionWith("com.utils.Array.whatever");
+ * proxyChain.find("com.utils.Array.whatever") // Lo mismo pero con llamada explícita
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29484,7 +29513,7 @@ Test_de_ejemplo: {
 
 });
 
-// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
+// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
 /**
  * 
  * # Nwt Framework API
@@ -29582,7 +29611,7 @@ Test_de_ejemplo: {
 
 })();
 
-// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
+// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
 /**
  * 
  * # Nwt Injection API
@@ -29616,7 +29645,7 @@ if (typeof window !== "undefined") {
     });
 }
 
-// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
+// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
 /**
  * 
  * # Nwt V-Resizable Directive - Vue directive
@@ -29723,7 +29752,7 @@ Vue.directive("resizable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
+// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
 /**
  * 
  * 
@@ -29793,7 +29822,7 @@ Vue.directive("draggable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
+// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
 /**
  * 
  * # Nwt V-Focus Directive - Vue directive
@@ -29818,7 +29847,7 @@ Vue.directive("focus", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
+// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
 Vue.directive("forms", {
   bind(el, binding, vnode) {
     const value = binding.value || {};
@@ -29836,9 +29865,9 @@ Vue.directive("forms", {
 });
 
 
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
 
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
 /**
  * 
  * # Nwt Dialogs API
@@ -29960,11 +29989,11 @@ Vue.component("CommonDialogs", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
 
-// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
 
-// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
 /**
  * 
  * # Nwt Toasts API
@@ -30078,11 +30107,11 @@ Vue.component("CommonToasts", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
 
-// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.html
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.html
 
-// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.js
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.js
 Vue.component("CommonErrors", {
   name: "CommonErrors",
   template: `<div class="common_errors"></div>`,
@@ -30119,11 +30148,11 @@ Vue.component("CommonErrors", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.css
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.css
 
-// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
 
-// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
 /**
  * 
  * # Nwt Common Injections API
@@ -30215,11 +30244,11 @@ Vue.component("CommonInjections", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
 
-// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
 
-// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
 /**
  * 
  * # Nwt Tester Viewer API / Componente Vue2
@@ -30304,11 +30333,11 @@ Vue.component("NwtTesterViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
 
-// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
 
-// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
 Vue.component("NwtTesterNode", {
   template: `<div class="nwt_tester_node">
     <template v-if="node instanceof \$nwt.Tester.Assertion">
@@ -30415,11 +30444,11 @@ Vue.component("NwtTesterNode", {
 });
 
 
-// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
 
-// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
 
-// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
 /**
  * 
  * # Nwt Progress Bar Viewer API / Componente Vue2
@@ -30481,11 +30510,11 @@ Vue.component("NwtProgressBarViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
 
-// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html
 
-// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js
 /**
  * 
  * # Nwt Box Viewer API / Componente Vue2
@@ -30562,11 +30591,11 @@ Vue.component("NwtBoxViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css
 
-// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html
 
-// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
 /**
  * 
  */
@@ -30624,11 +30653,11 @@ Vue.component("NwtSourceViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css
 
-// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
 /**
  * 
  * # Nwt Process Manager Viewer API / Componente Vue2
@@ -30772,11 +30801,11 @@ Vue.component("NwtProcessManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html
 
-// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js
 /**
  * 
  * # Nwt Settings Viewer API / Componente Vue2
@@ -31072,11 +31101,11 @@ Vue.component("NwtSettingsViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css
 
-// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
 Vue.component("NwtProceduresManagerViewer", {
   template: `<div class="app_procedures_manager_viewer">
     <div class="title">
@@ -31235,11 +31264,11 @@ Vue.component("NwtProceduresManagerViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
 
-// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
 Vue.component("AppProcedureDocumentationViewer", {
   template: `<div class="app_procedure_documentation_viewer">
     <template v-if="markdownContentToHtml">
@@ -31281,11 +31310,11 @@ Vue.component("AppProcedureDocumentationViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
 
-// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
 
-// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
 Vue.component("NwtFileExplorer", {
   name: "NwtFileExplorer",
   template: `<div class="nwt_file_explorer">
@@ -31616,11 +31645,11 @@ Vue.component("NwtFileExplorer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css
 
-// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html
 
-// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js
 /**
  * 
  * # Nwt Code Highlighter API / Componente Vue2
@@ -31701,11 +31730,11 @@ Vue.component("NwtCodeHighlighter", {
 });
 
 
-// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
 /**
  * 
  */
@@ -31977,11 +32006,11 @@ Vue.component("NwtPromptsManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
 /**
  * 
  * # Nwt Chatgpt Files Manager Viewer API / Componente Vue2
@@ -32200,9 +32229,9 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-utils.js
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-utils.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32280,7 +32309,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js
+// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32351,7 +32380,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-form.js
+// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-form.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32458,7 +32487,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-control.js
+// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-control.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32585,7 +32614,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-handler.js
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-handler.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32649,9 +32678,9 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.html
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.html
 
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.js
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.js
 Vue.component("NwtFormBuilder", {
   name: "NwtFormBuilder",
   template: `<div class="nwt_form_builder" v-forms.form="{
@@ -32836,9 +32865,9 @@ Vue.component("NwtFormBuilder", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.css
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.css
 
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-prototype.js
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-prototype.js
 Vue.component("NwtFormControlPrototype", {
   name: "NwtFormControlPrototype",
   props: {
@@ -32895,9 +32924,9 @@ Vue.component("NwtFormControlPrototype", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.html
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.html
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.js
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.js
 Vue.component("NwtFormControlStatement", {
   name: "NwtFormControlStatement",
   template: `<div class="nwt_form_control_statement">
@@ -32942,11 +32971,11 @@ Vue.component("NwtFormControlStatement", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.css
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.css
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.html
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.html
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.js
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.js
 Vue.component("NwtFormControlButtons", {
   name: "NwtFormControlButtons",
   template: `<div class="nwt_form_control_buttons">
@@ -32974,11 +33003,11 @@ Vue.component("NwtFormControlButtons", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.css
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.css
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.html
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.html
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.js
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.js
 Vue.component("NwtFormControlHandler", {
   name: "NwtFormControlHandler",
   template: `<div class="nwt_form_control_handler"
@@ -33013,11 +33042,11 @@ Vue.component("NwtFormControlHandler", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.css
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.css
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.html
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.html
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.js
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.js
 Vue.component("NwtFormControlForFileChooserDirectory", {
   name: "NwtFormControlForFileChooserDirectory",
   extends: Vue.options.components.NwtFormControlPrototype.options,
@@ -33033,11 +33062,11 @@ Vue.component("NwtFormControlForFileChooserDirectory", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.css
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.css
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.html
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.html
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.js
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.js
 Vue.component("NwtFormControlForFileChooserFile", {
   name: "NwtFormControlForFileChooserFile",
   extends: Vue.options.components.NwtFormControlPrototype.options,
@@ -33053,11 +33082,11 @@ Vue.component("NwtFormControlForFileChooserFile", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.css
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.css
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.html
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.html
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.js
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.js
 Vue.component("NwtFormControlForTextEmail", {
   name: "NwtFormControlForTextEmail",
   extends: Vue.options.components.NwtFormControlPrototype.options,
@@ -33075,11 +33104,11 @@ Vue.component("NwtFormControlForTextEmail", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.css
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.css
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.html
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.html
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.js
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.js
 Vue.component("NwtFormControlForTextPassword", {
   name: "NwtFormControlForTextPassword",
   extends: Vue.options.components.NwtFormControlPrototype.options,
@@ -33097,11 +33126,11 @@ Vue.component("NwtFormControlForTextPassword", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.css
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.css
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.html
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.html
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.js
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.js
 Vue.component("NwtFormControlForTextOneline", {
   name: "NwtFormControlForTextOneline",
   extends: Vue.options.components.NwtFormControlPrototype.options,
@@ -33157,11 +33186,11 @@ Vue.component("NwtFormControlForTextOneline", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.css
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.css
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.html
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.html
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.js
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.js
 Vue.component("NwtFormControlForTextMultiline", {
   name: "NwtFormControlForTextMultiline",
   extends: Vue.options.components.NwtFormControlPrototype.options,
@@ -33229,11 +33258,11 @@ Vue.component("NwtFormControlForTextMultiline", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.css
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.css
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
 Vue.component("NwtStarsBackground", {
   name: "NwtStarsBackground",
   template: `<div class="nwt_stars_background">
@@ -33300,11 +33329,11 @@ Vue.component("NwtStarsBackground", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
 Vue.component("NwtMatrixBackground", {
   name: "NwtMatrixBackground",
   template: `<div class="nwt_matrix_background">
@@ -33357,9 +33386,9 @@ Vue.component("NwtMatrixBackground", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33409,7 +33438,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33451,7 +33480,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33497,9 +33526,9 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
 Vue.component("NwtAnonymousCommandForm", {
   name: "NwtAnonymousCommandForm",
   template: `<div class="nwt_anonymous_command_form">
@@ -33522,11 +33551,11 @@ Vue.component("NwtAnonymousCommandForm", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
 Vue.component("NwtAnonymousCommandView", {
   name: "NwtAnonymousCommandView",
   template: `<div class="nwt_anonymous_command_view">
@@ -33543,11 +33572,11 @@ Vue.component("NwtAnonymousCommandView", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
 Vue.component("NwtCommandsManagerViewer", {
   name: "NwtCommandsManagerViewer",
   template: `<div class="nwt_commands_manager_viewer">
@@ -33722,11 +33751,11 @@ Vue.component("NwtCommandsManagerViewer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
 
-// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33926,7 +33955,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33977,7 +34006,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
+// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
 /**
  * 
  * # App Root API
@@ -34025,9 +34054,9 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
 /**
  * 
  * 
@@ -34282,9 +34311,9 @@ Vue.component("MainWindow", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
 
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
 /**
  * 
  * # App Payload API

@@ -28,5 +28,7 @@ await NwtLazyLoader.lazyLoad({
   type: "linkStylesheet",
   url: "https://cdn.js/styles.css",
 });
+await NwtLazyLoader.loadHighlightJs(); // carga highlight.js
+await NwtLazyLoader.loadJsBeautify(); // carga js-beautify
 ```
 
