@@ -1,12 +1,17 @@
 31-12-2025
 
 - [x] Estamos con v-forms.{form,control,handler}
-- [ ] Necesitamos:
-   - [ ] NwtFormControlForList
-      - [ ] que acepte :controls=[]
-   - [ ] NwtFormControlForStructure
-      - [ ] que acepte :controls=[]
-- [ ] Paneles top-bottom fijos en dialogs
+- [x] Necesitamos:
+   - [x] NwtFormControlForList
+      - [x] que acepte :controls=[]
+   - [x] NwtFormControlForStructure
+      - [x] que acepte :controls=[]
+
+----
+
+15-01-2026
+
+- [x] Paneles top-bottom fijos en dialogs, los cuales se tienen que aplicar a:
    - [ ] Para el file-chooser
    - [ ] Integrarlo con los file-chooser:
       - [ ] File picker
@@ -20,6 +25,15 @@
       - [ ] Configuraciones
       - [ ] Procedimientos
 
+----
+
+16-01-2026
+
+- [ ] Controles para los file-chooser:
+      - [ ] File picker
+      - [ ] Directory picker
+      - [ ] New file picker
+      - [ ] Usando el top-bottom fijo anterior
 
 - Y seguimos con el roadmap:
 

@@ -71,7 +71,7 @@
                                 <button class="mini selectable_common_error_button" onclick="NwtErrorsManagerViewerUtils.dispatchSelectError(<%= indexError %>)">💥 <%= indexError + 1 %></button>
                             <% } %>
                             <button class="mini" onclick="NwtErrorsManagerViewerUtils.dispatchSelectError('*')">*️⃣ Todos</button>
-                            <button class="position_absolute_fixed" onclick="NwtErrorsManagerViewerUtils.dispatchCopyErrors()">📜 Copiar</button>
+                            <button class="position_absolute_top_right" onclick="NwtErrorsManagerViewerUtils.dispatchCopyErrors()">📜 Copiar</button>
                         </div>
                     </div>
                     <% for(let indexError = 0; indexError < errors.length; indexError++) {

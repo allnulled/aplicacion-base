@@ -37,12 +37,17 @@
         event.detail.component.startNewFeature();
         window.dispatchEvent(new CustomEvent("app-started"));
       });
-      window.addEventListener("app-started", async function(event) {
+      window.addEventListener("app-started", async function (event) {
         trace("AppPayload.inject@app-started");
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {
-          
+          const respuesta = await NwtDialogs.openByTemplateId({
+            template: "trash/ejemplo-panel-fijo.html",
+            factory: { data: { value: {} } },
+            windowClasses: "no_scroll",
+          });
+          console.log(respuesta);
         }
       });
     }

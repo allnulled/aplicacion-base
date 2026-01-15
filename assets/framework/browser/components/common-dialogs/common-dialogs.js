@@ -58,6 +58,21 @@ Vue.component("CommonDialogs", {
       const dialogDefinition = NwtDialogDefinition.create(userDialogDefinition);
       return dialogDefinition.$state.promise;
     },
+    openByTemplateId(userDialogDefinition) {
+      trace("CommonDialogs.methods.openByTemplateId");
+      const templateId = userDialogDefinition.template;
+      const templatePath = NwtPaths.global.relative("assets/framework/browser/dialog-templates/", templateId);
+      return new Promise((resolve, reject) => {
+        require("fs").readFile(templatePath, "utf8", (error, templateContents) => {
+          if(error) {
+            return reject(error);
+          }
+          const normalizedDialogDefinition = Object.assign({}, userDialogDefinition, { template: templateContents });
+          const dialogDefinition = NwtDialogDefinition.create(normalizedDialogDefinition);
+          return resolve(dialogDefinition.$state.promise);
+        });
+      });
+    },
     subdialog(userDialogDefinition) {
       trace("CommonDialogs.methods.subdialog");
       return this.open(userDialogDefinition);

@@ -23,6 +23,10 @@
     overflow: scroll;
 }
 
+.common_dialogs_window.window.no_scroll > .window-body {
+    overflow: hidden;
+}
+
 .window.common_dialogs_window {
 
 }

@@ -2445,6 +2445,11 @@ textarea {
     min-height: 90px;
 }
 
+hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
 .no_wrap {
     white-space: nowrap;
 }
@@ -2481,9 +2486,19 @@ textarea {
     height: auto;
 }
 
+.flex_column {
+    display: flex;
+    flex-direction: column;
+}
+
 .flex_row {
     display: flex;
     flex-direction: row;
+}
+
+.flex_column.centered,
+.flex_row.centered {
+    align-items: center;
 }
 
 .flex_100 {
@@ -2492,10 +2507,6 @@ textarea {
 
 .flex_1 {
     flex: 1;
-}
-
-.flex_row.centered {
-    align-items: center;
 }
 
 .font_weight_bold {
@@ -2593,8 +2604,8 @@ textarea {
 .position_absolute_fixed {
     position: absolute;
     top: 0px;
-    bottom: auto;
-    left: auto;
+    bottom: 0px;
+    left: 0px;
     right: 0px;
 }
 
@@ -2685,6 +2696,10 @@ button.bg_danger.active {}
 
 .overflow_scroll {
     overflow: scroll;
+}
+
+.background_gray_1 {
+    background-color: rgb(203, 203, 203);
 }
 
 /* @vuebundler[Proyecto_base_001][3]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
@@ -2968,6 +2983,10 @@ div.subcard {
 .common_dialogs_window.window > .window-body {
     height: 100%;
     overflow: scroll;
+}
+
+.common_dialogs_window.window.no_scroll > .window-body {
+    overflow: hidden;
 }
 
 .window.common_dialogs_window {

@@ -19710,6 +19710,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       this.$original = userDialogDefinition;
       this.$factory = {};
       this.$process = null;
+      this.$state = null;
       this.validate();
     }
 
@@ -30064,6 +30065,7 @@ Vue.component("CommonDialogs", {
         v-if="processManager.\$list.length">
         <template v-for="processItem, processIndex in processManager.\$list">
             <div class="window common_dialogs_window"
+                :class="processItem.definition.\$original?.windowClasses || ''"
                 v-resizable
                 v-draggable
                 v-on:mousedown="() => focusDialog(processItem)"
@@ -30081,7 +30083,7 @@ Vue.component("CommonDialogs", {
                             v-on:click="() => closeDialog(processItem)"></button>
                     </div>
                 </div>
-                <div class="window-body pad_1">
+                <div class="window-body position_relative">
                     <nwt-box-viewer :component="processItem.definition.\$factory" />
                 </div>
             </div>
@@ -30101,6 +30103,21 @@ Vue.component("CommonDialogs", {
       trace("CommonDialogs.methods.open");
       const dialogDefinition = NwtDialogDefinition.create(userDialogDefinition);
       return dialogDefinition.$state.promise;
+    },
+    openByTemplateId(userDialogDefinition) {
+      trace("CommonDialogs.methods.openByTemplateId");
+      const templateId = userDialogDefinition.template;
+      const templatePath = NwtPaths.global.relative("assets/framework/browser/dialog-templates/", templateId);
+      return new Promise((resolve, reject) => {
+        require("fs").readFile(templatePath, "utf8", (error, templateContents) => {
+          if(error) {
+            return reject(error);
+          }
+          const normalizedDialogDefinition = Object.assign({}, userDialogDefinition, { template: templateContents });
+          const dialogDefinition = NwtDialogDefinition.create(normalizedDialogDefinition);
+          return resolve(dialogDefinition.$state.promise);
+        });
+      });
     },
     subdialog(userDialogDefinition) {
       trace("CommonDialogs.methods.subdialog");
@@ -30709,6 +30726,7 @@ Vue.component("NwtProgressBarViewer", {
  * 
  * Donde `source` tiene que ser un string válido como plantilla para un componente Vue2 anónimo.
  * 
+ * Este componente se utiliza en los diálogos, y sirve para que cualquier componente renderizable dentro de un diálogo, pueda renderizarse fuera también.
  * 
  */
 Vue.component("NwtBoxViewer", {
@@ -35339,12 +35357,17 @@ Vue.component("MainWindow", {
         event.detail.component.startNewFeature();
         window.dispatchEvent(new CustomEvent("app-started"));
       });
-      window.addEventListener("app-started", async function(event) {
+      window.addEventListener("app-started", async function (event) {
         trace("AppPayload.inject@app-started");
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {
-          
+          const respuesta = await NwtDialogs.openByTemplateId({
+            template: "trash/ejemplo-panel-fijo.html",
+            factory: { data: { value: {} } },
+            windowClasses: "no_scroll",
+          });
+          console.log(respuesta);
         }
       });
     }

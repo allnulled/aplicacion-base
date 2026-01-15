@@ -81,6 +81,7 @@
       this.$original = userDialogDefinition;
       this.$factory = {};
       this.$process = null;
+      this.$state = null;
       this.validate();
     }
 

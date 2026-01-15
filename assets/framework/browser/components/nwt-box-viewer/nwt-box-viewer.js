@@ -22,6 +22,7 @@
  * 
  * Donde `source` tiene que ser un string válido como plantilla para un componente Vue2 anónimo.
  * 
+ * Este componente se utiliza en los diálogos, y sirve para que cualquier componente renderizable dentro de un diálogo, pueda renderizarse fuera también.
  * 
  */
 Vue.component("NwtBoxViewer", {
