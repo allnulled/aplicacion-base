@@ -105,6 +105,15 @@
       }
     };
 
+    static getComponentNameForControlType(controlSubpath, ifMissing = "nwt-form-control-for-text") {
+      trace("NwtFormUtils.getComponentNameForControlType");
+      if(typeof controlSubpath === "undefined") {
+        return NwtVue2.fromTagToIdNotation(ifMissing);
+      }
+      assertion(typeof controlSubpath === "string", "Parameter «controlSubpath» must be a string on «NwtFormBuilder.methods.getComponentNameForControl»");
+      return NwtVue2.fromTagToIdNotation(`nwt-form-control-for-${controlSubpath}`);
+    }
+
   };
 
   return NwtFormUtils;

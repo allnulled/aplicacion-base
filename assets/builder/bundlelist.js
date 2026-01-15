@@ -56,6 +56,8 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/text/password/control`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/text/oneline/control`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/text/multiline/control`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/group/list/control`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/group/structure/control`,
   // Fondos exóticos:
   `${projectRoot}/assets/framework/browser/components/nwt-stars-background/nwt-stars-background`,
   `${projectRoot}/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background`,

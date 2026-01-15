@@ -6,9 +6,14 @@
                     :class="{active:control.isShowingExtraInfo}"
                     v-on:click="() => control.toggleExtraInfo()">❓</button>
                 <div class="control_statement display_inline_block">{{ control.statement }}</div>
-                <div class="control_type display_inline_block">text/oneline</div>
+                <div class="control_type display_inline_block">{{ control.isControl }}</div>
             </div>
-            <div class="flex_1">
+            <div v-for="button, buttonIndex in extraButtons"
+                v-bind:key="'button_' + buttonIndex"
+                class="flex_1 pad_right_1">
+                <button class="mini" v-on:click="button.click">{{ button.text }}</button>
+            </div>
+            <div class="flex_1" v-if="control.vformsControl">
                 <button class="mini" v-on:click="validateControl">✅</button>
             </div>
         </div>

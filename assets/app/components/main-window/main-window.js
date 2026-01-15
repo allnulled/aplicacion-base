@@ -141,6 +141,7 @@ Vue.component("MainWindow", {
                   statement: "Nombre del usuario:",
                   extraInfo: "Con el nombre del usuario podremos dirigirnos a usted por su nombre.",
                   placeholder: "Aquí el nombre",
+                  initialValue: "Un nombre random",
                   buttons: [
                     {
                       text: "Btn 1",
@@ -190,6 +191,56 @@ Vue.component("MainWindow", {
                   extraInfo: "Con la opinión del usuario podremos averiguar si interesa partirle las piernas o no.",
                 }
               },
+              {
+                name: "notes",
+                type: "group/list",
+                props: {
+                  statement: "Notas adjuntas",
+                  controls: [{
+                    type: "text/oneline",
+                    props: {
+                      statement: "Título de la nota:",
+                      placeholder: "Aquí el título",
+                      extraInfo: "Para ponerle una etiqueta general a la nota.",
+                      initialValue: "Titulo random",
+                    }
+                  }, {
+                    type: "text/multiline",
+                    props: {
+                      statement: "Contenido de la nota:",
+                      placeholder: "Aquí el contenido",
+                      extraInfo: "Para ponerle un contenido a la nota.",
+                      initialValue: "Contenido random",
+                    }
+                  }]
+                }
+              }, {
+                name: "details",
+                type: "group/structure",
+                props: {
+                  statement: "Detalles adjuntos",
+                  controls: {
+                    reason: {
+                      type: "text/oneline",
+                      props: {
+                        statement: "Motivo del contacto",
+                        placeholder: "Aquí el motivo del contacto",
+                        extraInfo: "Para poner un motivo",
+                        initialValue: "Motivo random",
+                      }
+                    },
+                    channel: {
+                      type: "text/oneline",
+                      props: {
+                        statement: "Canal del contacto",
+                        placeholder: "Aquí cómo supo de nosotros",
+                        extraInfo: "Si nos conoció por redes, personas, medios, carteles, etc.",
+                        initialValue: "Canal random",
+                      }
+                    }
+                  }
+                }
+              }
             ],
           }
         }

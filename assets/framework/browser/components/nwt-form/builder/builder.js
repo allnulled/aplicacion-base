@@ -88,11 +88,7 @@ Vue.component("NwtFormBuilder", {
     },
     getComponentNameForControl(controlSubpath = undefined, ifMissing = undefined) {
       trace("NwtFormBuilder.methods.getComponentNameForControl");
-      if(typeof controlSubpath === "undefined") {
-        return NwtVue2.fromTagToIdNotation(ifMissing);
-      }
-      assertion(typeof controlSubpath === "string", "Parameter «controlSubpath» must be a string on «NwtFormBuilder.methods.getComponentNameForControl»");
-      return NwtVue2.fromTagToIdNotation(`nwt-form-control-for-${controlSubpath}`);
+      return NwtFormUtils.getComponentNameForControlType(controlSubpath, ifMissing);
     },
     toggleControlInForm(control) {
       trace("NwtFormBuilder.methods.toggleControlInForm");

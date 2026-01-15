@@ -58,7 +58,7 @@
     };
 
     constructor(dirpath = false) {
-      this.cwd = require("path").resolve(dirpath) || process.cwd();
+      this.cwd = require("path").resolve(dirpath || process.cwd());
       this._children = new Set();
     }
 

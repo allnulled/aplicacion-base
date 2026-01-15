@@ -19,6 +19,7 @@
  * ```html
  * <nwt-form-control-statement
  *   :control="controlComponent"
+ *   :extra-buttons="[{text:'ok',click:()=>{}}]"
  * />
  * ```
  * 
@@ -29,6 +30,11 @@
  * - `control.statement`
  * - `control.extraInfo`
  * 
+ * Los `extra-buttons` permiten añadir botones, a nivel de componente de control: no a nivel de parámetros de control.
+ * 
+ * Estos botones extra deben ser proporcionados desde el código del control, no desde los parámetros.
+ * 
+ * Otra cosa es que el control, por diseño, permita traspasar un parámetro propio hacia aquí.
  * 
  */
 Vue.component("NwtFormControlStatement", {
@@ -38,6 +44,10 @@ Vue.component("NwtFormControlStatement", {
     control: {
       type: Vue,
       required: true,
+    },
+    extraButtons: {
+      type: Array,
+      default: () => [],
     }
   },
   mixins: [],

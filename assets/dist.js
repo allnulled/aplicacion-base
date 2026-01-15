@@ -20456,6 +20456,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * // Si el «cleaner» devuelve «undefined», esa entrada no se devolverá
  * // Si el «cleaner» devuelve Array<Clave,Valor>, esa entrada será substituida por lo especificado
  * // Si el «cleaner» devuelve otra cosa, lanzará error
+ * ```
  * 
  */
 (function (factory) {
@@ -25585,7 +25586,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     };
 
     constructor(dirpath = false) {
-      this.cwd = require("path").resolve(dirpath) || process.cwd();
+      this.cwd = require("path").resolve(dirpath || process.cwd());
       this._children = new Set();
     }
 
@@ -26238,6 +26239,36 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
+/**
+ * 
+ * # NwtJsonPersister
+ * 
+ * API para la persistencia de ficheros JSON.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * await NwtJsonPersister.has(base:String|Object|Function, propertyPath:Array);
+ * await NwtJsonPersister.init(base:String|Object|Function, propertyPath:Array, value:any);
+ * await NwtJsonPersister.get(base:String|Object|Function, propertyPath:Array);
+ * await NwtJsonPersister.set(base:String|Object|Function, propertyPath:Array, value:any);
+ * await NwtJsonPersister.delete(base:String|Object|Function, propertyPath:Array)
+ * ```
+ * 
+ * En cuanto a `base`:
+ * 
+ * - Cuando `base` es un String, se considera como ruta del fichero.
+ * - Cuando `base` es Object o Function, se considera ese como los datos de base.
+ * 
+ * En cuanto a `propertyPath`:
+ * 
+ * - Se espera un `Array<String>` con el índice de los nombres de las propiedades del JSON.
+ *    - Si das `["items", "0", "subitems"]` apuntas a `jsonData.items["0"].subitems`
+ * - Si omites `propertyPath`, estás apuntando al fichero entero.
+ * 
+ * En cuanto a `value`, se espera el valor a establecer en los casos de `set` e `init`.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26255,15 +26286,19 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     static noop = () => {};
 
-    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
-      if(!condition) {
-        throw new Error(errorMessage);
-      }
-    };
+    static get assertion() {
+      return typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+        if (!condition) {
+          throw new Error(errorMessage);
+        }
+      };
+    }
 
-    static trace = typeof trace === "function" ? trace : (traceMessage) => {
-      console.log("[trace][local] " + traceMessage);
-    };
+    static get trace() {
+      return typeof trace === "function" ? trace : (traceMessage) => {
+        console.log("[trace][local] " + traceMessage);
+      };
+    }
 
     static low = {
       availableOperations: [
@@ -26343,7 +26378,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
           if (["has"].indexOf(operation) !== -1) {
             this.assertion(args.length >= argsDone, `Operation «${operation}» does not admit more parameters on «NwtJsonPersister.${operation}»`);
             this.assertion(hasEnoughInputs, `Operation «${operation}» requires «settings.prop» or «settings.file» or «settings.dataset» to be defined on «NwtJsonPersister.${operation}»`);
-            
           }
           if (["get"].indexOf(operation) !== -1) {
             if (typeof args[argsDone] !== "undefined") {
@@ -26379,8 +26413,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       this.assertion(typeof onPropertyError === "function", "Parameter «settings.hooks.onPropertyError» must be function on «NwtJsonPersister.iterate»");
       this.assertion(typeof onError === "function", "Parameter «settings.hooks.onError» must be function on «NwtJsonPersister.iterate»");
       this.assertion(hasFile || hasData, "Parameter «settings.file» can only be replaced with parameter «settings.dataset» on «NwtJsonPersister.iterate»");
-      // @TODO: aquí empezaría la cosa
-      // console.log({ operation, file, prop, hooks, dataset, });
       const memo = { dataset };
       Proceso_de_lectura_de_fichero:
       if (hasFile) {
@@ -26539,6 +26571,24 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
+/**
+ * 
+ * # NwtJsonlPersister
+ * 
+ * API para la persistencia de ficheros JSONL.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * await NwtJsonlPersister.select(file:String, filter:Function);
+ * await NwtJsonlPersister.insert(file:String, value:Object);
+ * await NwtJsonlPersister.update(file:String, filter:Function, value:Object);
+ * await NwtJsonlPersister.delete(file:String, filter:Function);
+ * ```
+ * 
+ * Dado que los ficheros JSONL son prácticamente una tabla (en términos SQL), los métodos son los de una tabla también.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26554,17 +26604,21 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
   const NwtJsonlPersister = class {
 
-    static noop = () => {};
+    static noop = () => { };
 
-    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
-      if (!condition) {
-        throw new Error(errorMessage);
-      }
-    };
+    static get assertion() {
+      return typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+        if (!condition) {
+          throw new Error(errorMessage);
+        }
+      };
+    }
 
-    static trace = typeof trace === "function" ? trace : (traceMessage) => {
-      console.log("[trace][local] " + traceMessage);
-    };
+    static get trace() {
+      return typeof trace === "function" ? trace : (traceMessage) => {
+        console.log("[trace][local] " + traceMessage);
+      };
+    }
 
     static uidAlphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -26679,6 +26733,33 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
+/**
+ * 
+ * # NwtFilePersister
+ * 
+ * API para persistencia de ficheros.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFilePersister
+ * NwtFramework.FilePersister
+ * Vue.prototype.$nwt.FilePersister
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * await NwtFilePersister.has(file:String)
+ * await NwtFilePersister.init(file:String, content:String);
+ * await NwtFilePersister.get(file:String);
+ * await NwtFilePersister.set(file:String, content:String);
+ * await NwtFilePersister.delete(file:String);
+ * ```
+ * 
+ * Esta API solo atacará a ficheros, no a directorios, ni a JSONs. Por eso, `content` debe ser un String siempre.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26696,15 +26777,19 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     static noop = () => {};
 
-    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
-      if(!condition) {
-        throw new Error(errorMessage);
-      }
-    };
+    static get assertion() {
+      return typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+        if (!condition) {
+          throw new Error(errorMessage);
+        }
+      };
+    }
 
-    static trace = typeof trace === "function" ? trace : (traceMessage) => {
-      console.log("[trace][local] " + traceMessage);
-    };
+    static get trace() {
+      return typeof trace === "function" ? trace : (traceMessage) => {
+        console.log("[trace][local] " + traceMessage);
+      };
+    }
 
     static low = {
       availableOperations: ["get", "set", "has", "init", "delete"],
@@ -26786,17 +26871,17 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       throw new Error("At this point, the operation should have returned already on «NwtFilePersister.iterate»");
     }
 
-    static get(...args) {
-      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "get"));
-    }
-    static set(...args) {
-      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "set"));
-    }
     static has(...args) {
       return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "has"));
     }
     static init(...args) {
       return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "init"));
+    }
+    static get(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "get"));
+    }
+    static set(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "set"));
     }
     static delete(...args) {
       return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "delete"));
@@ -26809,6 +26894,37 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 
 // @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
+/**
+ * 
+ * # NwtDirectoryPersister
+ * 
+ * API para persistencia de directorios.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtDirectoryPersister
+ * NwtFramework.DirectoryPersister
+ * Vue.prototype.$nwt.DirectoryPersister
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Métodos principales:
+ * await NwtDirectoryPersister.has(directory:String); // returns Boolean
+ * await NwtDirectoryPersister.init(directory:String); // mkdir si no existe ya
+ * await NwtDirectoryPersister.get(directory:String); // devuelve los nombres de los nodos (fichero o directorio) de dentro
+ * await NwtDirectoryPersister.set(directory:String); // mkdir
+ * await NwtDirectoryPersister.delete(directory:String); // rmdir (no recursivo)
+ * // Métodos drásticos:
+ * await NwtDirectoryPersister.ensure(directory:String); // ensureDirectory, crea todos los nodos necesarios y el directorio final
+ * await NwtDirectoryPersister.destroy(directory:String); // rmdir (recursivamente)
+ * ```
+ * 
+ * Como mucho, esta API creará o destruirá un directorio, por lo cual no hay más argumentos que la ruta al directorio.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26826,15 +26942,19 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     static noop = () => {};
 
-    static assertion = typeof assertion === "function" ? assertion : (condition, errorMessage) => {
-      if(!condition) {
-        throw new Error(errorMessage);
-      }
-    };
+    static get assertion() {
+      return typeof assertion === "function" ? assertion : (condition, errorMessage) => {
+        if (!condition) {
+          throw new Error(errorMessage);
+        }
+      };
+    }
 
-    static trace = typeof trace === "function" ? trace : (traceMessage) => {
-      console.log("[trace][local] " + traceMessage);
-    };
+    static get trace() {
+      return typeof trace === "function" ? trace : (traceMessage) => {
+        console.log("[trace][local] " + traceMessage);
+      };
+    }
 
     static low = {
       availableOperations: ["get", "set", "has", "init", "delete"],
@@ -26932,14 +27052,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       throw new Error(`At this point, the operation should have returned already on «NwtDirectoryPersister.${operation}»`);
     }
 
-    static get(...args) {
-      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "get"));
-    }
-
-    static set(...args) {
-      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "set"));
-    }
-
     static has(...args) {
       return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "has"));
     }
@@ -26948,12 +27060,20 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "init"));
     }
 
-    static ensure(...args) {
-      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "ensure"));
+    static get(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "get"));
+    }
+
+    static set(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "set"));
     }
 
     static delete(...args) {
       return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "delete"));
+    }
+
+    static ensure(...args) {
+      return this.iterate(this.low.extractSettingsFromArgsAndOperation(args, "ensure"));
     }
 
     static destroy(...args) {
@@ -26967,6 +27087,32 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
+/**
+ * 
+ * # NwtPersister
+ * 
+ * API de persistencia en el sistema de ficheros.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtPersister
+ * NwtFramework.Persister
+ * Vue.prototype.$nwt.Persister
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtPersister.json === NwtJsonPersister
+ * NwtPersister.jsonl === NwtJsonlPersister
+ * NwtPersister.file === NwtFilePersister
+ * NwtPersister.directory === NwtDirectoryPersister
+ * ```
+ * 
+ * Es una API conectora. Para más información, consultar las APIs contenidas.
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29870,7 +30016,9 @@ Vue.directive("forms", {
 // @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
 /**
  * 
- * # Nwt Dialogs API
+ * # Common Dialogs
+ * 
+ * API para diálogos.
  * 
  * ## Exposición
  * 
@@ -30112,6 +30260,19 @@ Vue.component("CommonToasts", {
 // @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.html
 
 // @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.js
+/**
+ * 
+ * # Common Errors
+ * 
+ * Esta API no se está usando.
+ * 
+ * La razón es que los errores NO SE PUEDEN mostrar a través de un componente Vue, porque causa recursividad y la aplicación se bloquea.
+ * 
+ * La API de `NwtErrorsManager` es la encargada de gestionar los errores.
+ * 
+ * No se elimina todavía por si se está usando, pero debería poder eliminarse sin más problemas.
+ * 
+ */
 Vue.component("CommonErrors", {
   name: "CommonErrors",
   template: `<div class="common_errors"></div>`,
@@ -30143,8 +30304,10 @@ Vue.component("CommonErrors", {
   created() {},
   async mounted() {
     trace("CommonErrors.mounted");
+    NwtGlobalizer.exportTo("CommonErrors", this);
+    NwtGlobalizer.exportTo("NwtErrors", this);
+    Vue.prototype.$errors = this;
     this.manager = await NwtErrorsManager.create(this).initialize();
-    
   },
 });
 
@@ -30338,6 +30501,13 @@ Vue.component("NwtTesterViewer", {
 // @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
 
 // @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
+/**
+ * 
+ * # NwtTesterNode
+ * 
+ * Componente vue2 interno. No debe usarse, lo usa `NwtTesterViewer` por debajo.
+ * 
+ */
 Vue.component("NwtTesterNode", {
   template: `<div class="nwt_tester_node">
     <template v-if="node instanceof \$nwt.Tester.Assertion">
@@ -30597,6 +30767,31 @@ Vue.component("NwtBoxViewer", {
 
 // @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
 /**
+ * 
+ * # NwtSourceViewer
+ * 
+ * Componente vue2 para renderizar plantillas vue2 en runtime.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtSourceViewer
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-source-viewer
+ *   :source="codigoHtmlVue"
+ *   :component-context="{ mounted:?, data:?, methods:?, ... }" # opcional
+ * />
+ * ```
+ * 
+ * Donde `codigoHtmlVue` es un String con el código de plantilla vue2 que desees.
+ * 
+ * Por debajo, creará un componente `AnonymousSourceViewer{RANDOMIZED-STRING}`.
+ * 
+ * Utilizará `component-context` para darle contexto a este componente.
  * 
  */
 Vue.component("NwtSourceViewer", {
@@ -31315,6 +31510,38 @@ Vue.component("AppProcedureDocumentationViewer", {
 // @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
 
 // @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
+/**
+ * 
+ * # NwtFileExplorer
+ * 
+ * Componente vue2 para explorar sistema de ficheros. También como filepicker y directorypicker.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtFileExplorer
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-file-explorer
+ *   opened-by="/ruta/por/donde/quieres/que/aparezca/abierto"
+ *   accept-extensions="*"
+ *   accept-extensions="js,html,css,csv,json,jsonl"
+ *   save-file="true"          # esta opción es para seleccionar ficheros que no existen todavía
+ *   multiple="true"           # esta opción no es compatible con las opciones save-file=true ni chooser-of="none" ni chooser-of="directory"
+ *   chooser-of="none"         # acepta también: "file" y "directory"
+ *   :on-accept="(choosen) => doSomethingWith(choosen)"
+ *   :on-cancel="() => doSomethingWith()"
+ * />
+ * ```
+ * 
+ * Por tanto, este componente puede usarse tanto para escoger ficheros, directorios, nuevos ficheros, o simplemente explorar ficheros.
+ * 
+ * De momento, no hace nada cuando seleccionas un fichero.
+ * 
+ */
 Vue.component("NwtFileExplorer", {
   name: "NwtFileExplorer",
   template: `<div class="nwt_file_explorer">
@@ -31737,6 +31964,28 @@ Vue.component("NwtCodeHighlighter", {
 // @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
 /**
  * 
+ * # NwtPromptsManagerViewer
+ * 
+ * Componente para gestionar prompts guardados en local.
+ * 
+ * No usa la API de OpenAI para nada.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtPromptsManagerViewer
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-prompts-manager-viewer
+ *   :manager="NwtPromptsManager.global"  # valor por defecto: este parámetro puede ignorarse
+ *   :chooser="true"   # si se usa como prompt-picker: true, si se usa como prompt-explorer: false (por defecto)
+ *   :dialog="dialog"  # diálogo externo, para cerrarlo cuando el picker haya acabado
+ * />
+ * ```
+ * 
  */
 Vue.component("NwtPromptsManagerViewer", {
   template: `<div>
@@ -31966,7 +32215,9 @@ Vue.component("NwtPromptsManagerViewer", {
     async openPromptsFolder() {
       trace("NwtPromptsManagerViewer.methods.openPromptsFolder");
       const fileExplorerBinary = await NwtSettings.global.get("nwt.binary.file-explorer");
-      NwtShell.create().exec(`${JSON.stringify(fileExplorerBinary)} ${JSON.stringify(this.manager.$basedir)}`);
+      const command = `${JSON.stringify(fileExplorerBinary)} ${JSON.stringify(this.manager.$basedir)}`;
+      console.log(command);
+      NwtShell.create().exec(command);
     },
     async reload() {
       trace("NwtPromptsManagerViewer.methods.reload");
@@ -32232,6 +32483,42 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 // @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
 
 // @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-utils.js
+/**
+ * 
+ * # NwtFormUtils
+ * 
+ * API de utilidades varias de un formulario.
+ * 
+ * Esta API se utiliza por:
+ * 
+ *  - La directiva de v-forms, para no poner toda la lógica dentro de la directiva, y tenerla reutilizable desde fuera
+ *  - El control prototipo base, para algunas validaciones que deberían hacerse para cumplir los estándares de los Form Controls.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormUtils
+ * NwtFramework.FormUtils
+ * Vue.prototype.$nwt.FormUtils
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Usados por la API de Form Controls:
+ * NwtFormUtils.fromControlTypeToFullpath("text/oneline");          // returns "assets/framework/browser/components/nwt-form/control-for/{tipo/subtipo}/control"
+ * NwtFormUtils.validateControlButtons(componenteControlVue2);      // lanzará error si el componente no cumple con la opción de buttons
+ * NwtFormUtils.validateControlPlaceholder(componenteControlVue2);  // lanzará error si el componente no cumple con la opción de placeholder
+ * NwtFormUtils.validateControlExtraClasses(componenteControlVue2); // lanzará error si el componente no cumple con la opción de extraClasses
+ * NwtFormUtils.validateControlValue(componenteControlVue2);        // lanzará error si el componente no cumple con la opción de value
+ * NwtFormUtils.validateIsControl(componenteControlVue2);           // lanzará error si el componente no cumple con la opción de isControl
+ * // Usados por la API de v-forms:
+ * NwtFormUtils.from.element.to.form(htmlElement);     // se aplica cuando v-forms.form y equivale a:    NwtFormElementToForm.create(...args).initialize()
+ * NwtFormUtils.from.element.to.control(htmlElement);  // se aplica cuando v-forms.control y equivale a: NwtFormElementToControl.create(...args).initialize()
+ * NwtFormUtils.from.element.to.handler(htmlElement);  // se aplica cuando v-forms.handler y equivale a: NwtFormElementToHandler.create(...args).initialize()
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32249,7 +32536,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
     static fromControlTypeToFullpath(controlType) {
       trace("NwtVue2.fromControlTypeToFullpath");
-      return NwtPaths.global.relative("assets/framework/nwt-form/control-for", controlType, "control");
+      return NwtPaths.global.relative("assets/framework/browser/components/nwt-form/control-for", controlType, "control");
     }
 
     static validateControlButtons(component) {
@@ -32303,6 +32590,15 @@ Vue.component("NwtChatgptFilesManagerViewer", {
       }
     };
 
+    static getComponentNameForControlType(controlSubpath, ifMissing = "nwt-form-control-for-text") {
+      trace("NwtFormUtils.getComponentNameForControlType");
+      if(typeof controlSubpath === "undefined") {
+        return NwtVue2.fromTagToIdNotation(ifMissing);
+      }
+      assertion(typeof controlSubpath === "string", "Parameter «controlSubpath» must be a string on «NwtFormBuilder.methods.getComponentNameForControl»");
+      return NwtVue2.fromTagToIdNotation(`nwt-form-control-for-${controlSubpath}`);
+    }
+
   };
 
   return NwtFormUtils;
@@ -32310,6 +32606,43 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 });
 
 // @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js
+/**
+ * 
+ * # NwtFormElementToAny
+ * 
+ * API común de los elementos que usan la directiva `v-forms.{form,control,handler}`.
+ * 
+ * De esta clase heredan las clases:
+ * 
+ *  - NwtFormElementToForm
+ *  - NwtFormElementToControl
+ *  - NwtFormElementToHandler
+ * 
+ * Pero es una clase abstracta: no se debe instanciar desde ella misma, sino desde una de estas descendientes.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormElementToAny
+ * NwtFramework.FormElementToAny
+ * Vue.prototype.$nwt.FormElementToAny
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * NwtFormElementToAny.create(element:HTMLElement, value:Object, virtualNode);
+ * // Propiedades y métodos que deben sobreescribirse:
+ * NwtFormElementToAny.vformType === "any";
+ * NwtFormElementToAny.prototype.initialize(); // NwtVue2.cross.expose.by.element(this.element, this, "vformsPrototype"); Pero vformsPrototype no debería aparecer nunca
+ * NwtFormElementToAny.prototype.getValue(); // lanza un error porque es una clase abstracta
+ * NwtFormElementToAny.prototype.validate(); // lanza un error porque es una clase abstracta
+ * NwtFormElementToAny.prototype.propagateSuccess(); // lanza un error porque es una clase abstracta
+ * NwtFormElementToAny.prototype.propagateErrors(error); // lanza un error porque es una clase abstracta
+ * NwtFormElementToAny.prototype.submit(); // lanza un error porque es una clase abstracta
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32381,6 +32714,33 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 });
 
 // @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-form.js
+/**
+ * 
+ * # NwtFormElementToForm
+ * 
+ * API de los elementos que usan la directiva `v-forms.form`.
+ * 
+ * Hereda de `NwtFormElementToAny`.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormElementToForm
+ * NwtFramework.FormElementToForm
+ * Vue.prototype.$nwt.FormElementToForm
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Métodos sobreescritos de padre:
+ * NwtFormElementToForm.prototype.initialize()
+ * NwtFormElementToForm.prototype.getValue()
+ * NwtFormElementToForm.prototype.validate(notify = false, mustThrow = true)
+ * NwtFormElementToForm.prototype.submit()
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32488,6 +32848,36 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 });
 
 // @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-control.js
+/**
+ * 
+ * # NwtFormElementToControl
+ * 
+ * API de los elementos que usan la directiva `v-forms.control`.
+ * 
+ * Hereda de `NwtFormElementToAny`.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormElementToControl
+ * NwtFramework.FormElementToControl
+ * Vue.prototype.$nwt.FormElementToControl
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Métodos sobreescritos de padre:
+ * NwtFormElementToControl.prototype.initialize()
+ * NwtFormElementToControl.prototype.getValue()
+ * NwtFormElementToControl.prototype.validate(notify = false, mustThrow = true)
+ * NwtFormElementToControl.prototype.propagateSuccess()
+ * NwtFormElementToControl.prototype.propagateErrors(errors)
+ * // Métodos propios:
+ * NwtFormElementToControl.prototype.getName()
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32615,6 +33005,31 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 });
 
 // @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-handler.js
+/**
+ * 
+ * # NwtFormElementToHandler
+ * 
+ * API de los elementos que usan la directiva `v-forms.handler`.
+ * 
+ * Hereda de `NwtFormElementToAny`.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormElementToHandler
+ * NwtFramework.FormElementToHandler
+ * Vue.prototype.$nwt.FormElementToHandler
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```js
+ * // Métodos sobreescritos de padre:
+ * NwtFormElementToForm.prototype.initialize()
+ * NwtFormElementToForm.prototype.setErrors(errors)
+ * ```
+ * 
+ */
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32681,6 +33096,61 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 // @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.html
 
 // @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.js
+/**
+ * 
+ * # NwtFormBuilder
+ * 
+ * Componente vue2 que construye formularios.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtFormBuilder
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-form-builder
+ *   :from="{
+ *     title: "Título del formulario",
+ *     footer: "Pie del formulario",
+ *     controls: [{
+ *       type: "text/oneline", # El {tipo/subtipo} de control que están en assets/framework/browser/components/nwt-form/control-for/{tipo/subtipo}
+ *       props: {},            # Propiedades que se le pasan como parámetros. Son parámetros específicos del control en sí.
+ *       listeners: {},        # Eventos que se le pasan como parámetros. Son parámetros específicos del control en sí también.
+ *     },{
+ *       ...
+ *     }]
+ *     events: {
+ *       onSubmit: (data) => {},
+ *       onSuccess: (data) => {},
+ *       onError: (data) => {},
+ *     }
+ *   }"
+ * />
+ * ```
+ * 
+ * Esta API se cruza con varias APIs:
+ * 
+ * - `assets/framework/browser/components/nwt-form/control-prototype.js`:
+ *    - este es el componente base de todos los controles de formulario (heredan de él)
+ * - `assets/framework/browser/directives/v-forms.js`:
+ *    - utiliza las directivas de v-forms para componer un formulario paralelo que respeta la jerarquía del DOM
+ *    - ese formulario paralelo permite composición de campos, validación y envío automáticamente
+ * 
+ * Y luego están todos los controles que hay bajo:
+ * 
+ * - `assets/framework/browser/components/nwt-form/control-for/{tipo/subtipo}/control.{html,css,js}`
+ *    - file-chooser/directory
+ *    - file-chooser/file
+ *    - file-chooser/new-file
+ *    - text/oneline
+ *    - text/multiline
+ * 
+ * En el momento de documentar esto, estos son los controles disponibles. Para estar actualizado, revisar el directorio.
+ * 
+ */
 Vue.component("NwtFormBuilder", {
   name: "NwtFormBuilder",
   template: `<div class="nwt_form_builder" v-forms.form="{
@@ -32805,11 +33275,7 @@ Vue.component("NwtFormBuilder", {
     },
     getComponentNameForControl(controlSubpath = undefined, ifMissing = undefined) {
       trace("NwtFormBuilder.methods.getComponentNameForControl");
-      if(typeof controlSubpath === "undefined") {
-        return NwtVue2.fromTagToIdNotation(ifMissing);
-      }
-      assertion(typeof controlSubpath === "string", "Parameter «controlSubpath» must be a string on «NwtFormBuilder.methods.getComponentNameForControl»");
-      return NwtVue2.fromTagToIdNotation(`nwt-form-control-for-${controlSubpath}`);
+      return NwtFormUtils.getComponentNameForControlType(controlSubpath, ifMissing);
     },
     toggleControlInForm(control) {
       trace("NwtFormBuilder.methods.toggleControlInForm");
@@ -32868,6 +33334,106 @@ Vue.component("NwtFormBuilder", {
 // @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.css
 
 // @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-prototype.js
+/**
+ * 
+ * # NwtFormControlPrototype
+ * 
+ * Componente base (sin plantilla) para controles de formulario compatibles con `NwtFormBuilder`.
+ * 
+ * De este componente, heredan todos los controles de formulario.
+ * 
+ * Por lo tanto, esta lógica es común a todos los controles.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtFormControlPrototype
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * Este componente no está pensado para usarse por sí mismo, sino para extenderse vía la API de vue2.
+ * 
+ * Pero su API es común a todos los controles, así que es especialmente interesante documentarla.
+ * 
+ * ## Propiedades HTML de un control
+ * 
+ * Las propiedades comunes a todos los controles de formulario son:
+ * 
+ * ```html
+ * <nwt-form-control-prototype
+ *   :initial-value="anything" # valor inicial del control, en su tipo hidratado, no en String solamente
+ *   statement="Enunciado de este control"
+ *   extra-info="Información extra del enunciado de este control"
+ *   is-required="false"     # si es requerido en el formulario, u opcional (false, por defecto)
+ *   :on-change="() => {}"   # evento lanzado al cambiar el valor del control
+ *   :on-format="() => {}"   # evento para hidratar el valor, usado cuando llamas a thi.getValue()
+ *   :on-validate="() => {}" # creo que este no se usa, la validación corre a cuenta de la API de v-forms en su lugar
+ * />
+ * ```
+ * 
+ * ## Propiedades JS de un control
+ * 
+ * Otras propiedades internas, desde el JS y no del HTML, son estas:
+ * 
+ * ```js
+ * this.isControl === "prototype"; // Esta propiedad debe ser sobreescrita por cada control con el nombre del {tipo/subtipo} propios
+ * this.isShowingExtraInfo; // variable de estado
+ * this.value === ?; // El valor, sin formatear. Suele ser un string que se puede visualizar con text-boxes.
+ * this.validationErrors === []; // errores de validación acumulados
+ * ```
+ * 
+ * ## Métodos internos de un control
+ * 
+ * ```js
+ * this.getValue(); // devuelve el valor del control, pero formateado. Este valor ya no siempre será un String, puede ser número, booleano, objeto, lo que sea.
+ * this.toggleExtraInfo(); // muestra u oculta la información extra del control
+ * ```
+ * 
+ * Esta sería la API inicial de cualquier control.
+ * 
+ * Pero hay que saber algunas cosas más para crear tu propio control.
+ * 
+ * Dado que este componente no tiene plantilla, y aunque la tuviera no serviría de nada porque cada control la sobreescribiría a su manera, conviene consultar el primer control que se ha creado como referencia para saber cómo crear la plantilla de un control.
+ * 
+ * El primer control que se ha crea en la API es:
+ * 
+ *  - `NwtFormControlForTextOneline`: que se corresponde con un input[type=text].
+ * 
+ * Consultar ese control si vas a crear uno propio, porque para hacerlo compatible del todo, por ejemplo, hay que:
+ * 
+ *  - Ponerle un class="nwt_form_control"
+ *  - Ponerle un `<nwt-form-control-statement :control="this" />` arriba
+ *  - Ponerle un `<nwt-form-control-handler :control="this" />` abajo
+ *  - Poner el control en un flex-row y a la izquierda
+ *  - Poner en la derecha del flex-row un `<nwt-form-control-buttons :control="this" />`
+ *  - Poner un `v-model="value"` al input, de haberlo
+ *  - Poner un `v-on:input="e => onChange(e, this)"` o llamar al `onChange` desde `watch.value`
+ * 
+ * Y esta API todavía no está completa en el momento de esta documentación, así que puede que haya alguna cosa más.
+ * 
+ * ## Convivencia con la API de v-forms
+ * 
+ * Es importante entender por qué la API de `v-forms` no va incrustada en esta hard-way.
+ * 
+ * Es decir: son controles, ¿por qué no tienen ya el `v-forms.control` incrustado a nivel de componente?
+ * 
+ * La respuesta es: porque no siempre están participando activamente como controles en un formulario.
+ * 
+ * Separar estas 2 APIs permite que puedas reutilizar todos los controles en cualquier contexto, sin necesariamente vincularlos a un formulario.
+ * 
+ * Pero, por debajo, hay compatibilidades ya pensadas para integrarse con el formulario.
+ * 
+ * Además, la vinculación con un formulario permite algunos parámetros extra que no van necesariamente con el componente de control, sino con el formulario concreto.
+ * 
+ * Por ejemplo, si quieres añadir una validación de un texto en el contexto de un formulario concreto:
+ * 
+ * - Pides un tipo `text/oneline`: eso es lógica del control
+ * - Pero además quieres que ese `text/oneline` cumpla con un formato concreto a la hora de validarlo: eso es lógica del formulario
+ * 
+ * Por eso, hay que separar estas 2 APIs. Porque un control no siempre es control activo en un formulario.
+ * 
+ */
 Vue.component("NwtFormControlPrototype", {
   name: "NwtFormControlPrototype",
   props: {
@@ -32927,6 +33493,45 @@ Vue.component("NwtFormControlPrototype", {
 // @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.html
 
 // @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.js
+/**
+ * 
+ * # NwtFormControlStatement
+ * 
+ * Componente para mostrar anunciados de control homogéneos.
+ * 
+ * Uso interno de las plantillas de los Form Controls.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * NwtFormControlStatement
+ * NwtFramework.FormControlStatement
+ * Vue.prototype.$nwt.FormControlStatement
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-form-control-statement
+ *   :control="controlComponent"
+ *   :extra-buttons="[{text:'ok',click:()=>{}}]"
+ * />
+ * ```
+ * 
+ * Donde `controlComponent` tiene que ser el componente de tipo Form Control.
+ * 
+ * Mientras el control cumpla con los estándares, no habrá problema. Solo se accede a:
+ * 
+ * - `control.statement`
+ * - `control.extraInfo`
+ * 
+ * Los `extra-buttons` permiten añadir botones, a nivel de componente de control: no a nivel de parámetros de control.
+ * 
+ * Estos botones extra deben ser proporcionados desde el código del control, no desde los parámetros.
+ * 
+ * Otra cosa es que el control, por diseño, permita traspasar un parámetro propio hacia aquí.
+ * 
+ */
 Vue.component("NwtFormControlStatement", {
   name: "NwtFormControlStatement",
   template: `<div class="nwt_form_control_statement">
@@ -32937,9 +33542,14 @@ Vue.component("NwtFormControlStatement", {
                     :class="{active:control.isShowingExtraInfo}"
                     v-on:click="() => control.toggleExtraInfo()">❓</button>
                 <div class="control_statement display_inline_block">{{ control.statement }}</div>
-                <div class="control_type display_inline_block">text/oneline</div>
+                <div class="control_type display_inline_block">{{ control.isControl }}</div>
             </div>
-            <div class="flex_1">
+            <div v-for="button, buttonIndex in extraButtons"
+                v-bind:key="'button_' + buttonIndex"
+                class="flex_1 pad_right_1">
+                <button class="mini" v-on:click="button.click">{{ button.text }}</button>
+            </div>
+            <div class="flex_1" v-if="control.vformsControl">
                 <button class="mini" v-on:click="validateControl">✅</button>
             </div>
         </div>
@@ -32950,6 +33560,10 @@ Vue.component("NwtFormControlStatement", {
     control: {
       type: Vue,
       required: true,
+    },
+    extraButtons: {
+      type: Array,
+      default: () => [],
     }
   },
   mixins: [],
@@ -33008,6 +33622,39 @@ Vue.component("NwtFormControlButtons", {
 // @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.html
 
 // @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.js
+/**
+ * 
+ * # NwtFormControlHandler
+ * 
+ * Componente para mostrar errores de validación de un Form Control.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtFormControlHandler
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-form-control-handler :control="controlComponent" />
+ * ```
+ * 
+ * Donde `controlComponent` tiene que ser el componente de tipo Form Control.
+ * 
+ * Mientras el control cumpla con los estándares, no habrá problema. Solo se accede a:
+ * 
+ * - `control.validationErrors`
+ * 
+ * Este componente **SÍ LLEVA INCRUSTADA** la directiva de v-forms.handler.
+ * 
+ * La razón teórica (no sé si está bien implementado todavía) es que:
+ * 
+ *   - Solo mostrará los errores de validación que se acumulen en el control proporcionado
+ *   - Si el control proporcionado no usa v-forms.control, no acumula errores
+ *   - Si el control proporcionado sí usa v-forms.control, sí acumula errores, entonces sí mostrará errores.
+ * 
+ */
 Vue.component("NwtFormControlHandler", {
   name: "NwtFormControlHandler",
   template: `<div class="nwt_form_control_handler"
@@ -33131,6 +33778,30 @@ Vue.component("NwtFormControlForTextPassword", {
 // @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.html
 
 // @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.js
+/**
+ * 
+ * # NwtFormControlForTextOneline
+ * 
+ * Componente de control de formulario para textos de una sola línea.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtFormControlForTextOneline
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-form-control-for-text-oneline
+ *   :buttons="[{text:'texto de boton',click:() => {}}]"
+ *   extraClases="clase1 clase2"
+ *   placeholder="Texto de relleno"
+ *   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
+ * />
+ * ```
+ * 
+ */
 Vue.component("NwtFormControlForTextOneline", {
   name: "NwtFormControlForTextOneline",
   extends: Vue.options.components.NwtFormControlPrototype.options,
@@ -33260,9 +33931,254 @@ Vue.component("NwtFormControlForTextMultiline", {
 
 // @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.css
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/list/control.html
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/list/control.js
+/**
+ * 
+ * # NwtFormControlForGroupList
+ * 
+ * Componente de control de formulario para listas de controles.
+ * 
+ * Con este control, puedes agrupar listas de controles en 1 mismo control.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtFormControlForGroupList
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-form-control-for-list
+ *   statement="Enunciado para lista de controles"
+ *   :controls="[{
+ *     type: 'text/oneline',
+ *     props: {
+ *       initialValue: 'No sabe/No contesta',
+ *     },
+ *     listeners: {}
+ *   },{
+ *     type: 'text/oneline',
+ *     props: {
+ *       initialValue: 'No sabe/No contesta',
+ *     },
+ *     listeners: {}
+ *   }]"
+ *   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
+ * />
+ * ```
+ * 
+ */
+Vue.component("NwtFormControlForGroupList", {
+  name: "NwtFormControlForGroupList",
+  extends: Vue.options.components.NwtFormControlPrototype.options,
+  template: `<div class="nwt_form_control for_list">
+    <nwt-form-control-statement :control="this" :extra-buttons="[{ text: '➕', click: () => { itemsOfList.push(\$nwt.Randomizer.fromAlphabet(10)) } }]" />
+    <div v-if="itemsOfList"
+        v-for="itemId, itemIndex, itemCounter in itemsOfList"
+        v-bind:key="'item_' + itemId"
+        class="pad_right_1">
+        <div class="card position_relative">
+            <div class="position_absolute" style="left:auto;top:2px;bottom:auto;right:2px;">
+                <div class="flex_row centered">
+                    <div class="flex_1 pad_left_1">
+                        <button class="mini" v-on:click="() => itemsOfList.splice(itemCounter, 1)">❌</button>
+                    </div>
+                </div>
+            </div>
+            <div :class="controlIndex !== 0 ? 'pad_top_1' : ''"
+                v-for="control, controlIndex in controls"
+                v-bind:key="'control_' + controlIndex">
+                <component :is="control.componentId"
+                    ref="subcontrols"
+                    v-bind="control.props"
+                    v-on="control.listeners" />
+            </div>
+        </div>
+    </div>
+    <nwt-form-control-handler :control="this" />
+</div>`,
+  props: {
+    controls: {
+      type: Array,
+      required: true,
+    },
+  },
+  mixins: [],
+  data() {
+    trace("NwtFormControlForGroupList.data");
+    return {
+      isControl: "list",
+      itemsOfList: false,
+    };
+  },
+  methods: {
+    getValue() {
+      trace("NwtFormControlForGroupList.methods.getValue");
+      if(!this.$refs.subcontrols) return [];
+      const subcontrols = this.$refs.subcontrols;
+      return subcontrols.map(control => control.getValue());
+    },
+    addComponentIdToControls() {
+      trace("NwtFormControlForGroupList.methods.addComponentIdToControls");
+      for(let index=0; index<this.controls.length; index++) {
+        const controlObject = this.controls[index];
+        controlObject.componentId = NwtFormUtils.getComponentNameForControlType(controlObject.type);
+      }
+    }
+  },
+  created() {
+    trace("NwtFormControlForGroupList.created");
+    NwtFormUtils.validate.control.isControl(this);
+    NwtFormUtils.validate.control.value(this);
+  },
+  mounted() {
+    trace("NwtFormControlForGroupList.mounted");
+    this.addComponentIdToControls();
+    this.itemsOfList = [];
+  },
+});
+
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/list/control.css
+
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.html
+
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.js
+/**
+ * 
+ * # NwtFormControlForGroupStructure
+ * 
+ * Componente de control de formulario para estructuras de controles.
+ * 
+ * Con este control, puedes agrupar controles con etiqueta en 1 mismo control.
+ * 
+ * Es como listas, pero no es incrementable, es solo un grupo, donde a cada control le corresponde una etiqueta diferente.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtFormControlForGroupStructure
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-form-control-for-structure
+ *   statement="Enunciado para estructure de controles"
+ *   :controls="{
+ *     'campo 1': {
+ *       type: 'text/oneline',
+ *       props: {
+ *         initialValue: 'No sabe/No contesta',
+ *       },
+ *       listeners: {}
+ *     },
+ *     'campo 2': {
+ *       type: 'text/oneline',
+ *       props: {
+ *         initialValue: 'No sabe/No contesta',
+ *       },
+ *       listeners: {}
+ *     }
+ *   }"
+ *   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
+ * />
+ * ```
+ * 
+ */
+Vue.component("NwtFormControlForGroupStructure", {
+  name: "NwtFormControlForGroupStructure",
+  extends: Vue.options.components.NwtFormControlPrototype.options,
+  template: `<div class="nwt_form_control for_structure">
+    <nwt-form-control-statement :control="this" />
+    <div class="card position_relative" v-if="isLoaded">
+        <div v-for="control, controlId, controlCounter in controls"
+            v-bind:key="'control_' + controlId">
+            <component :is="control.componentId"
+                :ref="'subcontrol_' + controlId"
+                v-bind="control.props"
+                v-on="control.listeners" />
+        </div>
+    </div>
+    <nwt-form-control-handler :control="this" />
+</div>`,
+  props: {
+    controls: {
+      type: Object,
+      required: true,
+    },
+  },
+  mixins: [],
+  data() {
+    trace("NwtFormControlForGroupStructure.data");
+    return {
+      isControl: "structure",
+      isLoaded: false,
+    };
+  },
+  methods: {
+    getValue() {
+      trace("NwtFormControlForGroupStructure.methods.getValue");
+      const value = {};
+      const controlIds = Object.keys(this.controls);
+      for(let index=0; index<controlIds.length; index++) {
+        const controlId = controlIds[index];
+        const subcontrolList = this.$refs["subcontrol_" + controlId];
+        const subcontrol = subcontrolList[0];
+        value[controlId] = subcontrol.getValue();
+      }
+      return value;
+    },
+    addComponentIdToControls() {
+      trace("NwtFormControlForGroupStructure.methods.addComponentIdToControls");
+      const controlIds = Object.keys(this.controls);
+      for(let index=0; index<controlIds.length; index++) {
+        const controlId = controlIds[index];
+        const controlObject = this.controls[controlId];
+        controlObject.componentId = NwtFormUtils.getComponentNameForControlType(controlObject.type);
+      }
+    }
+  },
+  created() {
+    trace("NwtFormControlForGroupStructure.created");
+    NwtFormUtils.validate.control.isControl(this);
+    NwtFormUtils.validate.control.value(this);
+  },
+  mounted() {
+    trace("NwtFormControlForGroupStructure.mounted");
+    this.addComponentIdToControls();
+    this.isLoaded = true;
+  },
+});
+
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.css
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+/**
+ * 
+ * # NwtStarsBackground
+ * 
+ * Componente vue2 que pinta estrellas de fondo.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtStarsBackground
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * ```html
+ * <nwt-stars-background />
+ * ```
+ * 
+ * Es un componente estético, nada más.
+ * 
+ */
 Vue.component("NwtStarsBackground", {
   name: "NwtStarsBackground",
   template: `<div class="nwt_stars_background">
@@ -33329,11 +34245,30 @@ Vue.component("NwtStarsBackground", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+/**
+ * 
+ * # NwtMatrixBackground
+ * 
+ * Componente de diseño para hacer el efecto de letras de Matrix.
+ * 
+ * ## Exposición
+ * 
+ * ```js
+ * Vue.options.components.NwtMatrixBackground
+ * ```
+ * 
+ * ## Uso
+ * 
+ * ```html
+ * <nwt-matrix-background />
+ * ```
+ *  
+ */
 Vue.component("NwtMatrixBackground", {
   name: "NwtMatrixBackground",
   template: `<div class="nwt_matrix_background">
@@ -33386,9 +34321,9 @@ Vue.component("NwtMatrixBackground", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33438,7 +34373,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33480,7 +34415,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33526,9 +34461,9 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
 Vue.component("NwtAnonymousCommandForm", {
   name: "NwtAnonymousCommandForm",
   template: `<div class="nwt_anonymous_command_form">
@@ -33551,11 +34486,11 @@ Vue.component("NwtAnonymousCommandForm", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
 Vue.component("NwtAnonymousCommandView", {
   name: "NwtAnonymousCommandView",
   template: `<div class="nwt_anonymous_command_view">
@@ -33572,11 +34507,11 @@ Vue.component("NwtAnonymousCommandView", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
 Vue.component("NwtCommandsManagerViewer", {
   name: "NwtCommandsManagerViewer",
   template: `<div class="nwt_commands_manager_viewer">
@@ -33751,11 +34686,11 @@ Vue.component("NwtCommandsManagerViewer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
+// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33955,7 +34890,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34006,7 +34941,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
 /**
  * 
  * # App Root API
@@ -34054,9 +34989,9 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
 /**
  * 
  * 
@@ -34244,6 +35179,7 @@ Vue.component("MainWindow", {
                   statement: "Nombre del usuario:",
                   extraInfo: "Con el nombre del usuario podremos dirigirnos a usted por su nombre.",
                   placeholder: "Aquí el nombre",
+                  initialValue: "Un nombre random",
                   buttons: [
                     {
                       text: "Btn 1",
@@ -34293,6 +35229,56 @@ Vue.component("MainWindow", {
                   extraInfo: "Con la opinión del usuario podremos averiguar si interesa partirle las piernas o no.",
                 }
               },
+              {
+                name: "notes",
+                type: "group/list",
+                props: {
+                  statement: "Notas adjuntas",
+                  controls: [{
+                    type: "text/oneline",
+                    props: {
+                      statement: "Título de la nota:",
+                      placeholder: "Aquí el título",
+                      extraInfo: "Para ponerle una etiqueta general a la nota.",
+                      initialValue: "Titulo random",
+                    }
+                  }, {
+                    type: "text/multiline",
+                    props: {
+                      statement: "Contenido de la nota:",
+                      placeholder: "Aquí el contenido",
+                      extraInfo: "Para ponerle un contenido a la nota.",
+                      initialValue: "Contenido random",
+                    }
+                  }]
+                }
+              }, {
+                name: "details",
+                type: "group/structure",
+                props: {
+                  statement: "Detalles adjuntos",
+                  controls: {
+                    reason: {
+                      type: "text/oneline",
+                      props: {
+                        statement: "Motivo del contacto",
+                        placeholder: "Aquí el motivo del contacto",
+                        extraInfo: "Para poner un motivo",
+                        initialValue: "Motivo random",
+                      }
+                    },
+                    channel: {
+                      type: "text/oneline",
+                      props: {
+                        statement: "Canal del contacto",
+                        placeholder: "Aquí cómo supo de nosotros",
+                        extraInfo: "Si nos conoció por redes, personas, medios, carteles, etc.",
+                        initialValue: "Canal random",
+                      }
+                    }
+                  }
+                }
+              }
             ],
           }
         }
@@ -34311,9 +35297,9 @@ Vue.component("MainWindow", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
+// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
 /**
  * 
  * # App Payload API

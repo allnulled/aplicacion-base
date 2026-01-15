@@ -3434,11 +3434,25 @@ div.subcard {
 /* @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.css*/
 .nwt_form_control_for_text.multiline {}
 
-/* @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html*/
+/* @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/list/control.html*/
 
-/* @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js*/
+/* @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/list/control.js*/
 
-/* @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css*/
+/* @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/list/control.css*/
+
+
+/* @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.html*/
+
+/* @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.js*/
+
+/* @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.css*/
+
+
+/* @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html*/
+
+/* @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js*/
+
+/* @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css*/
 .nwt_stars_background {
   display: flex;
   justify-content: center;
@@ -3828,27 +3842,27 @@ div.subcard {
 
 
 
-/* @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html*/
+/* @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html*/
 
-/* @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js*/
+/* @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js*/
 
-/* @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css*/
+/* @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css*/
 .nwt_matrix_background {
   background: #000;
   min-height: 120px;
 }
 
-/* @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js*/
+/* @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js*/
 
-/* @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js*/
+/* @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js*/
 
-/* @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js*/
+/* @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js*/
 
-/* @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html*/
+/* @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html*/
 
-/* @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js*/
+/* @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js*/
 
-/* @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css*/
+/* @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css*/
 .nwt_anonymous_command_form .question_text_1,
 .nwt_anonymous_command_form .question_text_2,
 .nwt_anonymous_command_form .question_text_3 {
@@ -3866,18 +3880,18 @@ div.subcard {
     color: #AAA;
 }
 
-/* @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html*/
+/* @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html*/
 
-/* @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js*/
+/* @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js*/
 
-/* @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css*/
+/* @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css*/
 
 
-/* @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html*/
+/* @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html*/
 
-/* @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js*/
+/* @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js*/
 
-/* @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css*/
+/* @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css*/
 .commands_table > .thead > .row,
 .commands_table > .tbody > .row {
     display: grid;
@@ -3892,7 +3906,7 @@ div.subcard {
     grid-template-columns: 30px 100fr auto;
 }
 
-/* @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css*/
+/* @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css*/
 .window.common_errors_window {
     display: flex;
     flex-direction: column;
@@ -3970,17 +3984,17 @@ pre.error_code_box {
     display: block;
 }
 
-/* @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js*/
+/* @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js*/
 
-/* @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js*/
+/* @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js*/
 
-/* @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js*/
+/* @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js*/
 
-/* @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html*/
+/* @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html*/
 
-/* @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js*/
+/* @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js*/
 
-/* @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css*/
+/* @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css*/
 .main_window_container {}
 .main_window {}
 
@@ -4010,4 +4024,4 @@ table>tbody>tr>* {
     height: auto;
 }
 
-/* @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js*/
+/* @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js*/

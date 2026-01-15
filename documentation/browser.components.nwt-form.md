@@ -354,6 +354,7 @@ Vue.prototype.$nwt.FormControlStatement
 ```html
 <nwt-form-control-statement
   :control="controlComponent"
+  :extra-buttons="[{text:'ok',click:()=>{}}]"
 />
 ```
 
@@ -363,6 +364,111 @@ Mientras el control cumpla con los estándares, no habrá problema. Solo se acce
 
 - `control.statement`
 - `control.extraInfo`
+
+Los `extra-buttons` permiten añadir botones, a nivel de componente de control: no a nivel de parámetros de control.
+
+Estos botones extra deben ser proporcionados desde el código del control, no desde los parámetros.
+
+Otra cosa es que el control, por diseño, permita traspasar un parámetro propio hacia aquí.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# NwtFormControlForGroupList
+
+Componente de control de formulario para listas de controles.
+
+Con este control, puedes agrupar listas de controles en 1 mismo control.
+
+## Exposición
+
+```js
+Vue.options.components.NwtFormControlForGroupList
+```
+
+## Ventajas
+
+```html
+<nwt-form-control-for-list
+  statement="Enunciado para lista de controles"
+  :controls="[{
+    type: 'text/oneline',
+    props: {
+      initialValue: 'No sabe/No contesta',
+    },
+    listeners: {}
+  },{
+    type: 'text/oneline',
+    props: {
+      initialValue: 'No sabe/No contesta',
+    },
+    listeners: {}
+  }]"
+  v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
+/>
+```
+
+
+
+
+
+# NwtFormControlForGroupStructure
+
+Componente de control de formulario para estructuras de controles.
+
+Con este control, puedes agrupar controles con etiqueta en 1 mismo control.
+
+Es como listas, pero no es incrementable, es solo un grupo, donde a cada control le corresponde una etiqueta diferente.
+
+## Exposición
+
+```js
+Vue.options.components.NwtFormControlForGroupStructure
+```
+
+## Ventajas
+
+```html
+<nwt-form-control-for-structure
+  statement="Enunciado para estructure de controles"
+  :controls="{
+    'campo 1': {
+      type: 'text/oneline',
+      props: {
+        initialValue: 'No sabe/No contesta',
+      },
+      listeners: {}
+    },
+    'campo 2': {
+      type: 'text/oneline',
+      props: {
+        initialValue: 'No sabe/No contesta',
+      },
+      listeners: {}
+    }
+  }"
+  v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
+/>
+```
 
 
 
@@ -400,24 +506,6 @@ Vue.options.components.NwtFormControlForTextOneline
   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
 />
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

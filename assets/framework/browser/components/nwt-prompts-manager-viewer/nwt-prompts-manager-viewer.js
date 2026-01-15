@@ -163,7 +163,9 @@ Vue.component("NwtPromptsManagerViewer", {
     async openPromptsFolder() {
       trace("NwtPromptsManagerViewer.methods.openPromptsFolder");
       const fileExplorerBinary = await NwtSettings.global.get("nwt.binary.file-explorer");
-      NwtShell.create().exec(`${JSON.stringify(fileExplorerBinary)} ${JSON.stringify(this.manager.$basedir)}`);
+      const command = `${JSON.stringify(fileExplorerBinary)} ${JSON.stringify(this.manager.$basedir)}`;
+      console.log(command);
+      NwtShell.create().exec(command);
     },
     async reload() {
       trace("NwtPromptsManagerViewer.methods.reload");
