@@ -1898,7 +1898,7 @@ Este método difiere con `open` en 2 cosas:
 - El parámetro `template` de la `definition:Object` no es el string de la plantilla, sino el string del fichero que contiene la plantilla.
 - Se inyecta automáticamente, si no se sobreescribe, el parámetro `windowClasses: "no_scroll"`.
    - Esto pasa para que se pueda utilizar el patrón CSS del `dialog_layout`, que permite un header y un footer fijos en el diálogo, y que el contenido sea scrolleable.
-   - Para ver un ejemplo de implementación, puedes ir a `assets/framework/browser/dialog-templates/trash/ejemplo-panel-fijo-limpio.html`, donde se utilizan las clases/estructura:
+   - Para ver un ejemplo de implementación, puedes ir a `assets/framework/browser/dialog-templates/examples/ejemplo-panel-fijo-limpio.html`, donde se utilizan las clases/estructura:
       - `.dialog_container`
       - `.dialog_container > .dialog_structure`
       - `.dialog_container > .dialog_structure > .dialog_header`

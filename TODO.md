@@ -40,9 +40,16 @@
 
 - [ ] Caché directory
    - [ ] Integrar en la commands api
-- [ ] Cierre de proceso === abort en commands api
+   - [ ] Opcionalmente: no todos los comandos aplican caché por `programa+fichero`
+   - [ ] Usando la interfaz NwtPersister directamente
+- [ ] Abort en commands api === Cierre de proceso
    - [ ] Hacer el binding oficial
 - [ ] Parámetro input === Retorno output
+   - [ ] Y así poder encadenar comandos sobreentendiendo que la salida de uno es la entrada del otro
+      - [ ] Esto se hace mediante un método intermedio, un `piper` pivote:
+         - [ ] nada de implicidades, es un proceso explícito, que:
+         - [ ] con un método intermedio se puede dar como implítico
 
+- Y seguimos con los comandos iniciales
 
 

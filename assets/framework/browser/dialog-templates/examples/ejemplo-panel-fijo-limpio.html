@@ -1,0 +1,44 @@
+<div class="dialog_container">
+    <!--
+    Desde el JavaScript se tendría que poner:
+
+    ```js
+    const respuesta = await NwtDialogs.openByTemplateId({
+        template: "trash/ejemplo-panel-fijo-limpio.html",
+        factory: { data: { value: {} } },
+        windowClasses: "no_scroll", // ESTA CLASE ES PARA QUE NO META EL SCROLL
+    });
+    ```
+    
+    -->
+    <div class="dialog_structure">
+        <div class="dialog_header">
+            <div class="pad_2">Rellena el formulario:</div>
+            <hr />
+        </div>
+        <div class="dialog_body">
+            <div class="dialog_content">
+                <div v-for="v, i in new Array(100)" v-bind:key="'what_' + i">
+                    <div>
+                        <input class="width_100" type="text" placeholder="Nombre aquí" v-model="value['name_' + i]" />
+                    </div>
+                    <div>
+                        <input class="width_100" type="text" placeholder="Apellido aquí" v-model="value['surname_' + i]" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dialog_footer">
+            <hr />
+            <div class="flex_row centered pad_1">
+                <div class="flex_100"></div>
+                <div class="flex_1 pad_left_1">
+                    <button class="mini" v-on:click="accept">Aceptar</button>
+                </div>
+                <div class="flex_1 pad_left_1">
+                    <button class="mini" v-on:click="cancel">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
