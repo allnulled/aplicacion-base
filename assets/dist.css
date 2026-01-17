@@ -2997,6 +2997,40 @@ div.subcard {
     cursor: default;
 }
 
+/* CLASES PARA EL DIALOG-LAYOUT BUENO: */
+
+.window.common_dialogs_window .dialog_container {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_header {
+    flex: 1;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_body {
+    flex: 100;
+    padding: 2px;
+    position: relative;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_body > .dialog_content {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: scroll;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_footer {
+    flex: 1;
+}
+
 /* @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html*/
 
 /* @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js*/

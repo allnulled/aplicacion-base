@@ -19631,15 +19631,16 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * 
  * # Nwt Dialog Definition API
  * 
- * API de uso interno.
- * 
  * Permite crear definiciones abstractas de diálogos.
+ * 
+ * Es una API de uso interno, pero muy importante porque se instancia en la creación de diálogos.
  * 
  * Sirve para vincular:
  * 
  *  - `$original`: Definición de usuario de diálogo
  *  - `$factory`: Definición validada de diálogo
- *  - `$process`: Proceso representativo del diaĺogo
+ *  - `$process`: Proceso representativo del diálogo, instancia de `NwtProcess`
+ *  - `$state`: El `Promise.withResolvers()` del diálogo
  * 
  *  
  * ## Exposición
@@ -19658,20 +19659,50 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * 
  * ```js
  * const dialogDefinition = NwtDialogDefinition.create({
+ *   // Parámetros principales:
  *   title: "Título del diálogo",
  *   template: `
  *     <div>
  *       <div>En el body del diálogo</div>
+ *       <div class="flex_row">
+ *         <div class="flex_100"></div>
+ *         <div class="flex_1"><button v-on:click="accept">Aceptar</button></div>
+ *         <div class="flex_1"><button v-on:click="cancel">Cancelar</button></div>
+ *       </div>
  *     </div>
  *   `,
  *   factory: {
- *     data: {},
- *     methods: {},
+ *     data: {
+ *       // El `data` también puede ser una función que devuelva un objeto, como normalmente sería.
+ *       // Se inyectan automáticamente algunas propiedades en el data:
+ *       // 
+ *       // value:        "", // Por defecto, value es un String vacío
+ *       // deepness:     101, // Este valor se usa como z-index y sirve para poder tener varios diálogos simultáneos, con profundidad
+ *       // state:        ..., // El `Promise.withResolvers()` del diálogo/proceso, su `promise` es lo que se devuelve cuando haces `await NwtDialogs.open(...)`
+ *       // process:      ..., // El `NwtProcess` correspondiente al diálogo, el cual tendrá en `nwtProcess.dialog` el componente de diálogo (no la instancia de `NwtDialogDefinition`, cuidado ahí)
+ *       // definition:   ..., // El `NwtDialogDefinition`, que contiene `$original`, `$factory`, `$process` y `$state`
+ *       // isMinimized:  false, // Flag que indica si el diálogo está minimizado o no. La minimización solo aplica un `v-show`, nunca `v-if`
+ *       // 
+ *     },
+ *     methods: {
+ *       // Se inyectan automáticamente algunos métodos:
+ *       // 
+ *       // accept: function(valor) {...}, // Cierra el diálogo y devuelve el valor especificado, o `this.value` en su defecto. Si valor es `instanceof Event`, devolverá el `this.value` igual (así se puede hacer `v-on:click="accept", más cómodo)
+ *       // cancel: function() {...}, // Cierra el diálogo y devuelve `undefined`
+ *       // minimize: function() {...}, // Minimiza el diálogo
+ *       // maximize: function() {...}, // Maximiza el diálogo
+ *       // subdialog: function() {...}, // Crea un subdiálogo (pasándole el `parent: this.process` automáticamente) usando el método `NwtDialogs.open`
+ *       // subdialogByTemplateId: function() {...}, // igual, pero usando el método `NwtDialogs.openByTemplateId` en su lugar
+ *       // 
+ *     },
  *     watch: {},
  *     created: {},
  *     mounted: {},
  *     ...
- *   }
+ *   },
+ *   // Parámetros avanzados (opcionales):
+ *   parent: nwtProcessInstance, // Proceso (**no diálogo, cuidado**) padre, para que al cerrarse, cierre a este (**proceso, no diálogo**) hijo también.
+ *   windowClasses: "no_scroll", // Clases que se quieren inyectar en `.window`
  * });
  * ```
  * 
@@ -19681,8 +19712,15 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * dialogDefinition.$original; // Parámetros originales
  * dialogDefinition.$factory; // Parámetros finales
  * dialogDefinition.$process; // Proceso vinculado al diálogo
- * await CommonDialogs.open(dialogDefinition.$factory);
+ * dialogDefinition.$state; // Es un `Promise.withResolvers()`: `resolve`, `reject` y `promise` están dentro.
+ * await CommonDialogs.open(dialogDefinition.$factory); // aunque esto no está pensado para usarse así, sino que directamente le proporcionarías el objeto de definición. Pero internamente, hará esto.
  * ```
+ * 
+ * Es una interfaz interna, pero su construcción se utiliza en el proceso de `NwtDialogs.open` y `NwtDialogs.openByTemplateId`, por lo cual aunque no se interactúe directamente con ella, es una interfaz importante dentro del framework, y hay que entenderla para poder explotar los diálogos al máximo.
+ * 
+ * Los parámetros estrictamente necesarios para la instanciación solo son:
+ * 
+ *  - `template:String`
  * 
  */
 (function (factory) {
@@ -19792,6 +19830,10 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
           subdialog: function (obj) {
             trace("NwtDialogDefinition.$factory.methods.subdialog");
             return NwtDialogs.open({ ...obj, parent: this.process });
+          },
+          subdialogByTemplateId: function (obj) {
+            trace("NwtDialogDefinition.$factory.methods.subdialog");
+            return NwtDialogs.openByTemplateId({ ...obj, parent: this.process });
           },
           accept: function (val) {
             trace("NwtDialogDefinition.$factory.methods.accept");
@@ -30019,7 +30061,11 @@ Vue.directive("forms", {
  * 
  * # Common Dialogs
  * 
- * API para diálogos.
+ * Componente para diálogos. Permite usar diálogos programáticamente.
+ * 
+ * ## Especificaciones
+ * 
+ * Este componente vue2 se debe inyectar 1 sola vez, globalmente, en la aplicación.
  * 
  * ## Exposición
  * 
@@ -30057,6 +30103,10 @@ Vue.directive("forms", {
  * ```
  * 
  * Este componente, que se inyecta en el root de la aplicación, inyecta un evento para CTRL+SUPR que muestra un `NwtProcessManagerViewer` mediante un diálogo.
+ * 
+ * ## API de diálogos
+ * 
+ * A continuación se explican los métodos disponibles desde el objeto `NwtDialogs` / `CommonDialogs`.
  * 
  */
 Vue.component("CommonDialogs", {
@@ -30099,11 +30149,45 @@ Vue.component("CommonDialogs", {
     };
   },
   methods: {
+    /**
+     * 
+     * ### `NwtDialogs.open(definition:Object)`
+     * 
+     * Este método llamará a `NwtDialogDefinition.create(definition)` y devolverá la promesa que devuelve el valor del diálogo.
+     * 
+     * Esa promesa se cumple cuando se llama a `accept` o `cancel` desde el diálogo mismo, métodos que se inyectan automáticamente y están disponibles desde la plantilla del diálogo directamente.
+     * 
+     * Para más información, buscar en la documentación la interfaz `NwtDialogDefinition` y saber las opciones del parámetro `definition:Object`.
+     * 
+     * 
+     */
     open(userDialogDefinition) {
       trace("CommonDialogs.methods.open");
       const dialogDefinition = NwtDialogDefinition.create(userDialogDefinition);
       return dialogDefinition.$state.promise;
     },
+    /**
+     * 
+     * ### `NwtDialogs.openByTemplateId(definition:Object)`
+     * 
+     * Este método difiere con `open` en 2 cosas:
+     * 
+     * - El parámetro `template` de la `definition:Object` no es el string de la plantilla, sino el string del fichero que contiene la plantilla.
+     * - Se inyecta automáticamente, si no se sobreescribe, el parámetro `windowClasses: "no_scroll"`.
+     *    - Esto pasa para que se pueda utilizar el patrón CSS del `dialog_layout`, que permite un header y un footer fijos en el diálogo, y que el contenido sea scrolleable.
+     *    - Para ver un ejemplo de implementación, puedes ir a `assets/framework/browser/dialog-templates/trash/ejemplo-panel-fijo-limpio.html`, donde se utilizan las clases/estructura:
+     *       - `.dialog_container`
+     *       - `.dialog_container > .dialog_structure`
+     *       - `.dialog_container > .dialog_structure > .dialog_header`
+     *       - `.dialog_container > .dialog_structure > .dialog_body`
+     *       - `.dialog_container > .dialog_structure > .dialog_body > .dialog_content`
+     *       - `.dialog_container > .dialog_structure > .dialog_footer`
+     * 
+     * Este método, por tanto, usa `readFile` para conocer la plantilla.
+     * 
+     * Por lo demás, funciona exactamente igual que `open`.
+     * 
+     */
     openByTemplateId(userDialogDefinition) {
       trace("CommonDialogs.methods.openByTemplateId");
       const templateId = userDialogDefinition.template;
@@ -30113,21 +30197,52 @@ Vue.component("CommonDialogs", {
           if(error) {
             return reject(error);
           }
-          const normalizedDialogDefinition = Object.assign({}, userDialogDefinition, { template: templateContents });
+          const normalizedDialogDefinition = Object.assign({
+            windowClasses: "no_scroll", // En las template-id se inyecta por defecto el no_scroll
+          }, userDialogDefinition, {
+            template: templateContents
+          });
           const dialogDefinition = NwtDialogDefinition.create(normalizedDialogDefinition);
           return resolve(dialogDefinition.$state.promise);
         });
       });
     },
+    /**
+     * 
+     * ### `NwtDialogs.subdialog(definition:Object)` 
+     *  
+     * Este método no crea un subdiálogo (sino un diálogo normal, sin padre), porque no hay un diálogo padre conocido, se está usando el manager de los diálogos.
+     * 
+     * Su razón de existir es homogeneizar la llamada de `dialog.subdialog` y `manager.open/manager.subdialog`.
+     * 
+     * Esto es útil en la API de procesos. Pero si no hay necesidad, no debería usarse este método, sino `open` o `openByTemplateId`.
+     * 
+     * Es un método de uso interno principalmente, y su intención es solo homogeneizar.
+     * 
+     */
     subdialog(userDialogDefinition) {
       trace("CommonDialogs.methods.subdialog");
       return this.open(userDialogDefinition);
     },
+    /**
+     * 
+     * ### `NwtDialogs.closeDialog(process:NwtProcess)`
+     * 
+     * Sirve para cerrar diálogos activos. Requiere del objeto `NwtProcess`.
+     * 
+     */
     closeDialog(currentProcess) {
       trace("CommonDialogs.methods.closeDialog");
       currentProcess.close();
       currentProcess.dialog.cancel();
     },
+    /**
+     * 
+     * ### `NwtDialogs.focusDialog(process:NwtProcess)`
+     * 
+     * Sirve para poner en el foco un diálogo activo. Requiere del objeto `NwtProcess`.
+     * 
+     */
     focusDialog(currentProcess) {
       trace("CommonDialogs.methods.focusDialog");
       for (let index = 0; index < this.processManager.$list.length; index++) {
@@ -30136,10 +30251,24 @@ Vue.component("CommonDialogs", {
       }
       currentProcess.dialog.deepness = 101;
     },
+    /**
+     * 
+     * ### `NwtDialogs.minimizeDialog(process:NwtProcess)`
+     * 
+     * Sirve para minimizar un diálogo activo. Requiere del objeto `NetProcess`.
+     * 
+     */
     minimizeDialog(currentProcess) {
       trace("CommonDialogs.methods.minimizeDialog");
       currentProcess.hide();
     },
+    /**
+     * 
+     * ### `NwtDialogs.maximizeDialog(process:NwtProcess)`
+     * 
+     * Sirve para maximizar (dejar de ocultar y poner en el foco) un diálogo activo. Requiere del objeto `NwtProcess`.
+     * 
+     */
     maximizeDialog(currentProcess) {
       trace("CommonDialogs.methods.maximizeDialog");
       currentProcess.show();
@@ -35362,6 +35491,12 @@ Vue.component("MainWindow", {
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {
+          const respuesta0 = await NwtDialogs.openByTemplateId({
+            template: "trash/ejemplo-panel-fijo-limpio.html",
+            factory: { data: { value: {} } },
+            windowClasses: "no_scroll",
+          });
+          console.log(respuesta0);
           const respuesta = await NwtDialogs.openByTemplateId({
             template: "trash/ejemplo-panel-fijo.html",
             factory: { data: { value: {} } },

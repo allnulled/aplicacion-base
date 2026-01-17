@@ -42,6 +42,12 @@
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {
+          const respuesta0 = await NwtDialogs.openByTemplateId({
+            template: "trash/ejemplo-panel-fijo-limpio.html",
+            factory: { data: { value: {} } },
+            windowClasses: "no_scroll",
+          });
+          console.log(respuesta0);
           const respuesta = await NwtDialogs.openByTemplateId({
             template: "trash/ejemplo-panel-fijo.html",
             factory: { data: { value: {} } },
