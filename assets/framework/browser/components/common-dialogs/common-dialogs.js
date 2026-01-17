@@ -85,6 +85,8 @@ Vue.component("CommonDialogs", {
      * Este método difiere con `open` en 2 cosas:
      * 
      * - El parámetro `template` de la `definition:Object` no es el string de la plantilla, sino el string del fichero que contiene la plantilla.
+     *    - El parámetro `template` utiliza la raíz de `assets/framework/browser/dialog-templates/${template}` para saber a qué fichero está apuntando el parámetro.
+     *    - En el fichero, solo se acepta HTML, nada de JS ni CSS: solo dice dónde está la plantilla
      * - Se inyecta automáticamente, si no se sobreescribe, el parámetro `windowClasses: "no_scroll"`.
      *    - Esto pasa para que se pueda utilizar el patrón CSS del `dialog_layout`, que permite un header y un footer fijos en el diálogo, y que el contenido sea scrolleable.
      *    - Para ver un ejemplo de implementación, puedes ir a `assets/framework/browser/dialog-templates/examples/ejemplo-panel-fijo-limpio.html`, donde se utilizan las clases/estructura:
