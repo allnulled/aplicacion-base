@@ -5,8 +5,6 @@ const bundlelistCommon = require(__dirname + "/bundlelist-common.js");
 module.exports = [
   `${projectRoot}/assets/framework/browser/win7/win7.css`,
   `${projectRoot}/assets/framework/browser/win7/win7-patches.css`,
-  `${projectRoot}/assets/framework/browser/css/one-framework/one-framework.css`,
-  `${projectRoot}/assets/framework/browser/css/custom/custom.css`,
   `${projectRoot}/assets/framework/browser/vue2/vue2.js`,
   `${projectRoot}/assets/framework/browser/ejs/ejs.js`,
   `${projectRoot}/assets/framework/browser/socket.io-client/socket.io-client.js`,
@@ -73,4 +71,6 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-command/nwt-commands-manager.js`,
   // @OK
   ...bundlelistExternal,
+  `${projectRoot}/assets/framework/browser/css/one-framework/one-framework.css`,
+  `${projectRoot}/assets/framework/browser/css/custom/custom.css`,
 ];

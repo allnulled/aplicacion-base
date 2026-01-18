@@ -49,6 +49,7 @@ Vue.component("MainWindow", {
       this.$dialogs.open({
         title: "Configuraciones",
         template: `<nwt-settings-viewer :dialog="this" />`,
+        windowClasses: "no_scroll"
       });
     },
     startProcesos() {
@@ -56,6 +57,7 @@ Vue.component("MainWindow", {
       this.$dialogs.open({
         title: "Procesos",
         template: `<nwt-process-manager-viewer :dialog="this" />`,
+        windowClasses: "no_scroll"
       });
     },
     startExploradorDeFicheros() {
@@ -63,6 +65,7 @@ Vue.component("MainWindow", {
       this.$dialogs.open({
         title: "Explorador de ficheros",
         template: `<nwt-file-explorer />`,
+        windowClasses: "no_scroll"
       });
     },
     startGestorDePrompts() {
@@ -70,6 +73,7 @@ Vue.component("MainWindow", {
       this.$dialogs.open({
         title: "Gestor de prompts",
         template: `<nwt-prompts-manager-viewer />`,
+        windowClasses: "no_scroll"
       });
     },
     startGestorDeFicherosDeChatgpt() {
@@ -77,6 +81,7 @@ Vue.component("MainWindow", {
       this.$dialogs.open({
         title: "Gestor de ficheros de ChatGPT",
         template: `<nwt-chatgpt-files-manager-viewer />`,
+        windowClasses: "no_scroll"
       });
     },
 

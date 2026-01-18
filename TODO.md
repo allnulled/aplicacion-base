@@ -12,18 +12,16 @@
 15-01-2026
 
 - [x] Paneles top-bottom fijos en dialogs, los cuales se tienen que aplicar a:
-   - [ ] Para el file-chooser
-   - [ ] Integrarlo con los file-chooser:
+   - [x] Ficheros ChatGPT
+   - [x] Configuraciones
+   - [x] Prompts
+   - [x] Procesos
+   - [ ] Procedimientos
+   - [ ] Explorador de ficheros
+      - [ ] Explorador normal
       - [ ] File picker
       - [ ] Directory picker
       - [ ] New file picker
-   - [ ] Para otros también
-      - [ ] Explorador de ficheros
-      - [ ] Ficheros ChatGPT
-      - [ ] Procesos
-      - [ ] Prompts
-      - [ ] Configuraciones
-      - [ ] Procedimientos
 
 ----
 

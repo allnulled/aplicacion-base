@@ -39,7 +39,7 @@ div.title {
     padding: 4px;
     background-color: #1c5a93;
     color: #FFF;
-    box-shadow: 2px 2px 0px black;
+    /*box-shadow: 2px 2px 0px black;*/
     min-height: 23px;
 }
 

@@ -29,12 +29,15 @@
           await NwtCodeComposer.loadBeautifyJs();
         }
         await NwtTimer.timeout(400);
-        // event.detail.component.startConfiguraciones();
+        for(let index=0; index<30; index++) {
+          event.detail.component.startConfiguraciones();
+        }
         // event.detail.component.startGestorDePrompts();
         // event.detail.component.startExploradorDeFicheros();
-        // event.detail.component.startGestorDeFicherosDeChatgpt();
         // event.detail.component.startProcedimientos();
-        event.detail.component.startNewFeature();
+        event.detail.component.startProcesos();
+        // event.detail.component.startGestorDeFicherosDeChatgpt();
+        // event.detail.component.startNewFeature();
         window.dispatchEvent(new CustomEvent("app-started"));
       });
       window.addEventListener("app-started", async function (event) {
@@ -42,18 +45,7 @@
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {
-          const respuesta0 = await NwtDialogs.openByTemplateId({
-            template: "examples/ejemplo-panel-fijo-limpio.html",
-            factory: { data: { value: {} } },
-            windowClasses: "no_scroll",
-          });
-          console.log(respuesta0);
-          const respuesta = await NwtDialogs.openByTemplateId({
-            template: "examples/ejemplo-panel-fijo.html",
-            factory: { data: { value: {} } },
-            windowClasses: "no_scroll",
-          });
-          console.log(respuesta);
+          
         }
       });
     }

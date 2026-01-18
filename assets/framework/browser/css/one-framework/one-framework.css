@@ -24,6 +24,11 @@ hr {
     margin-bottom: 0px;
 }
 
+.table_viewer {
+    overflow: scroll;
+    min-height: 140px;
+}
+
 .no_wrap {
     white-space: nowrap;
 }
@@ -34,6 +39,10 @@ hr {
 
 .scrollable {
     overflow: scroll;
+}
+
+.overflow_hidden {
+    overflow: hidden;
 }
 
 .width_100 {
@@ -91,6 +100,16 @@ hr {
     padding: 0px;
 }
 
+.pad_horizontal_0 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.pad_vertical_0 {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
 .pad_top_0 {
     padding-top: 0px;
 }
@@ -111,6 +130,16 @@ hr {
     padding: 2px;
 }
 
+.pad_horizontal_1 {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.pad_vertical_1 {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
 .pad_top_1 {
     padding-top: 2px;
 }
@@ -129,6 +158,16 @@ hr {
 
 .pad_2 {
     padding: 4px;
+}
+
+.pad_horizontal_2 {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.pad_vertical_2 {
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 .pad_top_2 {
@@ -238,11 +277,6 @@ button.bg_danger.active {}
     text-overflow: ellipsis;
 }
 
-.table_viewer {
-    overflow: scroll;
-    min-height: 140px;
-}
-
 .expanded_vertically_button_1 {
     height: calc(100% - 4px);
 }
@@ -274,4 +308,8 @@ button.bg_danger.active {}
 
 .background_gray_1 {
     background-color: rgb(203, 203, 203);
+}
+
+.border_bottom_style_1 {
+    border-bottom: 1px solid #CCC;
 }
