@@ -239,10 +239,10 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
 - [NwtFormControlStatement](#nwtformcontrolstatement)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [NwtFormControlForGroupStructure](#nwtformcontrolforgroupstructure)
+- [NwtFormControlForGroupList](#nwtformcontrolforgrouplist)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [NwtFormControlForGroupList](#nwtformcontrolforgrouplist)
+- [NwtFormControlForGroupStructure](#nwtformcontrolforgroupstructure)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 - [NwtFormControlForTextOneline](#nwtformcontrolfortextoneline)
@@ -2854,6 +2854,44 @@ Otra cosa es que el control, por diseño, permita traspasar un parámetro propio
 
 
 
+# NwtFormControlForGroupList
+
+Componente de control de formulario para listas de controles.
+
+Con este control, puedes agrupar listas de controles en 1 mismo control.
+
+## Exposición
+
+```js
+Vue.options.components.NwtFormControlForGroupList
+```
+
+## Ventajas
+
+```html
+<nwt-form-control-for-list
+  statement="Enunciado para lista de controles"
+  :controls="[{
+    type: 'text/oneline',
+    props: {
+      initialValue: 'No sabe/No contesta',
+    },
+    listeners: {}
+  },{
+    type: 'text/oneline',
+    props: {
+      initialValue: 'No sabe/No contesta',
+    },
+    listeners: {}
+  }]"
+  v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
+/>
+```
+
+
+
+
+
 # NwtFormControlForGroupStructure
 
 Componente de control de formulario para estructuras de controles.
@@ -2889,44 +2927,6 @@ Vue.options.components.NwtFormControlForGroupStructure
       listeners: {}
     }
   }"
-  v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
-/>
-```
-
-
-
-
-
-# NwtFormControlForGroupList
-
-Componente de control de formulario para listas de controles.
-
-Con este control, puedes agrupar listas de controles en 1 mismo control.
-
-## Exposición
-
-```js
-Vue.options.components.NwtFormControlForGroupList
-```
-
-## Ventajas
-
-```html
-<nwt-form-control-for-list
-  statement="Enunciado para lista de controles"
-  :controls="[{
-    type: 'text/oneline',
-    props: {
-      initialValue: 'No sabe/No contesta',
-    },
-    listeners: {}
-  },{
-    type: 'text/oneline',
-    props: {
-      initialValue: 'No sabe/No contesta',
-    },
-    listeners: {}
-  }]"
   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
 />
 ```

@@ -37,6 +37,7 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-importer.js`,
   `${projectRoot}/assets/framework/nwt-environment.js`,
   `${projectRoot}/assets/framework/nwt-paths.js`,
+  `${projectRoot}/assets/framework/nwt-abort.js`,
   `${projectRoot}/assets/framework/nwt-strings.js`,
   `${projectRoot}/assets/framework/nwt-object-utils.js`,
   `${projectRoot}/assets/framework/nwt-array-utils.js`,

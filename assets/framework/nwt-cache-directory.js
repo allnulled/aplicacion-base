@@ -45,7 +45,7 @@
       assertion(typeof basedir === "string", "Parameter «basedir» must be string on «NwtCacheDirectory.constructor»");
       assertion(basedir.length !== 0, "Parameter «basedir.length» cannot be 0 on «NwtCacheDirectory.constructor»");
       this.basedir = basedir;
-      this.stringShortener = NwtStringShortener.create(`${this.basedir}/cache-ids.json`);
+      this.stringShortener = NwtStringShortener.create(`${this.basedir}/cache/ids.json`);
     }
 
     resolve(...subpaths) {
@@ -63,10 +63,10 @@
       }
       assertion(typeof result === "object", "Parameter «result» must be object on «NwtCacheDirectory.prototype.saveStep»");
       const shortableId = keys.join("/");
-      const shortenedId = await this.stringShortener.init(shortableId);
       Aseguramos_directorio_de_cache_general: {
         await NwtFilesystem.ensureDirectory(this.resolve("cache"));
       }
+      const shortenedId = await this.stringShortener.init(shortableId);
       const cachedPath = this.resolve(`cache/${shortenedId}`);
       const cachedFile = this.resolve(`${cachedPath}/cached.json`);
       Aseguramos_directorio_de_cache_concreto: {

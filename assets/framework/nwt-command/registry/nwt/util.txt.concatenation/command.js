@@ -1,3 +1,45 @@
+// La idea sería una api así:
+
+return await NwtCommandSynchronizer.create({
+  autoclose: 2000, // se cierra por defecto al final
+  cacheable: true, // se cachea por defecto en cada vuelta de collection
+  collection: typeof files !== "undefined" ? files : ["file1.ok", "file2.ok", "file3.ok"], // inicialización del iterable
+  output: [], // inicialización de la salida
+  silent: false, // no hace el toast.show del final
+  command: typeof command === "object" ? command : {},
+  commandTester: component.tester,
+  commandComponent: component,
+  assertion: assertion,
+  dialog: component.dialog,
+  cacher: component.cacher,
+  progressBar: component.tester.progressBar,
+  tester: tester,
+}, {
+  onStart: async function (collection) {
+    // @TODO: si solo quieres hacer 1 cosa, aquí
+    this.settings.assertion(true, `Iniciando comando «${this.settings.command.getCommandName()}»`);
+  },
+  onIterate: async function (item, index) {
+    // @TODO: si quieres interaccionar con cada item de la collection, aquí:
+    const result = false;
+    // @CAUTION: si devuelve algo, la caché se guardará/cargará en función de el onIterate si no lo hace ya onStart
+    this.settings.assertion(true, `Iterando comando «${this.settings.command.getCommandName()}»`);
+    await NwtTimer.timeout(1000);
+    // Esto guarda el último resultado de ese comando en la caché, pero no lo utiliza:
+    return result;
+    // Lo interesante es cuando devuelves el «done:true»:
+    return {
+      done: true, // este es el flag mágico para que el comando se cachee y se quede en el onIterationStart, y no entre en el `onIterate`
+    };
+    // También puedes interrumpir con un NwtAbort:
+    return new NwtAbort("Comando cacheado a mano"); // Y ya está: NwtAbort + Error es error, NwtAbort es return
+  },
+  onEnd: async function (collection) {
+    // @TODO: si quieres despedirte de la iteración, aquí:
+    this.settings.assertion(true, `Finalizando comando «${this.settings.command.getCommandName()}»`);
+  }
+}).start();
+
 // @TODO:
 // mejor explotarlo como función asíncrona y punto.
 // luego hacemos otras cosas
@@ -124,40 +166,3 @@ if (Array.isArray($files) && $files.length) {
 }
 
 return false;
-
-
-// La idea sería una api así:
-const ALL_FILES = files; // este parámetro tiene que venir inyectado por el comando o command-view, y no es el caso.
-
-return await NwtIterableCommandClass.create({
-  cacheable: true, // se cachea por defecto en cada vuelta de collection
-  collection: ALL_FILES || [], // inicialización del iterable
-  output: [], // inicialización de la salida
-  silent: false, // no hace el toast.show del final
-  context: {
-    command: command,
-    assertion: assertion,
-    dialog: component.dialog,
-    globalTester: component.tester,
-    cacher: component.cacher,
-    progressBar: component.tester.progressBar,
-    subtester: tester,
-    files: typeof files !== "undefined" ? files : [], // desde donde se inyectan estos files? Pues desde el `NwtCommand.prototype.start.function({ files: ["whatever"] })` si se quiere.
-  }
-}, {
-  onStart: async function (collection) {
-    // @TODO: si solo quieres hacer 1 cosa, aquí
-  },
-  onIterate: async function (item, index) {
-    // @TODO: si quieres interaccionar con cada item de la collection, aquí:
-    const result = false;
-    // @CAUTION: si devuelve algo, la caché se guardará/cargará en función de el onIterate si no lo hace ya onStart
-    this.output.push(result);
-    return {
-      done: true, // este es el flag mágico para que el comando se cachee,
-    };
-  },
-  onEnd: async function (collection) {
-    // @TODO: si quieres despedirte de la iteración, aquí:
-  }
-}).iterate();

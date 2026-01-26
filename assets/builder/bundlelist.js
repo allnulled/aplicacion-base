@@ -67,6 +67,7 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view`,
   `${projectRoot}/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer`,
   `${projectRoot}/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css`,
+  `${projectRoot}/assets/framework/nwt-command/nwt-command-synchronizer.js`,
   `${projectRoot}/assets/framework/nwt-command/nwt-command.js`,
   `${projectRoot}/assets/framework/nwt-command/nwt-commands-manager.js`,
   // @OK
