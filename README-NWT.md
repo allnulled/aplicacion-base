@@ -21,6 +21,9 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
   - [Exposición](#exposicin)
 - [NwtJsonlPersister](#nwtjsonlpersister)
   - [Exposición](#exposicin)
+- [NwtStringShortener](#nwtstringshortener)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
 - [NwtTemplates](#nwttemplates)
 - [NwtArgumentes](#nwtargumentes)
   - [Exposición](#exposicin)
@@ -126,9 +129,6 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 - [Nwt Shell API](#nwt-shell-api)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
-- [NwtStringShortener](#nwtstringshortener)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 - [NwtStrings](#nwtstrings)
@@ -239,10 +239,10 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
 - [NwtFormControlStatement](#nwtformcontrolstatement)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [NwtFormControlForGroupList](#nwtformcontrolforgrouplist)
+- [NwtFormControlForGroupStructure](#nwtformcontrolforgroupstructure)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [NwtFormControlForGroupStructure](#nwtformcontrolforgroupstructure)
+- [NwtFormControlForGroupList](#nwtformcontrolforgrouplist)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 - [NwtFormControlForTextOneline](#nwtformcontrolfortextoneline)
@@ -413,6 +413,38 @@ Dado que los ficheros JSONL son prácticamente una tabla (en términos SQL), los
 
 
 
+
+# NwtStringShortener
+
+API para gestionar strings acortados.
+
+## Exposición
+
+Se expone a través de:
+
+```js
+NwtStringShortener
+NwtFramework.StringShortener
+Vue.prototype.$nwt.StringShortener
+// Instancia:
+NwtStringShortener.global // instancia creada en: "assets/framework/nwt-string-shortener/global.json"
+```
+
+## Ventajas
+
+La API permite cosas como:
+
+```js
+// Estáticos:
+NwtStringShortener.create(jsonFilepath:String);
+NwtStringShortener.createUid(len=10); // returns String con un nuevo ID (PERO NO LO PERSISTE)
+// De instancia:
+await NwtStringShortener.global.init(id, initialValue = undefined); // Inicializa un ID si no existe ya + retorna su shorteneado
+await NwtStringShortener.global.get(id, defaultValue = undefined); // Devuelve el ID shorteneado de un ID, o en su defecto `defaultValue`
+await NwtStringShortener.global.deleteById(id); // Elimina el ID no shorteneado proporcionado
+await NwtStringShortener.global.deleteAllExceptValues(values=[]); // Elimina todos los IDs **shorteneados** que NO aparezcan en el `values=[...]`. Se usa para eliminar directorios-caché obsoletos.
+await NwtStringShortener.global.add(id, value = false, silently = false); // añade el ID como nuevo shortener + si value no es false lo usa como ID shorteneado + si silently no es false no lanza error de existir ya + retorna el ID shorteneado correspondiente
+```
 
 # NwtTemplates
 
@@ -1454,39 +1486,6 @@ await shell.ls();               // Listar directorios
 shell.cd("..");                 // Cambiar de directorio
 shell.subprocess("comando", argumentos=["--flag"], opciones={cwd:...}); // returns una Promise (por si se quiere usar con await directamente) de la que cuelga una propiedad extra: «subprocess»
 shell.terminate(); // envía signal de terminado a todos los procesos hijo (de this._children)
-```
-
-# NwtStringShortener
-
-API para gestionar strings acortados.
-
-## Exposición
-
-Se expone a través de:
-
-```js
-NwtStringShortener
-NwtFramework.StringShortener
-Vue.prototype.$nwt.StringShortener
-// Instancia:
-NwtStringShortener.global // instancia creada en: "assets/framework/nwt-string-shortener/global.json"
-```
-
-## Ventajas
-
-La API permite cosas como:
-
-```js
-// Estáticos:
-NwtStringShortener.create(jsonFilepath:String);
-NwtStringShortener.createUid(len=10); // returns String con un nuevo ID (PERO NO LO PERSISTE)
-// De instancia:
-await NwtStringShortener.global.initializeStore(); // inicializa (con NwtFilesystem.ensureFile, cuidado) el JSON si no existe
-await NwtStringShortener.global.init(id, initialValue = undefined); // Inicializa un ID si no existe ya + retorna su shorteneado
-await NwtStringShortener.global.get(id, defaultValue = undefined); // Devuelve el ID shorteneado de un ID, o en su defecto `defaultValue`
-await NwtStringShortener.global.deleteById(id); // Elimina el ID no shorteneado proporcionado
-await NwtStringShortener.global.deleteAllExceptValues(values=[]); // Elimina todos los IDs **shorteneados** que NO aparezcan en el `values=[...]`. Se usa para eliminar directorios-caché obsoletos.
-await NwtStringShortener.global.add(id, value = false, silently = false); // añade el ID como nuevo shortener + si value no es false lo usa como ID shorteneado + si silently no es false no lanza error de existir ya + retorna el ID shorteneado correspondiente
 ```
 
 # NwtStrings
@@ -2855,44 +2854,6 @@ Otra cosa es que el control, por diseño, permita traspasar un parámetro propio
 
 
 
-# NwtFormControlForGroupList
-
-Componente de control de formulario para listas de controles.
-
-Con este control, puedes agrupar listas de controles en 1 mismo control.
-
-## Exposición
-
-```js
-Vue.options.components.NwtFormControlForGroupList
-```
-
-## Ventajas
-
-```html
-<nwt-form-control-for-list
-  statement="Enunciado para lista de controles"
-  :controls="[{
-    type: 'text/oneline',
-    props: {
-      initialValue: 'No sabe/No contesta',
-    },
-    listeners: {}
-  },{
-    type: 'text/oneline',
-    props: {
-      initialValue: 'No sabe/No contesta',
-    },
-    listeners: {}
-  }]"
-  v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
-/>
-```
-
-
-
-
-
 # NwtFormControlForGroupStructure
 
 Componente de control de formulario para estructuras de controles.
@@ -2928,6 +2889,44 @@ Vue.options.components.NwtFormControlForGroupStructure
       listeners: {}
     }
   }"
+  v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
+/>
+```
+
+
+
+
+
+# NwtFormControlForGroupList
+
+Componente de control de formulario para listas de controles.
+
+Con este control, puedes agrupar listas de controles en 1 mismo control.
+
+## Exposición
+
+```js
+Vue.options.components.NwtFormControlForGroupList
+```
+
+## Ventajas
+
+```html
+<nwt-form-control-for-list
+  statement="Enunciado para lista de controles"
+  :controls="[{
+    type: 'text/oneline',
+    props: {
+      initialValue: 'No sabe/No contesta',
+    },
+    listeners: {}
+  },{
+    type: 'text/oneline',
+    props: {
+      initialValue: 'No sabe/No contesta',
+    },
+    listeners: {}
+  }]"
   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
 />
 ```

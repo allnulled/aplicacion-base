@@ -178,6 +178,9 @@
             data: {
               comando: this,
               parameters,
+            },
+            mounted() {
+              this.$trace("NwtCommend.prototype.start.view@dialog.mounted");
             }
           }
         });
@@ -186,8 +189,8 @@
         trace("NwtCommand.prototype.start.function");
         await this.validateCommandExists();
         const commandFile = this.resolve("command.js");
+        // @INJECTION: el assets/framework/nwt-command/registry/{vendor=nwt}/{command=util.txt.concatenation}
         const commandDefinition = await NwtImporter.asyncSource(commandFile, { command: this, ...injections });
-        return await NwtIterableCommandClass.run(commandDefinition);
       },
     };
 

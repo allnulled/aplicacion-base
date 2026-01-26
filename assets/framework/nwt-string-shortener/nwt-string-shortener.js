@@ -25,7 +25,6 @@
  * NwtStringShortener.create(jsonFilepath:String);
  * NwtStringShortener.createUid(len=10); // returns String con un nuevo ID (PERO NO LO PERSISTE)
  * // De instancia:
- * await NwtStringShortener.global.initializeStore(); // inicializa (con NwtFilesystem.ensureFile, cuidado) el JSON si no existe
  * await NwtStringShortener.global.init(id, initialValue = undefined); // Inicializa un ID si no existe ya + retorna su shorteneado
  * await NwtStringShortener.global.get(id, defaultValue = undefined); // Devuelve el ID shorteneado de un ID, o en su defecto `defaultValue`
  * await NwtStringShortener.global.deleteById(id); // Elimina el ID no shorteneado proporcionado
@@ -62,13 +61,9 @@
       this.filepath = filepath;
     }
 
-    async initializeStore() {
-      trace("NwtStringShortener.initialize");
-      return await NwtFilesystem.ensureJson(this.filepath, {});
-    }
-
     async add(id, value = false, silently = false) {
       trace("NwtStringShortener.add");
+      await NwtFilesystem.ensureJson(this.filepath, {});
       const ids = await NwtFilesystem.readJson(this.filepath);
       if(id in ids) {
         if(!silently) {
@@ -112,6 +107,7 @@
 
     async get(id, defaultValue = undefined) {
       trace("NwtStringShortener.get");
+      await NwtFilesystem.ensureJson(this.filepath, {});
       const ids = await NwtFilesystem.readJson(this.filepath);
       if(!(id in ids)) {
         return defaultValue;
@@ -121,6 +117,7 @@
 
     async init(id, initialValue = undefined) {
       trace("NwtStringShortener.init");
+      await NwtFilesystem.ensureJson(this.filepath, {});
       const ids = await NwtFilesystem.readJson(this.filepath);
       if(id in ids) {
         return ids[id];

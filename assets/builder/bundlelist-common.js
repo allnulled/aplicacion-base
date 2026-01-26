@@ -76,7 +76,7 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-live-injector.js`,
   `${projectRoot}/assets/framework/nwt-prompts-manager.js`,
   `${projectRoot}/assets/framework/nwt-chatgpt.js`,
-  `${projectRoot}/assets/framework/nwt-string-shortener.js`,
+  `${projectRoot}/assets/framework/nwt-string-shortener/nwt-string-shortener.js`,
   `${projectRoot}/assets/framework/nwt-persister/nwt-json-persister.js`,
   `${projectRoot}/assets/framework/nwt-persister/nwt-jsonl-persister.js`,
   `${projectRoot}/assets/framework/nwt-persister/nwt-file-persister.js`,

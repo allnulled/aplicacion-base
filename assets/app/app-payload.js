@@ -29,16 +29,13 @@
           await NwtCodeComposer.loadBeautifyJs();
         }
         await NwtTimer.timeout(400);
-        for(let index=0; index<30; index++) {
-          event.detail.component.startConfiguraciones();
-        }
         // event.detail.component.startGestorDePrompts();
         // event.detail.component.startExploradorDeFicheros();
-        // event.detail.component.startProcedimientos();
-        event.detail.component.startProcesos();
+        // event.detail.component.startProcesos();
         // event.detail.component.startGestorDeFicherosDeChatgpt();
         // event.detail.component.startNewFeature();
-        window.dispatchEvent(new CustomEvent("app-started"));
+        // window.dispatchEvent(new CustomEvent("app-started"));
+        event.detail.component.startProcedimientos();
       });
       window.addEventListener("app-started", async function (event) {
         trace("AppPayload.inject@app-started");

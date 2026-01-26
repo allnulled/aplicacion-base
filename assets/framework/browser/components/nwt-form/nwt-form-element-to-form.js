@@ -45,7 +45,7 @@
       trace("NwtFormElementToForm.prototype.constructor");
       const [element, value, virtualNode] = args;
       assertion(typeof value.onSubmit === "function", "Parameter «onSubmit» must be function on «NwtFormElementToForm.constructor»");
-
+      // @OK. Es lo más básico para un form: que tenga `onSubmit:Function`.
     }
 
     initialize() {

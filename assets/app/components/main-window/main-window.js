@@ -41,7 +41,8 @@ Vue.component("MainWindow", {
       trace("MainWindow.methods.startProcedimientos");
       this.$dialogs.open({
         title: "Procedimientos",
-        template: `<nwt-commands-manager-viewer :dialog="this" />`
+        template: `<nwt-commands-manager-viewer :dialog="this" />`,
+        windowClasses: "no_scroll"
       });
     },
     startConfiguraciones() {

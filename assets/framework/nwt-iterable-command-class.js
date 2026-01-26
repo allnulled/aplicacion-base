@@ -84,6 +84,14 @@
       return this.output;
     }
 
+    onIterationStart() {
+
+    }
+    
+    onProgression() {
+
+    }
+
   };
 
   return NwtIterableCommandClass;

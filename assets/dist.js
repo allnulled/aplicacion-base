@@ -25015,6 +25015,14 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return this.output;
     }
 
+    onIterationStart() {
+
+    }
+    
+    onProgression() {
+
+    }
+
   };
 
   return NwtIterableCommandClass;
@@ -26132,7 +26140,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener.js
+// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
 /**
  * 
  * # NwtStringShortener
@@ -26160,7 +26168,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
  * NwtStringShortener.create(jsonFilepath:String);
  * NwtStringShortener.createUid(len=10); // returns String con un nuevo ID (PERO NO LO PERSISTE)
  * // De instancia:
- * await NwtStringShortener.global.initializeStore(); // inicializa (con NwtFilesystem.ensureFile, cuidado) el JSON si no existe
  * await NwtStringShortener.global.init(id, initialValue = undefined); // Inicializa un ID si no existe ya + retorna su shorteneado
  * await NwtStringShortener.global.get(id, defaultValue = undefined); // Devuelve el ID shorteneado de un ID, o en su defecto `defaultValue`
  * await NwtStringShortener.global.deleteById(id); // Elimina el ID no shorteneado proporcionado
@@ -26197,13 +26204,9 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       this.filepath = filepath;
     }
 
-    async initializeStore() {
-      trace("NwtStringShortener.initialize");
-      return await NwtFilesystem.ensureJson(this.filepath, {});
-    }
-
     async add(id, value = false, silently = false) {
       trace("NwtStringShortener.add");
+      await NwtFilesystem.ensureJson(this.filepath, {});
       const ids = await NwtFilesystem.readJson(this.filepath);
       if(id in ids) {
         if(!silently) {
@@ -26247,6 +26250,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     async get(id, defaultValue = undefined) {
       trace("NwtStringShortener.get");
+      await NwtFilesystem.ensureJson(this.filepath, {});
       const ids = await NwtFilesystem.readJson(this.filepath);
       if(!(id in ids)) {
         return defaultValue;
@@ -26256,6 +26260,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     async init(id, initialValue = undefined) {
       trace("NwtStringShortener.init");
+      await NwtFilesystem.ensureJson(this.filepath, {});
       const ids = await NwtFilesystem.readJson(this.filepath);
       if(id in ids) {
         return ids[id];
@@ -29586,24 +29591,71 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
   }
 })(function () {
   
-  const NwtCacheDirectory = class extends NwtFiletree {
+  const NwtCacheDirectory = class {
 
     static create(...args) {
       return new this(...args);
     }
 
     constructor(basedir) {
-      super(basedir);
+      assertion(typeof basedir === "string", "Parameter «basedir» must be string on «NwtCacheDirectory.constructor»");
+      assertion(basedir.length !== 0, "Parameter «basedir.length» cannot be 0 on «NwtCacheDirectory.constructor»");
+      this.basedir = basedir;
+      this.stringShortener = NwtStringShortener.create(`${this.basedir}/cache-ids.json`);
+    }
+
+    resolve(...subpaths) {
+      trace("NwtCacheDirectory.prototype.resolve");
+      return require("path").resolve(this.basedir, ...subpaths);
     }
 
     async saveStep(keys, result = {done:true}) {
       trace("NwtCacheDirectory.prototype.saveStep");
-      // @TODO:
+      assertion(Array.isArray(keys), "Parameter «keys» must be array on «NwtCacheDirectory.prototype.saveStep»");
+      assertion(keys.length !== 0, "Parameter «keys.length» cannot be 0 on «NwtCacheDirectory.prototype.saveStep»");
+      for(let index=0; index<keys.length; index++) {
+        const item = keys[index];
+        assertion(typeof item === "string", `Parameter «keys[${index}]» must be string on «NwtCacheDirectory.prototype.saveStep»`);
+      }
+      assertion(typeof result === "object", "Parameter «result» must be object on «NwtCacheDirectory.prototype.saveStep»");
+      const shortableId = keys.join("/");
+      const shortenedId = await this.stringShortener.init(shortableId);
+      Aseguramos_directorio_de_cache_general: {
+        await NwtFilesystem.ensureDirectory(this.resolve("cache"));
+      }
+      const cachedPath = this.resolve(`cache/${shortenedId}`);
+      const cachedFile = this.resolve(`${cachedPath}/cached.json`);
+      Aseguramos_directorio_de_cache_concreto: {
+        await require("fs").promises.mkdir(cachedPath, { recursive: true });
+      }
+      Aseguramos_fichero_de_cache_concreto: {
+       await NwtFilesystem.ensureJson(cachedFile, result);
+      }
+      Sobreescribimos_json: {
+       await NwtFilesystem.writeJson(cachedFile, result); 
+      }
     }
 
     async loadStep(keys, initializer = {done:false}) {
       trace("NwtCacheDirectory.prototype.loadStep");
-      // @TODO:
+      assertion(Array.isArray(keys), "Parameter «keys» must be array on «NwtCacheDirectory.prototype.loadStep»");
+      assertion(typeof initializer === "object", "Parameter «initializer» must be object on «NwtCacheDirectory.prototype.loadStep»");
+      const shortableId = keys.join("/");
+      const shortenedId = await this.stringShortener.init(shortableId);
+      const cachedPath = this.resolve(`cache/${shortenedId}`);
+      const cachedFile = this.resolve(`${cachedPath}/cached.json`);
+      Aseguramos_directorio_de_cache_general: {
+        await NwtFilesystem.ensureDirectory(this.resolve("cache"));
+      }
+      Aseguramos_directorio_de_cache_concreto: {
+        await require("fs").promises.mkdir(cachedPath, { recursive: true });
+      }
+      Aseguramos_fichero_de_cache_concreto: {
+       await NwtFilesystem.ensureJson(cachedFile, initializer);
+      }
+      Devolvemos_cache: {
+        return await NwtFilesystem.readJson(cachedFile, initializer);
+      }
     }
 
   };
@@ -31723,133 +31775,148 @@ Vue.component("AppProcedureDocumentationViewer", {
 Vue.component("NwtFileExplorer", {
   name: "NwtFileExplorer",
   template: `<div class="nwt_file_explorer">
-    <div class="flex_row centered pad_bottom_1">
-        <div class="flex_1 text_align_center"
-            style="min-width:32px;">📂</div>
-        <div class="flex_100">
-            <input class="width_100"
-                type="text"
-                v-model="openedNode"
-                v-on:keypress.enter="reload" />
-        </div>
-    </div>
-    <div class="pad_bottom_1">
-        <div class="flex_row centered">
-            <div class="flex_1 pad_right_1">
-                <button class="mini no_wrap"
-                    v-on:click="createDirectory">📁➕</button>
-            </div>
-            <div class="flex_1 pad_right_1">
-                <button class="mini no_wrap"
-                    v-on:click="createFile">📄➕</button>
-            </div>
-            <div class="flex_100"></div>
-            <template v-if="chooserOf !== 'none'">
-                <div class="flex_1 pad_left_1">
-                    <button class=""
-                        v-on:click="acceptChooser">Aceptar</button>
-                </div>
-                <div class="flex_1 pad_left_1">
-                    <button class=""
-                        v-on:click="cancelChooser">Cancelar</button>
-                </div>
-            </template>
-        </div>
-    </div>
-    <div class="pad_bottom_1"
-        v-if="chooserOf !== 'none'">
-        <template v-if="saveFile === false">
-            <div class="file_explorer_selected_nodes_container">
-                <div v-if="selectedNodes.length"
-                    class="table file_explorer_selected_nodes_table">
-                    <div class="tbody">
-                        <div class="row"
-                            v-for="node, nodeIndex in selectedNodes"
-                            v-bind:key="'selected_node_' + node">
-                            <div class="cell buttons_cell text_align_center cursor_pointer">
-                                <div class="checkbox active"
-                                    v-on:click="() => toggleNode(node)"></div>
-                            </div>
-                            <div class="cell"
-                                :title="node">
-                                {{ node }}
-                            </div>
+    <div class="dialog_container">
+        <div class="dialog_structure">
+            <div class="dialog_header">
+                <div class="">
+                    <div class="flex_row centered pad_top_1 pad_bottom_1 pad_horizontal_1 border_bottom_style_1">
+                        <div class="flex_1 text_align_center"
+                            style="min-width:32px;">📂</div>
+                        <div class="flex_100">
+                            <input class="width_100"
+                                type="text"
+                                v-model="openedNode"
+                                v-on:keypress.enter="reload" />
                         </div>
                     </div>
+                    <div class="pad_1 border_bottom_style_1">
+                        <div class="flex_row centered">
+                            <div class="flex_1 pad_right_1">
+                                <button class="mini no_wrap"
+                                    v-on:click="createDirectory">📁➕</button>
+                            </div>
+                            <div class="flex_1 pad_right_1">
+                                <button class="mini no_wrap"
+                                    v-on:click="createFile">📄➕</button>
+                            </div>
+                            <div class="flex_100"></div>
+                            <template v-if="chooserOf !== 'none'">
+                                <div class="flex_1 pad_left_1">
+                                    <button class=""
+                                        v-on:click="acceptChooser">Aceptar</button>
+                                </div>
+                                <div class="flex_1 pad_left_1">
+                                    <button class=""
+                                        v-on:click="cancelChooser">Cancelar</button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="pad_1 border_bottom_style_1"
+                        v-if="chooserOf !== 'none'">
+                        <template v-if="saveFile === false">
+                            <div class="file_explorer_selected_nodes_container">
+                                <div v-if="selectedNodes.length"
+                                    class="table file_explorer_selected_nodes_table">
+                                    <div class="tbody">
+                                        <div class="row"
+                                            v-for="node, nodeIndex in selectedNodes"
+                                            v-bind:key="'selected_node_' + node">
+                                            <div class="cell buttons_cell text_align_center cursor_pointer">
+                                                <div class="checkbox active"
+                                                    v-on:click="() => toggleNode(node)"></div>
+                                            </div>
+                                            <div class="cell"
+                                                :title="node">
+                                                {{ node }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=""
+                                    v-else-if="chooserOf === 'file'">
+                                    No hay ficheros seleccionados.
+                                </div>
+                                <div class=""
+                                    v-else-if="chooserOf === 'directory'">
+                                    <div class="table file_explorer_selected_nodes_table">
+                                        <div class="tbody">
+                                            <div class="row">
+                                                <div class="cell buttons_cell text_align_center cursor_pointer">
+                                                    <div class="checkbox active"></div>
+                                                </div>
+                                                <div class="cell"
+                                                    :title="openedNode">
+                                                    {{ openedNode }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <input class="width_100"
+                                type="text"
+                                placeholder="Nombre del nuevo fichero"
+                                v-on:keypress.enter="acceptChooser"
+                                v-model="savedFileName"
+                                v-focus />
+                        </template>
+                    </div>
                 </div>
-                <div class=""
-                    v-else-if="chooserOf === 'file'">
-                    No hay ficheros seleccionados.
-                </div>
-                <div class=""
-                    v-else-if="chooserOf === 'directory'">
-                    <div class="table file_explorer_selected_nodes_table">
+            </div>
+            <div class="dialog_body">
+                <div class="dialog_content pad_1">
+                    <div class="table file_explorer_table">
                         <div class="tbody">
                             <div class="row">
-                                <div class="cell buttons_cell text_align_center cursor_pointer">
-                                    <div class="checkbox active"></div>
+                                <div class="cell">
+                                    <div class="visibility_hidden checkbox"></div>
                                 </div>
-                                <div class="cell"
-                                    :title="openedNode">
-                                    {{ openedNode }}
+                                <div class="cell">📂</div>
+                                <div class="cell clickable"
+                                    v-on:click="() => goUp()">..</div>
+                                <div class="cell"></div>
+                            </div>
+                            <div class="row"
+                                v-for="subnode, subnodeIndex in subnodes"
+                                v-bind:key="'subnode_' + subnode.path"
+                                :title="subnode.name">
+                                <template
+                                    v-if="(chooserOf === 'file') && (!saveFile) && subnode.isFile && isAcceptedExtension(subnode.name)">
+                                    <div class="cell clickable"
+                                        v-on:click="() => toggleNode(subnode.path)">
+                                        <div class="checkbox"
+                                            :class="{active: selectedNodes.indexOf(subnode.path) !== -1}"></div>
+                                    </div>
+                                </template>
+                                <template v-else-if="chooserOf === 'directory' && subnode.isDirectory">
+                                    <div class="cell"></div>
+                                </template>
+                                <template v-else>
+                                    <div class="cell"></div>
+                                </template>
+                                <div class="cell">
+                                    {{ subnode.isFile ? "📄" : "" }}
+                                    {{ subnode.isDirectory ? "📁" : "" }}
+                                    {{ subnode.isSymbolicLink ? "🔗" : "" }}
+                                </div>
+                                <div class="cell clickable"
+                                    :title="subnode.name"
+                                    v-on:click="() => subnode.isDirectory ? open(subnode.path) : null">
+                                    {{ subnode.name }}
+                                </div>
+                                <div class="cell text_align_right">
+                                    {{ \$nwt.Filesystem.formatBytes(subnode.size) }}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </template>
-        <template v-else>
-            <input class="width_100"
-                type="text"
-                placeholder="Nombre del nuevo fichero"
-                v-on:keypress.enter="acceptChooser"
-                v-model="savedFileName"
-                v-focus
-            />
-        </template>
-    </div>
-    <div class="table file_explorer_table">
-        <div class="tbody">
-            <div class="row">
-                <div class="cell">
-                    <div class="visibility_hidden checkbox"></div>
-                </div>
-                <div class="cell">📂</div>
-                <div class="cell clickable"
-                    v-on:click="() => goUp()">..</div>
-                <div class="cell"></div>
-            </div>
-            <div class="row"
-                v-for="subnode, subnodeIndex in subnodes"
-                v-bind:key="'subnode_' + subnode.path"
-                :title="subnode.name">
-                <template v-if="(chooserOf === 'file') && (!saveFile) && subnode.isFile && isAcceptedExtension(subnode.name)">
-                    <div class="cell clickable"
-                        v-on:click="() => toggleNode(subnode.path)">
-                        <div class="checkbox"
-                            :class="{active: selectedNodes.indexOf(subnode.path) !== -1}"></div>
-                    </div>
-                </template>
-                <template v-else-if="chooserOf === 'directory' && subnode.isDirectory">
-                    <div class="cell"></div>
-                </template>
-                <template v-else>
-                    <div class="cell"></div>
-                </template>
-                <div class="cell">
-                    {{ subnode.isFile ? "📄" : "" }}
-                    {{ subnode.isDirectory ? "📁" : "" }}
-                    {{ subnode.isSymbolicLink ? "🔗" : "" }}
-                </div>
-                <div class="cell clickable"
-                    :title="subnode.name"
-                    v-on:click="() => subnode.isDirectory ? open(subnode.path) : null">
-                    {{ subnode.name }}
-                </div>
-                <div class="cell text_align_right">
-                    {{ \$nwt.Filesystem.formatBytes(subnode.size) }}
-                </div>
+            <div class="dialog_footer" v-if="saveFile !== false">
+
             </div>
         </div>
     </div>
@@ -32169,61 +32236,63 @@ Vue.component("NwtPromptsManagerViewer", {
   template: `<div class="nwt_prompts_manager_viewer">
     <div class="dialog_container">
         <div class="dialog_structure">
-            <div class="dialog_header border_bottom_style_1">
-                <div class="title">
-                    <div class="flex_row centered">
+            <div class="dialog_header">
+                <div class="border_bottom_style_1">
+                    <div class="title">
+                        <div class="flex_row centered">
+                            <div class="flex_100">
+                                Prompts disponibles
+                            </div>
+                            <div class="flex_1 pad_left_1">
+                                <button class="mini no_wrap"
+                                    v-on:click="openPromptsFolder">📂↗️</button>
+                            </div>
+                            <div class="flex_1 pad_left_1">
+                                <button class="mini"
+                                    v-on:click="addPrompt">➕</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pad_1"
+                        v-if="chooser">
+                        <div class="flex_row centered">
+                            <div class="flex_1 no_wrap">
+                                Prompt seleccionado:
+                            </div>
+                            <div class="flex_100 pad_left_2 no_wrap ellipsable"
+                                :title="selectedPrompt">{{ selectedPrompt || "-" }}</div>
+                        </div>
+                    </div>
+                    <div class="flex_row centered pad_1">
                         <div class="flex_100">
-                            Prompts disponibles
-                        </div>
-                        <div class="flex_1 pad_left_1">
-                            <button class="mini no_wrap"
-                                v-on:click="openPromptsFolder">📂↗️</button>
-                        </div>
-                        <div class="flex_1 pad_left_1">
-                            <button class="mini"
-                                v-on:click="addPrompt">➕</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="pad_1"
-                    v-if="chooser">
-                    <div class="flex_row centered">
-                        <div class="flex_1 no_wrap">
-                            Prompt seleccionado:
-                        </div>
-                        <div class="flex_100 pad_left_2 no_wrap ellipsable"
-                            :title="selectedPrompt">{{ selectedPrompt || "-" }}</div>
-                    </div>
-                </div>
-                <div class="flex_row centered pad_1">
-                    <div class="flex_100">
-                        <input type="text"
-                            class="width_100 searcher_box"
-                            :class="{is_searching: state === 'searching'}"
-                            placeholder="Filtra prompt aquí"
-                            v-model="searchText"
-                            v-on:keypress.enter="reload"
-                            v-on:input="delayedSearch" />
-                    </div>
-                    <div class="flex_1 pad_left_1">
-                        <button class="mini"
-                            v-on:click="reload">
-                            <template v-if="state === 'searching'">⏳</template>
-                            <template v-else>🔎</template>
-                        </button>
-                    </div>
-                </div>
-                <div class="pad_top_1"
-                    v-if="chooser">
-                    <div class="flex_row centered">
-                        <div class="flex_100"></div>
-                        <div class="flex_1 pad_left_1">
-                            <button class="mini"
-                                v-on:click="acceptPrompt">Aceptar</button>
+                            <input type="text"
+                                class="width_100 searcher_box"
+                                :class="{is_searching: state === 'searching'}"
+                                placeholder="Filtra prompt aquí"
+                                v-model="searchText"
+                                v-on:keypress.enter="reload"
+                                v-on:input="delayedSearch" />
                         </div>
                         <div class="flex_1 pad_left_1">
                             <button class="mini"
-                                v-on:click="() => dialog.cancel()">Cancelar</button>
+                                v-on:click="reload">
+                                <template v-if="state === 'searching'">⏳</template>
+                                <template v-else>🔎</template>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="pad_top_1"
+                        v-if="chooser">
+                        <div class="flex_row centered">
+                            <div class="flex_100"></div>
+                            <div class="flex_1 pad_left_1">
+                                <button class="mini"
+                                    v-on:click="acceptPrompt">Aceptar</button>
+                            </div>
+                            <div class="flex_1 pad_left_1">
+                                <button class="mini"
+                                    v-on:click="() => dialog.cancel()">Cancelar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -32231,46 +32300,44 @@ Vue.component("NwtPromptsManagerViewer", {
             <div class="dialog_body">
                 <div class="dialog_content">
                     <div class="pad_1">
-                        <div class="pad_top_1">
-                            <template v-if="Array.isArray(filteredPromptPaths) && filteredPromptPaths.length">
-                                <div class="table prompts_table"
-                                    :class="{prompt_chooser: chooser}">
-                                    <div class="tbody">
-                                        <div class="row"
-                                            v-for="promptPath, promptPathId in filteredPromptPaths"
-                                            v-bind:key="'prompt_' + promptPath">
-                                            <div class="cell">{{ promptPathId + 1 }}</div>
-                                            <div class="cell"
-                                                v-if="chooser"
-                                                v-on:click="() => togglePrompt(promptPath)">
-                                                <div class="checkbox"
-                                                    :class="{active:selectedPrompt === promptPath}"></div>
-                                            </div>
-                                            <div class="cell"
-                                                :title="promptPath">{{ promptPath }}</div>
-                                            <div class="cell buttons_cell">
-                                                <div class="flex_row centered">
-                                                    <div class="flex_1 pad_left_1">
-                                                        <button class="mini"
-                                                            v-on:click="() => editPrompt(promptPath)">✏️</button>
-                                                    </div>
-                                                    <div class="flex_1 pad_left_1">
-                                                        <button class="mini"
-                                                            v-on:click="() => deletePrompt(promptPath)">❌</button>
-                                                    </div>
+                        <template v-if="Array.isArray(filteredPromptPaths) && filteredPromptPaths.length">
+                            <div class="table prompts_table"
+                                :class="{prompt_chooser: chooser}">
+                                <div class="tbody">
+                                    <div class="row"
+                                        v-for="promptPath, promptPathId in filteredPromptPaths"
+                                        v-bind:key="'prompt_' + promptPath">
+                                        <div class="cell">{{ promptPathId + 1 }}</div>
+                                        <div class="cell"
+                                            v-if="chooser"
+                                            v-on:click="() => togglePrompt(promptPath)">
+                                            <div class="checkbox"
+                                                :class="{active:selectedPrompt === promptPath}"></div>
+                                        </div>
+                                        <div class="cell"
+                                            :title="promptPath">{{ promptPath }}</div>
+                                        <div class="cell buttons_cell">
+                                            <div class="flex_row centered">
+                                                <div class="flex_1 pad_left_1">
+                                                    <button class="mini"
+                                                        v-on:click="() => editPrompt(promptPath)">✏️</button>
+                                                </div>
+                                                <div class="flex_1 pad_left_1">
+                                                    <button class="mini"
+                                                        v-on:click="() => deletePrompt(promptPath)">❌</button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </template>
-                            <template v-else-if="filteredPromptPaths === false">
-                                Cargando...
-                            </template>
-                            <template v-else-if="filteredPromptPaths.length === 0">
-                                No se encontraton prompts coincidentes.
-                            </template>
-                        </div>
+                            </div>
+                        </template>
+                        <template v-else-if="filteredPromptPaths === false">
+                            Cargando...
+                        </template>
+                        <template v-else-if="filteredPromptPaths.length === 0">
+                            No se encontraton prompts coincidentes.
+                        </template>
                     </div>
                 </div>
             </div>
@@ -32975,7 +33042,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
       trace("NwtFormElementToForm.prototype.constructor");
       const [element, value, virtualNode] = args;
       assertion(typeof value.onSubmit === "function", "Parameter «onSubmit» must be function on «NwtFormElementToForm.constructor»");
-
+      // @OK. Es lo más básico para un form: que tenga `onSubmit:Function`.
     }
 
     initialize() {
@@ -34563,25 +34630,6 @@ Vue.component("NwtMatrixBackground", {
         required: true,
       },
     },
-    data() {
-      trace("NwtCommandContextInterface.data");
-      return {
-        enunciado: "Esto es un enunciado general",
-        tester: false,
-      };
-    },
-    methods: {
-      close() {
-        trace("NwtCommandContextInterface.methods.close");
-        return this.dialog.close();
-      }
-    },
-    created() {
-      trace("NwtCommandContextInterface.created");
-    },
-    mounted() {
-      trace("NwtCommandContextInterface.mounted");
-    },
   };
   return NwtCommandContextInterface;
 
@@ -34646,27 +34694,47 @@ Vue.component("NwtMatrixBackground", {
   const NwtCommandViewInterface = {
     name: "NwtCommandViewInterface",
     extends: NwtCommandContextInterface,
-    props: {},
+    props: {
+      dialog: {
+        type: Object,
+        required: true,
+      },
+      command: {
+        type: Object,
+        required: true,
+      },
+    },
     data() {
       trace("NwtCommandViewInterface.data");
       return {
-        tester: undefined
+        tester: undefined,
+        cacher: undefined,
       };
     },
     methods: {
-      prepareTester() {
+      async prepareTester() {
         trace("NwtCommandViewInterface.methods.prepareTester");
         this.tester = NwtTester.create(`Ejecutando comando «${this.command.getCommandName()}»`, async (tester, assertion) => {
+          // @EXACTO: aquí empieza la acción: pero va sola.
+          // Las variables pasadas al objecto se inyectarán en el scope con `NwtImporter.asyncSource`
           await this.command.start.function({ component: this, tester, assertion });
         });
+      },
+      async prepareCacher() {
+        trace("NwtCommandViewInterface.methods.prepareCacher");
+        const commandPath = `assets/framework/nwt-command/registry/${this.command.getCommandName()}`
+        await NwtFilesystem.ensureDirectory(`${commandPath}/cache`);
+        this.cacher = NwtCacheDirectory.create(`assets/framework/nwt-command/registry/${this.command.getCommandName()}`);
       }
     },
-    created() {
+    async created() {
       trace("NwtCommandViewInterface.created");
-      this.prepareTester();
+      await this.prepareTester();
+      await this.prepareCacher();
     },
-    mounted() {
+    async mounted() {
       trace("NwtCommandViewInterface.mounted");
+      // @ASYNC: asíncronamente, para que no bloquee:
       this.tester.start();
     },
   };
@@ -34729,92 +34797,107 @@ Vue.component("NwtAnonymousCommandView", {
 Vue.component("NwtCommandsManagerViewer", {
   name: "NwtCommandsManagerViewer",
   template: `<div class="nwt_commands_manager_viewer">
-    <div class="title">
-        <div class="flex_row centered">
-            <div class="flex_100">
-                Comandos disponibles
-            </div>
-            <div class="flex_1">
-                <div class="pad_left_1">
-                    <button class="mini no_wrap" v-on:click="openCommandsDirectory">📂↗️</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="pad_1 pad_bottom_0">
-            <div class="flex_row centered">
-                <div class="flex_100">
-                    <input class="width_100 searcher_box"
-                        :class="{is_searching:isSearching}"
-                        type="text"
-                        v-model="searchText"
-                        v-on:input="delayReload"
-                        v-on:keypress.enter="loadCommands"
-                    />
-                </div>
-                <div class="flex_1 pad_left_1">
-                    <button class="mini" v-on:click="loadCommands">
-                        <template v-if="isSearching">⏳</template>
-                        <template v-else>🔎</template>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="pad_1 pad_bottom_0">
-            <div class="table commands_table" :class="{mode_selectable: mode === 'selectable'}">
-                <div class="thead">
-                    <div class="row">
-                        <div class="hcell" v-if="mode === 'selectable'"></div>
-                        <div class="hcell">Comando:</div>
-                        <div class="hcell"></div>
-                    </div>
-                </div>
-                <div class="tbody">
-                    <template v-if="!filteredCommands.length">
-                        <div class="row unicell">
-                            <div class="cell">
-                                <template v-if="!commands.length">No hay comandos actualmente.</template>
-                                <template v-else>No se encontraron comandos coincidentes.</template>
+    <div class="dialog_container">
+        <div class="dialog_structure">
+            <div class="dialog_header">
+                <div class="title">
+                    <div class="flex_row centered">
+                        <div class="flex_100">
+                            Comandos disponibles
+                        </div>
+                        <div class="flex_1">
+                            <div class="pad_left_1">
+                                <button class="mini no_wrap"
+                                    v-on:click="openCommandsDirectory">📂↗️</button>
                             </div>
                         </div>
-                    </template>
-                    <template v-for="command, commandIndex in filteredCommands" v-else>
-                        <div class="row"
-                            v-bind:key="'command_normal_row_' + commandIndex">
-                            <div class="cell" v-if="mode === 'selectable'"></div>
-                            <div class="cell">{{ command.name }}</div>
-                            <div class="cell">
-                                <div class="flex_row centered">
-                                    <div class="flex_100"></div>
-                                    <div class="flex_1 pad_left_1">
-                                        <button class="mini"
-                                            v-on:click="() => toggleReadme(command.name)">📖</button>
+                    </div>
+                </div>
+                <div class="pad_1 border_bottom_style_1">
+                    <div class="flex_row centered">
+                        <div class="flex_100">
+                            <input class="width_100 searcher_box"
+                                :class="{is_searching:isSearching}"
+                                type="text"
+                                v-model="searchText"
+                                v-on:input="delayReload"
+                                v-on:keypress.enter="loadCommands" />
+                        </div>
+                        <div class="flex_1 pad_left_1">
+                            <button class="mini"
+                                v-on:click="loadCommands">
+                                <template v-if="isSearching">⏳</template>
+                                <template v-else>🔎</template>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog_body">
+                <div class="dialog_content">
+
+                    <div class="">
+                        <div class="pad_1 pad_bottom_0">
+                            <div class="table commands_table"
+                                :class="{mode_selectable: mode === 'selectable'}">
+                                <div class="thead">
+                                    <div class="row">
+                                        <div class="hcell"
+                                            v-if="mode === 'selectable'"></div>
+                                        <div class="hcell">Comando:</div>
+                                        <div class="hcell"></div>
                                     </div>
-                                    <div class="flex_1 pad_left_1">
-                                        <button class="mini"
-                                            v-on:click="() => startForm(command.name)">📋</button>
-                                    </div>
-                                    <div class="flex_1 pad_left_1">
-                                        <button class="mini"
-                                            v-on:click="() => startView(command.name)">▶️</button>
-                                    </div>
+                                </div>
+                                <div class="tbody">
+                                    <template v-if="!filteredCommands.length">
+                                        <div class="row unicell">
+                                            <div class="cell">
+                                                <template v-if="!commands.length">No hay comandos actualmente.</template>
+                                                <template v-else>No se encontraron comandos coincidentes.</template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-for="command, commandIndex in filteredCommands"
+                                        v-else>
+                                        <div class="row"
+                                            v-bind:key="'command_normal_row_' + commandIndex">
+                                            <div class="cell"
+                                                v-if="mode === 'selectable'"></div>
+                                            <div class="cell">{{ command.name }}</div>
+                                            <div class="cell">
+                                                <div class="flex_row centered">
+                                                    <div class="flex_100"></div>
+                                                    <div class="flex_1 pad_left_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => toggleReadme(command.name)">📖</button>
+                                                    </div>
+                                                    <div class="flex_1 pad_left_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => startForm(command.name)">📋</button>
+                                                    </div>
+                                                    <div class="flex_1 pad_left_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => startView(command.name)">▶️</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row no_cells"
+                                            v-if="openedReadmes.indexOf(command.name) !== -1"
+                                            v-bind:key="'command_readme_row_' + commandIndex">
+                                            <div class="cell">
+                                                <nwt-source-viewer :source="openedReadmeContents[command.name]" />
+                                            </div>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </div>
-                        <div class="row no_cells"
-                            v-if="openedReadmes.indexOf(command.name) !== -1"
-                            v-bind:key="'command_readme_row_' + commandIndex">
-                            <div class="cell">
-                                <nwt-source-viewer :source="openedReadmeContents[command.name]" />
-                            </div>
-                        </div>
-                    </template>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>`,
   props: {
     manager: {
@@ -35085,6 +35168,9 @@ Vue.component("NwtCommandsManagerViewer", {
             data: {
               comando: this,
               parameters,
+            },
+            mounted() {
+              this.$trace("NwtCommend.prototype.start.view@dialog.mounted");
             }
           }
         });
@@ -35093,8 +35179,8 @@ Vue.component("NwtCommandsManagerViewer", {
         trace("NwtCommand.prototype.start.function");
         await this.validateCommandExists();
         const commandFile = this.resolve("command.js");
+        // @INJECTION: el assets/framework/nwt-command/registry/{vendor=nwt}/{command=util.txt.concatenation}
         const commandDefinition = await NwtImporter.asyncSource(commandFile, { command: this, ...injections });
-        return await NwtIterableCommandClass.run(commandDefinition);
       },
     };
 
@@ -35293,7 +35379,8 @@ Vue.component("MainWindow", {
       trace("MainWindow.methods.startProcedimientos");
       this.$dialogs.open({
         title: "Procedimientos",
-        template: `<nwt-commands-manager-viewer :dialog="this" />`
+        template: `<nwt-commands-manager-viewer :dialog="this" />`,
+        windowClasses: "no_scroll"
       });
     },
     startConfiguraciones() {
@@ -35550,16 +35637,13 @@ Vue.component("MainWindow", {
           await NwtCodeComposer.loadBeautifyJs();
         }
         await NwtTimer.timeout(400);
-        for(let index=0; index<30; index++) {
-          event.detail.component.startConfiguraciones();
-        }
         // event.detail.component.startGestorDePrompts();
         // event.detail.component.startExploradorDeFicheros();
-        // event.detail.component.startProcedimientos();
-        event.detail.component.startProcesos();
+        // event.detail.component.startProcesos();
         // event.detail.component.startGestorDeFicherosDeChatgpt();
         // event.detail.component.startNewFeature();
-        window.dispatchEvent(new CustomEvent("app-started"));
+        // window.dispatchEvent(new CustomEvent("app-started"));
+        event.detail.component.startProcedimientos();
       });
       window.addEventListener("app-started", async function (event) {
         trace("AppPayload.inject@app-started");

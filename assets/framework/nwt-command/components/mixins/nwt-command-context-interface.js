@@ -23,25 +23,6 @@
         required: true,
       },
     },
-    data() {
-      trace("NwtCommandContextInterface.data");
-      return {
-        enunciado: "Esto es un enunciado general",
-        tester: false,
-      };
-    },
-    methods: {
-      close() {
-        trace("NwtCommandContextInterface.methods.close");
-        return this.dialog.close();
-      }
-    },
-    created() {
-      trace("NwtCommandContextInterface.created");
-    },
-    mounted() {
-      trace("NwtCommandContextInterface.mounted");
-    },
   };
   return NwtCommandContextInterface;
 

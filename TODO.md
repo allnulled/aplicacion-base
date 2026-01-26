@@ -16,7 +16,7 @@
    - [x] Configuraciones
    - [x] Prompts
    - [x] Procesos
-   - [ ] Procedimientos
+   - [x] Procedimientos
    - [ ] Explorador de ficheros
       - [ ] Explorador normal
       - [ ] File picker
@@ -27,7 +27,7 @@
 
 16-01-2026
 
-- [ ] Controles para los file-chooser:
+- [ ] Controles para los file-chooser en la API de Forms:
       - [ ] File picker
       - [ ] Directory picker
       - [ ] New file picker
