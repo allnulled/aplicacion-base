@@ -18820,7 +18820,229 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][10]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-argumenter.js
+// @vuebundler[Proyecto_base_001][10]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-environment.js
+/**
+ * 
+ * # Nwt Environment API
+ * 
+ * API para poder discriminar entre diferentes entornos del JavaScript.
+ * 
+ * ## Exposición
+ * 
+ * Se expone a través de:
+ * 
+ * ```js
+ * NwtEnvironment
+ * NwtFramework.Environment
+ * Vue.prototype.$nwt.Environment
+ * ```
+ * 
+ * ## Ventajas
+ * 
+ * Puedes hacer cosas como:
+ * 
+ * ```js
+ * NwtEnvironment.summary() // Object con todas las propiedades
+ * NwtEnvironment.isDesktop // Boolean
+ * NwtEnvironment.isBrowser // Boolean
+ * NwtEnvironment.isMobile // Boolean
+ * NwtEnvironment.isLinux // Boolean
+ * NwtEnvironment.isWindows // Boolean
+ * NwtEnvironment.isMac // Boolean
+ * NwtEnvironment.isAndroid // Boolean
+ * NwtEnvironment.isIOS // Boolean
+ * NwtEnvironment.isElectron // Boolean
+ * NwtEnvironment.isNode // Boolean
+ * NwtEnvironment.isCordova // Boolean
+ * NwtEnvironment.isCapacitor // Boolean
+ * NwtEnvironment.isNWJS // Boolean
+ * NwtEnvironment.isTouchDevice // Boolean
+ * NwtEnvironment.isHeadless // Boolean
+ * NwtEnvironment.canUseLocalStorage // Boolean
+ * NwtEnvironment.canUseFilesystem // Boolean
+ * NwtEnvironment.hasWindow // Boolean
+ * NwtEnvironment.hasDOM // Boolean
+ * NwtEnvironment.hasGlobal // Boolean
+ * NwtEnvironment.hasRequire // Boolean
+ * ```
+ * 
+ */
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtEnvironment'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtEnvironment'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const hasGlobal = function() {
+    return typeof global !== "undefined";
+  }
+
+  const hasWindow = function() {
+    return typeof window !== "undefined";
+  }
+
+  const hasDocument = function() {
+    return typeof document !== "undefined";
+  }
+
+  const hasRequire = function() {
+    return typeof require === "function";
+  }
+
+  const detectNode = function() {
+    return hasGlobal() && hasRequire() && typeof process !== "undefined";
+  }
+
+  const detectCordova = function() {
+    return hasWindow() && (window.cordova || window.PhoneGap || window.phonegap);
+  }
+
+  const detectCapacitor = function() {
+    return hasWindow() && window.Capacitor;
+  }
+
+  const detectElectron = function() {
+    return detectNode() && !!process.versions.electron;
+  }
+
+  const detectNWJS = function() {
+    return detectNode() && !!process.versions.nw;
+  }
+
+  const detectOS = function() {
+    if (detectNode()) {
+      const p = process.platform;
+      if (p === "win32") return "windows";
+      if (p === "linux") return "linux";
+      if (p === "darwin") return "macos";
+      if (p === "android") return "android";
+      return p;
+    } else {
+      const ua = navigator.userAgent || "";
+      if (/Windows/i.test(ua)) return "windows";
+      if (/Linux/i.test(ua) && !/Android/i.test(ua)) return "linux";
+      if (/Macintosh|Mac OS X/i.test(ua)) return "macos";
+      if (/Android/i.test(ua)) return "android";
+      if (/iPhone|iPad|iPod/i.test(ua)) return "ios";
+      return "unknown";
+    }
+  }
+
+  const detectTouch = function() {
+    if (!hasWindow()) return false;
+    return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  }
+
+  const detectLocalStorage = function() {
+    try {
+      if (!hasWindow()) return false;
+      const x = "ls_test";
+      localStorage.setItem(x, x);
+      localStorage.removeItem(x);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  const detectFilesystem = function() {
+    if (detectNode()) return true;
+    // Browser FS APIs (File System Access API)
+    if (hasWindow() && window.showOpenFilePicker) return true;
+    return false;
+  }
+
+  const detectHeadless = function() {
+    if (!hasWindow()) return true;
+    if (!hasDocument()) return true;
+    return false;
+  }
+
+  const NwtEnvironment = class {
+
+    static initialize() {
+
+      const isNode = detectNode();
+      const isCordova = !!detectCordova();
+      const isCapacitor = !!detectCapacitor();
+      const os = detectOS();
+
+      this.isDesktop = isNode && !isCordova && !isCapacitor;
+      this.isBrowser = hasWindow() && !isNode && !isCordova && !isCapacitor;
+      this.isMobile = isCordova || isCapacitor || os === "android" || os === "ios";
+
+      this.isLinux = os === "linux";
+      this.isWindows = os === "windows";
+      this.isMac = os === "macos";
+      this.isAndroid = os === "android";
+      this.isIOS = os === "ios";
+
+      this.isElectron = detectElectron();
+      this.isNode = isNode;
+      this.isCordova = isCordova;
+      this.isCapacitor = isCapacitor;
+      this.isNWJS = detectNWJS();
+
+      this.isTouchDevice = detectTouch();
+      this.isHeadless = detectHeadless();
+
+      this.canUseLocalStorage = detectLocalStorage();
+      this.canUseFilesystem = detectFilesystem();
+
+      this.hasDOM = hasDocument();
+      this.hasWindow = hasWindow();
+      this.hasGlobal = hasGlobal();
+      this.hasRequire = hasRequire();
+
+      return this;
+
+    }
+
+    static summary() {
+      return {
+        isDesktop: this.isDesktop,
+        isBrowser: this.isBrowser,
+        isMobile: this.isMobile,
+        isLinux: this.isLinux,
+        isWindows: this.isWindows,
+        isMac: this.isMac,
+        isAndroid: this.isAndroid,
+        isIOS: this.isIOS,
+        isElectron: this.isElectron,
+        isNode: this.isNode,
+        isCordova: this.isCordova,
+        isCapacitor: this.isCapacitor,
+        isNWJS: this.isNWJS,
+        isTouchDevice: this.isTouchDevice,
+        isHeadless: this.isHeadless,
+        canUseLocalStorage: this.canUseLocalStorage,
+        canUseFilesystem: this.canUseFilesystem,
+        hasWindow: this.hasWindow,
+        hasDOM: this.hasDOM,
+        hasGlobal: this.hasGlobal,
+        hasRequire: this.hasRequire
+      };
+    }
+
+
+
+  };
+
+  // Ejecutamos detection automáticamente
+  NwtEnvironment.initialize();
+
+  return NwtEnvironment;
+
+});
+
+// @vuebundler[Proyecto_base_001][11]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-argumenter.js
 /**
  * 
  * # NwtArgumentes
@@ -19143,7 +19365,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][11]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-asserter.js
+// @vuebundler[Proyecto_base_001][12]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-asserter.js
 /**
  * 
  * # Nwt Asserter API
@@ -19262,7 +19484,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][12]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-debug.js
+// @vuebundler[Proyecto_base_001][13]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-debug.js
 /**
  * 
  * # NwtDebug
@@ -19344,7 +19566,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][13]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-errors-manager.js
+// @vuebundler[Proyecto_base_001][14]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-errors-manager.js
 /**
  * 
  * # NwtErrorsManager
@@ -19390,45 +19612,92 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return new this(...args);
     }
 
-    constructor(vueComponent = false) {
+    constructor(htmlElement = false) {
       trace("NwtErrorsManager.constructor");
-      assertion(vueComponent instanceof Vue, "Parameter «vueComponent» must be instance of Vue on «NwtErrorsManager.constructor»");
-      this.vueComponent = vueComponent;
-      this.htmlElement = vueComponent.$el;
+      this.isDebugging = false;
+      this.htmlElement = htmlElement;
       this.errors = [];
       this.loopbroker = undefined;
+      this.state = "stopped";
+    }
+
+    debug(...args) {
+      if(this.isDebugging) {
+        console.log("[debug][errors-manager]", ...args);
+      }
+    }
+
+    inspect(...args) {
+      for(let index=0; index<args.length; index++) {
+        const arg = args[index];
+        console.log(`Tipo ${typeof arg}:`, arg);
+      }
     }
 
     async initialize() {
       trace("NwtErrorsManager.prototype.initialize");
+      this.debug("step1");
+      if(!NwtEnvironment.hasWindow) {
+        this.debug("step2");
+        return -1; // @EXIT -1 === it is node
+      }
+      this.debug("step3");
       assertion(this.htmlElement instanceof HTMLElement, "Parameter «htmlElement» must be instance of HTMLElement on «NwtErrorsManager.initialize»");
-      NwtGlobalizer.exportTo("CommonErrors", this);
-      NwtGlobalizer.exportTo("NwtErrors", this);
+      this.debug("step4");
+      Export_first_instance_to_global: {
+        if(NwtErrorsManager.global && (NwtErrorsManager.global.state !== "stopped")) {
+          this.debug("step5");
+          return -2; // @EXIT -2 === it is singleton and is initializing
+        }
+        this.debug("step6");
+        NwtGlobalizer.exportTo("CommonErrors", this);
+        NwtGlobalizer.exportTo("NwtErrors", this);
+        NwtErrorsManager.global = this;
+        this.debug("step7");
+      }
       Vue.prototype.$errors = this;
       Bind_error_handlers: {
         // For assertions globally:
         assertion.setErrorCallback(error => this.showError(error));
         // For vue errors globally:
         //*
-        const globalErrorHandler = (...args) => {
+        this.debug("step8");
+        const globalErrorVueHandler = (...args) => {
+          this.debug(1);
           const [errorOrWarn, component, stack, ...others] = args;
+          this.debug(2, errorOrWarn);
           let error = undefined;
           if (errorOrWarn instanceof Error) {
+            this.debug(3);
             error = errorOrWarn;
+            if(stack) {
+              error.injectedStack = stack;
+            }
           } else {
+            this.debug(4);
             error = new Error(`On component «${component?.$options?._componentTag}»: ${errorOrWarn}`);
             if (typeof stack === "string") {
+              this.debug(5);
               error.injectedStack = stack;
+            } else {
+              this.debug(6);
             }
           }
           if(this.isErrorDuplicated(error)) return false;
+          this.debug(7);
+          this.inspect(error instanceof Error);
+          this.inspect(error, component);
           NwtErrorsManager.expandError(error, {
             byComponent: component?.$options?._componentTag || component,
           });
+          this.debug(8);
           this.showError(error);
         };
-        Vue.config.errorHandler = globalErrorHandler;
-        Vue.config.warnHandler = globalErrorHandler;
+        this.debug("step9");
+        Vue.config.errorHandler = globalErrorVueHandler;
+        this.debug("step10");
+        Vue.config.warnHandler = globalErrorVueHandler;
+        this.debug("step11");
         window.addEventListener("error", (event) => {
           const error = new Error(event.message);
           this.showError(event.error || error);
@@ -19441,14 +19710,18 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         });
         Load_dist_source_once: {
           await NwtStrings.getDistJsSource();
+          this.debug("step13");
         }
       }
+      this.state = "initialized";
       return this;
     }
 
     isErrorDuplicated(error) {
       trace("NwtErrorsManager.prototype.isErrorDuplicated");
-      const repeated = NwtErrors.errors.filter(actualError => error.name === actualError.name && error.message === actualError.message);
+      const repeated = this.errors.filter(actualError => {
+        return (error.name === actualError.name) && (error.message === actualError.message);
+      });
       if (repeated.length) {
         console.error(`Repeating error: [${error.name}] ${error.message}`);
         return true;
@@ -19461,7 +19734,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       Securers: {
         if (this.isErrorDuplicated(error)) return false;
         console.error("showError:", error);
-        if (NwtErrors.errors.length >= 50) return false;
+        if (this.errors.length >= 50) return false;
       }
       this.errors.push(error);
       this.reload();
@@ -19522,7 +19795,10 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       trace("NwtUtils.expandError");
       console.error("expandError", errorInput);
       Securers: {
-        if (NwtErrors.errors.length >= 50) return false;
+        // Por si aún no está cargado:
+        if (!this.errors) return false;
+        // Por si está overfloodeado:
+        if (this.errors.length >= 50) return false;
       }
       if (overriders) {
         assertion(typeof overriders === "object", "Required parameter «overriders» to be object on «NwtErrorsManager.expandError»");
@@ -19566,11 +19842,21 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
   };
 
+  if(NwtEnvironment.hasWindow) {
+    window.addEventListener("load", function() {
+      const errormanagerElement = document.querySelector("#errorsmanager");
+      NwtErrorsManager.global = NwtErrorsManager.create(errormanagerElement);
+      NwtErrorsManager.global.initialize().then(() => {
+        trace("NwtErrorsManager.global.onInitialized");
+      });
+    });
+  }
+
   return NwtErrorsManager;
 
 });
 
-// @vuebundler[Proyecto_base_001][14]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-error-utils.js
+// @vuebundler[Proyecto_base_001][15]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-error-utils.js
 /**
  * 
  * # NwtErrorUtils
@@ -19622,7 +19908,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][15]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dialog-definition.js
+// @vuebundler[Proyecto_base_001][16]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dialog-definition.js
 /**
  * 
  * # Nwt Dialog Definition API
@@ -19927,7 +20213,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][16]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-importer.js
+// @vuebundler[Proyecto_base_001][17]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-importer.js
 /**
  * 
  * # Nwt Importer API
@@ -20017,13 +20303,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       }
     }
 
-    static async asyncSource(subpath, parameters = {}, scope = window) {
-      trace("NwtImporter.asyncSource");
-      const fullpath = require("path").resolve(subpath);
-      const content = await require("fs").promises.readFile(fullpath, "utf8");
-      return this.asyncFunction(content, parameters, scope);
-    }
-
     static async vueComponentByFilesystem(subpath) {
       trace("NwtImporter.vueComponentByFilesystem");
       if (NwtEnvironment.hasGlobal) {
@@ -20062,12 +20341,25 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return style;
     }
 
+    static async asyncSource(subpath, parameters = {}, scope = window) {
+      trace("NwtImporter.asyncSource");
+      const fullpath = require("path").resolve(subpath);
+      const content = await require("fs").promises.readFile(fullpath, "utf8");
+      return this.asyncFunction(content, parameters, scope);
+    }
+
     static asyncFunction(code, parameters = {}, scope = window) {
       trace("NwtImporter.asyncFunction");
       const AsyncFunction = (async () => { }).constructor;
       const keys = Object.keys(parameters);
       const values = Object.values(parameters);
       const asyncFunction = new AsyncFunction(...keys, code);
+      const keysTyped = keys.reduce((out, key) => {
+        out[key] = typeof parameters[key];
+        return out;
+      }, {});
+      trace("js-injection://", code);
+      trace("js-injected://", JSON.stringify(keysTyped, null, 2));
       return asyncFunction.call(scope, ...values);
     }
 
@@ -20081,228 +20373,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
   };
 
   return NwtImporter;
-
-});
-
-// @vuebundler[Proyecto_base_001][17]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-environment.js
-/**
- * 
- * # Nwt Environment API
- * 
- * API para poder discriminar entre diferentes entornos del JavaScript.
- * 
- * ## Exposición
- * 
- * Se expone a través de:
- * 
- * ```js
- * NwtEnvironment
- * NwtFramework.Environment
- * Vue.prototype.$nwt.Environment
- * ```
- * 
- * ## Ventajas
- * 
- * Puedes hacer cosas como:
- * 
- * ```js
- * NwtEnvironment.summary() // Object con todas las propiedades
- * NwtEnvironment.isDesktop // Boolean
- * NwtEnvironment.isBrowser // Boolean
- * NwtEnvironment.isMobile // Boolean
- * NwtEnvironment.isLinux // Boolean
- * NwtEnvironment.isWindows // Boolean
- * NwtEnvironment.isMac // Boolean
- * NwtEnvironment.isAndroid // Boolean
- * NwtEnvironment.isIOS // Boolean
- * NwtEnvironment.isElectron // Boolean
- * NwtEnvironment.isNode // Boolean
- * NwtEnvironment.isCordova // Boolean
- * NwtEnvironment.isCapacitor // Boolean
- * NwtEnvironment.isNWJS // Boolean
- * NwtEnvironment.isTouchDevice // Boolean
- * NwtEnvironment.isHeadless // Boolean
- * NwtEnvironment.canUseLocalStorage // Boolean
- * NwtEnvironment.canUseFilesystem // Boolean
- * NwtEnvironment.hasWindow // Boolean
- * NwtEnvironment.hasDOM // Boolean
- * NwtEnvironment.hasGlobal // Boolean
- * NwtEnvironment.hasRequire // Boolean
- * ```
- * 
- */
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtEnvironment'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtEnvironment'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-
-  const hasGlobal = function() {
-    return typeof global !== "undefined";
-  }
-
-  const hasWindow = function() {
-    return typeof window !== "undefined";
-  }
-
-  const hasDocument = function() {
-    return typeof document !== "undefined";
-  }
-
-  const hasRequire = function() {
-    return typeof require === "function";
-  }
-
-  const detectNode = function() {
-    return hasGlobal() && hasRequire() && typeof process !== "undefined";
-  }
-
-  const detectCordova = function() {
-    return hasWindow() && (window.cordova || window.PhoneGap || window.phonegap);
-  }
-
-  const detectCapacitor = function() {
-    return hasWindow() && window.Capacitor;
-  }
-
-  const detectElectron = function() {
-    return detectNode() && !!process.versions.electron;
-  }
-
-  const detectNWJS = function() {
-    return detectNode() && !!process.versions.nw;
-  }
-
-  const detectOS = function() {
-    if (detectNode()) {
-      const p = process.platform;
-      if (p === "win32") return "windows";
-      if (p === "linux") return "linux";
-      if (p === "darwin") return "macos";
-      if (p === "android") return "android";
-      return p;
-    } else {
-      const ua = navigator.userAgent || "";
-      if (/Windows/i.test(ua)) return "windows";
-      if (/Linux/i.test(ua) && !/Android/i.test(ua)) return "linux";
-      if (/Macintosh|Mac OS X/i.test(ua)) return "macos";
-      if (/Android/i.test(ua)) return "android";
-      if (/iPhone|iPad|iPod/i.test(ua)) return "ios";
-      return "unknown";
-    }
-  }
-
-  const detectTouch = function() {
-    if (!hasWindow()) return false;
-    return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-  }
-
-  const detectLocalStorage = function() {
-    try {
-      if (!hasWindow()) return false;
-      const x = "ls_test";
-      localStorage.setItem(x, x);
-      localStorage.removeItem(x);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  const detectFilesystem = function() {
-    if (detectNode()) return true;
-    // Browser FS APIs (File System Access API)
-    if (hasWindow() && window.showOpenFilePicker) return true;
-    return false;
-  }
-
-  const detectHeadless = function() {
-    if (!hasWindow()) return true;
-    if (!hasDocument()) return true;
-    return false;
-  }
-
-  const NwtEnvironment = class {
-
-    static initialize() {
-
-      const isNode = detectNode();
-      const isCordova = !!detectCordova();
-      const isCapacitor = !!detectCapacitor();
-      const os = detectOS();
-
-      this.isDesktop = isNode && !isCordova && !isCapacitor;
-      this.isBrowser = hasWindow() && !isNode && !isCordova && !isCapacitor;
-      this.isMobile = isCordova || isCapacitor || os === "android" || os === "ios";
-
-      this.isLinux = os === "linux";
-      this.isWindows = os === "windows";
-      this.isMac = os === "macos";
-      this.isAndroid = os === "android";
-      this.isIOS = os === "ios";
-
-      this.isElectron = detectElectron();
-      this.isNode = isNode;
-      this.isCordova = isCordova;
-      this.isCapacitor = isCapacitor;
-      this.isNWJS = detectNWJS();
-
-      this.isTouchDevice = detectTouch();
-      this.isHeadless = detectHeadless();
-
-      this.canUseLocalStorage = detectLocalStorage();
-      this.canUseFilesystem = detectFilesystem();
-
-      this.hasDOM = hasDocument();
-      this.hasWindow = hasWindow();
-      this.hasGlobal = hasGlobal();
-      this.hasRequire = hasRequire();
-
-      return this;
-
-    }
-
-    static summary() {
-      return {
-        isDesktop: this.isDesktop,
-        isBrowser: this.isBrowser,
-        isMobile: this.isMobile,
-        isLinux: this.isLinux,
-        isWindows: this.isWindows,
-        isMac: this.isMac,
-        isAndroid: this.isAndroid,
-        isIOS: this.isIOS,
-        isElectron: this.isElectron,
-        isNode: this.isNode,
-        isCordova: this.isCordova,
-        isCapacitor: this.isCapacitor,
-        isNWJS: this.isNWJS,
-        isTouchDevice: this.isTouchDevice,
-        isHeadless: this.isHeadless,
-        canUseLocalStorage: this.canUseLocalStorage,
-        canUseFilesystem: this.canUseFilesystem,
-        hasWindow: this.hasWindow,
-        hasDOM: this.hasDOM,
-        hasGlobal: this.hasGlobal,
-        hasRequire: this.hasRequire
-      };
-    }
-
-
-
-  };
-
-  // Ejecutamos detection automáticamente
-  NwtEnvironment.initialize();
-
-  return NwtEnvironment;
 
 });
 
@@ -20711,7 +20781,140 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][24]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-timer.js
+// @vuebundler[Proyecto_base_001][24]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-module-manager/nwt-module-manager.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtModuleManager'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtModuleManager'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtModuleManager = class {
+
+    static create(...args) {
+      trace("NwtModuleManager.create");
+      return new this(...args);
+    }
+
+    constructor(basedir) {
+      trace("NwtModuleManager.constructor");
+      this.basedir = basedir;
+      this.defined = {};
+    }
+
+    resolve(...subpaths) {
+      trace("NwtModuleManager.prototype.resolve");
+      return require("path").resolve(this.basedir, ...subpaths);
+    }
+
+    define(id, dependencies = [], callback = NwtUtils.noop, context = {}) {
+      trace("NwtModuleManager.prototype.define");
+      assertion(typeof id === "string", "Parameter «id» must be string on «NwtModuleManager.prototype.define»");
+      assertion(Array.isArray(dependencies), "Parameter «dependencies» must be array on «NwtModuleManager.prototype.define»");
+      assertion(typeof callback === "function", "Parameter «callback» must be function on «NwtModuleManager.prototype.define»");
+      assertion(typeof context === "object", "Parameter «context» must be object on «NwtModuleManager.prototype.define»");
+      this.defined[id] = { id, dependencies, callback, context };
+    }
+
+    import(id, injections = {}, ...others) {
+      trace("NwtModuleManager.prototype.import");
+      const isDefinition = (typeof id === "string")
+        && (typeof injections === "object")
+        && (others.length >= 2)
+        && Array.isArray(others[0])
+        && (typeof others[1] === "function");
+      if(isDefinition) {
+        const [ dependencies, callback, context ] = others;
+        return this.importDefining(id, injections, dependencies, callback, context);
+      }
+      const isList = Array.isArray(id) && (others.length === 0);
+      if(isList) {
+        return this.importByArray(id, injections);
+      }
+      assertion(typeof id === "string", "Parameter «id» must be string on «NwtModuleManager.prototype.import»");
+      const definition = id in this.defined ? this.defined[id] : null;
+      if (definition) {
+        return this.importByDefinition(definition);
+      }
+      return this.importByFile(id, injections);
+    }
+
+    importDefining(id, injections, dependencies, callback, context) {
+      trace("NwtModuleManager.prototype.importDefining");
+      this.define(id, dependencies, callback, context);
+      return this.import(id, injections);
+    }
+
+    async importByArray(idsArray, injections = {}) {
+      trace("NwtModuleManager.prototype.importByArray");
+      assertion(Array.isArray(idsArray), "Parameter «idsArray» must be array on «NwtModuleManager.prototype.importByArray»");
+      const imported = [];
+      for(let index=0; index<idsArray.length; index++) {
+        const id = idsArray[index];
+        const isList = Array.isArray(id);
+        const isString = typeof id === "string";
+        let result = undefined;
+        if(isString) {
+          result = await this.import(id, injections);
+        } else if(isList) {
+          assertion(typeof id[0] === "string", `Parameter «idsArray[${index}][0]» must be string on «NwtModuleManager.prototype.importByArray»`);
+          assertion(typeof id[1] === "object", `Parameter «idsArray[${index}][1]» must be object on «NwtModuleManager.prototype.importByArray»`);
+          result = await this.import(id[0], Object.assign({}, injections, id[1]));
+        } else {
+          assertion(false, `Parameter «idsArray» on index «${index}» must be string or array on «NwtModuleManager.prototype.importByArray»`);
+        }
+        imported.push(result);
+      }
+      return imported;
+    }
+
+    importByFile(subpath, injections = {}) {
+      trace("NwtModuleManager.prototype.importByFile", subpath);
+      assertion(typeof subpath === "string", "Parameter «subpath» must be string on «NwtModuleManager.prototype.importByFile»");
+      assertion(typeof injections === "object", "Parameter «injections» must be object on «NwtModuleManager.prototype.importByFile»");
+      const path = this.resolve(subpath);
+      return NwtImporter.asyncSource(path, injections);
+    }
+
+    async importByDefinition(definition) {
+      assertion(typeof definition === "object", "Parameter «definition» must be object on «NwtModuleManager.prototype.importByDefinition»");
+      const { id, dependencies, callback, context = {} } = definition;
+      assertion(typeof id === "string", "Parameter «id» must be string on «NwtModuleManager.prototype.importByDefinition»");
+      assertion(Array.isArray(dependencies), "Parameter «dependencies» must be array on «NwtModuleManager.prototype.importByDefinition»");
+      assertion(typeof callback === "function", "Parameter «callback» must be function on «NwtModuleManager.prototype.importByDefinition»");
+      assertion(typeof context === "object", "Parameter «context» must be object on «NwtModuleManager.prototype.importByDefinition»");
+      const importedDependencies = [];
+      for (let index = 0; index < dependencies.length; index++) {
+        const dependency = dependencies[index];
+        const isParameters = Array.isArray(dependency) ? true : typeof dependency === "string" ? false : null;
+        assertion(typeof isParameters === "boolean", `Parameter «dependency» on index «${index}» must be array or string on «NwtModuleManager.prototype.importByDefinition»`);
+        if(isParameters) {
+          assertion(typeof dependency[0] === "string", `Parameter «dependencies[${index}][0]» must be string on «NwtModuleManager.prototype.importByDefinition»`);
+          assertion(typeof dependency[1] === "object", `Parameter «dependencies[${index}][1]» must be object on «NwtModuleManager.prototype.importByDefinition»`);
+        }
+        const imported = await (isParameters ? this.import(...dependency) : this.import(dependency));
+        importedDependencies.push(imported);
+      }
+      return await callback(context, importedDependencies);
+    }
+
+  };
+
+  const globalModulesPath = NwtPaths.global.relative("assets/framework/nwt-module-manager/global");
+
+  NwtModuleManager.global = NwtModuleManager.create(globalModulesPath);
+
+  return NwtModuleManager;
+
+});
+
+// @vuebundler[Proyecto_base_001][25]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-timer.js
 /**
  * 
  * # Nwt Timer API
@@ -20833,7 +21036,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][25]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2.js
+// @vuebundler[Proyecto_base_001][26]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2.js
 /**
  * 
  * # Nwt Vue2 API
@@ -20973,7 +21176,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][26]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
+// @vuebundler[Proyecto_base_001][27]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
 /**
  * 
  * # Nwt Lazy Loader API
@@ -21085,7 +21288,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][27]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
+// @vuebundler[Proyecto_base_001][28]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
 /**
  * 
  * # Nwt Json Storer API
@@ -21252,7 +21455,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][28]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
+// @vuebundler[Proyecto_base_001][29]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
 /**
  * 
  * # Nwt Settings API
@@ -21382,7 +21585,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][29]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
+// @vuebundler[Proyecto_base_001][30]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21421,7 +21624,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][30]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
+// @vuebundler[Proyecto_base_001][31]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21469,7 +21672,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][31]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
+// @vuebundler[Proyecto_base_001][32]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21517,7 +21720,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][32]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
+// @vuebundler[Proyecto_base_001][33]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -22459,7 +22662,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][33]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
+// @vuebundler[Proyecto_base_001][34]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
 /**
  * 
  * # NwtTemplates
@@ -22489,7 +22692,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     constructor(basedir = false) {
       trace("NwtTemplates.constructor");
-      this.basedir = basedir || NwtPaths.relative("assets/framework/nwt-templates/templates");
+      this.basedir = basedir || NwtPaths.global.relative("assets/framework/nwt-templates/templates");
     }
 
     resolve(...subpaths) {
@@ -22694,7 +22897,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][34]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
+// @vuebundler[Proyecto_base_001][35]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
 /**
  * 
  * # Nwt Utils API
@@ -22744,6 +22947,10 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
   const NwtUtils = class {
 
     static noop() { }
+    
+    static noopSelf(s) {
+      return s;
+    }
 
     static trify(callback, onFail) {
       trace("NwtUtils.trify");
@@ -22777,7 +22984,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     static getSignatureOfArray(array) {
       trace("NwtPersister.low.getSignatureOfArray");
       const signature = [];
-      for(let index=0; index<array.length; index++) {
+      for (let index = 0; index < array.length; index++) {
         const item = array[index];
         signature.push(typeof item);
       }
@@ -22843,7 +23050,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
           const lineNumber = i + 1;
           let text = lines[i];
           if (lineNumber === line) {
-            result.push(`!${column}:${lineNumber.toString().padStart(8 - (column+"").length)} | ${text}`);
+            result.push(`!${column}:${lineNumber.toString().padStart(8 - (column + "").length)} | ${text}`);
           } else {
             result.push(`${lineNumber.toString().padStart(10)} | ${text}`);
           }
@@ -22854,13 +23061,104 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       }
     }
 
+    static defaultCurryOnNoFunction() {
+      trace("NwtUtils.defaultCurryOnNoFunction");
+    }
+
+    static currySync(...callbacks) {
+      trace("NwtUtils.currySync");
+      return this.currySyncDetailedly(callbacks, (output, row) => {
+        output.push(row);
+      });
+    }
+
+    static currySyncDetailedly(callbacks, onNoFunction = this.defaultCurryOnNoFunction) {
+      trace("NwtUtils.currySyncDetailedly");
+      return (...args) => {
+        const output = [];
+        for (let index = 0; index < callbacks.length; index++) {
+          const subcallback = callbacks[index];
+          if (typeof subcallback === "function") {
+            const result = subcallback(...args);
+            output.push(result);
+          } else {
+            onNoFunction(output, subcallback);
+          }
+        }
+        return output;
+      };
+    }
+
+    static curryAsync(...callbacks) {
+      trace("NwtUtils.curryAsync");
+      return this.curryAsyncDetailedly(callbacks, async (output, row) => {
+        const it = await row;
+        output.push(it || row);
+      });
+    }
+
+    static curryAsyncDetailedly(callbacks, onNoFunction = this.defaultCurryOnNoFunction) {
+      trace("NwtUtils.curryAsyncDetailedly");
+      return async (...args) => {
+        const output = [];
+        for (let index = 0; index < callbacks.length; index++) {
+          const subcallback = callbacks[index];
+          if (typeof subcallback === "function") {
+            const result = await subcallback(...args);
+            output.push(result);
+          } else {
+            onNoFunction(subcallback, output);
+          }
+        }
+        return output;
+      };
+    }
+
+    static initializePropertiesOf(target, schema) {
+      assertion(typeof target === "object", "Parameter «target» must be object on «NwtUtils.initializePropertiesOf»");
+      assertion(typeof schema === "object", "Parameter «schema» must be object on «NwtUtils.initializePropertiesOf»");
+      Iterating_schema:
+      for (const key in schema) {
+        const rule = schema[key];
+        const allowedTypes = Array.isArray(rule[0]) ? rule[0] : [rule[0]];
+        const defaultValue = rule[1];
+        if (!(key in target)) {
+          if(rule.length === 1) {
+            throw new TypeError(`Invalid empty value for property «${key}». Required ${allowedTypes.map(t => (t?.name) || ((t === null) ? "Null" : t === undefined ? "Undefined" : typeof t)).join(" | ")}`);
+          }
+          target[key] = defaultValue;
+          continue Iterating_schema;
+        }
+        const value = target[key];
+        let valid = false;
+        for (const Type of allowedTypes) {
+          if ((Type === null) && (value === null)) valid = true;
+          else if (Type === undefined && typeof value === "undefined") valid = true;
+          else if (Type === String && typeof value === "string") valid = true;
+          else if (Type === Number && typeof value === "number") valid = true;
+          else if (Type === Boolean && typeof value === "boolean") valid = true;
+          else if (Type === Function && typeof value === "function") valid = true;
+          else if (Type === Object && typeof value === "object" && (value !== null)) valid = true;
+          else if (Type === Array && Array.isArray(value)) valid = true;
+          else if (typeof Type === "function" && value instanceof Type) valid = true;
+          if (valid) break;
+        }
+        if (!valid) {
+          throw new TypeError(
+            `Invalid type for property «${key}». Expected ${allowedTypes.map(t => (t?.name) || ((t === null) ? "Null" : t === undefined ? "Undefined" : typeof t)).join(" | ")}, got ${value.constructor?.name ||( (value === null) ? "Null" : (value === undefined) ? "Undefined" : typeof value)}`
+          );
+        }
+      }
+      return target;
+    }
+
   };
 
   return NwtUtils;
 
 });
 
-// @vuebundler[Proyecto_base_001][35]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
+// @vuebundler[Proyecto_base_001][36]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22976,7 +23274,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][36]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
+// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -23035,7 +23333,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
+// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -23086,7 +23384,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
+// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
 /**
  * 
  * # Nwt Code Composer
@@ -23276,7 +23574,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
+// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
 /**
  * 
  * # Nwt Randomizer API
@@ -23369,7 +23667,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
+// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
 /**
  * 
  * # Nwt Progress Bar API
@@ -23496,7 +23794,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
+// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
 /**
  * 
  * # Nwt Globalizer API
@@ -23556,7 +23854,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
+// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
 /**
  * 
  * # Nwt Tester API
@@ -23915,7 +24213,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
+// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
 /**
  * 
  * # Nwt Process API
@@ -24062,7 +24360,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
+// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
 /**
  * 
  * # NwtProcessManager
@@ -24133,7 +24431,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
+// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24191,7 +24489,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
+// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24355,7 +24653,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
+// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24416,7 +24714,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
+// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24459,7 +24757,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
+// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
 /**
  * 
  * # NwtCsv
@@ -24548,7 +24846,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
+// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
 /**
  * 
  * # NwtIterableFunction
@@ -24782,7 +25080,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
+// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
 /**
  * 
  * # NwtIterableClass
@@ -24958,7 +25256,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
+// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
 /**
  * 
  * # NwtIterableCommandClass
@@ -25059,7 +25357,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
+// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
 /**
  * 
  * # NwtFilesystem
@@ -25496,7 +25794,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
+// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
 /**
  * 
  * # NwtFileChooser
@@ -25602,7 +25900,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
+// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
 /**
  * 
  * # Nwt Shell API
@@ -25815,7 +26113,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
+// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
 /**
  * 
  * # NwtLiveInjector
@@ -25895,7 +26193,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
+// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
 /**
  * 
  * # Nwt Prompt Manager API
@@ -25994,7 +26292,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
+// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
 /**
  * 
  * # NwtChatgpt
@@ -26170,7 +26468,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
+// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
 /**
  * 
  * # NwtStringShortener
@@ -26312,7 +26610,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
+// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
 /**
  * 
  * # NwtJsonPersister
@@ -26644,7 +26942,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
+// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
 /**
  * 
  * # NwtJsonlPersister
@@ -26806,7 +27104,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
+// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
 /**
  * 
  * # NwtFilePersister
@@ -26967,7 +27265,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 
-// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
+// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
 /**
  * 
  * # NwtDirectoryPersister
@@ -27160,7 +27458,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
+// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
 /**
  * 
  * # NwtPersister
@@ -27216,7 +27514,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
+// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
 (function (factory) {
       const mod = factory();
       if (typeof window !== 'undefined') {
@@ -27232,7 +27530,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return "{\n  const /**<?=localMemoryName?>**/localMemory = {};\n  /**<?#onFunctionStart?>**/\n  /**<?#onInitializeCollection?>**/\n  /**<?#onInitializeDimensions?>**/\n  try {\n    /**<?#onNextIteration?>**/\n    /**<?=localMemoryName?>**/localMemory.conditionalCallback = async () => {\n      /**<?#onCondition?>**/\n    };\n    /**<?=localMemoryName?>**/localMemory.output = undefined;\n    /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n    /**<?=onIdentifier + \":\"?>**/\n    while (/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n      /**<?#onIterationStart?>**/\n      try {\n        /**<?#onIteration?>**/\n        /**<?#onIterationSuccess?>**/\n      } catch (error) {\n        /**<?#onIterationError?>**/\n      } finally {\n        /**<?#onIterationFinally?>**/\n      }\n      /**<?#onIterationEnd?>**/\n      /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n      if (!/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n        break /**<?=onIdentifier?>**/;\n      }\n      /**<?#onInterlapse?>**/\n      /**<?#onNextIteration?>**/\n      /**<?#onProgression?>**/\n    }\n    /**<?#onFunctionSuccess?>**/\n  } catch (error) {\n    /**<?#onFunctionError?>**/\n  } finally {\n    /**<?#onFunctionFinally?>**/\n  }\n  /**<?#onFunctionEnd?>**/\n  return /**<?=localMemoryName?>**/localMemory.output;\n}"
     });
 
-// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
+// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -27341,7 +27639,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
+// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -28793,7 +29091,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
+// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28821,7 +29119,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
+// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28908,7 +29206,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
+// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29004,7 +29302,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
+// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29042,7 +29340,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
+// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29079,7 +29377,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
+// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29106,7 +29404,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
+// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29133,7 +29431,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
+// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29160,7 +29458,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
+// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
 /**
  * 
  * # NwtDom
@@ -29351,7 +29649,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
+// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
 /**
  * 
  * # NwtExporter
@@ -29446,7 +29744,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
+// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
 /**
  * 
  * # NwtClipboard
@@ -29499,7 +29797,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
+// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29583,7 +29881,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
+// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
 /**
  * 
  * # NwtCacheDirectory
@@ -29699,7 +29997,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js
+// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js
 /**
  * 
  * # NwtProxyChain
@@ -29780,7 +30078,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
+// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
 /**
  * 
  * # Nwt Framework API
@@ -29878,7 +30176,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 })();
 
-// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
+// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
 /**
  * 
  * # Nwt Injection API
@@ -29912,7 +30210,7 @@ if (typeof window !== "undefined") {
     });
 }
 
-// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
+// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
 /**
  * 
  * # Nwt V-Resizable Directive - Vue directive
@@ -30019,7 +30317,7 @@ Vue.directive("resizable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
+// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
 /**
  * 
  * 
@@ -30089,7 +30387,7 @@ Vue.directive("draggable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
+// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
 /**
  * 
  * # Nwt V-Focus Directive - Vue directive
@@ -30114,7 +30412,7 @@ Vue.directive("focus", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
+// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
 Vue.directive("forms", {
   bind(el, binding, vnode) {
     const value = binding.value || {};
@@ -30132,9 +30430,9 @@ Vue.directive("forms", {
 });
 
 
-// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
 
-// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
 /**
  * 
  * # Common Dialogs
@@ -30363,11 +30661,11 @@ Vue.component("CommonDialogs", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
 
-// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
 
-// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
 /**
  * 
  * # Nwt Toasts API
@@ -30465,7 +30763,7 @@ Vue.component("CommonToasts", {
     },
     showError(error) {
       trace("CommonToasts.methods.showError");
-      return NwtErrors.showError(error);
+      return CommonErrors.showError(error);
     },
     closeToast(toast) {
       trace("CommonToasts.methods.closeToast");
@@ -30481,63 +30779,7 @@ Vue.component("CommonToasts", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
-
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.html
-
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.js
-/**
- * 
- * # Common Errors
- * 
- * Esta API no se está usando.
- * 
- * La razón es que los errores NO SE PUEDEN mostrar a través de un componente Vue, porque causa recursividad y la aplicación se bloquea.
- * 
- * La API de `NwtErrorsManager` es la encargada de gestionar los errores.
- * 
- * No se elimina todavía por si se está usando, pero debería poder eliminarse sin más problemas.
- * 
- */
-Vue.component("CommonErrors", {
-  name: "CommonErrors",
-  template: `<div class="common_errors"></div>`,
-  props: {},
-  data() {
-    trace("CommonErrors.data");
-    return {
-      manager: false,
-    };
-  },
-  methods: {
-    showError(...args) {
-      trace("CommonErrors.methods.showError");
-      return this.manager.showError(...args);
-    },
-    reload(...args) {
-      trace("CommonErrors.methods.reload");
-      return this.manager.reload(...args);
-    },
-    clearErrors(...args) {
-      trace("CommonErrors.methods.clearErrors");
-      return this.manager.clearErrors(...args);
-    },
-    clearError(...args) {
-      trace("CommonErrors.methods.clearError");
-      return this.manager.clearError(...args);
-    }
-  },
-  created() {},
-  async mounted() {
-    trace("CommonErrors.mounted");
-    NwtGlobalizer.exportTo("CommonErrors", this);
-    NwtGlobalizer.exportTo("NwtErrors", this);
-    Vue.prototype.$errors = this;
-    this.manager = await NwtErrorsManager.create(this).initialize();
-  },
-});
-
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-errors/common-errors.css
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
 
 // @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
 
@@ -34466,9 +34708,773 @@ Vue.component("NwtFormControlForGroupStructure", {
 
 // @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.css
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/nwt-formulator-lazy-control.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorLazyControl'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorLazyControl'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormulatorLazyControl = class {
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+    constructor(options) {
+      trace("NwtFormulatorLazyControl.constructor");
+      assertion(typeof options === "object", "Parameter «options» must be object on «NwtFormulatorLazyControl.constructor»");
+      assertion(typeof options.html === "string", "Parameter «options.html» must be string on «NwtFormulatorLazyControl.constructor»");
+      assertion(typeof options.css === "string", "Parameter «options.css» must be string on «NwtFormulatorLazyControl.constructor»");
+      assertion(typeof options.js === "string", "Parameter «options.js» must be string on «NwtFormulatorLazyControl.constructor»");
+      assertion(typeof options.component === "string", "Parameter «options.component» must be string on «NwtFormulatorLazyControl.constructor»");
+      this.options = options;
+    }
+
+    async getComponent() {
+      trace("NwtFormulatorLazyControl.prototype.getComponent");
+    }
+
+  };
+
+  return NwtFormulatorLazyControl;
+
+});
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/nwt-formulator-control-manager.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorControlManager'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorControlManager'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormulatorControlManager = class {
+
+    static create(...args) {
+      return new this(...args);
+    }
+
+    constructor(formulator, basedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/component/for")) {
+      this.formulator = formulator;
+      this.basedir = basedir;
+    }
+
+    for(componentId) {
+      assertion(typeof componentId === "string", "Parameter «componentId» must be string on «NwtFormulatorControlManager.prototype.for»");
+      const componentPath = `${this.basedir}/${componentId}/component`;
+      const componentHtmlPath = `${componentPath}.html`;
+      const componentCssPath = `${componentPath}.css`;
+      const componentJsPath = `${componentPath}.js`;
+      return new NwtFormulatorLazyControl({
+        component: componentPath,
+        html: componentHtmlPath,
+        css: componentCssPath,
+        js: componentJsPath,
+      });
+    }
+
+  };
+
+  return NwtFormulatorControlManager;
+
+});
+
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/for/basic/text/oneline/component.html
+
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/for/basic/text/oneline/component.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtControlForBasicTextOneline'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtControlForBasicTextOneline'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtControlForBasicTextOneline = class {
+
+    static createInstance(...args) {
+      return new this(...args);
+    }
+
+    constructor(component) {
+      assertion(typeof component === "object", "Parameter «component» must be object on «NwtControlForBasicTextOneline.constructor»");
+      assertion(component instanceof Vue, "Parameter «component» must be Vue instance on «NwtControlForBasicTextOneline.constructor»");
+      this.component = component;
+    }
+
+    static template = `<div class="control_for basic_text_oneline">
+    <div v-if="statement"
+        class="pad_horizontal_1 pad_bottom_1">
+        <button class="mini"
+            v-on:click="toggleSelf">
+            <template v-if="isShowing">
+                ➖
+            </template>
+            <template v-else>
+                ➕
+            </template>
+        </button>
+        <button class="mini"
+            v-if="typeof isValidated === 'boolean'">
+            <template v-if="isValidated === true">
+                ✅
+            </template>
+            <template v-else-if="isValidated === false">
+                ❌
+            </template>
+        </button>
+        <span>{{ statement }}</span>
+        <span v-if="description && isShowing">
+            <span>
+                <button class="mini"
+                    :class="{active:isShowingDescription}"
+                    v-on:click="toggleDescription">
+                    <template v-if="isShowingDescription">
+                        ❓➖
+                    </template>
+                    <template v-else>
+                        ❓➕
+                    </template>
+                </button>
+            </span>
+            <span v-if="isShowingDescription">
+                {{ description }}
+            </span>
+        </span>
+    </div>
+    <div v-if="isShowing">
+        <div class="flex_row pad_horizontal_1">
+            <div class="flex_1 pad_right_1"
+                v-if="buttonsLeft.length"
+                v-for="button, buttonIndex in buttonsLeft"
+                v-bind:key="'button_left_' + buttonIndex">
+                <button class="mini"
+                    v-on:click="function(e) {button.click(e, self);}">{{ button.text }}</button>
+            </div>
+            <div class="flex_100 pad_horizontal_1">
+                <input class="width_100"
+                    type="text"
+                    v-model="value"
+                    :placeholder="placeholder"
+                    v-on:keypress.enter="e => onEnter(value, e, self)" />
+            </div>
+            <div class="flex_1 pad_left_1"
+                v-if="buttonsRight.length"
+                v-for="button, buttonIndex in buttonsRight"
+                v-bind:key="'button_right_' + buttonIndex">
+                <button class="mini"
+                    v-on:click="function(e) {button.click(e, self);}">{{ button.text }}</button>
+            </div>
+        </div>
+        <nwt-control-validator :control="this" />
+    </div>
+</div>`;
+
+    static definition = {
+      id: "basic/text/oneline",
+      name: "NwtControlForBasicTextOneline",
+    };
+
+    static createSettings(_settings = {}) {
+      trace("NwtControlForBasicTextOneline.createSettings");
+      assertion(typeof _settings === "object", "Parameter «settings» must be object on «NwtControlForBasicTextOneline.createSettings»");
+      const settings = NwtUtils.initializePropertiesOf(_settings, {
+        initialValue: [String, ""],
+        statement: [String, ""],
+        placeholder: [String, ""],
+        description: [String, ""],
+        buttonsLeft: [Array, []],
+        buttonsRight: [Array, []],
+        isShowing: [Boolean, true],
+        isShowingDescription: [Boolean, false],
+        isValidated: [Boolean, undefined],
+        onEnter: [Function, NwtUtils.noop],
+        onChange: [Function, NwtUtils.noop],
+        onValidate: [Function, NwtUtils.noop],
+      });
+      for(let index=0; index<settings.buttonsLeft.length; index++) {
+        const item = settings.buttonsLeft[index];
+        assertion(typeof item === "object", `Parameter «settings.buttonsLeft[${index}]» must be object, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
+        assertion(typeof item.text === "string", `Parameter «settings.buttonsLeft[${index}].text» must be string, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
+        assertion(typeof item.click === "function", `Parameter «settings.buttonsLeft[${index}].click» must be function, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
+      }
+      for(let index=0; index<settings.buttonsRight.length; index++) {
+        const item = settings.buttonsRight[index];
+        assertion(typeof item === "object", `Parameter «settings.buttonsRight[${index}]» must be object, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
+        assertion(typeof item.text === "string", `Parameter «settings.buttonsRight[${index}].text» must be string, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
+        assertion(typeof item.click === "function", `Parameter «settings.buttonsRight[${index}].click» must be function, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
+      }
+      return settings;
+    }
+
+    createSettings() {
+      trace("NwtControlForBasicTextOneline.prototype.createSettings");
+      return this.constructor.createSettings(this.component.settings);
+    }
+
+    static get view() {
+      trace("NwtControlForBasicTextOneline.prototype.view");
+      const ControlClass = this;
+      return {
+        name: ControlClass.definition.name,
+        template: ControlClass.template,
+        props: {
+          settings: {
+            type: Object,
+            required: true,
+          }
+        },
+        data: function () {
+          trace("NwtControlForBasicTextOneline.data");
+          const ControlInstance = ControlClass.createInstance(this);
+          const settings = ControlInstance.createSettings();
+          return {
+            ...settings,
+            self: this,
+            value: settings.initialValue,
+            control: {
+              validators: [],
+              class: ControlClass,
+              instance: ControlInstance,
+            },
+          };
+        },
+        methods: {
+          validate() {
+            trace("NwtControlForBasicTextOneline.methods.validate");
+            try {
+              this.onValidate(this.value, this);
+              this.onValidationSuccess(this.value, this);
+            } catch (error) {
+              this.onValidationError(error, this.value, this);
+            }
+          },
+          onValidationSuccess() {
+            trace("NwtControlForBasicTextOneline.methods.onValidationSuccess");
+            for(let index=0; index<this.control.validators.length; index++) {
+              const validator = this.control.validators[index];
+              validator.clearErrors();
+            }
+          },
+          onValidationError(error) {
+            trace("NwtControlForBasicTextOneline.methods.onValidationError");
+            for(let index=0; index<this.control.validators.length; index++) {
+              const validator = this.control.validators[index];
+              validator.addErrors(error);
+            }
+          },
+          toggleDescription() {
+            trace("NwtControlForBasicTextOneline.methods.toggleDescription");
+            this.isShowingDescription = !this.isShowingDescription;
+          },
+          toggleSelf() {
+            trace("NwtControlForBasicTextOneline.methods.toggleSelf");
+            this.isShowing = !this.isShowing;
+          }
+        },
+        watch: {
+          value(newValue, oldValue) {
+            trace("NwtControlForBasicTextOneline.watch.value");
+            this.onChange(newValue, oldValue, this);
+          }
+        },
+      };
+    }
+
+  };
+
+  Vue.component(NwtControlForBasicTextOneline.definition.name, NwtControlForBasicTextOneline.view);
+
+  return NwtControlForBasicTextOneline;
+
+});
+
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/for/basic/text/oneline/component.css
+
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/validator/component.html
+
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/validator/component.js
+Vue.component("NwtControlValidator", {
+  name: "NwtControlValidator",
+  template: `<div class="control_validator" :class="{hidden:errors.length === 0}">
+    <div v-for="error, errorIndex in errors" v-bind:key="'list_of_errors_index_' + errorIndex">
+      ❌ {{ errorIndex + 1 }}: {{ error }}
+    </div>
+</div>`,
+  props: {
+    control: {
+      type: Vue,
+      required: true,
+    }
+  },
+  data: function () {
+    trace("NwtControlValidator.data");
+    return {
+      errors: [],
+    };
+  },
+  created() {
+    this.control.control.validators.push(this);
+  },
+  methods: {
+    addErrors(errors) {
+      this.errors = this.errors.concat(errors);
+    },
+    clearErrors(errors) {
+      this.errors = [];
+    }
+  },
+});
+
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/validator/component.css
+
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/dialog/nwt-formulator-lazy-dialog.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorLazyDialog'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorLazyDialog'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormulatorLazyDialog = class {
+
+    constructor(options) {
+      trace("NwtFormulatorLazyDialog.constructor");
+      assertion(typeof options === "object", "Parameter «options» must be object on «NwtFormulatorLazyDialog.constructor»");
+      assertion(typeof options.html === "string", "Parameter «options.html» must be string on «NwtFormulatorLazyDialog.constructor»");
+      assertion(typeof options.css === "string", "Parameter «options.css» must be string on «NwtFormulatorLazyDialog.constructor»");
+      assertion(typeof options.js === "string", "Parameter «options.js» must be string on «NwtFormulatorLazyDialog.constructor»");
+      this.options = options;
+    }
+
+    async open(parameters = {}) {
+      trace("NwtFormulatorLazyDialog.prototype.open");
+      assertion(typeof parameters === "object", "Parameter «parameters» must be object on «NwtFormulatorLazyDialog.prototype.open»");
+      // @TODO: abrir un diálogo con el componente indicado
+    }
+
+  };
+
+  return NwtFormulatorLazyDialog;
+
+});
+
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/dialog/nwt-formulator-dialog-manager.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorDialogManager'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorDialogManager'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormulatorDialogManager = class {
+
+    static create(...args) {
+      return new this(...args);
+    }
+
+    static defaultBasedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/dialog/for");
+
+    constructor(formulator, basedir = this.constructor.defaultBasedir) {
+      this.formulator = formulator;
+      this.basedir = basedir;
+    }
+
+    for(dialogId) {
+      assertion(typeof dialogId === "string", "Parameter «dialogId» must be string on «NwtFormulatorComponentManager.prototype.for»");
+      const dialogComponentPath = `${this.basedir}/${dialogId}/component`;
+      const dialogHtmlPath = `${dialogComponentPath}.html`;
+      const dialogCssPath = `${dialogComponentPath}.css`;
+      const dialogJsPath = `${dialogComponentPath}.js`;
+      return NwtFormulatorLazyDialog({
+        component: dialogPath,
+        html: dialogHtmlPath,
+        css: dialogCssPath,
+        js: dialogJsPath,
+      });
+    }
+
+  };
+
+  return NwtFormulatorDialogManager;
+
+});
+
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/database/nwt-formulator-database-manager.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorDatabaseManager'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorDatabaseManager'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormulatorDatabaseManager = class {
+
+    static create(...args) {
+      return new this(...args);
+    }
+
+  };
+
+  return NwtFormulatorDatabaseManager;
+
+});
+
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/feature/nwt-formulator-lazy-feature.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorLazyFeature'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorLazyFeature'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormulatorLazyFeature = class {
+
+    static create(...args) {
+      trace("NwtFormulatorLazyFeature.create");
+      return new this(...args);
+    }
+
+    constructor(id) {
+      trace("NwtFormulatorLazyFeature.constructor");
+      this.id = id;
+    }
+
+    async load() {
+      trace("NwtFormulatorLazyFeature.prototype.load");
+    }
+
+  };
+
+  return NwtFormulatorLazyFeature;
+
+});
+
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/feature/nwt-formulator-feature-manager.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorFeatureManager'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorFeatureManager'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormulatorFeatureManager = class {
+
+    static create(...args) {
+      return new this(...args);
+    }
+
+    constructor(formulator, basedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/feature/for")) {
+      this.formulator = formulator;
+      this.basedir = basedir;
+    }
+
+    for(featureId) {
+      assertion(typeof featureId === "string", "Parameter «featureId» must be string on «NwtFormulatorFeatureManager.prototype.for»");
+      const featurePath = `${this.basedir}/${featureId}.js`;
+      return NwtFormulatorLazyFeature.create(featurePath);
+    }
+
+  };
+
+  return NwtFormulatorFeatureManager;
+
+});
+
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/feature/nwt-formulator-feature-mixer.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorFeatureMixer'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorFeatureMixer'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtFormulatorFeatureMixer = class {
+
+    static isHook(k) {
+      return [
+        "created", "mounted", "updated",
+        "beforeDestroy", "destroyed"
+      ].includes(k)
+    }
+
+    static mix(interfaces) {
+      trace("NwtFormulatorFeatureMixer.mix");
+      const out = {
+        data: null,
+        methods: {},
+        computed: {},
+        watch: {}
+      };
+      const dataFns = []
+      const hooks = {}
+      for (const iface of interfaces) {
+        // data
+        if (iface.data) dataFns.push(iface.data)
+        // methods / computed / props → NO se suman
+        for (const k of ["methods", "computed", "props"]) {
+          if (!iface[k]) continue
+          for (const key in iface[k]) {
+            if (out[k][key])
+              throw new Error(`Collision on ${k}.${key}`)
+            out[k][key] = iface[k][key]
+          }
+        }
+        // watch → merge por clave
+        if (iface.watch) {
+          for (const key in iface.watch) {
+            const cur = out.watch[key]
+            out.watch[key] = cur
+              ? [].concat(cur, iface.watch[key])
+              : iface.watch[key]
+          }
+        }
+        // hooks → se encadenan
+        for (const key in iface) {
+          if (typeof iface[key] === "function" && this.isHook(key)) {
+            (hooks[key] ||= []).push(iface[key])
+          }
+        }
+      }
+      // data final
+      out.data = dataFns.length ? function () {
+        let res = {}
+        for (const fn of dataFns)
+          Object.assign(res, fn.call(this))
+        return res
+      } : () => ({});
+      // hooks finales
+      for (const key in hooks) {
+        out[key] = function () {
+          for (const fn of hooks[key])
+            fn.call(this)
+        }
+      }
+      return out
+    }
+
+  };
+
+  return NwtFormulatorFeatureMixer;
+
+});
+
+// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/utils/nwt-formulator-utils.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorUtils'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorUtils'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormulatorUtils = class {
+
+    static create(...args) {
+      return new this(...args);
+    }
+
+    constructor(formulator) {
+      this.formulator = formulator;
+    }
+
+    static notifyValidationSuccessByControlComponent() {
+      trace("NwtFormulatorUtils.notifyValidationSuccessByControlComponent");
+      // @TODO: hacer la validación: pensar estrategia buena.
+    }
+
+    static notifyValidationErrorByControlComponent() {
+      trace("NwtFormulatorUtils.notifyValidationErrorByControlComponent");
+      // @TODO: hacer la validación: pensar estrategia buena.
+    }
+
+  };
+
+  return NwtFormulatorUtils;
+
+});
+
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/nwt-formulator.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulator'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulator'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormulator = class {
+
+    static utils = NwtFormulatorUtils.create(this);
+
+    static database = NwtFormulatorDatabaseManager.create(this);
+
+    static dialog = NwtFormulatorDialogManager.create(this);
+
+    static control = NwtFormulatorControlManager.create(this);
+
+    static feature = NwtFormulatorFeatureManager.create(this);
+
+  };
+
+  return NwtFormulator;
+
+});
+
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/feature/for/value.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormulatorFeatureForValue'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormulatorFeatureForValue'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtFormulatorFeatureForValue = class {
+
+    static $inherits = [
+      NwtFormulator.feature.for("Feature «value» API"),
+      NwtFormulator.feature.for("Feature «value:onChange» API"),
+      NwtFormulator.feature.for("Feature «value:onValidate» API"),
+    ]
+
+    props = {
+      settings: {
+        type: Object,
+        required: true,
+      },
+    }
+
+    data() {
+      return {
+        value: this.settings.hasInitialValue,
+      };
+    }
+
+    methods = {
+      getSettingsSpec() {
+        trace("NwtFormulatorFeatureForValue.methods.getSettingsSpec");
+        return {
+          // validation feature
+          hasInitialValue: [String, ""],
+          onGetValue: [Function, NwtUtils.noopSelf],
+          onFormat: [Function, NwtUtils.noopSelf],
+          onChange: [Function, NwtUtils.noop],
+          // basic common text control features
+          hasPlaceholder: [String, ""],
+          hasDescription: [String, ""],
+          // Validation feature:
+          hasValidationErrors: [Array, []],
+          onValidate: [Function, NwtUtils.noop],
+          onValidationSuccess: [Function, NwtUtils.noop],
+          onValidationError: [Function, NwtUtils.noop],
+        };
+      },
+      async getValue() {
+        trace("NwtFormulatorFeatureForValue.methods.getValue");
+        const val0 = await this.settings.onGetValue(this.value);
+        const val1 = await this.settings.onFormat(val0);
+        return val1;
+      },
+      async validateValue() {
+        trace("NwtFormulatorFeatureForValue.methods.validateValue");
+        const value = await this.getValue();
+        try {
+          await this.settings.onValidate(value);
+          await this.settings.onValidationSuccess(value);
+        } catch (error) {
+          await this.settings.onValidationError(value);
+        }
+      }
+    }
+
+    watch = {
+      value(newValue, oldValue) {
+        trace("NwtFormulatorFeatureForValue.watch.value");
+        this.settings.onChange(newValue, oldValue, this);
+      }
+    }
+
+    created() {
+      trace("NwtFormulatorFeatureForValue.created");
+      this.settings = NwtUtils.initializePropertiesOf(settings, this.getSettingsSpec());
+    }
+
+  };
+
+  return NwtFormulatorFeatureForValue;
+
+});
+
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
 /**
  * 
  * # NwtStarsBackground
@@ -34556,11 +35562,11 @@ Vue.component("NwtStarsBackground", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
+// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
 /**
  * 
  * # NwtMatrixBackground
@@ -34632,9 +35638,9 @@ Vue.component("NwtMatrixBackground", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
+// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
+// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34665,7 +35671,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
+// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34707,7 +35713,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
+// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34773,9 +35779,9 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
+// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
+// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
 Vue.component("NwtAnonymousCommandForm", {
   name: "NwtAnonymousCommandForm",
   template: `<div class="nwt_anonymous_command_form">
@@ -34798,11 +35804,11 @@ Vue.component("NwtAnonymousCommandForm", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
+// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
+// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
+// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
 Vue.component("NwtAnonymousCommandView", {
   name: "NwtAnonymousCommandView",
   template: `<div class="nwt_anonymous_command_view">
@@ -34819,11 +35825,11 @@ Vue.component("NwtAnonymousCommandView", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
+// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
+// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
+// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
 Vue.component("NwtCommandsManagerViewer", {
   name: "NwtCommandsManagerViewer",
   template: `<div class="nwt_commands_manager_viewer">
@@ -35013,11 +36019,11 @@ Vue.component("NwtCommandsManagerViewer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
+// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
+// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
 
-// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js
+// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35055,13 +36061,14 @@ Vue.component("NwtCommandsManagerViewer", {
       assertion(typeof settings.progressBar === "object", `Required parameter «settings.progressBar» to be object on «NwtCommandSynchronizer.constructor»`);
       assertion(typeof settings.tester === "object", `Required parameter «settings.tester» to be object on «NwtCommandSynchronizer.constructor»`);
       assertion(typeof cycle === "object", `Required parameter «cycle» to be object on «NwtCommandSynchronizer.constructor»`);
-      this.settings = settings;
+      this.settings = Object.assign(settings, {
+        abortController: new AbortController(),
+      });
       Object.assign(this, cycle);
-      this.abortController = new AbortController();
     }
 
     async step(id, output, ...parameters) {
-      trace("NwtCommandSynchronizer.prototype.runStep");
+      trace("NwtCommandSynchronizer.prototype.step");
       const cycleFunction = this[id] || undefined;
       let result = undefined;
       if (!cycleFunction) {
@@ -35070,34 +36077,32 @@ Vue.component("NwtCommandsManagerViewer", {
         result = await cycleFunction.call(this, ...parameters, output);
       }
       if ((typeof result === "object") && (result instanceof NwtAbort)) {
-        this.abortController.abort(result.value);
+        this.settings.abortController.abort(result.value);
       } else {
         // @pordefecto si no es abort, no hacer nada
       }
-      return this.abortController.signal.aborted;
+      return this.settings.abortController.signal.aborted;
     }
 
     async flush(output = undefined) {
       trace("NwtCommandSynchronizer.prototype.flush");
       Exit_command_by_abort:
-      if (this.abortController.signal.aborted) {
+      if (this.settings.abortController.signal.aborted) {
         this.settings.dialog.cancel();
-        return this.abortController.signal.reason;
+        return this.settings.abortController.signal.reason;
       }
       Exit_command_by_process:
       if (this.settings.dialog.process.$closedAt) {
         return new Error(`Command interrupted by process cancelation on «NwtCommandSynchronizer.prototype.onIterationProgress»`);
       }
       Exit_command_by_finished:
-      if(typeof output !== "undefined") {
+      if (typeof output !== "undefined") {
         if (this.settings.autoclose) {
           return NwtTimer.timeout(this.settings.autoclose).then(() => {
             this.settings.dialog.cancel();
           });
         }
       }
-      
-      
     }
 
     async onStart(collection, output) {
@@ -35120,6 +36125,23 @@ Vue.component("NwtCommandsManagerViewer", {
       // @VACIO para el uso externo.
     }
 
+    async onSuccess(collection, output) {
+      trace("NwtCommandSynchronizer.prototype.onSuccess");
+      // @VACIO para el uso externo.
+    }
+
+    async onError(error, collection, output) {
+      trace("NwtCommandSynchronizer.prototype.onError");
+      console.error(`Error in command synchronizer: ${this.settings.command.getCommandName()}`);
+      console.error(error);
+      throw error;
+    }
+
+    async onFinally(collection, output) {
+      trace("NwtCommandSynchronizer.prototype.onFinally");
+      // @VACIO para el uso externo.
+    }
+
     async onIterationPreparation(collection, output) {
       trace("NwtCommandSynchronizer.prototype.onIterationPreparation");
       Set_total_in_progress_bar:
@@ -35135,9 +36157,9 @@ Vue.component("NwtCommandsManagerViewer", {
         return NwtAbort.create(new Error(`Command interrupted by process cancelation on «NwtCommandSynchronizer.prototype.onIterationProgress»`));
       }
       Exit_command_by_abort:
-      if (this.abortController.signal.aborted) {
+      if (this.settings.abortController.signal.aborted) {
         this.settings.dialog.cancel();
-        return NwtAbort.create(this.abortController.signal.reason);
+        return true;
       }
       this.settings.progressBar.advance(1);
     }
@@ -35168,33 +36190,40 @@ Vue.component("NwtCommandsManagerViewer", {
     async start() {
       trace("NwtCommandSynchronizer.prototype.start");
       let output = [];
-      if (await this.step("onStart", output, this.settings.collection)) return await this.flush();
-      if (await this.step("onIterationPreparation", output, this.settings.collection)) return await this.flush();
-      for (let index = 0; index < this.settings.collection.length; index++) {
-        const item = this.settings.collection[index];
-        if (await this.step("onIterationStart", output, item, index, this.settings.collection)) return await this.flush();
-        const cachedIteration = await this.step("onIterationIsStepCached", item, index);
-        if (cachedIteration) {
-          output.push(cachedIteration);
-        } else {
-          const iterationResult = await this.step("onIterate", output, item, index, this.settings.collection);
-          if (typeof iterationResult === "undefined") {
-            // @NOTHING
-          } else if (iterationResult instanceof NwtAbort) {
-            return iterationResult.value;
-          } else if ((typeof iterationResult === "object") && (iterationResult.done === true) && (this.settings.cacheable === true)) {
-            await this.settings.cacher.saveStep([item], iterationResult);
-            output.push(iterationResult);
+      try {
+        if (await this.step("onStart", output, this.settings.collection)) return await this.flush();
+        if (await this.step("onIterationPreparation", output, this.settings.collection)) return await this.flush();
+        for (let index = 0; index < this.settings.collection.length; index++) {
+          const item = this.settings.collection[index];
+          if (await this.step("onIterationStart", output, item, index, this.settings.collection)) return await this.flush();
+          const cachedIteration = await this.step("onIterationIsStepCached", item, index);
+          if (cachedIteration) {
+            output.push(cachedIteration);
           } else {
-            output.push(iterationResult);
+            const iterationResult = await this.step("onIterate", output, item, index, this.settings.collection);
+            if (typeof iterationResult === "undefined") {
+              // @NOTHING
+            } else if (iterationResult instanceof NwtAbort) {
+              return iterationResult.value;
+            } else if ((typeof iterationResult === "object") && (iterationResult.done === true) && (this.settings.cacheable === true)) {
+              await this.settings.cacher.saveStep([item], iterationResult);
+              output.push(iterationResult);
+            } else {
+              output.push(iterationResult);
+            }
           }
+          if (await this.step("onIterationEnd", output, item, index, this.settings.collection)) return await this.flush();
+          if (await this.step("onIterationProgress", output, item, index, this.settings.collection)) return await this.flush();
         }
-        if (await this.step("onIterationEnd", output, item, index, this.settings.collection)) return await this.flush();
-        if (await this.step("onIterationProgress", output, item, index, this.settings.collection)) return await this.flush();
+        if (await this.step("onNotify", output, this.settings.collection)) return await this.flush();
+        if (await this.step("onEnd", output, this.settings.collection)) return await this.flush();
+        if (await this.step("onSuccess", output, this.settings.collection)) return await this.flush();
+        return await this.flush(output);
+      } catch (error) {
+        if (await this.step("onError", output, error, this.settings.collection)) return await this.flush();
+      } finally {
+        if (await this.step("onFinally", output, this.settings.collection)) return await this.flush();
       }
-      if (await this.step("onNotify", output, this.settings.collection)) return await this.flush();
-      if (await this.step("onEnd", output, this.settings.collection)) return await this.flush();
-      return await this.flush(output);
     }
 
   };
@@ -35203,7 +36232,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
+// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35406,7 +36435,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
+// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35457,7 +36486,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
+// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
 /**
  * 
  * # App Root API
@@ -35505,9 +36534,9 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
+// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
 
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
+// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
 /**
  * 
  * 
@@ -35516,6 +36545,7 @@ Vue.component("NwtCommandsManagerViewer", {
  */
 Vue.component("MainWindow", {
   template: `<div class="main_window_container">
+
     <div class="main_window pad_1 pad_right_2">
         <div class="title">Programas disponibles</div>
         <div class="card">
@@ -35556,9 +36586,20 @@ Vue.component("MainWindow", {
         </div>
     </div>
     <common-injections />
-    <common-errors />
     <common-dialogs />
     <common-toasts />
+    <div class="position_absolute_fixed pad_bottom_1" style="top:auto;bottom:0px;">
+        <nwt-control-for-basic-text-oneline :settings="{
+            placeholder:'ok',
+            
+            statement: 'Enunciado princial',
+            description: 'Descripción secundaria',
+            onChange:v=>\$window.console.log(v),
+            onEnter:v=>\$window.console.log('ENTER:', v),
+            buttonsLeft: [{text:'🟩',click:function(e,c) {\$window.console.log(c.value);}}],
+            buttonsRight: [{text:'🟩',click:e=>\$window.console.log(e)},{text:'🟩',click:e=>\$window.console.log(e)},{text:'🟩',click:e=>\$window.console.log(e)},{text:'🟩',click:e=>\$window.console.log(e)}],
+        }" />
+    </div>
 </div>`,
   props: {},
   data() {
@@ -35819,9 +36860,9 @@ Vue.component("MainWindow", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
+// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
+// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
 /**
  * 
  * # App Payload API
@@ -35879,6 +36920,6 @@ Vue.component("MainWindow", {
 
 });
 
-// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][151]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][152]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

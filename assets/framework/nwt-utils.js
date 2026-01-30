@@ -47,6 +47,10 @@
   const NwtUtils = class {
 
     static noop() { }
+    
+    static noopSelf(s) {
+      return s;
+    }
 
     static trify(callback, onFail) {
       trace("NwtUtils.trify");
@@ -80,7 +84,7 @@
     static getSignatureOfArray(array) {
       trace("NwtPersister.low.getSignatureOfArray");
       const signature = [];
-      for(let index=0; index<array.length; index++) {
+      for (let index = 0; index < array.length; index++) {
         const item = array[index];
         signature.push(typeof item);
       }
@@ -146,7 +150,7 @@
           const lineNumber = i + 1;
           let text = lines[i];
           if (lineNumber === line) {
-            result.push(`!${column}:${lineNumber.toString().padStart(8 - (column+"").length)} | ${text}`);
+            result.push(`!${column}:${lineNumber.toString().padStart(8 - (column + "").length)} | ${text}`);
           } else {
             result.push(`${lineNumber.toString().padStart(10)} | ${text}`);
           }
@@ -155,6 +159,97 @@
       } catch (err) {
         return [`Error leyendo archivo: ${err.message}`];
       }
+    }
+
+    static defaultCurryOnNoFunction() {
+      trace("NwtUtils.defaultCurryOnNoFunction");
+    }
+
+    static currySync(...callbacks) {
+      trace("NwtUtils.currySync");
+      return this.currySyncDetailedly(callbacks, (output, row) => {
+        output.push(row);
+      });
+    }
+
+    static currySyncDetailedly(callbacks, onNoFunction = this.defaultCurryOnNoFunction) {
+      trace("NwtUtils.currySyncDetailedly");
+      return (...args) => {
+        const output = [];
+        for (let index = 0; index < callbacks.length; index++) {
+          const subcallback = callbacks[index];
+          if (typeof subcallback === "function") {
+            const result = subcallback(...args);
+            output.push(result);
+          } else {
+            onNoFunction(output, subcallback);
+          }
+        }
+        return output;
+      };
+    }
+
+    static curryAsync(...callbacks) {
+      trace("NwtUtils.curryAsync");
+      return this.curryAsyncDetailedly(callbacks, async (output, row) => {
+        const it = await row;
+        output.push(it || row);
+      });
+    }
+
+    static curryAsyncDetailedly(callbacks, onNoFunction = this.defaultCurryOnNoFunction) {
+      trace("NwtUtils.curryAsyncDetailedly");
+      return async (...args) => {
+        const output = [];
+        for (let index = 0; index < callbacks.length; index++) {
+          const subcallback = callbacks[index];
+          if (typeof subcallback === "function") {
+            const result = await subcallback(...args);
+            output.push(result);
+          } else {
+            onNoFunction(subcallback, output);
+          }
+        }
+        return output;
+      };
+    }
+
+    static initializePropertiesOf(target, schema) {
+      assertion(typeof target === "object", "Parameter «target» must be object on «NwtUtils.initializePropertiesOf»");
+      assertion(typeof schema === "object", "Parameter «schema» must be object on «NwtUtils.initializePropertiesOf»");
+      Iterating_schema:
+      for (const key in schema) {
+        const rule = schema[key];
+        const allowedTypes = Array.isArray(rule[0]) ? rule[0] : [rule[0]];
+        const defaultValue = rule[1];
+        if (!(key in target)) {
+          if(rule.length === 1) {
+            throw new TypeError(`Invalid empty value for property «${key}». Required ${allowedTypes.map(t => (t?.name) || ((t === null) ? "Null" : t === undefined ? "Undefined" : typeof t)).join(" | ")}`);
+          }
+          target[key] = defaultValue;
+          continue Iterating_schema;
+        }
+        const value = target[key];
+        let valid = false;
+        for (const Type of allowedTypes) {
+          if ((Type === null) && (value === null)) valid = true;
+          else if (Type === undefined && typeof value === "undefined") valid = true;
+          else if (Type === String && typeof value === "string") valid = true;
+          else if (Type === Number && typeof value === "number") valid = true;
+          else if (Type === Boolean && typeof value === "boolean") valid = true;
+          else if (Type === Function && typeof value === "function") valid = true;
+          else if (Type === Object && typeof value === "object" && (value !== null)) valid = true;
+          else if (Type === Array && Array.isArray(value)) valid = true;
+          else if (typeof Type === "function" && value instanceof Type) valid = true;
+          if (valid) break;
+        }
+        if (!valid) {
+          throw new TypeError(
+            `Invalid type for property «${key}». Expected ${allowedTypes.map(t => (t?.name) || ((t === null) ? "Null" : t === undefined ? "Undefined" : typeof t)).join(" | ")}, got ${value.constructor?.name ||( (value === null) ? "Null" : (value === undefined) ? "Undefined" : typeof value)}`
+          );
+        }
+      }
+      return target;
     }
 
   };

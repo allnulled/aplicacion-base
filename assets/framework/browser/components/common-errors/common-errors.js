@@ -42,9 +42,5 @@ Vue.component("CommonErrors", {
   created() {},
   async mounted() {
     trace("CommonErrors.mounted");
-    NwtGlobalizer.exportTo("CommonErrors", this);
-    NwtGlobalizer.exportTo("NwtErrors", this);
-    Vue.prototype.$errors = this;
-    this.manager = await NwtErrorsManager.create(this).initialize();
   },
 });

@@ -313,3 +313,7 @@ button.bg_danger.active {}
 .border_bottom_style_1 {
     border-bottom: 1px solid #CCC;
 }
+
+.hidden {
+    display: none !important;
+}

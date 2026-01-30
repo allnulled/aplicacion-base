@@ -67,7 +67,7 @@ Vue.component("CommonToasts", {
     },
     showError(error) {
       trace("CommonToasts.methods.showError");
-      return NwtErrors.showError(error);
+      return CommonErrors.showError(error);
     },
     closeToast(toast) {
       trace("CommonToasts.methods.closeToast");

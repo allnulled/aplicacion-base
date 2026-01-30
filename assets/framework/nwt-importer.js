@@ -87,13 +87,6 @@
       }
     }
 
-    static async asyncSource(subpath, parameters = {}, scope = window) {
-      trace("NwtImporter.asyncSource");
-      const fullpath = require("path").resolve(subpath);
-      const content = await require("fs").promises.readFile(fullpath, "utf8");
-      return this.asyncFunction(content, parameters, scope);
-    }
-
     static async vueComponentByFilesystem(subpath) {
       trace("NwtImporter.vueComponentByFilesystem");
       if (NwtEnvironment.hasGlobal) {
@@ -132,12 +125,25 @@
       return style;
     }
 
+    static async asyncSource(subpath, parameters = {}, scope = window) {
+      trace("NwtImporter.asyncSource");
+      const fullpath = require("path").resolve(subpath);
+      const content = await require("fs").promises.readFile(fullpath, "utf8");
+      return this.asyncFunction(content, parameters, scope);
+    }
+
     static asyncFunction(code, parameters = {}, scope = window) {
       trace("NwtImporter.asyncFunction");
       const AsyncFunction = (async () => { }).constructor;
       const keys = Object.keys(parameters);
       const values = Object.values(parameters);
       const asyncFunction = new AsyncFunction(...keys, code);
+      const keysTyped = keys.reduce((out, key) => {
+        out[key] = typeof parameters[key];
+        return out;
+      }, {});
+      trace("js-injection://", code);
+      trace("js-injected://", JSON.stringify(keysTyped, null, 2));
       return asyncFunction.call(scope, ...values);
     }
 

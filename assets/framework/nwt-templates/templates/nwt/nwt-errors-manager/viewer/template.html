@@ -121,7 +121,7 @@
                                             <div class="copìable"><b>Tipo: </b> objeto</div>
                                             <div class="copìable"><b>Fichero: </b><%= errorCall.file %>:<%= errorCall.line %>:<%= errorCall.column %></div>
                                             <div class="copìable"><b>Función: </b><%= errorCall.function %></div>
-                                            <pre class="copiable js error_code_box"><%= errorCall.fragment?.join("\n") || errorCall.fragment %></pre>
+                                            <pre class="copiable js error_code_box"><%= Array.isArray(errorCall.fragment) ? errorCall.fragment.join("\n") : errorCall.fragment %></pre>
                                         </div>
                                     <% } %>
                                 <% } %>

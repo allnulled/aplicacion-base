@@ -1,23 +1,88 @@
-31-12-2025
+AHORA:
 
-- [x] Estamos con v-forms.{form,control,handler}
-- [x] Necesitamos:
-   - [x] NwtFormControlForList
-      - [x] que acepte :controls=[]
-   - [x] NwtFormControlForStructure
-      - [x] que acepte :controls=[]
+- [ ] Que command.js inyecte solamente 1 parámetro:
+   - [ ] context
+- [ ] Que la API de Command Synchronizer funcione pasándole este `{context}`
+- [ ] Que el método `NwtCommandSynchronizer.run(context, events)` funcione
+   - [ ] con el caché
+      - [ ] y su string-shortener
+   - [ ] con la interrupcibilidad
+   - [ ] con la sincronización con el diálogo
+   - [ ] con el tester
+   - [ ] con la progressBar del tester
+   - [ ] con los events
+      - [ ] y su onIteration opcional a
+      - [ ] la collection
+   - [ ] con el context solamente inyectado en command.js
+      - [ ] y todas las variables dentro
+   - [ ] con los parámetros que
+      - [ ] en form se preparan pero
+      - [ ] en view se pasarían vacíos
+      - [ ] incluido files que sería interesante para
+         - [ ] pipeo de comandos
 
-----
 
-15-01-2026
+- [ ] Que Formulator API
+   - [ ] se pueda empalmar con controles/formularios desde:
+      - [ ] `command/questions.js`
+      - [ ] `NwtCommand.create("wherever/anever").start.form({what:"ever"});`
+   - [ ] se pueda empalmar con controles/formularios desde:
+      - [ ] `database/schema.json`
+      - [ ] `Fooldb.schema.tables[table]` que es implícitamente
+         - [ ] `=== {type:"group/structure"}`
+      - [ ] `Fooldb.schema.tables[table].controls[column]` que es validatoriamente
+         - [ ] `=== {"Property name":{type:"whatever"}}`
+   - [ ] se pueda empalmar con controles/formularios desde:
+      - [ ] `component/for/«subpath/for/submodule»/component/component.{html,css,js}`
+
+
+26-01-2026
+
+- [ ] Comandos API:
+   - [ ] Command Synchronizer API
+      - [x] Que haga la caché automática
+      - [x] Que haga la iteración sobre collection opcionalmente
+      - [x] Que haga la avanzar progressBar automáticamente
+      - [x] Que permita interrupciones
+         - [x] Vía diálogo.process.$closedAt
+         - [x] Vía abortController
+      - [ ] Que unifique todos los parámetros del script en 1 variable
+         - [ ] No inyecciones rándom en el namespace
+         - [ ] Usaríamos NwtCommandContext o algo.
+      - [ ] ...
+   - [ ] Command Form API
+      - [ ] Compliant con la Forms API
+      - [ ] Compliant con la V-Forms API
+      - [ ] Compliant con la Database Schema API
+         - [ ] Esto va a ser difícil
+   - [ ] Y finalmente:
+      - [ ] COMANDOS DEL SCRIPT
+         - [ ] Concatenar txt
+         - [ ] Concatenar csv
+         - [ ] Pedir salida a ChatGPT
+         - [ ] Por yomitoku
+         - [ ] Por imagemagick
+         - [ ] ...
+         - [ ] ...y todos
+
+
+Y estamos y seguimos desde aquí.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 - [x] Paneles top-bottom fijos en dialogs, los cuales se tienen que aplicar a:
-   - [x] Ficheros ChatGPT
-   - [x] Configuraciones
-   - [x] Prompts
-   - [x] Procesos
-   - [x] Procedimientos
-   - [ ] Explorador de ficheros
+   - [ ] Explorador de ficheros y controles relacionados
       - [ ] Explorador normal
       - [ ] File picker
       - [ ] Directory picker
@@ -34,7 +99,6 @@
       - [ ] Usando el top-bottom fijo anterior
 
 - Y seguimos con el roadmap:
-
 
 - [ ] Caché directory
    - [ ] Integrar en la commands api

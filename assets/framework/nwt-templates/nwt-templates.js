@@ -27,7 +27,7 @@
 
     constructor(basedir = false) {
       trace("NwtTemplates.constructor");
-      this.basedir = basedir || NwtPaths.relative("assets/framework/nwt-templates/templates");
+      this.basedir = basedir || NwtPaths.global.relative("assets/framework/nwt-templates/templates");
     }
 
     resolve(...subpaths) {

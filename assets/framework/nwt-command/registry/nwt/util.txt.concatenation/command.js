@@ -1,5 +1,20 @@
 // La idea sería una api así:
 
+Como_deberia_ser: {
+  break Como_deberia_ser;
+  return await NwtCommandSynchronizer.run(context, {
+    async onStart(collection) {
+
+    },
+    async onIterate(item, index, collection) {
+      // Y aquí inyectar el comando aplicable para cada file.
+    },
+    async onEnd(collection) {
+
+    },
+  });
+}
+
 return await NwtCommandSynchronizer.create({
   autoclose: 2000, // se cierra por defecto al final
   cacheable: true, // se cachea por defecto en cada vuelta de collection
@@ -32,7 +47,7 @@ return await NwtCommandSynchronizer.create({
       done: true, // este es el flag mágico para que el comando se cachee y se quede en el onIterationStart, y no entre en el `onIterate`
     };
     // También puedes interrumpir con un NwtAbort:
-    return new NwtAbort("Comando cacheado a mano"); // Y ya está: NwtAbort + Error es error, NwtAbort es return
+    return new NwtAbort("Comando abortado");
   },
   onEnd: async function (collection) {
     // @TODO: si quieres despedirte de la iteración, aquí:
