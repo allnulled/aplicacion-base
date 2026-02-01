@@ -20303,7 +20303,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       }
     }
 
-    static async vueComponentByFilesystem(subpath) {
+    static async vueComponentByFilesystem(subpath, injection = {}, scope = window) {
       trace("NwtImporter.vueComponentByFilesystem");
       if (NwtEnvironment.hasGlobal) {
         const fs = require("fs");
@@ -20316,8 +20316,8 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         const jsTemplate = await fs.promises.readFile(jsPath, "utf8");
         const htmlStringified = `\`${htmlContent.replace(/`/g, "\\`")}\``;
         const jsContent = jsTemplate.replace("$template", htmlStringified);
-        const result = await this.asyncFunction(jsContent);
-        this.styleTag(cssContent);
+        const result = await this.asyncFunction(jsContent, injection, scope);
+        this.styleTag(cssContent, cssPath);
         return result;
       }
     }
@@ -20696,6 +20696,16 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         output.push(val);
       }
       return output;
+    }
+
+    static pushEachInto(added, destination) {
+      trace("NwtArrayUtils.pushInto");
+      assertion(Array.isArray(destination), "Parameter «destination» must be array");
+      assertion(Array.isArray(added), "Parameter «added» must be array");
+      for(let index=0; index<added.length; index++) {
+        const item = added[index];
+        destination.push(item);
+      }
     }
 
   };
@@ -33035,2322 +33045,422 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 // @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-utils.js
-/**
- * 
- * # NwtFormUtils
- * 
- * API de utilidades varias de un formulario.
- * 
- * Esta API se utiliza por:
- * 
- *  - La directiva de v-forms, para no poner toda la lógica dentro de la directiva, y tenerla reutilizable desde fuera
- *  - El control prototipo base, para algunas validaciones que deberían hacerse para cumplir los estándares de los Form Controls.
- * 
- * ## Exposición
- * 
- * ```js
- * NwtFormUtils
- * NwtFramework.FormUtils
- * Vue.prototype.$nwt.FormUtils
- * ```
- * 
- * ## Ventajas
- * 
- * ```js
- * // Usados por la API de Form Controls:
- * NwtFormUtils.fromControlTypeToFullpath("text/oneline");          // returns "assets/framework/browser/components/nwt-form/control-for/{tipo/subtipo}/control"
- * NwtFormUtils.validateControlButtons(componenteControlVue2);      // lanzará error si el componente no cumple con la opción de buttons
- * NwtFormUtils.validateControlPlaceholder(componenteControlVue2);  // lanzará error si el componente no cumple con la opción de placeholder
- * NwtFormUtils.validateControlExtraClasses(componenteControlVue2); // lanzará error si el componente no cumple con la opción de extraClasses
- * NwtFormUtils.validateControlValue(componenteControlVue2);        // lanzará error si el componente no cumple con la opción de value
- * NwtFormUtils.validateIsControl(componenteControlVue2);           // lanzará error si el componente no cumple con la opción de isControl
- * // Usados por la API de v-forms:
- * NwtFormUtils.from.element.to.form(htmlElement);     // se aplica cuando v-forms.form y equivale a:    NwtFormElementToForm.create(...args).initialize()
- * NwtFormUtils.from.element.to.control(htmlElement);  // se aplica cuando v-forms.control y equivale a: NwtFormElementToControl.create(...args).initialize()
- * NwtFormUtils.from.element.to.handler(htmlElement);  // se aplica cuando v-forms.handler y equivale a: NwtFormElementToHandler.create(...args).initialize()
- * ```
- * 
- */
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-control/nwt-lazy-control.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
-    window['NwtFormUtils'] = mod;
+    window['NwtLazyControl'] = mod;
   }
   if (typeof global !== 'undefined') {
-    global['NwtFormUtils'] = mod;
+    global['NwtLazyControl'] = mod;
   }
   if (typeof module !== 'undefined') {
     module.exports = mod;
   }
 })(function () {
 
-  const NwtFormUtils = class {
-
-    static fromControlTypeToFullpath(controlType) {
-      trace("NwtVue2.fromControlTypeToFullpath");
-      return NwtPaths.global.relative("assets/framework/browser/components/nwt-form/control-for", controlType, "control");
-    }
-
-    static validateControlButtons(component) {
-      trace("NwtFormUtils.validateControlButtons");
-      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateControlButtons»");
-      assertion(Array.isArray(component.buttons), "Parameter «buttons» must be array on «NwtFormUtils.validateControlButtons»");
-      for(let index=0; index<component.buttons.length; index++) {
-        const button = component.buttons[index];
-        assertion(typeof button.text === "string", `Parameter «component.buttons[${index}].text» must be string on «NwtFormUtils.validateControlButtons»`);
-        assertion(typeof button.click === "function", `Parameter «component.buttons[${index}].click» must be function on «NwtFormUtils.validateControlButtons»`);
-      }
-    }
-    static validateControlPlaceholder(component) {
-      trace("NwtFormUtils.validateControlPlaceholder");
-      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateControlPlaceholder»");
-      assertion(typeof component.placeholder === "string", "Parameter «component.placeholder» must be string on «NwtFormUtils.validateControlPlaceholder»");
-    }
-    static validateControlExtraClasses(component) {
-      trace("NwtFormUtils.validateControlExtraClasses");
-      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateControlExtraClasses»");
-      assertion(typeof component.extraClasses === "string", "Parameter «component.extraClasses» must be string on «NwtFormUtils.validateControlExtraClasses");
-    }
-    static validateControlValue(component) {
-      trace("NwtFormUtils.validateControlValue");
-      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateControlValue»");
-      assertion(typeof component.value === "string", "Parameter «component.value» must be string on «NwtFormUtils.validateControlValue»");
-    }
-    static validateIsControl(component) {
-      trace("NwtFormUtils.validateIsControl");
-      assertion(component instanceof Vue, "Parameter «component» must be instance of Vue on «NwtFormUtils.validateIsControl»");
-      assertion(typeof component.isControl === "string", "Parameter «component.isControl» must be string on «NwtFormUtils.validateIsControl»");
-    }
-
-    static validate = {
-      control: {
-        isControl: (...args) => this.validateIsControl(...args),
-        buttons: (...args) => this.validateControlButtons(...args),
-        placeholder: (...args) => this.validateControlPlaceholder(...args),
-        extraClasses: (...args) => this.validateControlExtraClasses(...args),
-        value: (...args) => this.validateControlValue(...args),
-      }
-    };
-
-    static from = {
-      element: {
-        to: {
-          form: (...args) => NwtFormElementToForm.create(...args).initialize(),
-          control: (...args) => NwtFormElementToControl.create(...args).initialize(),
-          handler: (...args) => NwtFormElementToHandler.create(...args).initialize(),
-        }
-      }
-    };
-
-    static getComponentNameForControlType(controlSubpath, ifMissing = "nwt-form-control-for-text") {
-      trace("NwtFormUtils.getComponentNameForControlType");
-      if(typeof controlSubpath === "undefined") {
-        return NwtVue2.fromTagToIdNotation(ifMissing);
-      }
-      assertion(typeof controlSubpath === "string", "Parameter «controlSubpath» must be a string on «NwtFormBuilder.methods.getComponentNameForControl»");
-      return NwtVue2.fromTagToIdNotation(`nwt-form-control-for-${controlSubpath}`);
-    }
-
-  };
-
-  return NwtFormUtils;
-
-});
-
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js
-/**
- * 
- * # NwtFormElementToAny
- * 
- * API común de los elementos que usan la directiva `v-forms.{form,control,handler}`.
- * 
- * De esta clase heredan las clases:
- * 
- *  - NwtFormElementToForm
- *  - NwtFormElementToControl
- *  - NwtFormElementToHandler
- * 
- * Pero es una clase abstracta: no se debe instanciar desde ella misma, sino desde una de estas descendientes.
- * 
- * ## Exposición
- * 
- * ```js
- * NwtFormElementToAny
- * NwtFramework.FormElementToAny
- * Vue.prototype.$nwt.FormElementToAny
- * ```
- * 
- * ## Ventajas
- * 
- * ```js
- * NwtFormElementToAny.create(element:HTMLElement, value:Object, virtualNode);
- * // Propiedades y métodos que deben sobreescribirse:
- * NwtFormElementToAny.vformType === "any";
- * NwtFormElementToAny.prototype.initialize(); // NwtVue2.cross.expose.by.element(this.element, this, "vformsPrototype"); Pero vformsPrototype no debería aparecer nunca
- * NwtFormElementToAny.prototype.getValue(); // lanza un error porque es una clase abstracta
- * NwtFormElementToAny.prototype.validate(); // lanza un error porque es una clase abstracta
- * NwtFormElementToAny.prototype.propagateSuccess(); // lanza un error porque es una clase abstracta
- * NwtFormElementToAny.prototype.propagateErrors(error); // lanza un error porque es una clase abstracta
- * NwtFormElementToAny.prototype.submit(); // lanza un error porque es una clase abstracta
- * ```
- * 
- */
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormElementToAny'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormElementToAny'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormElementToAny = class {
-
-    static create(element, value, virtualNode) {
-      trace("NwtFormElementToAny.create");
-      return new this(element, value, virtualNode);
-    }
-
-    static vformType = "any";
-
-    constructor(element, value, virtualNode) {
-      trace("NwtFormElementToAny.constructor");
-      assertion(element instanceof HTMLElement, "Parameter «element» must be HTMLElement on «NwtFormElementToAny.constructor»");
-      assertion(typeof value === "object", "Parameter «value» must be object on «NwtFormElementToAny.constructor»");
-      assertion(typeof virtualNode === "object", "Parameter «virtualNode» must be object on «NwtFormElementToAny.constructor»");
-      this.element = element;
-      this.value = value;
-      this.virtualNode = virtualNode;
-      this.component = undefined;
-    }
-
-    initialize() {
-      trace("NwtFormElementToAny.prototype.initialize");
-      NwtVue2.cross.expose.by.element(this.element, this, "vformsPrototype");
-      return this;
-    }
-
-    getValue() {
-      trace("NwtFormElementToAny.prototype.getValue");
-      throw new Error(`Method «getValue» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny.prototype.getValue»`);
-    }
-
-    validate() {
-      trace("NwtFormElementToAny.prototype.validate");
-      throw new Error(`Method «validate» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny»`);
-    }
-
-    propagateSuccess() {
-      trace("NwtFormElementToAny.prototype.propagateSuccess");
-      throw new Error(`Method «propagateSuccess» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny»`);
-    }
-
-    propagateErrors(error) {
-      trace("NwtFormElementToAny.prototype.propagateErrors");
-      throw new Error(`Method «propagateErrors» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny»`);
-    }
-
-    submit() {
-      trace("NwtFormElementToAny.prototype.submit");
-      throw new Error(`Method «submit» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToAny»`);
-    }
-
-  };
-
-  return NwtFormElementToAny;
-
-});
-
-// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-form.js
-/**
- * 
- * # NwtFormElementToForm
- * 
- * API de los elementos que usan la directiva `v-forms.form`.
- * 
- * Hereda de `NwtFormElementToAny`.
- * 
- * ## Exposición
- * 
- * ```js
- * NwtFormElementToForm
- * NwtFramework.FormElementToForm
- * Vue.prototype.$nwt.FormElementToForm
- * ```
- * 
- * ## Ventajas
- * 
- * ```js
- * // Métodos sobreescritos de padre:
- * NwtFormElementToForm.prototype.initialize()
- * NwtFormElementToForm.prototype.getValue()
- * NwtFormElementToForm.prototype.validate(notify = false, mustThrow = true)
- * NwtFormElementToForm.prototype.submit()
- * ```
- * 
- */
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormElementToForm'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormElementToForm'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-
-  const NwtFormElementToForm = class extends NwtFormElementToAny {
-
-    constructor(...args) {
-      super(...args);
-      trace("NwtFormElementToForm.prototype.constructor");
-      const [element, value, virtualNode] = args;
-      assertion(typeof value.onSubmit === "function", "Parameter «onSubmit» must be function on «NwtFormElementToForm.constructor»");
-      // @OK. Es lo más básico para un form: que tenga `onSubmit:Function`.
-    }
-
-    initialize() {
-      trace("NwtFormElementToForm.prototype.initialize");
-      NwtVue2.cross.expose.by.element(this.element, this, "vformsForm");
-      return this;
-    }
-
-    getValue() {
-      trace("NwtFormElementToForm.prototype.getValue");
-      const controls = NwtDom.find.first.children.where(this.element, "[data-vforms-control]");
-      const formValue = {};
-      for (let index = 0; index < controls.length; index++) {
-        const control = controls[index];
-        formValue[control.vformsControl.getName()] = control.vformsControl.getValue();
-      }
-      return formValue;
-    }
-
-    async validate(notify = false) {
-      trace("NwtFormElementToForm.prototype.validate");
-      const controls = NwtDom.find.first.children.where(this.element, "[data-vforms-control]");
-      const formValue = {};
-      const validationErrors = [];
-      for (let index = 0; index < controls.length; index++) {
-        const control = controls[index];
-        try {
-          const value = await control.vformsControl.validate();
-          formValue[control.vformsControl.getName()] = value;
-        } catch (error) {
-          validationErrors.push(error);
-        }
-      }
-      if (validationErrors.length) {
-        if (notify) {
-          NwtToasts.showError(new Error(NwtErrorUtils.unifyMessages(validationErrors)));
-        }
-        return {
-          isValid: false,
-          errors: validationErrors,
-        };
-      } else {
-        if (notify) {
-          NwtToasts.show({
-            title: "Formulario validado",
-            text: "El formulario está cumplimentado válidamente",
-          });
-        }
-        return {
-          isValid: true,
-          output: formValue,
-        };
-      }
-    }
-
-    async submit(notify = false) {
-      trace("NwtFormElementToForm.prototype.submit");
-      const validation = await this.validate();
-      if (validation.isValid) {
-        await this.value.onSubmit(validation.output);
-        if (notify) {
-          NwtToasts.show({
-            title: "Formulario gestionado correctamente",
-            text: "El formulario fue gestionado correctamente",
-          });
-        }
-        if (typeof this.value.onSuccess === "function") {
-          await this.value.onSuccess(validation.output);
-        }
-      } else {
-        if (notify) {
-          NwtToasts.showError(new Error(NwtErrorUtils.unifyMessages(validation.errors)));
-        }
-        if (typeof this.value.onError === "function") {
-          await this.value.onError(validation.errors);
-        }
-      }
-    }
-
-  };
-
-  return NwtFormElementToForm;
-
-});
-
-// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-control.js
-/**
- * 
- * # NwtFormElementToControl
- * 
- * API de los elementos que usan la directiva `v-forms.control`.
- * 
- * Hereda de `NwtFormElementToAny`.
- * 
- * ## Exposición
- * 
- * ```js
- * NwtFormElementToControl
- * NwtFramework.FormElementToControl
- * Vue.prototype.$nwt.FormElementToControl
- * ```
- * 
- * ## Ventajas
- * 
- * ```js
- * // Métodos sobreescritos de padre:
- * NwtFormElementToControl.prototype.initialize()
- * NwtFormElementToControl.prototype.getValue()
- * NwtFormElementToControl.prototype.validate(notify = false, mustThrow = true)
- * NwtFormElementToControl.prototype.propagateSuccess()
- * NwtFormElementToControl.prototype.propagateErrors(errors)
- * // Métodos propios:
- * NwtFormElementToControl.prototype.getName()
- * ```
- * 
- */
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormElementToControl'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormElementToControl'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormElementToControl = class extends NwtFormElementToAny {
-
-    constructor(...args) {
-      super(...args);
-      trace("NwtFormElementToControl.prototype.constructor");
-      const [element, value, virtualNode] = args;
-      assertion(typeof value.name === "string", "Parameter «value.name» must be string on «NwtFormElementToControl.constructor»");
-    }
-
-    initialize() {
-      trace("NwtFormElementToControl.prototype.initialize");
-      assertion(typeof this.element.__vue__ === "object", "Parameter «element» must match a vue component element on «NwtFormElementToHandler.prototype.initialize»");
-      assertion(typeof this.element.__vue__.isControl === "string", "Parameter «element» must match a vue component element that is a «NwtFormControlFor~» instance on «NwtFormElementToHandler.prototype.initialize»");
-      this.component = this.element.__vue__;
-      NwtVue2.cross.expose.by.element(this.element, this, "vformsControl");
-      return this;
-    }
-
-    getName() {
-      trace("NwtFormElementToControl.prototype.getName");
-      return this.value.name;
-    }
-
-    getValue() {
-      trace("NwtFormElementToControl.prototype.getValue");
-      const componentId = this.element.__vue__.$options._componentTag;
-      const tagId = NwtVue2.fromIdToTagNotation(this.element.__vue__.$options._componentTag);
-      assertion("__vue__" in this.element, `Property «element» must match HTMLElement containing vue2 component on «NwtFormElementToControl.prototype.getValue»`);
-      assertion("getValue" in this.element.__vue__, `Property «element.__vue__» instance of «<${tagId}>» must implement «getValue» on «NwtFormElementToControl.prototype.getValue»`);
-      assertion(typeof this.element.__vue__.getValue === "function", `Property «element.__vue__» instance of «<${tagId}>» must implement function «getValue» on «NwtFormElementToControl.prototype.getValue»`);
-      return this.element.__vue__.getValue();
-    }
-
-    validate(notify = false, mustThrow = true) {
-      trace("NwtFormElementToControl.prototype.validate");
-      let value = this.getValue();
-      const validationErrors = [];
-      const scopedAssertion = NwtAsserter.createAssertionFunction(() => {}, error => {
-        console.error(error);
-        throw error
-      });
-      On_valite_by_component: {
-        // BINDING CON NWT-FORM-CONTROL-PROTOTYPE:
-        if(this.component.onValidate) {
-          try {
-            this.component.onValidate(value, scopedAssertion);
-          } catch (error) {
-            validationErrors.push(error);
-          }
-        }
-      }
-      On_validate_by_directive: {
-        if(this.value.onValidate) {
-          try {
-            this.value.onValidate(value, scopedAssertion);
-          } catch (error) {
-            validationErrors.push(error);
-          }
-        }
-      }
-      if(validationErrors.length) {
-        if(notify) {
-          validationErrors.forEach(error => NwtToasts.showError(error));
-        }
-        this.propagateErrors(validationErrors);
-        if(mustThrow) {
-          throw new Error(NwtErrorUtils.unifyMessages(validationErrors));
-        }
-      } else {
-        if(notify) {
-          const controlName = this.getName();
-          NwtToasts.show({
-            title: `Control «${controlName}» validado`,
-            text: `El control para «${controlName}» fue validado correctamente`,
-          });
-        }
-        this.propagateSuccess();
-      }
-      return value;
-    }
-
-    propagateSuccess() {
-      trace("NwtFormElementToControl.prototype.propagateSuccess");
-      Clean_control_errors: {
-        this.component.validationErrors = [];
-      }
-      Clean_handler_errors: {
-        const subhandler = this.element.querySelector("[data-vforms-handler]");
-        if(subhandler) {
-          subhandler.vformsHandler.setErrors([]);
-        }
-      }
-    }
-
-    propagateErrors(errors) {
-      trace("NwtFormElementToControl.prototype.propagateErrors");
-      Update_control_errors: {
-        this.component.validationErrors = errors;
-      }
-      Update_handler_errors: {
-        const subhandler = this.element.querySelector("[data-vforms-handler]");
-        if(subhandler) {
-          subhandler.vformsHandler.setErrors(errors);
-        }
-      }
-    }
-
-  };
-
-  return NwtFormElementToControl;
-
-});
-
-// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-handler.js
-/**
- * 
- * # NwtFormElementToHandler
- * 
- * API de los elementos que usan la directiva `v-forms.handler`.
- * 
- * Hereda de `NwtFormElementToAny`.
- * 
- * ## Exposición
- * 
- * ```js
- * NwtFormElementToHandler
- * NwtFramework.FormElementToHandler
- * Vue.prototype.$nwt.FormElementToHandler
- * ```
- * 
- * ## Ventajas
- * 
- * ```js
- * // Métodos sobreescritos de padre:
- * NwtFormElementToForm.prototype.initialize()
- * NwtFormElementToForm.prototype.setErrors(errors)
- * ```
- * 
- */
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormElementToHandler'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormElementToHandler'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormElementToHandler = class extends NwtFormElementToAny {
-
-    initialize() {
-      trace("NwtFormElementToHandler.prototype.initialize");
-      NwtVue2.cross.expose.by.element(this.element, this, "vformsHandler");
-      assertion(typeof this.value === "object", "Parameter «handler» must be object on «NwtFormElementToHandler.prototype.initialize»");
-      assertion(typeof this.value.component === "object", "Parameter «handler.component» must be object on «NwtFormElementToHandler.prototype.initialize»");
-      assertion(this.value.component instanceof Vue, "Parameter «handler.component» must be instance of Vue on «NwtFormElementToHandler.prototype.initialize»");
-      assertion(typeof this.value.component.isControl === "string", "Parameter «handler.component» must be a «NwtFormControlFor~» instance (error:1) on «NwtFormElementToHandler.prototype.initialize»");
-      assertion(typeof this.value.component.validationErrors === "object", "Parameter «handler.component» must be a «NwtFormControlFor~» instance (error:2) on «NwtFormElementToHandler.prototype.initialize»");
-      this.component = this.value.component;
-      return this;
-    }
-
-    setErrors(errors) {
-      trace("NwtFormElementToHandler.prototype.setErrors");
-      this.value.component.validationErrors = errors;
-    }
-
-    getValue() {
-      trace("NwtFormElementToHandler.prototype.getValue");
-      throw new Error(`Method «getValue» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler.prototype.getValue»`);
-    }
-
-    validate() {
-      trace("NwtFormElementToHandler.prototype.validate");
-      throw new Error(`Method «validate» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler»`);
-    }
-
-    propagateSuccess() {
-      trace("NwtFormElementToHandler.prototype.propagateSuccess");
-      throw new Error(`Method «propagateSuccess» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler»`);
-    }
-
-    propagateErrors(error) {
-      trace("NwtFormElementToHandler.prototype.propagateErrors");
-      throw new Error(`Method «propagateErrors» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler»`);
-    }
-
-    submit() {
-      trace("NwtFormElementToHandler.prototype.submit");
-      throw new Error(`Method «submit» must be implemented on type «${this.constructor.vformType}» on «NwtFormElementToHandler»`);
-    }
-
-  };
-
-  return NwtFormElementToHandler;
-
-});
-
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.html
-
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.js
-/**
- * 
- * # NwtFormBuilder
- * 
- * Componente vue2 que construye formularios.
- * 
- * ## Exposición
- * 
- * ```js
- * Vue.options.components.NwtFormBuilder
- * ```
- * 
- * ## Ventajas
- * 
- * ```html
- * <nwt-form-builder
- *   :from="{
- *     title: "Título del formulario",
- *     footer: "Pie del formulario",
- *     controls: [{
- *       type: "text/oneline", # El {tipo/subtipo} de control que están en assets/framework/browser/components/nwt-form/control-for/{tipo/subtipo}
- *       props: {},            # Propiedades que se le pasan como parámetros. Son parámetros específicos del control en sí.
- *       listeners: {},        # Eventos que se le pasan como parámetros. Son parámetros específicos del control en sí también.
- *     },{
- *       ...
- *     }]
- *     events: {
- *       onSubmit: (data) => {},
- *       onSuccess: (data) => {},
- *       onError: (data) => {},
- *     }
- *   }"
- * />
- * ```
- * 
- * Esta API se cruza con varias APIs:
- * 
- * - `assets/framework/browser/components/nwt-form/control-prototype.js`:
- *    - este es el componente base de todos los controles de formulario (heredan de él)
- * - `assets/framework/browser/directives/v-forms.js`:
- *    - utiliza las directivas de v-forms para componer un formulario paralelo que respeta la jerarquía del DOM
- *    - ese formulario paralelo permite composición de campos, validación y envío automáticamente
- * 
- * Y luego están todos los controles que hay bajo:
- * 
- * - `assets/framework/browser/components/nwt-form/control-for/{tipo/subtipo}/control.{html,css,js}`
- *    - file-chooser/directory
- *    - file-chooser/file
- *    - file-chooser/new-file
- *    - text/oneline
- *    - text/multiline
- * 
- * En el momento de documentar esto, estos son los controles disponibles. Para estar actualizado, revisar el directorio.
- * 
- */
-Vue.component("NwtFormBuilder", {
-  name: "NwtFormBuilder",
-  template: `<div class="nwt_form_builder" v-forms.form="{
-        onSubmit: events.onSubmit || \$nwt.Utils.noop,
-        onSuccess: events.onSuccess || console.log,
-        onError: events.onError || console.error,
-    }">
-    <div class="form">
-        <div class="table built_form_table">
-            <div class="thead">
-                <div class="row">
-                    <div class="hcell">
-                        <button class="mini" v-on:click="toggleAllControls">🔓*</button>
-                    </div>
-                    <div class="hcell">
-                        <b>{{ title }}</b>
-                    </div>
-                    <div class="hcell" style="padding-right: 0px;">
-                        <button class="mini" v-on:click="submitForm">▶️</button>
-                    </div>
-                    <div class="hcell">
-                        <button class="mini" v-on:click="validateForm">*✅</button>
-                    </div>
-                </div>
-            </div>
-            <div class="tbody">
-                <div class="row no_hover_row"
-                    v-for="control, controlIndex in formattedControls"
-                    v-bind:key="'form_control_' + controlIndex">
-                    <div class="cell" style="display: block; align-content: start; padding: 2px;">
-                        <button class="mini display_inline_block expanded_vertically_button_1 text_align_top"
-                            :class="{active:control.isOpened}"
-                            v-on:click="() => toggleControlInForm(control)">
-                            {{ control.isOpened ? "🔓" : "🔒" }}
-                        </button>
-                    </div>
-                    <div class="cell" style="align-content: start; padding: 2px;">
-                        <div v-show="control.isOpened === true">
-                            <component :is="control.componentId"
-                                ref="subcontrols"
-                                v-bind="control.props"
-                                v-on="control.listeners"
-                                v-forms.control="{name:control.name || 'control_' + controlIndex}"
-                            />
-                        </div>
-                        <div v-show="control.isOpened === false">
-                            <div class="flex_row centered">
-                                <div class="flex_1">
-                                    <button class="display_inline_block mini" v-on:click="() => toggleControlInForm(control)">
-                                        {{ \$refs.subcontrols && \$refs.subcontrols[controlIndex]?.validationErrors?.length ? "⛔️" : control.props?.isRequired ? "*️⃣" : "❓" }}
-                                    </button>
-                                </div>
-                                <div class="flex_1 pad_left_1">
-                                    <div class="display_inline_block">{{ control.props?.statement }}</div>
-                                </div>
-                                <div class="flex_1 pad_left_1">
-                                    <div class="control_type display_inline_block">{{ control.type }}</div>
-                                </div>
-                                <div class="flex_100 pad_left_1">
-                                </div>
-                                <div class="flex_1 pad_left_1">
-                                    <button class="mini" v-on:click="() => validateControl(controlIndex, control)">✅</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row no_hover_row">
-                    <div class="cell empty_cell"></div>
-                    <div class="cell empty_cell"></div>
-                    <div class="cell empty_cell"></div>
-                </div>
-            </div>
-            <div class="tfooter">
-                <div class="row">
-                    <div class="hcell">
-                        <button class="mini" v-on:click="toggleAllControls">🔓*</button>
-                    </div>
-                    <div class="hcell footer_text">
-                        {{ footer }}
-                    </div>
-                    <div class="hcell" style="padding-right: 0px;">
-                        <button class="mini" v-on:click="submitForm">▶️</button>
-                    </div>
-                    <div class="hcell">
-                        <button class="mini" v-on:click="validateForm">*✅</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`,
-  props: {
-    from: {
-      type: Object,
-      default: () => ({})
-    },
-  },
-  data() {
-    trace("NwtFormBuilder.data");
-    assertion(["undefined","string"].indexOf(typeof this.from.title) !== -1, "Parameter «from.title» must be undefined or string on «NwtFormBuilder.data»");
-    assertion(["undefined","string"].indexOf(typeof this.from.footer) !== -1, "Parameter «from.footer» must be undefined or string on «NwtFormBuilder.data»");
-    assertion(["object"].indexOf(typeof this.from.controls) !== -1, "Parameter «from.controls» must be object on «NwtFormBuilder.data»");
-    assertion(["object"].indexOf(typeof this.from.events) !== -1, "Parameter «from.events» must be object on «NwtFormBuilder.data»");
-    return {
-      formattedControls: [],
-      title: this.from.title || undefined,
-      footer: this.from.footer || undefined,
-      controls: this.from.controls || [],
-      events: this.from.events || {},
-    };
-  },
-  methods: {
-    loadControls() {
-      this.formattedControls = this.controls.map(control => {
-        control.componentId = this.getComponentNameForControl(control.type, 'nwt-form-control-for-text-oneline');
-        if(!control.props) control.props = {};
-        if(!control.listeners) control.listeners = {};
-        if(typeof control.isOpened === "undefined") control.isOpened = false;
-        return control;
-      });
-    },
-    getComponentNameForControl(controlSubpath = undefined, ifMissing = undefined) {
-      trace("NwtFormBuilder.methods.getComponentNameForControl");
-      return NwtFormUtils.getComponentNameForControlType(controlSubpath, ifMissing);
-    },
-    toggleControlInForm(control) {
-      trace("NwtFormBuilder.methods.toggleControlInForm");
-      control.isOpened = !control.isOpened;
-      this.$forceUpdate(true);
-    },
-    showControlInForm(control) {
-      trace("NwtFormBuilder.methods.showControlInForm");
-      control.isOpened = true;
-      this.$forceUpdate(true);
-    },
-    toggleAllControls() {
-      trace("NwtFormBuilder.methods.toggleAllControls");
-      let hasOpened = false;
-      Iterating_controls_1:
-      for(let index=0; index<this.formattedControls.length; index++) {
-        const formattedControl = this.formattedControls[index];
-        if(formattedControl.isOpened) {
-          hasOpened = true;
-          break Iterating_controls_1;
-        }
-      }
-      Iterating_controls_2: 
-      for(let index=0; index<this.formattedControls.length; index++) {
-        const formattedControl = this.formattedControls[index];
-        formattedControl.isOpened = hasOpened ? false : true;
-      }
-      this.$forceUpdate(true);
-    },
-    async validateForm() {
-      trace("NwtFormBuilder.methods.validateForm");
-      return await this.$el.vformsForm.validate(false);
-    },
-    async submitForm() {
-      trace("NwtFormBuilder.methods.submitForm");
-      return await this.$el.vformsForm.submit(false);
-    },
-    async validateControl(controlIndex, control) {
-      trace("NwtFormBuilder.methods.validateControl");
-      assertion(typeof this.$refs.subcontrols === "object", "No controls to validate were found on «NwtFormBuilder.methods.validateControl»");
-      assertion(controlIndex in this.$refs.subcontrols, `No control by index ${controlIndex} was found on «NwtFormBuilder.methods.validateControl»`);
-      assertion(this.$refs.subcontrols[controlIndex] instanceof Vue, `No vue component on control by index ${controlIndex} was found on «NwtFormBuilder.methods.validateControl»`);
-      assertion(this.$refs.subcontrols[controlIndex].$el instanceof HTMLElement, `No element corresponding to vue component on control by index ${controlIndex} was found on «NwtFormBuilder.methods.validateControl»`);
-      if(control) {
-        this.showControlInForm(control);
-      }
-      return await this.$refs.subcontrols[controlIndex].$el.vformsControl.validate(false, false);
-    }
-  },
-  created() {},
-  mounted() {
-    this.loadControls();
-  },
-});
-
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/builder/builder.css
-
-// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-prototype.js
-/**
- * 
- * # NwtFormControlPrototype
- * 
- * Componente base (sin plantilla) para controles de formulario compatibles con `NwtFormBuilder`.
- * 
- * De este componente, heredan todos los controles de formulario.
- * 
- * Por lo tanto, esta lógica es común a todos los controles.
- * 
- * ## Exposición
- * 
- * ```js
- * Vue.options.components.NwtFormControlPrototype
- * ```
- * 
- * ## Ventajas
- * 
- * Este componente no está pensado para usarse por sí mismo, sino para extenderse vía la API de vue2.
- * 
- * Pero su API es común a todos los controles, así que es especialmente interesante documentarla.
- * 
- * ## Propiedades HTML de un control
- * 
- * Las propiedades comunes a todos los controles de formulario son:
- * 
- * ```html
- * <nwt-form-control-prototype
- *   :initial-value="anything" # valor inicial del control, en su tipo hidratado, no en String solamente
- *   statement="Enunciado de este control"
- *   extra-info="Información extra del enunciado de este control"
- *   is-required="false"     # si es requerido en el formulario, u opcional (false, por defecto)
- *   :on-change="() => {}"   # evento lanzado al cambiar el valor del control
- *   :on-format="() => {}"   # evento para hidratar el valor, usado cuando llamas a thi.getValue()
- *   :on-validate="() => {}" # creo que este no se usa, la validación corre a cuenta de la API de v-forms en su lugar
- * />
- * ```
- * 
- * ## Propiedades JS de un control
- * 
- * Otras propiedades internas, desde el JS y no del HTML, son estas:
- * 
- * ```js
- * this.isControl === "prototype"; // Esta propiedad debe ser sobreescrita por cada control con el nombre del {tipo/subtipo} propios
- * this.isShowingExtraInfo; // variable de estado
- * this.value === ?; // El valor, sin formatear. Suele ser un string que se puede visualizar con text-boxes.
- * this.validationErrors === []; // errores de validación acumulados
- * ```
- * 
- * ## Métodos internos de un control
- * 
- * ```js
- * this.getValue(); // devuelve el valor del control, pero formateado. Este valor ya no siempre será un String, puede ser número, booleano, objeto, lo que sea.
- * this.toggleExtraInfo(); // muestra u oculta la información extra del control
- * ```
- * 
- * Esta sería la API inicial de cualquier control.
- * 
- * Pero hay que saber algunas cosas más para crear tu propio control.
- * 
- * Dado que este componente no tiene plantilla, y aunque la tuviera no serviría de nada porque cada control la sobreescribiría a su manera, conviene consultar el primer control que se ha creado como referencia para saber cómo crear la plantilla de un control.
- * 
- * El primer control que se ha crea en la API es:
- * 
- *  - `NwtFormControlForTextOneline`: que se corresponde con un input[type=text].
- * 
- * Consultar ese control si vas a crear uno propio, porque para hacerlo compatible del todo, por ejemplo, hay que:
- * 
- *  - Ponerle un class="nwt_form_control"
- *  - Ponerle un `<nwt-form-control-statement :control="this" />` arriba
- *  - Ponerle un `<nwt-form-control-handler :control="this" />` abajo
- *  - Poner el control en un flex-row y a la izquierda
- *  - Poner en la derecha del flex-row un `<nwt-form-control-buttons :control="this" />`
- *  - Poner un `v-model="value"` al input, de haberlo
- *  - Poner un `v-on:input="e => onChange(e, this)"` o llamar al `onChange` desde `watch.value`
- * 
- * Y esta API todavía no está completa en el momento de esta documentación, así que puede que haya alguna cosa más.
- * 
- * ## Convivencia con la API de v-forms
- * 
- * Es importante entender por qué la API de `v-forms` no va incrustada en esta hard-way.
- * 
- * Es decir: son controles, ¿por qué no tienen ya el `v-forms.control` incrustado a nivel de componente?
- * 
- * La respuesta es: porque no siempre están participando activamente como controles en un formulario.
- * 
- * Separar estas 2 APIs permite que puedas reutilizar todos los controles en cualquier contexto, sin necesariamente vincularlos a un formulario.
- * 
- * Pero, por debajo, hay compatibilidades ya pensadas para integrarse con el formulario.
- * 
- * Además, la vinculación con un formulario permite algunos parámetros extra que no van necesariamente con el componente de control, sino con el formulario concreto.
- * 
- * Por ejemplo, si quieres añadir una validación de un texto en el contexto de un formulario concreto:
- * 
- * - Pides un tipo `text/oneline`: eso es lógica del control
- * - Pero además quieres que ese `text/oneline` cumpla con un formato concreto a la hora de validarlo: eso es lógica del formulario
- * 
- * Por eso, hay que separar estas 2 APIs. Porque un control no siempre es control activo en un formulario.
- * 
- */
-Vue.component("NwtFormControlPrototype", {
-  name: "NwtFormControlPrototype",
-  props: {
-    initialValue: {
-      type: [Boolean,Number,String,Array,Object,Function,undefined],
-      default: () => "",
-    },
-    statement: {
-      type: String,
-      default: () => "",
-    },
-    extraInfo: {
-      type: String,
-      default: () => "",
-    },
-    isRequired: {
-      type: Boolean,
-      default: () => false,
-    },
-    onChange: {
-      type: Function,
-      default: function(event) {
-        trace("NwtFormControlPrototype.props.onChange");
-        return this.$emit("input", event);
-      },
-    },
-    onFormat: {
-      type: Function,
-      default: value => value,
-    },
-    onValidate: {
-      type: Function,
-      default: () => NwtUtils.noop()
-    },
-  },
-  data() {
-    return {
-      isControl: "prototype",
-      isShowingExtraInfo: false,
-      value: this.initialValue,
-      validationErrors: [],
-    };
-  },
-  methods: {
-    toggleExtraInfo() {
-      trace("NwtFormControlPrototype.methods.toggleExtraInfo");
-      this.isShowingExtraInfo = !this.isShowingExtraInfo;
-    },
-    getValue() {
-      trace("NwtFormControlPrototype.methods.getValue");
-      const formattedValue = this.onFormat(this.value);
-      return formattedValue;
-    },
-  }
-});
-
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.html
-
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.js
-/**
- * 
- * # NwtFormControlStatement
- * 
- * Componente para mostrar anunciados de control homogéneos.
- * 
- * Uso interno de las plantillas de los Form Controls.
- * 
- * ## Exposición
- * 
- * ```js
- * NwtFormControlStatement
- * NwtFramework.FormControlStatement
- * Vue.prototype.$nwt.FormControlStatement
- * ```
- * 
- * ## Ventajas
- * 
- * ```html
- * <nwt-form-control-statement
- *   :control="controlComponent"
- *   :extra-buttons="[{text:'ok',click:()=>{}}]"
- * />
- * ```
- * 
- * Donde `controlComponent` tiene que ser el componente de tipo Form Control.
- * 
- * Mientras el control cumpla con los estándares, no habrá problema. Solo se accede a:
- * 
- * - `control.statement`
- * - `control.extraInfo`
- * 
- * Los `extra-buttons` permiten añadir botones, a nivel de componente de control: no a nivel de parámetros de control.
- * 
- * Estos botones extra deben ser proporcionados desde el código del control, no desde los parámetros.
- * 
- * Otra cosa es que el control, por diseño, permita traspasar un parámetro propio hacia aquí.
- * 
- */
-Vue.component("NwtFormControlStatement", {
-  name: "NwtFormControlStatement",
-  template: `<div class="nwt_form_control_statement">
-    <div class="pad_bottom_1" v-if="control.statement">
-        <div class="flex_row centered">
-            <div class="flex_100">
-                <button class="display_inline_block mini"
-                    :class="{active:control.isShowingExtraInfo}"
-                    v-on:click="() => control.toggleExtraInfo()">❓</button>
-                <div class="control_statement display_inline_block">{{ control.statement }}</div>
-                <div class="control_type display_inline_block">{{ control.isControl }}</div>
-            </div>
-            <div v-for="button, buttonIndex in extraButtons"
-                v-bind:key="'button_' + buttonIndex"
-                class="flex_1 pad_right_1">
-                <button class="mini" v-on:click="button.click">{{ button.text }}</button>
-            </div>
-            <div class="flex_1" v-if="control.vformsControl">
-                <button class="mini" v-on:click="validateControl">✅</button>
-            </div>
-        </div>
-        <div class="control_extra_info" v-if="control.isShowingExtraInfo">{{ control.extraInfo }}</div>
-    </div>
-</div>`,
-  props: {
-    control: {
-      type: Vue,
-      required: true,
-    },
-    extraButtons: {
-      type: Array,
-      default: () => [],
-    }
-  },
-  mixins: [],
-  data() {
-    trace("NWtFormControlStatement.data");
-    return {};
-  },
-  methods: {
-    validateControl() {
-      trace("NwtFormControlStatement.methods.validateControl");
-      if(this.control.vformsControl) {
-        return this.control.vformsControl.validate(false, false);
-      } else {
-        return this.control.validate();
-      }
-    }
-  },
-  created() {},
-  mounted() {},
-});
-
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.css
-
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.html
-
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.js
-Vue.component("NwtFormControlButtons", {
-  name: "NwtFormControlButtons",
-  template: `<div class="nwt_form_control_buttons">
-    <div v-for="button, buttonIndex in control.buttons">
-        <div class="flex_1 pad_left_1"
-            v-bind:key="'button_' + buttonIndex">
-            <button class="mini no_wrap width_100"
-                v-on:click="e => button.click(e)">{{ button.text }}</button>
-        </div>
-    </div>
-</div>`,
-  props: {
-    control: {
-      type: Vue,
-      required: true,
-    }
-  },
-  mixins: [],
-  data() {
-    trace("NwtFormControlButtons.data");
-    return {};
-  },
-  methods: {},
-  created() {},
-  mounted() {},
-});
-
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.css
-
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.html
-
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.js
-/**
- * 
- * # NwtFormControlHandler
- * 
- * Componente para mostrar errores de validación de un Form Control.
- * 
- * ## Exposición
- * 
- * ```js
- * Vue.options.components.NwtFormControlHandler
- * ```
- * 
- * ## Ventajas
- * 
- * ```html
- * <nwt-form-control-handler :control="controlComponent" />
- * ```
- * 
- * Donde `controlComponent` tiene que ser el componente de tipo Form Control.
- * 
- * Mientras el control cumpla con los estándares, no habrá problema. Solo se accede a:
- * 
- * - `control.validationErrors`
- * 
- * Este componente **SÍ LLEVA INCRUSTADA** la directiva de v-forms.handler.
- * 
- * La razón teórica (no sé si está bien implementado todavía) es que:
- * 
- *   - Solo mostrará los errores de validación que se acumulen en el control proporcionado
- *   - Si el control proporcionado no usa v-forms.control, no acumula errores
- *   - Si el control proporcionado sí usa v-forms.control, sí acumula errores, entonces sí mostrará errores.
- * 
- */
-Vue.component("NwtFormControlHandler", {
-  name: "NwtFormControlHandler",
-  template: `<div class="nwt_form_control_handler"
-    v-forms.handler="{component:control}">
-    <div class="pad_top_1" v-if="control.validationErrors.length">
-        <div class="handler_message error_message">
-            <div v-if="control.validationErrors.length === 1">
-                <div>⛔️ Error: {{ control.validationErrors[0].message }} ({{ control.validationErrors[0].name }})</div>
-            </div>
-            <div v-else>
-                <div>⛔️ Errores:</div>
-                <div v-for="error, errorIndex in control.validationErrors" v-bind:key="'error_' + errorIndex">
-                    <div>❗️ Razón {{ errorIndex + 1 }}. {{ error.message }} ({{ error.name }})</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`,
-  props: {
-    control: {
-      type: Vue,
-      required: true,
-    }
-  },
-  mixins: [],
-  data() {
-    trace("NwtFormControlHandler.data");
-    return {};
-  },
-  methods: {},
-  created() {},
-  mounted() {},
-});
-
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.css
-
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.html
-
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.js
-Vue.component("NwtFormControlForFileChooserDirectory", {
-  name: "NwtFormControlForFileChooserDirectory",
-  extends: Vue.options.components.NwtFormControlPrototype.options,
-  template: `<div class="nwt_form_control_for_file_chooser directory">
-    File chooser/directory
-</div>`,
-  data() {
-    trace("NwtFormControlForFileChooserDirectory.data");
-    return {};
-  },
-  methods: {},
-  created() {},
-  mounted() {},
-});
-
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/directory/control.css
-
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.html
-
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.js
-Vue.component("NwtFormControlForFileChooserFile", {
-  name: "NwtFormControlForFileChooserFile",
-  extends: Vue.options.components.NwtFormControlPrototype.options,
-  template: `<div class="nwt_form_control_for_file_chooser file">
-    File chooser/file
-</div>`,
-  data() {
-    trace("NwtFormControlForFileChooserFile.data");
-    return {};
-  },
-  methods: {},
-  created() {},
-  mounted() {},
-});
-
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/file-chooser/file/control.css
-
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.html
-
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.js
-Vue.component("NwtFormControlForTextEmail", {
-  name: "NwtFormControlForTextEmail",
-  extends: Vue.options.components.NwtFormControlPrototype.options,
-  template: `<div class="nwt_form_control_for_text email">
-    Text/email
-</div>`,
-  data() {
-    trace("NwtFormControlForTextEmail.data");
-    return {
-      isControl: "text/email",
-    };
-  },
-  methods: {},
-  created() {},
-  mounted() {},
-});
-
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/email/control.css
-
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.html
-
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.js
-Vue.component("NwtFormControlForTextPassword", {
-  name: "NwtFormControlForTextPassword",
-  extends: Vue.options.components.NwtFormControlPrototype.options,
-  template: `<div class="nwt_form_control_for_text password">
-    Text/password
-</div>`,
-  data() {
-    trace("NwtFormControlForTextPassword.data");
-    return {
-      isControl: "text/password"
-    };
-  },
-  methods: {},
-  created() {},
-  mounted() {},
-});
-
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/password/control.css
-
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.html
-
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.js
-/**
- * 
- * # NwtFormControlForTextOneline
- * 
- * Componente de control de formulario para textos de una sola línea.
- * 
- * ## Exposición
- * 
- * ```js
- * Vue.options.components.NwtFormControlForTextOneline
- * ```
- * 
- * ## Ventajas
- * 
- * ```html
- * <nwt-form-control-for-text-oneline
- *   :buttons="[{text:'texto de boton',click:() => {}}]"
- *   extraClases="clase1 clase2"
- *   placeholder="Texto de relleno"
- *   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
- * />
- * ```
- * 
- */
-Vue.component("NwtFormControlForTextOneline", {
-  name: "NwtFormControlForTextOneline",
-  extends: Vue.options.components.NwtFormControlPrototype.options,
-  template: `<div class="nwt_form_control for_text oneline" :class="extraClasses">
-    <nwt-form-control-statement :control="this" />
-    <div class="flex_row centered">
-        <div class="flex_100">
-            <input
-                class="width_100"
-                type="text"
-                :placeholder="placeholder"
-                v-model="value"
-                v-on:input="e => onChange(e, this)"
-            />
-        </div>
-        <div class="flex_1 align_self_start" v-if="buttons.length">
-            <nwt-form-control-buttons :control="this" />
-        </div>
-    </div>
-    <nwt-form-control-handler :control="this" />
-</div>`,
-  props: {
-    buttons: {
-      type: Array,
-      default: () => [],
-    },
-    extraClasses: {
-      type: [String],
-      default: () => "",
-    },
-    placeholder: {
-      type: String,
-      default: () => "",
-    },
-  },
-  data() {
-    trace("NwtFormControlForTextOneline.data");
-    return {
-      isControl: "text/oneline",
-    };
-  },
-  methods: {
-    
-  },
-  created() {
-    trace("NwtFormControlForTextOneline.created");
-    NwtFormUtils.validate.control.isControl(this);
-    NwtFormUtils.validate.control.buttons(this);
-    NwtFormUtils.validate.control.extraClasses(this);
-    NwtFormUtils.validate.control.placeholder(this);
-    NwtFormUtils.validate.control.value(this);
-  },
-  mounted() {},
-});
-
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/oneline/control.css
-
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.html
-
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.js
-Vue.component("NwtFormControlForTextMultiline", {
-  name: "NwtFormControlForTextMultiline",
-  extends: Vue.options.components.NwtFormControlPrototype.options,
-  template: `<div class="nwt_form_control for_text multiline" :class="extraClasses">
-    <div class="pad_bottom_1" v-if="statement">
-        <div>
-            <button class="display_inline_block mini" :class="{active:isShowingExtraInfo}" v-on:click="toggleExtraInfo">
-                {{ isRequired ? "*️⃣" : "❓" }}
-            </button>
-            <div class="control_statement display_inline_block">{{ statement }}</div>
-            <div class="control_type display_inline_block">text/multiline</div>
-        </div>
-        <div class="control_extra_info" v-if="isShowingExtraInfo">{{ extraInfo }}</div>
-    </div>
-    <div class="flex_row centered">
-        <div class="flex_100">
-            <textarea
-                class="width_100"
-                type="text"
-                :placeholder="placeholder"
-                v-model="value"
-                v-on:input="e => onChange(e, this)"
-            />
-        </div>
-        <div class="flex_1 align_self_start">
-            <template v-for="button, buttonIndex in buttons">
-                <div class="flex_1 pad_left_1" v-bind:key="'button_' + buttonIndex">
-                    <button class="mini no_wrap width_100" v-on:click="e => button.click(e)">{{ button.text }}</button>
-                </div>
-            </template>
-        </div>
-    </div>
-</div>`,
-  props: {
-    buttons: {
-      type: Array,
-      default: () => [],
-    },
-    extraClasses: {
-      type: [String],
-      default: () => "",
-    },
-    placeholder: {
-      type: String,
-      default: () => "",
-    },
-  },
-  data() {
-    trace("NwtFormControlForTextMultiline.data");
-    return {
-      isControl: "text/oneline",
-    };
-  },
-  methods: {
-    
-  },
-  created() {
-    trace("NwtFormControlForTextMultiline.created");
-    NwtFormUtils.validate.control.isControl(this);
-    NwtFormUtils.validate.control.buttons(this);
-    NwtFormUtils.validate.control.extraClasses(this);
-    NwtFormUtils.validate.control.placeholder(this);
-    NwtFormUtils.validate.control.value(this);
-  },
-  mounted() {},
-});
-
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/text/multiline/control.css
-
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/list/control.html
-
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/list/control.js
-/**
- * 
- * # NwtFormControlForGroupList
- * 
- * Componente de control de formulario para listas de controles.
- * 
- * Con este control, puedes agrupar listas de controles en 1 mismo control.
- * 
- * ## Exposición
- * 
- * ```js
- * Vue.options.components.NwtFormControlForGroupList
- * ```
- * 
- * ## Ventajas
- * 
- * ```html
- * <nwt-form-control-for-list
- *   statement="Enunciado para lista de controles"
- *   :controls="[{
- *     type: 'text/oneline',
- *     props: {
- *       initialValue: 'No sabe/No contesta',
- *     },
- *     listeners: {}
- *   },{
- *     type: 'text/oneline',
- *     props: {
- *       initialValue: 'No sabe/No contesta',
- *     },
- *     listeners: {}
- *   }]"
- *   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
- * />
- * ```
- * 
- */
-Vue.component("NwtFormControlForGroupList", {
-  name: "NwtFormControlForGroupList",
-  extends: Vue.options.components.NwtFormControlPrototype.options,
-  template: `<div class="nwt_form_control for_list">
-    <nwt-form-control-statement :control="this" :extra-buttons="[{ text: '➕', click: () => { itemsOfList.push(\$nwt.Randomizer.fromAlphabet(10)) } }]" />
-    <div v-if="itemsOfList"
-        v-for="itemId, itemIndex, itemCounter in itemsOfList"
-        v-bind:key="'item_' + itemId"
-        class="pad_right_1">
-        <div class="card position_relative">
-            <div class="position_absolute" style="left:auto;top:2px;bottom:auto;right:2px;">
-                <div class="flex_row centered">
-                    <div class="flex_1 pad_left_1">
-                        <button class="mini" v-on:click="() => itemsOfList.splice(itemCounter, 1)">❌</button>
-                    </div>
-                </div>
-            </div>
-            <div :class="controlIndex !== 0 ? 'pad_top_1' : ''"
-                v-for="control, controlIndex in controls"
-                v-bind:key="'control_' + controlIndex">
-                <component :is="control.componentId"
-                    ref="subcontrols"
-                    v-bind="control.props"
-                    v-on="control.listeners" />
-            </div>
-        </div>
-    </div>
-    <nwt-form-control-handler :control="this" />
-</div>`,
-  props: {
-    controls: {
-      type: Array,
-      required: true,
-    },
-  },
-  mixins: [],
-  data() {
-    trace("NwtFormControlForGroupList.data");
-    return {
-      isControl: "list",
-      itemsOfList: false,
-    };
-  },
-  methods: {
-    getValue() {
-      trace("NwtFormControlForGroupList.methods.getValue");
-      if(!this.$refs.subcontrols) return [];
-      const subcontrols = this.$refs.subcontrols;
-      return subcontrols.map(control => control.getValue());
-    },
-    addComponentIdToControls() {
-      trace("NwtFormControlForGroupList.methods.addComponentIdToControls");
-      for(let index=0; index<this.controls.length; index++) {
-        const controlObject = this.controls[index];
-        controlObject.componentId = NwtFormUtils.getComponentNameForControlType(controlObject.type);
-      }
-    }
-  },
-  created() {
-    trace("NwtFormControlForGroupList.created");
-    NwtFormUtils.validate.control.isControl(this);
-    NwtFormUtils.validate.control.value(this);
-  },
-  mounted() {
-    trace("NwtFormControlForGroupList.mounted");
-    this.addComponentIdToControls();
-    this.itemsOfList = [];
-  },
-});
-
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/list/control.css
-
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.html
-
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.js
-/**
- * 
- * # NwtFormControlForGroupStructure
- * 
- * Componente de control de formulario para estructuras de controles.
- * 
- * Con este control, puedes agrupar controles con etiqueta en 1 mismo control.
- * 
- * Es como listas, pero no es incrementable, es solo un grupo, donde a cada control le corresponde una etiqueta diferente.
- * 
- * ## Exposición
- * 
- * ```js
- * Vue.options.components.NwtFormControlForGroupStructure
- * ```
- * 
- * ## Ventajas
- * 
- * ```html
- * <nwt-form-control-for-structure
- *   statement="Enunciado para estructure de controles"
- *   :controls="{
- *     'campo 1': {
- *       type: 'text/oneline',
- *       props: {
- *         initialValue: 'No sabe/No contesta',
- *       },
- *       listeners: {}
- *     },
- *     'campo 2': {
- *       type: 'text/oneline',
- *       props: {
- *         initialValue: 'No sabe/No contesta',
- *       },
- *       listeners: {}
- *     }
- *   }"
- *   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
- * />
- * ```
- * 
- */
-Vue.component("NwtFormControlForGroupStructure", {
-  name: "NwtFormControlForGroupStructure",
-  extends: Vue.options.components.NwtFormControlPrototype.options,
-  template: `<div class="nwt_form_control for_structure">
-    <nwt-form-control-statement :control="this" />
-    <div class="card position_relative" v-if="isLoaded">
-        <div v-for="control, controlId, controlCounter in controls"
-            v-bind:key="'control_' + controlId">
-            <component :is="control.componentId"
-                :ref="'subcontrol_' + controlId"
-                v-bind="control.props"
-                v-on="control.listeners" />
-        </div>
-    </div>
-    <nwt-form-control-handler :control="this" />
-</div>`,
-  props: {
-    controls: {
-      type: Object,
-      required: true,
-    },
-  },
-  mixins: [],
-  data() {
-    trace("NwtFormControlForGroupStructure.data");
-    return {
-      isControl: "structure",
-      isLoaded: false,
-    };
-  },
-  methods: {
-    getValue() {
-      trace("NwtFormControlForGroupStructure.methods.getValue");
-      const value = {};
-      const controlIds = Object.keys(this.controls);
-      for(let index=0; index<controlIds.length; index++) {
-        const controlId = controlIds[index];
-        const subcontrolList = this.$refs["subcontrol_" + controlId];
-        const subcontrol = subcontrolList[0];
-        value[controlId] = subcontrol.getValue();
-      }
-      return value;
-    },
-    addComponentIdToControls() {
-      trace("NwtFormControlForGroupStructure.methods.addComponentIdToControls");
-      const controlIds = Object.keys(this.controls);
-      for(let index=0; index<controlIds.length; index++) {
-        const controlId = controlIds[index];
-        const controlObject = this.controls[controlId];
-        controlObject.componentId = NwtFormUtils.getComponentNameForControlType(controlObject.type);
-      }
-    }
-  },
-  created() {
-    trace("NwtFormControlForGroupStructure.created");
-    NwtFormUtils.validate.control.isControl(this);
-    NwtFormUtils.validate.control.value(this);
-  },
-  mounted() {
-    trace("NwtFormControlForGroupStructure.mounted");
-    this.addComponentIdToControls();
-    this.isLoaded = true;
-  },
-});
-
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-for/group/structure/control.css
-
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/nwt-formulator-lazy-control.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormulatorLazyControl'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormulatorLazyControl'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormulatorLazyControl = class {
-
-    constructor(options) {
-      trace("NwtFormulatorLazyControl.constructor");
-      assertion(typeof options === "object", "Parameter «options» must be object on «NwtFormulatorLazyControl.constructor»");
-      assertion(typeof options.html === "string", "Parameter «options.html» must be string on «NwtFormulatorLazyControl.constructor»");
-      assertion(typeof options.css === "string", "Parameter «options.css» must be string on «NwtFormulatorLazyControl.constructor»");
-      assertion(typeof options.js === "string", "Parameter «options.js» must be string on «NwtFormulatorLazyControl.constructor»");
-      assertion(typeof options.component === "string", "Parameter «options.component» must be string on «NwtFormulatorLazyControl.constructor»");
-      this.options = options;
-    }
-
-    async getComponent() {
-      trace("NwtFormulatorLazyControl.prototype.getComponent");
-    }
-
-  };
-
-  return NwtFormulatorLazyControl;
-
-});
-
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/nwt-formulator-control-manager.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormulatorControlManager'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormulatorControlManager'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormulatorControlManager = class {
+  const NwtLazyControl = class {
 
     static create(...args) {
       return new this(...args);
     }
 
-    constructor(formulator, basedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/component/for")) {
-      this.formulator = formulator;
-      this.basedir = basedir;
-    }
-
-    for(componentId) {
-      assertion(typeof componentId === "string", "Parameter «componentId» must be string on «NwtFormulatorControlManager.prototype.for»");
-      const componentPath = `${this.basedir}/${componentId}/component`;
-      const componentHtmlPath = `${componentPath}.html`;
-      const componentCssPath = `${componentPath}.css`;
-      const componentJsPath = `${componentPath}.js`;
-      return new NwtFormulatorLazyControl({
-        component: componentPath,
-        html: componentHtmlPath,
-        css: componentCssPath,
-        js: componentJsPath,
-      });
-    }
-
-  };
-
-  return NwtFormulatorControlManager;
-
-});
-
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/for/basic/text/oneline/component.html
-
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/for/basic/text/oneline/component.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtControlForBasicTextOneline'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtControlForBasicTextOneline'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-
-  const NwtControlForBasicTextOneline = class {
-
-    static createInstance(...args) {
-      return new this(...args);
-    }
-
-    constructor(component) {
-      assertion(typeof component === "object", "Parameter «component» must be object on «NwtControlForBasicTextOneline.constructor»");
-      assertion(component instanceof Vue, "Parameter «component» must be Vue instance on «NwtControlForBasicTextOneline.constructor»");
-      this.component = component;
-    }
-
-    static template = `<div class="control_for basic_text_oneline">
-    <div v-if="statement"
-        class="pad_horizontal_1 pad_bottom_1">
-        <button class="mini"
-            v-on:click="toggleSelf">
-            <template v-if="isShowing">
-                ➖
-            </template>
-            <template v-else>
-                ➕
-            </template>
-        </button>
-        <button class="mini"
-            v-if="typeof isValidated === 'boolean'">
-            <template v-if="isValidated === true">
-                ✅
-            </template>
-            <template v-else-if="isValidated === false">
-                ❌
-            </template>
-        </button>
-        <span>{{ statement }}</span>
-        <span v-if="description && isShowing">
-            <span>
-                <button class="mini"
-                    :class="{active:isShowingDescription}"
-                    v-on:click="toggleDescription">
-                    <template v-if="isShowingDescription">
-                        ❓➖
-                    </template>
-                    <template v-else>
-                        ❓➕
-                    </template>
-                </button>
-            </span>
-            <span v-if="isShowingDescription">
-                {{ description }}
-            </span>
-        </span>
-    </div>
-    <div v-if="isShowing">
-        <div class="flex_row pad_horizontal_1">
-            <div class="flex_1 pad_right_1"
-                v-if="buttonsLeft.length"
-                v-for="button, buttonIndex in buttonsLeft"
-                v-bind:key="'button_left_' + buttonIndex">
-                <button class="mini"
-                    v-on:click="function(e) {button.click(e, self);}">{{ button.text }}</button>
-            </div>
-            <div class="flex_100 pad_horizontal_1">
-                <input class="width_100"
-                    type="text"
-                    v-model="value"
-                    :placeholder="placeholder"
-                    v-on:keypress.enter="e => onEnter(value, e, self)" />
-            </div>
-            <div class="flex_1 pad_left_1"
-                v-if="buttonsRight.length"
-                v-for="button, buttonIndex in buttonsRight"
-                v-bind:key="'button_right_' + buttonIndex">
-                <button class="mini"
-                    v-on:click="function(e) {button.click(e, self);}">{{ button.text }}</button>
-            </div>
-        </div>
-        <nwt-control-validator :control="this" />
-    </div>
-</div>`;
-
-    static definition = {
-      id: "basic/text/oneline",
-      name: "NwtControlForBasicTextOneline",
-    };
-
-    static createSettings(_settings = {}) {
-      trace("NwtControlForBasicTextOneline.createSettings");
-      assertion(typeof _settings === "object", "Parameter «settings» must be object on «NwtControlForBasicTextOneline.createSettings»");
-      const settings = NwtUtils.initializePropertiesOf(_settings, {
-        initialValue: [String, ""],
-        statement: [String, ""],
-        placeholder: [String, ""],
-        description: [String, ""],
-        buttonsLeft: [Array, []],
-        buttonsRight: [Array, []],
-        isShowing: [Boolean, true],
-        isShowingDescription: [Boolean, false],
-        isValidated: [Boolean, undefined],
-        onEnter: [Function, NwtUtils.noop],
-        onChange: [Function, NwtUtils.noop],
-        onValidate: [Function, NwtUtils.noop],
-      });
-      for(let index=0; index<settings.buttonsLeft.length; index++) {
-        const item = settings.buttonsLeft[index];
-        assertion(typeof item === "object", `Parameter «settings.buttonsLeft[${index}]» must be object, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
-        assertion(typeof item.text === "string", `Parameter «settings.buttonsLeft[${index}].text» must be string, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
-        assertion(typeof item.click === "function", `Parameter «settings.buttonsLeft[${index}].click» must be function, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
-      }
-      for(let index=0; index<settings.buttonsRight.length; index++) {
-        const item = settings.buttonsRight[index];
-        assertion(typeof item === "object", `Parameter «settings.buttonsRight[${index}]» must be object, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
-        assertion(typeof item.text === "string", `Parameter «settings.buttonsRight[${index}].text» must be string, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
-        assertion(typeof item.click === "function", `Parameter «settings.buttonsRight[${index}].click» must be function, not «${typeof item}» on «NwtControlForBasicTextOneline.createSettings»`);
-      }
-      return settings;
-    }
-
-    createSettings() {
-      trace("NwtControlForBasicTextOneline.prototype.createSettings");
-      return this.constructor.createSettings(this.component.settings);
-    }
-
-    static get view() {
-      trace("NwtControlForBasicTextOneline.prototype.view");
-      const ControlClass = this;
-      return {
-        name: ControlClass.definition.name,
-        template: ControlClass.template,
-        props: {
-          settings: {
-            type: Object,
-            required: true,
-          }
-        },
-        data: function () {
-          trace("NwtControlForBasicTextOneline.data");
-          const ControlInstance = ControlClass.createInstance(this);
-          const settings = ControlInstance.createSettings();
-          return {
-            ...settings,
-            self: this,
-            value: settings.initialValue,
-            control: {
-              validators: [],
-              class: ControlClass,
-              instance: ControlInstance,
-            },
-          };
-        },
-        methods: {
-          validate() {
-            trace("NwtControlForBasicTextOneline.methods.validate");
-            try {
-              this.onValidate(this.value, this);
-              this.onValidationSuccess(this.value, this);
-            } catch (error) {
-              this.onValidationError(error, this.value, this);
-            }
-          },
-          onValidationSuccess() {
-            trace("NwtControlForBasicTextOneline.methods.onValidationSuccess");
-            for(let index=0; index<this.control.validators.length; index++) {
-              const validator = this.control.validators[index];
-              validator.clearErrors();
-            }
-          },
-          onValidationError(error) {
-            trace("NwtControlForBasicTextOneline.methods.onValidationError");
-            for(let index=0; index<this.control.validators.length; index++) {
-              const validator = this.control.validators[index];
-              validator.addErrors(error);
-            }
-          },
-          toggleDescription() {
-            trace("NwtControlForBasicTextOneline.methods.toggleDescription");
-            this.isShowingDescription = !this.isShowingDescription;
-          },
-          toggleSelf() {
-            trace("NwtControlForBasicTextOneline.methods.toggleSelf");
-            this.isShowing = !this.isShowing;
-          }
-        },
-        watch: {
-          value(newValue, oldValue) {
-            trace("NwtControlForBasicTextOneline.watch.value");
-            this.onChange(newValue, oldValue, this);
-          }
-        },
-      };
-    }
-
-  };
-
-  Vue.component(NwtControlForBasicTextOneline.definition.name, NwtControlForBasicTextOneline.view);
-
-  return NwtControlForBasicTextOneline;
-
-});
-
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/for/basic/text/oneline/component.css
-
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/validator/component.html
-
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/validator/component.js
-Vue.component("NwtControlValidator", {
-  name: "NwtControlValidator",
-  template: `<div class="control_validator" :class="{hidden:errors.length === 0}">
-    <div v-for="error, errorIndex in errors" v-bind:key="'list_of_errors_index_' + errorIndex">
-      ❌ {{ errorIndex + 1 }}: {{ error }}
-    </div>
-</div>`,
-  props: {
-    control: {
-      type: Vue,
-      required: true,
-    }
-  },
-  data: function () {
-    trace("NwtControlValidator.data");
-    return {
-      errors: [],
-    };
-  },
-  created() {
-    this.control.control.validators.push(this);
-  },
-  methods: {
-    addErrors(errors) {
-      this.errors = this.errors.concat(errors);
-    },
-    clearErrors(errors) {
-      this.errors = [];
-    }
-  },
-});
-
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/control/validator/component.css
-
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/dialog/nwt-formulator-lazy-dialog.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormulatorLazyDialog'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormulatorLazyDialog'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormulatorLazyDialog = class {
-
-    constructor(options) {
-      trace("NwtFormulatorLazyDialog.constructor");
-      assertion(typeof options === "object", "Parameter «options» must be object on «NwtFormulatorLazyDialog.constructor»");
-      assertion(typeof options.html === "string", "Parameter «options.html» must be string on «NwtFormulatorLazyDialog.constructor»");
-      assertion(typeof options.css === "string", "Parameter «options.css» must be string on «NwtFormulatorLazyDialog.constructor»");
-      assertion(typeof options.js === "string", "Parameter «options.js» must be string on «NwtFormulatorLazyDialog.constructor»");
-      this.options = options;
-    }
-
-    async open(parameters = {}) {
-      trace("NwtFormulatorLazyDialog.prototype.open");
-      assertion(typeof parameters === "object", "Parameter «parameters» must be object on «NwtFormulatorLazyDialog.prototype.open»");
-      // @TODO: abrir un diálogo con el componente indicado
-    }
-
-  };
-
-  return NwtFormulatorLazyDialog;
-
-});
-
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/dialog/nwt-formulator-dialog-manager.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormulatorDialogManager'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormulatorDialogManager'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormulatorDialogManager = class {
-
-    static create(...args) {
-      return new this(...args);
-    }
-
-    static defaultBasedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/dialog/for");
-
-    constructor(formulator, basedir = this.constructor.defaultBasedir) {
-      this.formulator = formulator;
-      this.basedir = basedir;
-    }
-
-    for(dialogId) {
-      assertion(typeof dialogId === "string", "Parameter «dialogId» must be string on «NwtFormulatorComponentManager.prototype.for»");
-      const dialogComponentPath = `${this.basedir}/${dialogId}/component`;
-      const dialogHtmlPath = `${dialogComponentPath}.html`;
-      const dialogCssPath = `${dialogComponentPath}.css`;
-      const dialogJsPath = `${dialogComponentPath}.js`;
-      return NwtFormulatorLazyDialog({
-        component: dialogPath,
-        html: dialogHtmlPath,
-        css: dialogCssPath,
-        js: dialogJsPath,
-      });
-    }
-
-  };
-
-  return NwtFormulatorDialogManager;
-
-});
-
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/database/nwt-formulator-database-manager.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormulatorDatabaseManager'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormulatorDatabaseManager'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormulatorDatabaseManager = class {
-
-    static create(...args) {
-      return new this(...args);
-    }
-
-  };
-
-  return NwtFormulatorDatabaseManager;
-
-});
-
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/feature/nwt-formulator-lazy-feature.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormulatorLazyFeature'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormulatorLazyFeature'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormulatorLazyFeature = class {
-
-    static create(...args) {
-      trace("NwtFormulatorLazyFeature.create");
-      return new this(...args);
-    }
-
-    constructor(id) {
-      trace("NwtFormulatorLazyFeature.constructor");
+    constructor(id, basedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-control")) {
+      trace("NwtLazyControl.constructor");
+      assertion(typeof id === "string", "Required parameter «id» to be string on «NwtLazyControl.constructor»");
+      assertion(typeof basedir === "string", "Required parameter «basedir» to be string on «NwtLazyControl.constructor»");
       this.id = id;
+      this.basedir = basedir;
     }
 
     async load() {
-      trace("NwtFormulatorLazyFeature.prototype.load");
+      trace("NwtLazyControl.prototype.load");
+      const targetComponent = `${this.basedir}/${this.id}/component`;
+      const targetJs = `${this.basedir}/${this.id}/component.js`;
+      const targetHtml = `${this.basedir}/${this.id}/component.html`;
+      const targetCss = `${this.basedir}/${this.id}/component.css`;
+      assertion(await NwtFilesystem.existsAsFile(targetJs), `Control «js» file not found at «${targetJs}» on «NwtFormulatorLazyControl.prototype.load»`);
+      assertion(await NwtFilesystem.existsAsFile(targetHtml), `Control «html» file not found at «${targetHtml}» on «NwtFormulatorLazyControl.prototype.load»`);
+      assertion(await NwtFilesystem.existsAsFile(targetCss), `Control «css» file not found at «${targetCss}» on «NwtFormulatorLazyControl.prototype.load»`);
+      this.loaded = await NwtImporter.vueComponentByFilesystem(targetComponent);
+      await this.validateLazyControl();
+      return this.loaded;
+    }
+
+    async validateLazyControl() {
+      trace("NwtLazyControl.prototype.validateLazyControl");
+
     }
 
   };
 
-  return NwtFormulatorLazyFeature;
+  return NwtLazyControl;
 
 });
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/feature/nwt-formulator-feature-manager.js
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
-    window['NwtFormulatorFeatureManager'] = mod;
+    window['NwtLazyFeature'] = mod;
   }
   if (typeof global !== 'undefined') {
-    global['NwtFormulatorFeatureManager'] = mod;
+    global['NwtLazyFeature'] = mod;
   }
   if (typeof module !== 'undefined') {
     module.exports = mod;
   }
 })(function () {
   
-  const NwtFormulatorFeatureManager = class {
+  const NwtLazyFeature = class {
 
     static create(...args) {
       return new this(...args);
     }
 
-    constructor(formulator, basedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/feature/for")) {
-      this.formulator = formulator;
+    constructor(id, basedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-feature")) {
+      trace("NwtLazyFeature.constructor");
+      assertion(typeof id === "string", "NwtLazyFeature.constructor:1");
+      assertion(typeof basedir === "string", "NwtLazyFeature.constructor:2");
+      this.id = id;
       this.basedir = basedir;
+      this.loaded = false;
     }
 
-    for(featureId) {
-      assertion(typeof featureId === "string", "Parameter «featureId» must be string on «NwtFormulatorFeatureManager.prototype.for»");
-      const featurePath = `${this.basedir}/${featureId}.js`;
-      return NwtFormulatorLazyFeature.create(featurePath);
+    async load(injection = {}) {
+     trace("NwtLazyFeature.prototype.load");
+     const target = `${this.basedir}/${this.id}/feature.js`;
+      assertion(await NwtFilesystem.existsAsFile(target), `Feature «js» file not found at «${target}» on «NwtLazyFeature.prototype.load»`);
+      this.loaded = await NwtImporter.asyncSource(target, injection);
+      await this.validateLazyFeature(this.loaded, target);
+      return this.loaded;
+    }
+
+    async validateLazyFeature(value, target) {
+      trace("NwtLazyFeature.prototype.validateLazyFeature");
+      assertion(typeof value === "object", `Required feature «${target}» to return object on «NwtLazyFeature.prototype.validateLazyFeature»`);
+      if(typeof value.statics === "function") return -1;
+      assertion(typeof value.statics === "object", `Required feature «${target}» to return object at property «statics» on «NwtLazyFeature.prototype.validateLazyFeature»`);
+      assertion(typeof value.statics.id === "string", `Required feature «${target}» to return string at property «statics.id» on «NwtLazyFeature.prototype.validateLazyFeature»`);
+      return -2;
     }
 
   };
 
-  return NwtFormulatorFeatureManager;
+  return NwtLazyFeature;
 
 });
 
-// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/feature/nwt-formulator-feature-mixer.js
+// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
-    window['NwtFormulatorFeatureMixer'] = mod;
+    window['NwtFeatureStatics'] = mod;
   }
   if (typeof global !== 'undefined') {
-    global['NwtFormulatorFeatureMixer'] = mod;
+    global['NwtFeatureStatics'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFeatureStatics = class {
+
+    static validateStaticsObject (statics) {
+      trace("NwtFeatureStatics.validateStaticsObject");
+      assertion(typeof statics === "object", "Required parameter «statics» to be object on «NwtFeatureStatics.validateStaticsObject»");
+    }
+
+  };
+
+  return NwtFeatureStatics;
+
+});
+
+// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFeatureMixer'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFeatureMixer'] = mod;
   }
   if (typeof module !== 'undefined') {
     module.exports = mod;
   }
 })(function () {
 
-  const NwtFormulatorFeatureMixer = class {
+  const NwtFeatureMixer = class {
 
-    static isHook(k) {
-      return [
-        "created", "mounted", "updated",
-        "beforeDestroy", "destroyed"
-      ].includes(k)
+    static assignWithoutOverriding(base = {}, extra = {}) {
+      assertion(typeof base === "object", "Required parameter «base» to be object on «NwtFeatureMixer.assignWithoutOverriding»");
+      assertion(typeof extra === "object", "Required parameter «extra» to be object on «NwtFeatureMixer.assignWithoutOverriding»");
+      for (const prop in extra) {
+        assertion(!(prop in base), `Assignation to «${prop}» is duplicated on «NwtFeatureMixer.assignWithoutOverriding»`);
+        base[prop] = extra[prop];
+      }
     }
 
-    static mix(interfaces) {
-      trace("NwtFormulatorFeatureMixer.mix");
+    assignSoftly(base = {}, extra = {}) {
+      assertion(typeof base === "object", "Required parameter «base» to be object on «NwtFeatureMixer.assignSoftly»");
+      assertion(typeof extra === "object", "Required parameter «extra» to be object on «NwtFeatureMixer.assignSoftly»");
+      Iterating_props:
+      for (const prop in extra) {
+        if (prop in base) continue Iterating_props;
+        base[prop] = extra[prop];
+      }
+    }
+
+    static hookables = [
+      "beforeCreate",
+      "created",
+      "beforeMount",
+      "mounted",
+      "beforeUpdate",
+      "updated",
+      "beforeDestroy",
+      "destroyed"
+    ];
+
+    static async extractFeaturesInheritance(features, loaded = []) {
+      trace("NwtFeatureMixer.extractFeaturesInheritance");
+      assertion(Array.isArray(features), "Parameter «features» must be array on «NwtFeatureMixer.extractFeaturesInheritance»");
+      Validating_features:
+      for (let index = 0; index < features.length; index++) {
+        const featureId = features[index];
+        assertion(typeof featureId === "string", `Parameter «features[${index}]» must be string on «NwtFeatureMixer.extractFeaturesInheritance»`);
+        const feature = await NwtLazyFeature.create(featureId).load();
+        assertion(typeof feature === "object", `Parameter «features[${featureId}]» must be object on «NwtFeatureMixer.extractFeaturesInheritance»`);
+        if(typeof feature.statics === "function") {
+          loaded.push(feature);
+          continue Validating_features;
+        }
+        assertion(typeof feature.statics === "object", `Parameter «features[${featureId}].statics» must be object on «NwtFeatureMixer.extractFeaturesInheritance»`);
+        assertion(typeof feature.statics.id === "string", `Parameter «features[${featureId}].statics.id» must be string on «NwtFeatureMixer.extractFeaturesInheritance»`);
+        Adding_inheritance:
+        if (feature.statics.inherits) {
+          assertion(Array.isArray(feature.statics.inherits), `Parameter «features[${featureId}].statics.inherits» must be array or none on «NwtFeatureMixer.extractFeaturesInheritance»`);
+          if (feature.statics.inherits.length === 0) {
+            break Adding_inheritance;
+          }
+          const inheritedFeatures = await this.extractFeaturesInheritance(feature.statics.inherits);
+          NwtArrayUtils.pushEachInto(inheritedFeatures, loaded);
+        }
+        loaded.push(feature);
+      }
+      return loaded;
+    }
+
+    static async mix(features) {
+      trace("NwtFeatureMixer.mix");
+      // datos iniciales:
+      const inheritsList = await this.extractFeaturesInheritance(features);
       const out = {
+        // NWT API:
+        statics: {
+          settings: {},
+        },
+        // Vue2 API:
+        props: {},
         data: null,
         methods: {},
         computed: {},
         watch: {}
       };
-      const dataFns = []
-      const hooks = {}
-      for (const iface of interfaces) {
+      const dataFunctions = [];
+      const hooks = {};
+      let counter = 0;
+      Iterate_interfaces:
+      for (const interfaze of inheritsList) {
+        counter++;
+        // class
+        let className = undefined;
+        Plugin_for_class_specification:
+        if (typeof interfaze.statics !== "undefined") {
+          if(typeof interfaze.statics === "function") {
+            interfaze.statics = await interfaze.statics.call(out);
+          }
+          assertion(typeof interfaze.statics === "object", `Required parameter «features['${features[counter - 1]}'].statics» to be object on «NwtFeatureMixer.mix»`);
+          assertion(typeof interfaze.statics.id === "string", `Required parameter «features['${features[counter - 1]}'].statics.id» to be string on «NwtFeatureMixer.mmix»`);
+          if (!out.statics.seeds) {
+            out.statics.seeds = [];
+          }
+          out.statics.seeds.push(interfaze.statics.id);
+          className = interfaze.statics.id;
+          Propagating_statics:
+          for (let prop in interfaze.statics) {
+            const val = interfaze.statics[prop];
+            if (!["settings"].includes(prop)) {
+              Object.assign(out.statics, { [prop]: val });
+            }
+          }
+          // settings
+          Plugin_for_settings_specification:
+          if (typeof interfaze.statics.settings === "object") {
+            if (interfaze.statics.settings.$once) {
+              this.assignWithoutOverriding(out.statics.settings, interfaze.statics.settings.$once);
+            }
+            if (interfaze.statics.settings.$soft) {
+              this.assignSoftly(out.statics.settings, interfaze.statics.settings.$soft);
+            }
+            if (interfaze.statics.settings.$hard) {
+              Object.assign(out.statics.settings, interfaze.statics.settings.$hard);
+            }
+            Object.assign(out.statics.settings, interfaze.statics.settings);
+          }
+        }
         // data
-        if (iface.data) dataFns.push(iface.data)
+        Push_data_callback:
+        if (interfaze.data) {
+          dataFunctions.push(interfaze.data);
+        }
         // methods / computed / props → NO se suman
-        for (const k of ["methods", "computed", "props"]) {
-          if (!iface[k]) continue
-          for (const key in iface[k]) {
-            if (out[k][key])
-              throw new Error(`Collision on ${k}.${key}`)
-            out[k][key] = iface[k][key]
+        On_method_collections:
+        for (const collection of ["methods", "computed", "props"]) {
+          if (!(collection in interfaze)) {
+            continue;
+          }
+          For_each_id:
+          for (const name in interfaze[collection]) {
+            Avoid_collisions:
+            if (out[collection][name]) {
+              throw new Error(`Collision on «${collection}.${name}» on class «${className}» at class sequence «${out.statics.seeds.join(",")}» on «NwtFeatureMixer.mix»`);
+            }
+            out[collection][name] = interfaze[collection][name];
           }
         }
         // watch → merge por clave
-        if (iface.watch) {
-          for (const key in iface.watch) {
-            const cur = out.watch[key]
-            out.watch[key] = cur
-              ? [].concat(cur, iface.watch[key])
-              : iface.watch[key]
+        On_watch:
+        if (interfaze.watch) {
+          for (const watchIndex in interfaze.watch) {
+            const watchObject = out.watch[watchIndex];
+            out.watch[watchIndex] = watchObject
+              ? [].concat(watchObject, interfaze.watch[watchIndex])
+              : interfaze.watch[watchIndex];
           }
         }
         // hooks → se encadenan
-        for (const key in iface) {
-          if (typeof iface[key] === "function" && this.isHook(key)) {
-            (hooks[key] ||= []).push(iface[key])
+        On_callbacks:
+        for (const propertyId in interfaze) {
+          if (typeof interfaze[propertyId] === "function" && this.hookables.includes(propertyId)) {
+            if (!(propertyId in hooks)) {
+              hooks[propertyId] = [];
+            }
+            hooks[propertyId].push(interfaze[propertyId]);
           }
         }
       }
       // data final
-      out.data = dataFns.length ? function () {
-        let res = {}
-        for (const fn of dataFns)
-          Object.assign(res, fn.call(this))
-        return res
-      } : () => ({});
+      On_data_but_after_loops: {
+        // inherits plugin:
+        Plugin_for_settings_specification: {
+          // mejor dejar el componente ligero, solo con seeds:
+          delete out.statics.inherits;
+          break Plugin_for_settings_specification;
+          out.statics.inherits = inheritsList;
+        }
+        out.data = function () {
+          let result = {};
+          for (const callback of dataFunctions) {
+            const partialResult = callback.call(this, result);
+            assertion(typeof partialResult === "object", "Required callback «data» to return object on «FeatureMix.data»");
+            Object.assign(result, partialResult);
+          }
+          return result;
+        };
+      }
+      On_statics_settings_after_loop: {
+        delete out.statics.settings.$once;
+        delete out.statics.settings.$soft;
+        delete out.statics.settings.$hard;
+      }
       // hooks finales
+      On_hooks:
       for (const key in hooks) {
         out[key] = function () {
-          for (const fn of hooks[key])
-            fn.call(this)
-        }
+          for (const callback of hooks[key]) {
+            callback.call(this);
+          }
+        };
       }
-      return out
+      return out;
     }
 
   };
 
-  return NwtFormulatorFeatureMixer;
+  return NwtFeatureMixer;
 
 });
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/utils/nwt-formulator-utils.js
+// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-vue2-bindings.js
+NwtFeature_vue2_binding: {
+
+  Injection_by_signature_on_vue_component: {
+    Vue.componentOriginalCallback = Vue.component;
+    Vue.component = function (...args) {
+      const isFeaturingSignature = true
+        && (typeof args[0] === "string")
+        && (typeof args[1] === "object")
+        && (typeof args[1].statics === "object")
+        && (typeof args[1].statics.inherits === "object")
+        && (Array.isArray(args[1].statics.inherits))
+        && (args[1].statics.inherits.length > 0);
+      if (isFeaturingSignature) {
+        return (async function () {
+          const featureChain = args[1].statics.inherits.concat([args[1]]);
+          const componentDefinition = await NwtFeatureMixer.mix(featureChain);
+          Vue.componentOriginalCallback(args[0], componentDefinition);
+        })();
+      } else {
+        Vue.componentOriginalCallback(...args);
+      }
+      return Vue.options.components[args[0]];
+    }
+  }
+
+}
+
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/form/builder/component.html
+
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/form/builder/component.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
-    window['NwtFormulatorUtils'] = mod;
+    window['NwtFormBuilder'] = mod;
   }
   if (typeof global !== 'undefined') {
-    global['NwtFormulatorUtils'] = mod;
+    global['NwtFormBuilder'] = mod;
   }
   if (typeof module !== 'undefined') {
     module.exports = mod;
   }
 })(function () {
   
-  const NwtFormulatorUtils = class {
-
-    static create(...args) {
-      return new this(...args);
-    }
-
-    constructor(formulator) {
-      this.formulator = formulator;
-    }
-
-    static notifyValidationSuccessByControlComponent() {
-      trace("NwtFormulatorUtils.notifyValidationSuccessByControlComponent");
-      // @TODO: hacer la validación: pensar estrategia buena.
-    }
-
-    static notifyValidationErrorByControlComponent() {
-      trace("NwtFormulatorUtils.notifyValidationErrorByControlComponent");
-      // @TODO: hacer la validación: pensar estrategia buena.
-    }
+  const NwtFormBuilder = class {
 
   };
 
-  return NwtFormulatorUtils;
+  Vue.component("NwtFormBuilder", {
+    name: "NwtFormBuilder",
+    template: `<div class="nwt_form_builder">
+    Form builder here.
+</div>`,
+    props: {},
+    data() {
+      return {};
+    },
+    methods: {},
+  });
+
+  return NwtFormBuilder;
 
 });
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/nwt-formulator.js
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/form/builder/component.css
+
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/nwt-formulator.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35366,15 +33476,9 @@ Vue.component("NwtControlValidator", {
   
   const NwtFormulator = class {
 
-    static utils = NwtFormulatorUtils.create(this);
-
-    static database = NwtFormulatorDatabaseManager.create(this);
-
-    static dialog = NwtFormulatorDialogManager.create(this);
-
-    static control = NwtFormulatorControlManager.create(this);
-
-    static feature = NwtFormulatorFeatureManager.create(this);
+    static form = {
+      builder: NwtFormBuilder,
+    };
 
   };
 
@@ -35382,99 +33486,9 @@ Vue.component("NwtControlValidator", {
 
 });
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/feature/for/value.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormulatorFeatureForValue'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormulatorFeatureForValue'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
 
-  const NwtFormulatorFeatureForValue = class {
-
-    static $inherits = [
-      NwtFormulator.feature.for("Feature «value» API"),
-      NwtFormulator.feature.for("Feature «value:onChange» API"),
-      NwtFormulator.feature.for("Feature «value:onValidate» API"),
-    ]
-
-    props = {
-      settings: {
-        type: Object,
-        required: true,
-      },
-    }
-
-    data() {
-      return {
-        value: this.settings.hasInitialValue,
-      };
-    }
-
-    methods = {
-      getSettingsSpec() {
-        trace("NwtFormulatorFeatureForValue.methods.getSettingsSpec");
-        return {
-          // validation feature
-          hasInitialValue: [String, ""],
-          onGetValue: [Function, NwtUtils.noopSelf],
-          onFormat: [Function, NwtUtils.noopSelf],
-          onChange: [Function, NwtUtils.noop],
-          // basic common text control features
-          hasPlaceholder: [String, ""],
-          hasDescription: [String, ""],
-          // Validation feature:
-          hasValidationErrors: [Array, []],
-          onValidate: [Function, NwtUtils.noop],
-          onValidationSuccess: [Function, NwtUtils.noop],
-          onValidationError: [Function, NwtUtils.noop],
-        };
-      },
-      async getValue() {
-        trace("NwtFormulatorFeatureForValue.methods.getValue");
-        const val0 = await this.settings.onGetValue(this.value);
-        const val1 = await this.settings.onFormat(val0);
-        return val1;
-      },
-      async validateValue() {
-        trace("NwtFormulatorFeatureForValue.methods.validateValue");
-        const value = await this.getValue();
-        try {
-          await this.settings.onValidate(value);
-          await this.settings.onValidationSuccess(value);
-        } catch (error) {
-          await this.settings.onValidationError(value);
-        }
-      }
-    }
-
-    watch = {
-      value(newValue, oldValue) {
-        trace("NwtFormulatorFeatureForValue.watch.value");
-        this.settings.onChange(newValue, oldValue, this);
-      }
-    }
-
-    created() {
-      trace("NwtFormulatorFeatureForValue.created");
-      this.settings = NwtUtils.initializePropertiesOf(settings, this.getSettingsSpec());
-    }
-
-  };
-
-  return NwtFormulatorFeatureForValue;
-
-});
-
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
-
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
 /**
  * 
  * # NwtStarsBackground
@@ -35562,11 +33576,11 @@ Vue.component("NwtStarsBackground", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
 /**
  * 
  * # NwtMatrixBackground
@@ -35638,9 +33652,9 @@ Vue.component("NwtMatrixBackground", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
 
-// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35671,7 +33685,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35713,7 +33727,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35779,9 +33793,9 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
 
-// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
 Vue.component("NwtAnonymousCommandForm", {
   name: "NwtAnonymousCommandForm",
   template: `<div class="nwt_anonymous_command_form">
@@ -35804,11 +33818,11 @@ Vue.component("NwtAnonymousCommandForm", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
 
-// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
 
-// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
 Vue.component("NwtAnonymousCommandView", {
   name: "NwtAnonymousCommandView",
   template: `<div class="nwt_anonymous_command_view">
@@ -35825,11 +33839,11 @@ Vue.component("NwtAnonymousCommandView", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
 
-// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
 Vue.component("NwtCommandsManagerViewer", {
   name: "NwtCommandsManagerViewer",
   template: `<div class="nwt_commands_manager_viewer">
@@ -36019,11 +34033,11 @@ Vue.component("NwtCommandsManagerViewer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
 
-// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36232,7 +34246,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36435,7 +34449,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36486,7 +34500,7 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
 /**
  * 
  * # App Root API
@@ -36534,9 +34548,9 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
 
-// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
 /**
  * 
  * 
@@ -36589,15 +34603,8 @@ Vue.component("MainWindow", {
     <common-dialogs />
     <common-toasts />
     <div class="position_absolute_fixed pad_bottom_1" style="top:auto;bottom:0px;">
-        <nwt-control-for-basic-text-oneline :settings="{
-            placeholder:'ok',
-            
-            statement: 'Enunciado princial',
-            description: 'Descripción secundaria',
-            onChange:v=>\$window.console.log(v),
-            onEnter:v=>\$window.console.log('ENTER:', v),
-            buttonsLeft: [{text:'🟩',click:function(e,c) {\$window.console.log(c.value);}}],
-            buttonsRight: [{text:'🟩',click:e=>\$window.console.log(e)},{text:'🟩',click:e=>\$window.console.log(e)},{text:'🟩',click:e=>\$window.console.log(e)},{text:'🟩',click:e=>\$window.console.log(e)}],
+        <nwt-form-builder :settings="{
+            type: 'group/structure'
         }" />
     </div>
 </div>`,
@@ -36860,9 +34867,9 @@ Vue.component("MainWindow", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
 
-// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
 /**
  * 
  * # App Payload API
@@ -36893,21 +34900,24 @@ Vue.component("MainWindow", {
         On_development: {
           await NwtCodeComposer.loadBeautifyJs();
         }
-        await NwtTimer.timeout(400);
-        // event.detail.component.startGestorDePrompts();
-        // event.detail.component.startExploradorDeFicheros();
-        // event.detail.component.startProcesos();
-        // event.detail.component.startGestorDeFicherosDeChatgpt();
-        // event.detail.component.startNewFeature();
-        // window.dispatchEvent(new CustomEvent("app-started"));
-        event.detail.component.startProcedimientos();
+        On_development_payload: {
+          await NwtTimer.timeout(400);
+          // event.detail.component.startGestorDePrompts();
+          // event.detail.component.startExploradorDeFicheros();
+          // event.detail.component.startProcesos();
+          // event.detail.component.startGestorDeFicherosDeChatgpt();
+          // event.detail.component.startNewFeature();
+          event.detail.component.startProcedimientos();
+        }
+        window.dispatchEvent(new CustomEvent("app-started"));
       });
       window.addEventListener("app-started", async function (event) {
         trace("AppPayload.inject@app-started");
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {
-          
+          const builderPath = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/tests/check-form-builder.js");
+          await NwtImporter.asyncSource(builderPath, {});
         }
       });
     }
@@ -36920,6 +34930,6 @@ Vue.component("MainWindow", {
 
 });
 
-// @vuebundler[Proyecto_base_001][151]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][152]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

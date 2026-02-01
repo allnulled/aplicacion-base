@@ -53,6 +53,16 @@
       return output;
     }
 
+    static pushEachInto(added, destination) {
+      trace("NwtArrayUtils.pushInto");
+      assertion(Array.isArray(destination), "Parameter «destination» must be array");
+      assertion(Array.isArray(added), "Parameter «added» must be array");
+      for(let index=0; index<added.length; index++) {
+        const item = added[index];
+        destination.push(item);
+      }
+    }
+
   };
 
   return NwtArrayUtils;

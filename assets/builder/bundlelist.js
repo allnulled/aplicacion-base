@@ -33,6 +33,7 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer`,
   `${projectRoot}/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer`,
   // Nwt Forms API | Utilidades genéricas:
+  /*
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-utils.js`,
   // Nwt Forms API | Prototipos primitivos de form, control y handler:
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js`,
@@ -55,20 +56,15 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/text/multiline/control`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/group/list/control`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/group/structure/control`,
+  //*/
   // Formulator: la API buena de fomularios
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/control/nwt-formulator-lazy-control.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/control/nwt-formulator-control-manager.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/control/for/basic/text/oneline/component`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/control/validator/component`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/dialog/nwt-formulator-lazy-dialog.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/dialog/nwt-formulator-dialog-manager.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/database/nwt-formulator-database-manager.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/feature/nwt-formulator-lazy-feature.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/feature/nwt-formulator-feature-manager.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/feature/nwt-formulator-feature-mixer.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/utils/nwt-formulator-utils.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-control/nwt-lazy-control.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-vue2-bindings.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-formulator/form/builder/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-formulator/nwt-formulator.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-formulator/feature/for/value.js`,
   // Fondos exóticos:
   `${projectRoot}/assets/framework/browser/components/nwt-stars-background/nwt-stars-background`,
   `${projectRoot}/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background`,

@@ -43,15 +43,8 @@
     <common-dialogs />
     <common-toasts />
     <div class="position_absolute_fixed pad_bottom_1" style="top:auto;bottom:0px;">
-        <nwt-control-for-basic-text-oneline :settings="{
-            placeholder:'ok',
-            
-            statement: 'Enunciado princial',
-            description: 'Descripción secundaria',
-            onChange:v=>$window.console.log(v),
-            onEnter:v=>$window.console.log('ENTER:', v),
-            buttonsLeft: [{text:'🟩',click:function(e,c) {$window.console.log(c.value);}}],
-            buttonsRight: [{text:'🟩',click:e=>$window.console.log(e)},{text:'🟩',click:e=>$window.console.log(e)},{text:'🟩',click:e=>$window.console.log(e)},{text:'🟩',click:e=>$window.console.log(e)}],
+        <nwt-form-builder :settings="{
+            type: 'group/structure'
         }" />
     </div>
 </div>

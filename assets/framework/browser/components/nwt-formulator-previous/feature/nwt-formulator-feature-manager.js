@@ -17,18 +17,24 @@
       return new this(...args);
     }
 
-    constructor(formulator, basedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/feature/for")) {
-      this.formulator = formulator;
+    constructor(basedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/feature/for")) {
+      assertion(typeof basedir === "string", "Parameter «basedir» must be string on «NwtFormulatorFeatureManager.constructor»");
       this.basedir = basedir;
+    }
+
+    resolve(...subpaths) {
+      return require("path").resolve(this.basedir, ...subpaths);
     }
 
     for(featureId) {
       assertion(typeof featureId === "string", "Parameter «featureId» must be string on «NwtFormulatorFeatureManager.prototype.for»");
       const featurePath = `${this.basedir}/${featureId}.js`;
-      return NwtFormulatorLazyFeature.create(featurePath);
+      return NwtFormulatorLazyFeature.create(featurePath, this);
     }
 
   };
+  
+  NwtFormulatorFeatureManager.global = NwtFormulatorFeatureManager.create();
 
   return NwtFormulatorFeatureManager;
 

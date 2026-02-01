@@ -13,15 +13,9 @@
   
   const NwtFormulator = class {
 
-    static utils = NwtFormulatorUtils.create(this);
-
-    static database = NwtFormulatorDatabaseManager.create(this);
-
-    static dialog = NwtFormulatorDialogManager.create(this);
-
-    static control = NwtFormulatorControlManager.create(this);
-
-    static feature = NwtFormulatorFeatureManager.create(this);
+    static form = {
+      builder: NwtFormBuilder,
+    };
 
   };
 

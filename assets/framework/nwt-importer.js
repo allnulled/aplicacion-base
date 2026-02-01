@@ -87,7 +87,7 @@
       }
     }
 
-    static async vueComponentByFilesystem(subpath) {
+    static async vueComponentByFilesystem(subpath, injection = {}, scope = window) {
       trace("NwtImporter.vueComponentByFilesystem");
       if (NwtEnvironment.hasGlobal) {
         const fs = require("fs");
@@ -100,8 +100,8 @@
         const jsTemplate = await fs.promises.readFile(jsPath, "utf8");
         const htmlStringified = `\`${htmlContent.replace(/`/g, "\\`")}\``;
         const jsContent = jsTemplate.replace("$template", htmlStringified);
-        const result = await this.asyncFunction(jsContent);
-        this.styleTag(cssContent);
+        const result = await this.asyncFunction(jsContent, injection, scope);
+        this.styleTag(cssContent, cssPath);
         return result;
       }
     }

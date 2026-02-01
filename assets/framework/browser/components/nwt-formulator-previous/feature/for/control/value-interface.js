@@ -1,3 +1,5 @@
+return {};
+
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {

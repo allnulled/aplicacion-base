@@ -28,21 +28,24 @@
         On_development: {
           await NwtCodeComposer.loadBeautifyJs();
         }
-        await NwtTimer.timeout(400);
-        // event.detail.component.startGestorDePrompts();
-        // event.detail.component.startExploradorDeFicheros();
-        // event.detail.component.startProcesos();
-        // event.detail.component.startGestorDeFicherosDeChatgpt();
-        // event.detail.component.startNewFeature();
-        // window.dispatchEvent(new CustomEvent("app-started"));
-        event.detail.component.startProcedimientos();
+        On_development_payload: {
+          await NwtTimer.timeout(400);
+          // event.detail.component.startGestorDePrompts();
+          // event.detail.component.startExploradorDeFicheros();
+          // event.detail.component.startProcesos();
+          // event.detail.component.startGestorDeFicherosDeChatgpt();
+          // event.detail.component.startNewFeature();
+          event.detail.component.startProcedimientos();
+        }
+        window.dispatchEvent(new CustomEvent("app-started"));
       });
       window.addEventListener("app-started", async function (event) {
         trace("AppPayload.inject@app-started");
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {
-          
+          const builderPath = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/tests/check-form-builder.js");
+          await NwtImporter.asyncSource(builderPath, {});
         }
       });
     }

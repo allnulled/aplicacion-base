@@ -1,10 +1,23 @@
-const inspector = require("inspector");
-const fs = require("fs");
+// const textFeature = await NwtFormulatorFeatureManager.global.for("control/text").load();
+const textFeature = await NwtFormulatorFeatureMixer.mix([
+  await NwtFormulatorLazyFeature.create("control/text").load(),
+]);
 
-const session = new inspector.Session();
-session.connect();
+window.tmp1 = textFeature;
 
-session.post("HeapProfiler.takeHeapSnapshot", null, (err, r) => {
-  if (err) console.error(err);
-  else console.log("Snapshot tomado");
-});
+textFeature.name = "feature-one";
+textFeature.template = `
+  <div>Feature one here!</div>
+`;
+
+Vue.component("feature-one", textFeature);
+
+await NwtDialogs.open({
+  template: `
+    <div class="">
+      <feature-one :settings="{}" />
+      <hr/>
+      <button v-on:click="cancel">Cancelar</button>
+    </div>
+  `,
+})
