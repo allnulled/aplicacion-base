@@ -39,9 +39,11 @@
       return this.loaded;
     }
 
-    async validateLazyControl() {
+    async validateLazyControl(loaded = this.loaded) {
       trace("NwtLazyControl.prototype.validateLazyControl");
-
+      assertion(typeof loaded === "object", "Required parameter «loaded» to be object on «NwtLazyControl.validateLazyControl»");
+      assertion(typeof loaded.statics === "object", "Required parameter «loaded.statics» to be object on «NwtLazyControl.validateLazyControl»");
+      assertion(typeof loaded.statics.id === "string", "Required parameter «loaded.statics.id» to be string on «NwtLazyControl.validateLazyControl»");
     }
 
   };

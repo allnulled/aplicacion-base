@@ -13,16 +13,25 @@
 
   const NwtFeatureMixer = class {
 
-    static assignWithoutOverriding(base = {}, extra = {}) {
-      assertion(typeof base === "object", "Required parameter «base» to be object on «NwtFeatureMixer.assignWithoutOverriding»");
-      assertion(typeof extra === "object", "Required parameter «extra» to be object on «NwtFeatureMixer.assignWithoutOverriding»");
+    static async component(baseComponent) {
+      trace("NwtFeatureMixer.component");
+      const vueComponent = await this.mix(baseComponent);
+      if (typeof vueComponent.name === "string") {
+        Vue.component(vueComponent.name, vueComponent);
+      }
+      return vueComponent;
+    }
+
+    static assignWithoutOverriding(base = {}, extra = {}, interfazeId = undefined) {
+      assertion(typeof base === "object", `Required parameter «base» on interface «${interfazeId}» to be object on «NwtFeatureMixer.assignWithoutOverriding»`);
+      assertion(typeof extra === "object", `Required parameter «extra» on interface «${interfazeId}» to be object on «NwtFeatureMixer.assignWithoutOverriding»`);
       for (const prop in extra) {
-        assertion(!(prop in base), `Assignation to «${prop}» is duplicated on «NwtFeatureMixer.assignWithoutOverriding»`);
+        assertion(!(prop in base), `Assignation to «${prop}» is duplicated on interface «${interfazeId}» on «NwtFeatureMixer.assignWithoutOverriding»`);
         base[prop] = extra[prop];
       }
     }
 
-    assignSoftly(base = {}, extra = {}) {
+    static assignSoftly(base = {}, extra = {}) {
       assertion(typeof base === "object", "Required parameter «base» to be object on «NwtFeatureMixer.assignSoftly»");
       assertion(typeof extra === "object", "Required parameter «extra» to be object on «NwtFeatureMixer.assignSoftly»");
       Iterating_props:
@@ -48,11 +57,20 @@
       assertion(Array.isArray(features), "Parameter «features» must be array on «NwtFeatureMixer.extractFeaturesInheritance»");
       Validating_features:
       for (let index = 0; index < features.length; index++) {
-        const featureId = features[index];
-        assertion(typeof featureId === "string", `Parameter «features[${index}]» must be string on «NwtFeatureMixer.extractFeaturesInheritance»`);
-        const feature = await NwtLazyFeature.create(featureId).load();
-        assertion(typeof feature === "object", `Parameter «features[${featureId}]» must be object on «NwtFeatureMixer.extractFeaturesInheritance»`);
-        if(typeof feature.statics === "function") {
+        let featureId = features[index];
+        const isObject = typeof featureId === "object";
+        let feature = undefined;
+        if (isObject) {
+          feature = featureId;
+          assertion(typeof feature.statics === "object", `Parameter «features[${index}].statics» must be object on «NwtFeatureMixer.extractFeaturesInheritance»`);
+          assertion(typeof feature.statics.id === "string", `Parameter «features[${index}].statics.id» must be string on «NwtFeatureMixer.extractFeaturesInheritance»`);
+          featureId = feature.statics.id;
+        } else {
+          assertion(typeof featureId === "string", `Parameter «features[${index}]» must be string on «NwtFeatureMixer.extractFeaturesInheritance»`);
+          feature = await NwtFormulatorResource.for(featureId).load();
+          assertion(typeof feature === "object", `Parameter «features[${featureId}]» must be object on «NwtFeatureMixer.extractFeaturesInheritance»`);
+        }
+        if (typeof feature.statics === "function") {
           loaded.push(feature);
           continue Validating_features;
         }
@@ -72,10 +90,15 @@
       return loaded;
     }
 
-    static async mix(features) {
+    static async mix(component) {
       trace("NwtFeatureMixer.mix");
+      assertion(typeof component === "object", "Required parameter «component» to be object on «NwtFeatureMixer.mix»");
+      assertion(!Array.isArray(component), "Required parameter «component» to not be array, only object on «NwtFeatureMixer.mix»");
+      assertion(typeof component.statics === "object", "Required parameter «component.statics» to be object on «NwtFeatureMixer.mix»");
+      assertion(Array.isArray(component.statics.inherits), "Required parameter «component.statics.inherits» to be array on «NwtFeatureMixer.mix»");
       // datos iniciales:
-      const inheritsList = await this.extractFeaturesInheritance(features);
+      const inheritsList = await this.extractFeaturesInheritance(component.statics.inherits);
+      inheritsList.push(component);
       const out = {
         // NWT API:
         statics: {
@@ -98,11 +121,11 @@
         let className = undefined;
         Plugin_for_class_specification:
         if (typeof interfaze.statics !== "undefined") {
-          if(typeof interfaze.statics === "function") {
+          if (typeof interfaze.statics === "function") {
             interfaze.statics = await interfaze.statics.call(out);
           }
-          assertion(typeof interfaze.statics === "object", `Required parameter «features['${features[counter - 1]}'].statics» to be object on «NwtFeatureMixer.mix»`);
-          assertion(typeof interfaze.statics.id === "string", `Required parameter «features['${features[counter - 1]}'].statics.id» to be string on «NwtFeatureMixer.mmix»`);
+          assertion(typeof interfaze.statics === "object", `Required parameter «features['${counter - 1}'].statics» to be object on «NwtFeatureMixer.mix»`);
+          assertion(typeof interfaze.statics.id === "string", `Required parameter «features['${counter - 1}'].statics.id» to be string on «NwtFeatureMixer.mmix»`);
           if (!out.statics.seeds) {
             out.statics.seeds = [];
           }
@@ -119,7 +142,7 @@
           Plugin_for_settings_specification:
           if (typeof interfaze.statics.settings === "object") {
             if (interfaze.statics.settings.$once) {
-              this.assignWithoutOverriding(out.statics.settings, interfaze.statics.settings.$once);
+              this.assignWithoutOverriding(out.statics.settings, interfaze.statics.settings.$once, interfaze.statics.id);
             }
             if (interfaze.statics.settings.$soft) {
               this.assignSoftly(out.statics.settings, interfaze.statics.settings.$soft);
@@ -168,6 +191,18 @@
               hooks[propertyId] = [];
             }
             hooks[propertyId].push(interfaze[propertyId]);
+          }
+        }
+        // name:
+        On_name_by_the_way: {
+          if(interfaze.name) {
+            out.name = interfaze.name;
+          }
+        }
+        // template:
+        On_template_by_the_way: {
+          if(interfaze.template) {
+            out.template = interfaze.template;
           }
         }
       }

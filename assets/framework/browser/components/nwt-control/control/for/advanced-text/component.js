@@ -1,9 +1,9 @@
 return await NwtFeatureMixer.component({
-  name: "NwtControlForList",
+  name: "NwtControlForAdvancedText",
   statics: {
-    id: "control/for/list",
+    id: "control/for/advanced-text",
     inherits: [
-      
+      "control/for/text",
     ],
   },
   template: $template,

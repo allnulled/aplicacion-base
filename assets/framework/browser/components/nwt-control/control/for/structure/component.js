@@ -1,7 +1,7 @@
 return await NwtFeatureMixer.component({
-  name: "NwtControlForList",
+  name: "NwtControlForStructure",
   statics: {
-    id: "control/for/list",
+    id: "control/for/structure",
     inherits: [
       
     ],

@@ -13,6 +13,8 @@
   
   const NwtFormulator = class {
 
+    static resource = NwtFormulatorResource;
+
     static form = {
       builder: NwtFormBuilder,
     };

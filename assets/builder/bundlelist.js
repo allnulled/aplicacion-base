@@ -58,12 +58,14 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/group/structure/control`,
   //*/
   // Formulator: la API buena de fomularios
+  `${projectRoot}/assets/framework/browser/components/nwt-control/control/loader/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-control/nwt-lazy-control.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-vue2-bindings.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-formulator/form/builder/component`,
+  `${projectRoot}/assets/framework/browser/components/nwt-formulator/resource/nwt-formulator-resource.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-formulator/resource/nwt-lazy-resource/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-formulator/nwt-formulator.js`,
   // Fondos exóticos:
   `${projectRoot}/assets/framework/browser/components/nwt-stars-background/nwt-stars-background`,
