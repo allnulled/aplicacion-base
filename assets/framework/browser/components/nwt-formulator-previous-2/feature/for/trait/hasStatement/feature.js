@@ -1,6 +1,6 @@
 return {
   abstraction: {
-    name: "feature/for/trait/hasStatement",
+    name: "feature/for/control/trait/hasStatement",
     settings: {
       hasStatement: [String, ""],
     },

@@ -58,8 +58,8 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/group/structure/control`,
   //*/
   // Formulator: la API buena de fomularios
-  `${projectRoot}/assets/framework/browser/components/nwt-control/control/loader/component`,
-  `${projectRoot}/assets/framework/browser/components/nwt-control/nwt-lazy-control.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-component/nwt-lazy-component.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-component/nwt-lazy-control.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js`,

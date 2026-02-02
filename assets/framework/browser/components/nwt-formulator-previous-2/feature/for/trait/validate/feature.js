@@ -1,12 +1,12 @@
 return {
   abstraction: {
-    name: "feature/for/trait/validate",
+    name: "feature/for/control/trait/validate",
     validate() {
-      trace("feature/for/trait/validate.abstraction.validate");
+      trace("feature/for/control/trait/validate.abstraction.validate");
       // @TODO:
     },
     onValidate() {
-      trace("feature/for/trait/validate.abstraction.onValidate");
+      trace("feature/for/control/trait/validate.abstraction.onValidate");
       // @EMPTY for overriding
     },
     settings: {
@@ -15,15 +15,15 @@ return {
   },
   view: {
     data() {
-      trace("feature/for/trait/validate.data");
+      trace("feature/for/control/trait/validate.data");
       return {
 
       };
     },
     methods: {
       async validate() {
-        trace("feature/for/trait/validate.methods.validate");
-        // @REQUIRED-TRAIT: "feature/for/trait/getValue"
+        trace("feature/for/control/trait/validate.methods.validate");
+        // @REQUIRED-TRAIT: "feature/for/control/trait/getValue"
         const value = await this.getValue();
         let errors = undefined;
         try {

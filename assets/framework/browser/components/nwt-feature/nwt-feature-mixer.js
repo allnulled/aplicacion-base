@@ -193,6 +193,27 @@
             hooks[propertyId].push(interfaze[propertyId]);
           }
         }
+        // traits abstract inheritance → con Object.assign pero dentro de cada trait
+        On_traits_abstract_inheritance: {
+          const hasTraits = interfaze.statics && interfaze.statics.traits;
+          if(!hasTraits) {
+            break On_traits_abstract_inheritance;
+          }
+          if(!out.statics.traits) {
+            out.statics.traits = {};
+          }
+          for(const traitId in interfaze.statics.traits) {
+            if(!out.statics.traits[traitId]) {
+              out.statics.traits[traitId] = {};
+            }
+            const traitMap = interfaze.statics.traits[traitId];
+            assertion(typeof traitMap === "object", `Trait «${traitId}» on interface «${interfaze.statics.id}» must be object on «NwtFeatureMixer.mix»`);
+            for(const traitProperty in traitMap) {
+              const traitValue = traitMap[traitProperty];
+              Object.assign(out.statics.traits[traitId], { [traitProperty]: traitValue });
+            }
+          }
+        }
         // name:
         On_name_by_the_way: {
           if(interfaze.name) {

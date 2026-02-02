@@ -1,3 +1,10 @@
+02/02/2026
+
+- [ ] Tener una API abstracta heredable a nivel Feature en:
+   - [ ] Esto afecta al mixer, que tiene que añadir un `Object.assign` a:
+   - [ ] `statics.traits[featureId].property`
+- [ ] 
+
 AHORA:
 
 - [ ] Que command.js inyecte solamente 1 parámetro:

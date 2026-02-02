@@ -1,6 +1,6 @@
 return {
   abstraction: {
-    name: "feature/for/trait/isExpanded",
+    name: "feature/for/control/trait/isExpanded",
     inherits: [],
     settings: {},
   },

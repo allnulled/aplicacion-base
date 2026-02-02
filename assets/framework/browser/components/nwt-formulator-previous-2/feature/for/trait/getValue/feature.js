@@ -1,6 +1,6 @@
 return {
   abstraction: {
-    name: "feature/for/trait/getValue",
+    name: "feature/for/control/trait/getValue",
     settings: {
       initialValue: [[String,Number,Boolean,Object,Array,Function,undefined,null], ""],
       onFormat: [Function, NwtUtils.noop],

@@ -1,6 +1,6 @@
 return {
   abstraction: {
-    name: "feature/for/trait/settings",
+    name: "feature/for/control/trait/settings",
     settings: {
   
     },

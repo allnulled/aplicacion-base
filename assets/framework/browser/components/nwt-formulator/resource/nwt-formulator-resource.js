@@ -13,16 +13,17 @@
 
   const NwtFormulatorResource = class {
 
-    static for(resourceId) {
+    static for(resourceIdBrute) {
       trace("NwtFormulatorResource.for");
-      const isFeature = resourceId.startsWith("feature/for/");
-      const isControl = resourceId.startsWith("control/for/");
+      const isFeature = resourceIdBrute.startsWith("@feature/for/");
+      const isControl = resourceIdBrute.startsWith("@control/for/");
+      const resourceId = resourceIdBrute.replace(/^\@/g, "");
       if (isFeature) {
         return NwtLazyFeature.create(resourceId);
       } else if (isControl) {
         return NwtLazyControl.create(resourceId);
       } else {
-        assertion(resourceId in Vue.options.component, `Required parameter «resourceId» now «${resourceId}» to exist as component or start with «control/for» or «feature/for» on «NwtFeatureMixer.extractFeaturesInheritance»`);
+        assertion(resourceId in Vue.options.component, `Required parameter «resourceId» now «${resourceId}» to exist as component or start with «@control/for» or «@feature/for» on «NwtFeatureMixer.extractFeaturesInheritance»`);
         return {
           load: () => Vue.options.components[resourceId].options
         };

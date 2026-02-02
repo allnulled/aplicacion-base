@@ -1,12 +1,12 @@
 const result = await NwtFormulator.feature.mixer.mix([
-  "feature/for/trait/abstraction",
-  "feature/for/trait/getValue",
-  "feature/for/trait/hasDescription",
-  "feature/for/trait/hasPlaceholder",
-  "feature/for/trait/hasStatement",
-  "feature/for/trait/isExpanded",
-  "feature/for/trait/settings",
-  "feature/for/trait/validate",
+  "feature/for/control/trait/abstraction",
+  "feature/for/control/trait/getValue",
+  "feature/for/control/trait/hasDescription",
+  "feature/for/control/trait/hasPlaceholder",
+  "feature/for/control/trait/hasStatement",
+  "feature/for/control/trait/isExpanded",
+  "feature/for/control/trait/settings",
+  "feature/for/control/trait/validate",
 ]);
 
 console.log(result);
