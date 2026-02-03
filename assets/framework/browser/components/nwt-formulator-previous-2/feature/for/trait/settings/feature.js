@@ -13,7 +13,7 @@ return {
       }
     },
     created() {
-      NwtUtils.initializePropertiesOf(this.settings, this.specification.settings || {});
+      NwtPrototyper.initializePropertiesOf(this.settings, this.specification.settings || {});
     },
     methods: {
 

@@ -66,6 +66,8 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-formulator/form/builder/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-formulator/resource/nwt-formulator-resource.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-formulator/resource/nwt-lazy-resource/component`,
+  `${projectRoot}/assets/framework/browser/components/nwt-validation/nwt-validation-context-pointer.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-validation/nwt-validation-context.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-formulator/nwt-formulator.js`,
   // Fondos exóticos:
   `${projectRoot}/assets/framework/browser/components/nwt-stars-background/nwt-stars-background`,

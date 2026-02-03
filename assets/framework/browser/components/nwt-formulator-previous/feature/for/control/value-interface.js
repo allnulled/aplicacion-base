@@ -80,7 +80,7 @@ return {};
 
     created() {
       trace("NwtFormulatorFeatureForValue.created");
-      this.settings = NwtUtils.initializePropertiesOf(settings, this.getSettingsSpec());
+      this.settings = NwtPrototyper.initializePropertiesOf(settings, this.getSettingsSpec());
     }
 
   };

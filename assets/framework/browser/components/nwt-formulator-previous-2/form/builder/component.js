@@ -37,7 +37,7 @@
     methods: {},
     created() {
       trace("NwtFormulatorFormBuilder.created");
-      NwtUtils.initializePropertiesOf(this.settings, {
+      NwtPrototyper.initializePropertiesOf(this.settings, {
         type: [String],
         controls: [Array, []],
       });

@@ -62,14 +62,14 @@
         if(condition) {
           return true;
         }
-        this.errors.push(new this.constructor.constructor.ConstraintError(constraintMessage));
+        this.errors.push(NwtConstrainer.ConstraintError.create(constraintMessage));
         if(throwOnFail) {
           throw this;
         }
       }
 
       absorve(multipleConstraintErrors) {
-        assertion(multipleConstraintErrors instanceof this.constructor, "Parameter «multipleConstraintErrors» must be instance of «MultipleConstraintErrors» on «MultipleConstraintErrors.prototype.absorve»");
+        assertion(multipleConstraintErrors instanceof NwtConstrainer.MultipleConstraintErrors, "Parameter «multipleConstraintErrors» must be instance of «MultipleConstraintErrors» on «MultipleConstraintErrors.prototype.absorve»");
         this.errors = this.errors.concat(multipleConstraintErrors.errors);
         return this;
       }

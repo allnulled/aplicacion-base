@@ -10,6 +10,6 @@ return {
     }
   },
   created() {
-    NwtUtils.initializePropertiesOf(this.settings, this.$options.statics.settings || {});
+    NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statics.settings || {});
   },
 };

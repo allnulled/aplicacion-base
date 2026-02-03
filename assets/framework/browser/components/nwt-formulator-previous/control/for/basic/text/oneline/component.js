@@ -33,7 +33,7 @@
     static createSettings(_settings = {}) {
       trace("NwtControlForBasicTextOneline.createSettings");
       assertion(typeof _settings === "object", "Parameter «settings» must be object on «NwtControlForBasicTextOneline.createSettings»");
-      const settings = NwtUtils.initializePropertiesOf(_settings, {
+      const settings = NwtPrototyper.initializePropertiesOf(_settings, {
         initialValue: [String, ""],
         statement: [String, ""],
         placeholder: [String, ""],
