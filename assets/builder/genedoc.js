@@ -1,10 +1,10 @@
 const fs = require("fs/promises");
 const path = require("path");
 
-const ROOT = process.argv[2] || process.cwd();
-const INPUT_TEMPLATE = "genedoc.ejs";
-const OUTPUT = process.argv[3] || "genedoc.json";
-const OUTPUT_MARKDOWN = process.argv[3] || "README-API.md";
+const ROOT = __dirname + "/../..";
+const INPUT_TEMPLATE = __dirname + "/genedoc.ejs";
+const OUTPUT = __dirname + "/genedoc.json";
+const OUTPUT_MARKDOWN = path.resolve(ROOT, "README-API.md");
 const PATTERN = /^nwt\-/g;
 
 function diehere(...things) {

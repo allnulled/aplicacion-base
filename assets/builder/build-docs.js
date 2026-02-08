@@ -5,7 +5,7 @@ const JavadocBrute = require("@allnulled/javadoc-brute");
 const main = async function () {
 
   Generar_genedoc_primero: {
-    require(__dirname + "/../../genedoc.js");
+    require(__dirname + "/genedoc.js");
   }
 
   const PROJECT_ROOT = path.resolve(__dirname, "..", "..");

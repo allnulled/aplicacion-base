@@ -1114,11 +1114,11 @@ El JSON original es:
 
 ```json
 {
-  "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1",
-  "generatedAt": "2026-02-08T12:44:12.488Z",
+  "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
+  "generatedAt": "2026-02-08T13:13:58.538Z",
   "nodes": [
     {
-      "path": "assets/framework/nwt-abort.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
       "name": "nwt-abort.js",
       "type": "file",
       "formalName": "NwtAbortJs",
@@ -1128,35 +1128,35 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css",
       "name": "nwt-anonymous-command-form.css",
       "type": "file",
       "formalName": "NwtAnonymousCommandFormCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html",
       "name": "nwt-anonymous-command-form.html",
       "type": "file",
       "formalName": "NwtAnonymousCommandFormHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css",
       "name": "nwt-anonymous-command-view.css",
       "type": "file",
       "formalName": "NwtAnonymousCommandViewCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html",
       "name": "nwt-anonymous-command-view.html",
       "type": "file",
       "formalName": "NwtAnonymousCommandViewHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-argumenter.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-argumenter.js",
       "name": "nwt-argumenter.js",
       "type": "file",
       "formalName": "NwtArgumenterJs",
@@ -1169,7 +1169,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-array-utils.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-array-utils.js",
       "name": "nwt-array-utils.js",
       "type": "file",
       "formalName": "NwtArrayUtilsJs",
@@ -1180,7 +1180,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-asserter.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-asserter.js",
       "name": "nwt-asserter.js",
       "type": "file",
       "formalName": "NwtAsserterJs",
@@ -1192,7 +1192,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-ast-tree-class.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js",
       "name": "nwt-ast-tree-class.js",
       "type": "file",
       "formalName": "NwtAstTreeClassJs",
@@ -1204,7 +1204,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-ast-tree-template-source.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js",
       "name": "nwt-ast-tree-template-source.js",
       "type": "file",
       "formalName": "NwtAstTreeTemplateSourceJs",
@@ -1214,7 +1214,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-boot.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-boot.js",
       "name": "nwt-boot.js",
       "type": "file",
       "formalName": "NwtBootJs",
@@ -1224,21 +1224,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
       "name": "nwt-box-viewer.css",
       "type": "file",
       "formalName": "NwtBoxViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html",
       "name": "nwt-box-viewer.html",
       "type": "file",
       "formalName": "NwtBoxViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-cache-directory.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js",
       "name": "nwt-cache-directory.js",
       "type": "file",
       "formalName": "NwtCacheDirectoryJs",
@@ -1254,21 +1254,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css",
       "name": "nwt-chatgpt-files-manager-viewer.css",
       "type": "file",
       "formalName": "NwtChatgptFilesManagerViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html",
       "name": "nwt-chatgpt-files-manager-viewer.html",
       "type": "file",
       "formalName": "NwtChatgptFilesManagerViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-chatgpt.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js",
       "name": "nwt-chatgpt.js",
       "type": "file",
       "formalName": "NwtChatgptJs",
@@ -1286,7 +1286,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-clipboard.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js",
       "name": "nwt-clipboard.js",
       "type": "file",
       "formalName": "NwtClipboardJs",
@@ -1299,7 +1299,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-code-composer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js",
       "name": "nwt-code-composer.js",
       "type": "file",
       "formalName": "NwtCodeComposerJs",
@@ -1314,21 +1314,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css",
       "name": "nwt-code-highlighter.css",
       "type": "file",
       "formalName": "NwtCodeHighlighterCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html",
       "name": "nwt-code-highlighter.html",
       "type": "file",
       "formalName": "NwtCodeHighlighterHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-collection-utils.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-collection-utils.js",
       "name": "nwt-collection-utils.js",
       "type": "file",
       "formalName": "NwtCollectionUtilsJs",
@@ -1339,7 +1339,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js",
       "name": "nwt-command-context-interface.js",
       "type": "file",
       "formalName": "NwtCommandContextInterfaceJs",
@@ -1349,7 +1349,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js",
       "name": "nwt-command-form-interface.js",
       "type": "file",
       "formalName": "NwtCommandFormInterfaceJs",
@@ -1361,7 +1361,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/nwt-command.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js",
       "name": "nwt-command.js",
       "type": "file",
       "formalName": "NwtCommandJs",
@@ -1377,7 +1377,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/nwt-command-synchronizer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js",
       "name": "nwt-command-synchronizer.js",
       "type": "file",
       "formalName": "NwtCommandSynchronizerJs",
@@ -1390,7 +1390,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js",
       "name": "nwt-command-view-interface.js",
       "type": "file",
       "formalName": "NwtCommandViewInterfaceJs",
@@ -1405,7 +1405,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/nwt-commands-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js",
       "name": "nwt-commands-manager.js",
       "type": "file",
       "formalName": "NwtCommandsManagerJs",
@@ -1419,21 +1419,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css",
       "name": "nwt-commands-manager-viewer.css",
       "type": "file",
       "formalName": "NwtCommandsManagerViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html",
       "name": "nwt-commands-manager-viewer.html",
       "type": "file",
       "formalName": "NwtCommandsManagerViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-constrainer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-constrainer.js",
       "name": "nwt-constrainer.js",
       "type": "file",
       "formalName": "NwtConstrainerJs",
@@ -1443,7 +1443,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-csv.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js",
       "name": "nwt-csv.js",
       "type": "file",
       "formalName": "NwtCsvJs",
@@ -1455,7 +1455,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-debug.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-debug.js",
       "name": "nwt-debug.js",
       "type": "file",
       "formalName": "NwtDebugJs",
@@ -1467,7 +1467,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-dialog-definition.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dialog-definition.js",
       "name": "nwt-dialog-definition.js",
       "type": "file",
       "formalName": "NwtDialogDefinitionJs",
@@ -1482,7 +1482,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-persister/nwt-directory-persister.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js",
       "name": "nwt-directory-persister.js",
       "type": "file",
       "formalName": "NwtDirectoryPersisterJs",
@@ -1495,7 +1495,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-dom.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js",
       "name": "nwt-dom.js",
       "type": "file",
       "formalName": "NwtDomJs",
@@ -1507,7 +1507,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-environment.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-environment.js",
       "name": "nwt-environment.js",
       "type": "file",
       "formalName": "NwtEnvironmentJs",
@@ -1523,7 +1523,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-error-utils.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-error-utils.js",
       "name": "nwt-error-utils.js",
       "type": "file",
       "formalName": "NwtErrorUtilsJs",
@@ -1534,7 +1534,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-errors-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-errors-manager.js",
       "name": "nwt-errors-manager.js",
       "type": "file",
       "formalName": "NwtErrorsManagerJs",
@@ -1554,7 +1554,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-exporter.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js",
       "name": "nwt-exporter.js",
       "type": "file",
       "formalName": "NwtExporterJs",
@@ -1566,7 +1566,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js",
       "name": "nwt-feature-mixer.js",
       "type": "file",
       "formalName": "NwtFeatureMixerJs",
@@ -1579,7 +1579,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-feature/nwt-feature-statics.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js",
       "name": "nwt-feature-statics.js",
       "type": "file",
       "formalName": "NwtFeatureStaticsJs",
@@ -1590,7 +1590,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-file-chooser.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js",
       "name": "nwt-file-chooser.js",
       "type": "file",
       "formalName": "NwtFileChooserJs",
@@ -1601,21 +1601,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css",
       "name": "nwt-file-explorer.css",
       "type": "file",
       "formalName": "NwtFileExplorerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html",
       "name": "nwt-file-explorer.html",
       "type": "file",
       "formalName": "NwtFileExplorerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-persister/nwt-file-persister.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js",
       "name": "nwt-file-persister.js",
       "type": "file",
       "formalName": "NwtFilePersisterJs",
@@ -1627,7 +1627,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filesystem.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js",
       "name": "nwt-filesystem.js",
       "type": "file",
       "formalName": "NwtFilesystemJs",
@@ -1645,7 +1645,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js",
       "name": "nwt-filetree-directory.js",
       "type": "file",
       "formalName": "NwtFiletreeDirectoryJs",
@@ -1657,7 +1657,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js",
       "name": "nwt-filetree-file.js",
       "type": "file",
       "formalName": "NwtFiletreeFileJs",
@@ -1668,7 +1668,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js",
       "name": "nwt-filetree-glob.js",
       "type": "file",
       "formalName": "NwtFiletreeGlobJs",
@@ -1679,7 +1679,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/nwt-filetree.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js",
       "name": "nwt-filetree.js",
       "type": "file",
       "formalName": "NwtFiletreeJs",
@@ -1700,7 +1700,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js",
       "name": "nwt-filetree-json.js",
       "type": "file",
       "formalName": "NwtFiletreeJsonJs",
@@ -1711,7 +1711,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js",
       "name": "nwt-filetree-node.js",
       "type": "file",
       "formalName": "NwtFiletreeNodeJs",
@@ -1722,7 +1722,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js",
       "name": "nwt-filetree-property.js",
       "type": "file",
       "formalName": "NwtFiletreePropertyJs",
@@ -1733,7 +1733,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js",
       "name": "nwt-filetree-selector-interpreter.js",
       "type": "file",
       "formalName": "NwtFiletreeSelectorInterpreterJs",
@@ -1747,7 +1747,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/selector/nwt-filetree-selector.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js",
       "name": "nwt-filetree-selector.js",
       "type": "file",
       "formalName": "NwtFiletreeSelectorJs",
@@ -1759,7 +1759,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.build.sh",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.build.sh",
       "name": "nwt-filetree-selector-parser.build.sh",
       "type": "file",
       "formalName": "NwtFiletreeSelectorParserBuildSh",
@@ -1768,14 +1768,14 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.dev.sh",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.dev.sh",
       "name": "nwt-filetree-selector-parser.dev.sh",
       "type": "file",
       "formalName": "NwtFiletreeSelectorParserDevSh",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.fix.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.fix.js",
       "name": "nwt-filetree-selector-parser.fix.js",
       "type": "file",
       "formalName": "NwtFiletreeSelectorParserFixJs",
@@ -1786,7 +1786,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js",
       "name": "nwt-filetree-selector-parser.js",
       "type": "file",
       "formalName": "NwtFiletreeSelectorParserJs",
@@ -1796,56 +1796,56 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.pegjs",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.pegjs",
       "name": "nwt-filetree-selector-parser.pegjs",
       "type": "file",
       "formalName": "NwtFiletreeSelectorParserPegjs",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.css",
       "name": "nwt-form-control-buttons.css",
       "type": "file",
       "formalName": "NwtFormControlButtonsCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.html",
       "name": "nwt-form-control-buttons.html",
       "type": "file",
       "formalName": "NwtFormControlButtonsHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.css",
       "name": "nwt-form-control-handler.css",
       "type": "file",
       "formalName": "NwtFormControlHandlerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.html",
       "name": "nwt-form-control-handler.html",
       "type": "file",
       "formalName": "NwtFormControlHandlerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.css",
       "name": "nwt-form-control-statement.css",
       "type": "file",
       "formalName": "NwtFormControlStatementCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.html",
       "name": "nwt-form-control-statement.html",
       "type": "file",
       "formalName": "NwtFormControlStatementHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js",
       "name": "nwt-form-element-to-any.js",
       "type": "file",
       "formalName": "NwtFormElementToAnyJs",
@@ -1860,7 +1860,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/nwt-form-element-to-control.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-control.js",
       "name": "nwt-form-element-to-control.js",
       "type": "file",
       "formalName": "NwtFormElementToControlJs",
@@ -1878,7 +1878,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/nwt-form-element-to-form.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-form.js",
       "name": "nwt-form-element-to-form.js",
       "type": "file",
       "formalName": "NwtFormElementToFormJs",
@@ -1894,7 +1894,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/nwt-form-element-to-handler.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-handler.js",
       "name": "nwt-form-element-to-handler.js",
       "type": "file",
       "formalName": "NwtFormElementToHandlerJs",
@@ -1909,7 +1909,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-form-schema/nwt-form-schema.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-schema/nwt-form-schema.js",
       "name": "nwt-form-schema.js",
       "type": "file",
       "formalName": "NwtFormSchemaJs",
@@ -1919,14 +1919,14 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-form-schema/nwt-form-schema-language.pegjs",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-schema/nwt-form-schema-language.pegjs",
       "name": "nwt-form-schema-language.pegjs",
       "type": "file",
       "formalName": "NwtFormSchemaLanguagePegjs",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/nwt-form-utils.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-utils.js",
       "name": "nwt-form-utils.js",
       "type": "file",
       "formalName": "NwtFormUtilsJs",
@@ -1943,7 +1943,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/control/nwt-formulator-control-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/control/nwt-formulator-control-manager.js",
       "name": "nwt-formulator-control-manager.js",
       "type": "file",
       "formalName": "NwtFormulatorControlManagerJs",
@@ -1955,7 +1955,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/database/nwt-formulator-database-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/database/nwt-formulator-database-manager.js",
       "name": "nwt-formulator-database-manager.js",
       "type": "file",
       "formalName": "NwtFormulatorDatabaseManagerJs",
@@ -1965,7 +1965,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/dialog/nwt-formulator-dialog-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/dialog/nwt-formulator-dialog-manager.js",
       "name": "nwt-formulator-dialog-manager.js",
       "type": "file",
       "formalName": "NwtFormulatorDialogManagerJs",
@@ -1978,7 +1978,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-feature-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-feature-manager.js",
       "name": "nwt-formulator-feature-manager.js",
       "type": "file",
       "formalName": "NwtFormulatorFeatureManagerJs",
@@ -1991,7 +1991,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-feature-mixer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-feature-mixer.js",
       "name": "nwt-formulator-feature-mixer.js",
       "type": "file",
       "formalName": "NwtFormulatorFeatureMixerJs",
@@ -2003,7 +2003,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous-2/feature/nwt-formulator-feature-mixer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous-2/feature/nwt-formulator-feature-mixer.js",
       "name": "nwt-formulator-feature-mixer.js",
       "type": "file",
       "formalName": "NwtFormulatorFeatureMixerJs",
@@ -2015,7 +2015,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-feature-mixer-previous.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-feature-mixer-previous.js",
       "name": "nwt-formulator-feature-mixer-previous.js",
       "type": "file",
       "formalName": "NwtFormulatorFeatureMixerPreviousJs",
@@ -2027,7 +2027,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator/nwt-formulator.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/nwt-formulator.js",
       "name": "nwt-formulator.js",
       "type": "file",
       "formalName": "NwtFormulatorJs",
@@ -2039,7 +2039,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/nwt-formulator.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/nwt-formulator.js",
       "name": "nwt-formulator.js",
       "type": "file",
       "formalName": "NwtFormulatorJs",
@@ -2054,7 +2054,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous-2/nwt-formulator.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous-2/nwt-formulator.js",
       "name": "nwt-formulator.js",
       "type": "file",
       "formalName": "NwtFormulatorJs",
@@ -2068,7 +2068,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/control/nwt-formulator-lazy-control.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/control/nwt-formulator-lazy-control.js",
       "name": "nwt-formulator-lazy-control.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyControlJs",
@@ -2078,7 +2078,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous-2/control/nwt-formulator-lazy-control.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous-2/control/nwt-formulator-lazy-control.js",
       "name": "nwt-formulator-lazy-control.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyControlJs",
@@ -2091,7 +2091,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/dialog/nwt-formulator-lazy-dialog.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/dialog/nwt-formulator-lazy-dialog.js",
       "name": "nwt-formulator-lazy-dialog.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyDialogJs",
@@ -2101,7 +2101,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-lazy-feature.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-lazy-feature.js",
       "name": "nwt-formulator-lazy-feature.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyFeatureJs",
@@ -2114,7 +2114,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous-2/feature/nwt-formulator-lazy-feature.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous-2/feature/nwt-formulator-lazy-feature.js",
       "name": "nwt-formulator-lazy-feature.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyFeatureJs",
@@ -2127,7 +2127,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator/resource/nwt-formulator-resource.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/resource/nwt-formulator-resource.js",
       "name": "nwt-formulator-resource.js",
       "type": "file",
       "formalName": "NwtFormulatorResourceJs",
@@ -2140,7 +2140,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-formulator-previous/utils/nwt-formulator-utils.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/utils/nwt-formulator-utils.js",
       "name": "nwt-formulator-utils.js",
       "type": "file",
       "formalName": "NwtFormulatorUtilsJs",
@@ -2150,7 +2150,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-globalizer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js",
       "name": "nwt-globalizer.js",
       "type": "file",
       "formalName": "NwtGlobalizerJs",
@@ -2161,7 +2161,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-importer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-importer.js",
       "name": "nwt-importer.js",
       "type": "file",
       "formalName": "NwtImporterJs",
@@ -2176,7 +2176,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-injection.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js",
       "name": "nwt-injection.js",
       "type": "file",
       "formalName": "NwtInjectionJs",
@@ -2188,7 +2188,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-interruption/nwt-interruptible.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js",
       "name": "nwt-interruptible.js",
       "type": "file",
       "formalName": "NwtInterruptibleJs",
@@ -2199,7 +2199,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-interruption/nwt-interruption-handler.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js",
       "name": "nwt-interruption-handler.js",
       "type": "file",
       "formalName": "NwtInterruptionHandlerJs",
@@ -2210,7 +2210,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-interruption/nwt-interruption.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js",
       "name": "nwt-interruption.js",
       "type": "file",
       "formalName": "NwtInterruptionJs",
@@ -2221,7 +2221,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-iterable-class.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js",
       "name": "nwt-iterable-class.js",
       "type": "file",
       "formalName": "NwtIterableClassJs",
@@ -2232,7 +2232,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-iterable-command-class.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js",
       "name": "nwt-iterable-command-class.js",
       "type": "file",
       "formalName": "NwtIterableCommandClassJs",
@@ -2244,7 +2244,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-iterable-function.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js",
       "name": "nwt-iterable-function.js",
       "type": "file",
       "formalName": "NwtIterableFunctionJs",
@@ -2259,7 +2259,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-js-controllers/nwt-js-controller.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js",
       "name": "nwt-js-controller.js",
       "type": "file",
       "formalName": "NwtJsControllerJs",
@@ -2269,7 +2269,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-js-controllers/nwt-js-return-controller.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js",
       "name": "nwt-js-return-controller.js",
       "type": "file",
       "formalName": "NwtJsReturnControllerJs",
@@ -2281,7 +2281,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-js-controllers/nwt-js-throw-controller.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js",
       "name": "nwt-js-throw-controller.js",
       "type": "file",
       "formalName": "NwtJsThrowControllerJs",
@@ -2293,7 +2293,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-persister/nwt-json-persister.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js",
       "name": "nwt-json-persister.js",
       "type": "file",
       "formalName": "NwtJsonPersisterJs",
@@ -2304,7 +2304,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-json-storer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js",
       "name": "nwt-json-storer.js",
       "type": "file",
       "formalName": "NwtJsonStorerJs",
@@ -2317,7 +2317,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-persister/nwt-jsonl-persister.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js",
       "name": "nwt-jsonl-persister.js",
       "type": "file",
       "formalName": "NwtJsonlPersisterJs",
@@ -2331,7 +2331,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-component/nwt-lazy-component.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-component.js",
       "name": "nwt-lazy-component.js",
       "type": "file",
       "formalName": "NwtLazyComponentJs",
@@ -2345,7 +2345,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-component/nwt-lazy-control.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-control.js",
       "name": "nwt-lazy-control.js",
       "type": "file",
       "formalName": "NwtLazyControlJs",
@@ -2357,7 +2357,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js",
       "name": "nwt-lazy-feature.js",
       "type": "file",
       "formalName": "NwtLazyFeatureJs",
@@ -2370,7 +2370,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-lazy-loader.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js",
       "name": "nwt-lazy-loader.js",
       "type": "file",
       "formalName": "NwtLazyLoaderJs",
@@ -2383,7 +2383,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-live-injector.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js",
       "name": "nwt-live-injector.js",
       "type": "file",
       "formalName": "NwtLiveInjectorJs",
@@ -2398,21 +2398,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css",
       "name": "nwt-matrix-background.css",
       "type": "file",
       "formalName": "NwtMatrixBackgroundCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html",
       "name": "nwt-matrix-background.html",
       "type": "file",
       "formalName": "NwtMatrixBackgroundHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-module-manager/nwt-module-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-module-manager/nwt-module-manager.js",
       "name": "nwt-module-manager.js",
       "type": "file",
       "formalName": "NwtModuleManagerJs",
@@ -2426,7 +2426,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-object-utils.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-object-utils.js",
       "name": "nwt-object-utils.js",
       "type": "file",
       "formalName": "NwtObjectUtilsJs",
@@ -2437,7 +2437,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-pack.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js",
       "name": "nwt-pack.js",
       "type": "file",
       "formalName": "NwtPackJs",
@@ -2476,7 +2476,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-paths.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-paths.js",
       "name": "nwt-paths.js",
       "type": "file",
       "formalName": "NwtPathsJs",
@@ -2490,7 +2490,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-persister/nwt-persister.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js",
       "name": "nwt-persister.js",
       "type": "file",
       "formalName": "NwtPersisterJs",
@@ -2505,7 +2505,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-procedure-definition.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js",
       "name": "nwt-procedure-definition.js",
       "type": "file",
       "formalName": "NwtProcedureDefinitionJs",
@@ -2519,21 +2519,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css",
       "name": "nwt-procedure-documentation-viewer.css",
       "type": "file",
       "formalName": "NwtProcedureDocumentationViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html",
       "name": "nwt-procedure-documentation-viewer.html",
       "type": "file",
       "formalName": "NwtProcedureDocumentationViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-procedure-injections.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js",
       "name": "nwt-procedure-injections.js",
       "type": "file",
       "formalName": "NwtProcedureInjectionsJs",
@@ -2545,7 +2545,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-procedure-seed.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js",
       "name": "nwt-procedure-seed.js",
       "type": "file",
       "formalName": "NwtProcedureSeedJs",
@@ -2558,7 +2558,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-procedures-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js",
       "name": "nwt-procedures-manager.js",
       "type": "file",
       "formalName": "NwtProceduresManagerJs",
@@ -2574,21 +2574,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css",
       "name": "nwt-procedures-manager-viewer.css",
       "type": "file",
       "formalName": "NwtProceduresManagerViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html",
       "name": "nwt-procedures-manager-viewer.html",
       "type": "file",
       "formalName": "NwtProceduresManagerViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-process.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js",
       "name": "nwt-process.js",
       "type": "file",
       "formalName": "NwtProcessJs",
@@ -2601,7 +2601,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-process-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js",
       "name": "nwt-process-manager.js",
       "type": "file",
       "formalName": "NwtProcessManagerJs",
@@ -2613,21 +2613,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css",
       "name": "nwt-process-manager-viewer.css",
       "type": "file",
       "formalName": "NwtProcessManagerViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html",
       "name": "nwt-process-manager-viewer.html",
       "type": "file",
       "formalName": "NwtProcessManagerViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-progress-bar.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js",
       "name": "nwt-progress-bar.js",
       "type": "file",
       "formalName": "NwtProgressBarJs",
@@ -2638,21 +2638,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css",
       "name": "nwt-progress-bar-viewer.css",
       "type": "file",
       "formalName": "NwtProgressBarViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html",
       "name": "nwt-progress-bar-viewer.html",
       "type": "file",
       "formalName": "NwtProgressBarViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-prompts-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js",
       "name": "nwt-prompts-manager.js",
       "type": "file",
       "formalName": "NwtPromptsManagerJs",
@@ -2670,21 +2670,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css",
       "name": "nwt-prompts-manager-viewer.css",
       "type": "file",
       "formalName": "NwtPromptsManagerViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html",
       "name": "nwt-prompts-manager-viewer.html",
       "type": "file",
       "formalName": "NwtPromptsManagerViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-prototyper.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prototyper.js",
       "name": "nwt-prototyper.js",
       "type": "file",
       "formalName": "NwtPrototyperJs",
@@ -2694,7 +2694,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-proxy-chain.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js",
       "name": "nwt-proxy-chain.js",
       "type": "file",
       "formalName": "NwtProxyChainJs",
@@ -2706,7 +2706,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-randomizer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js",
       "name": "nwt-randomizer.js",
       "type": "file",
       "formalName": "NwtRandomizerJs",
@@ -2717,7 +2717,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-settings.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js",
       "name": "nwt-settings.js",
       "type": "file",
       "formalName": "NwtSettingsJs",
@@ -2733,21 +2733,21 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css",
       "name": "nwt-settings-viewer.css",
       "type": "file",
       "formalName": "NwtSettingsViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html",
       "name": "nwt-settings-viewer.html",
       "type": "file",
       "formalName": "NwtSettingsViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-shell.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js",
       "name": "nwt-shell.js",
       "type": "file",
       "formalName": "NwtShellJs",
@@ -2764,35 +2764,35 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css",
       "name": "nwt-source-viewer.css",
       "type": "file",
       "formalName": "NwtSourceViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html",
       "name": "nwt-source-viewer.html",
       "type": "file",
       "formalName": "NwtSourceViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css",
       "name": "nwt-stars-background.css",
       "type": "file",
       "formalName": "NwtStarsBackgroundCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html",
       "name": "nwt-stars-background.html",
       "type": "file",
       "formalName": "NwtStarsBackgroundHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-string-shortener/nwt-string-shortener.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js",
       "name": "nwt-string-shortener.js",
       "type": "file",
       "formalName": "NwtStringShortenerJs",
@@ -2807,7 +2807,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-strings.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-strings.js",
       "name": "nwt-strings.js",
       "type": "file",
       "formalName": "NwtStringsJs",
@@ -2825,7 +2825,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-templates/nwt-templates.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js",
       "name": "nwt-templates.js",
       "type": "file",
       "formalName": "NwtTemplatesJs",
@@ -2839,7 +2839,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-tester.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js",
       "name": "nwt-tester.js",
       "type": "file",
       "formalName": "NwtTesterJs",
@@ -2855,35 +2855,35 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css",
       "name": "nwt-tester-node.css",
       "type": "file",
       "formalName": "NwtTesterNodeCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html",
       "name": "nwt-tester-node.html",
       "type": "file",
       "formalName": "NwtTesterNodeHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css",
       "name": "nwt-tester-viewer.css",
       "type": "file",
       "formalName": "NwtTesterViewerCss",
       "dependencies": []
     },
     {
-      "path": "assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html",
       "name": "nwt-tester-viewer.html",
       "type": "file",
       "formalName": "NwtTesterViewerHtml",
       "dependencies": []
     },
     {
-      "path": "assets/framework/nwt-timer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-timer.js",
       "name": "nwt-timer.js",
       "type": "file",
       "formalName": "NwtTimerJs",
@@ -2894,7 +2894,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-tracer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tracer.js",
       "name": "nwt-tracer.js",
       "type": "file",
       "formalName": "NwtTracerJs",
@@ -2907,7 +2907,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-utils.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js",
       "name": "nwt-utils.js",
       "type": "file",
       "formalName": "NwtUtilsJs",
@@ -2920,7 +2920,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-validation/nwt-validable-schema.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-validation/nwt-validable-schema.js",
       "name": "nwt-validable-schema.js",
       "type": "file",
       "formalName": "NwtValidableSchemaJs",
@@ -2930,7 +2930,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-validation/nwt-validation-context.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-validation/nwt-validation-context.js",
       "name": "nwt-validation-context.js",
       "type": "file",
       "formalName": "NwtValidationContextJs",
@@ -2945,7 +2945,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-validation/nwt-validation-context-pointer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-validation/nwt-validation-context-pointer.js",
       "name": "nwt-validation-context-pointer.js",
       "type": "file",
       "formalName": "NwtValidationContextPointerJs",
@@ -2955,7 +2955,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-vue2.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2.js",
       "name": "nwt-vue2.js",
       "type": "file",
       "formalName": "NwtVue2Js",
@@ -2968,7 +2968,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js",
       "name": "nwt-anonymous-command-form.js",
       "type": "file",
       "formalName": "NwtAnonymousCommandFormJs",
@@ -2985,7 +2985,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js",
       "name": "nwt-anonymous-command-view.js",
       "type": "file",
       "formalName": "NwtAnonymousCommandViewJs",
@@ -3002,7 +3002,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js",
       "name": "nwt-box-viewer.js",
       "type": "file",
       "formalName": "NwtBoxViewerJs",
@@ -3018,7 +3018,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js",
       "name": "nwt-chatgpt-files-manager-viewer.js",
       "type": "file",
       "formalName": "NwtChatgptFilesManagerViewerJs",
@@ -3036,7 +3036,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js",
       "name": "nwt-code-highlighter.js",
       "type": "file",
       "formalName": "NwtCodeHighlighterJs",
@@ -3054,7 +3054,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js",
       "name": "nwt-commands-manager-viewer.js",
       "type": "file",
       "formalName": "NwtCommandsManagerViewerJs",
@@ -3074,7 +3074,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js",
       "name": "nwt-file-explorer.js",
       "type": "file",
       "formalName": "NwtFileExplorerJs",
@@ -3094,7 +3094,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.js",
       "name": "nwt-form-control-buttons.js",
       "type": "file",
       "formalName": "NwtFormControlButtonsJs",
@@ -3110,7 +3110,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.js",
       "name": "nwt-form-control-handler.js",
       "type": "file",
       "formalName": "NwtFormControlHandlerJs",
@@ -3126,7 +3126,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.js",
       "name": "nwt-form-control-statement.js",
       "type": "file",
       "formalName": "NwtFormControlStatementJs",
@@ -3143,7 +3143,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js",
       "name": "nwt-matrix-background.js",
       "type": "file",
       "formalName": "NwtMatrixBackgroundJs",
@@ -3161,7 +3161,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js",
       "name": "nwt-procedure-documentation-viewer.js",
       "type": "file",
       "formalName": "NwtProcedureDocumentationViewerJs",
@@ -3180,7 +3180,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js",
       "name": "nwt-procedures-manager-viewer.js",
       "type": "file",
       "formalName": "NwtProceduresManagerViewerJs",
@@ -3197,7 +3197,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js",
       "name": "nwt-process-manager-viewer.js",
       "type": "file",
       "formalName": "NwtProcessManagerViewerJs",
@@ -3215,7 +3215,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js",
       "name": "nwt-progress-bar-viewer.js",
       "type": "file",
       "formalName": "NwtProgressBarViewerJs",
@@ -3232,7 +3232,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js",
       "name": "nwt-prompts-manager-viewer.js",
       "type": "file",
       "formalName": "NwtPromptsManagerViewerJs",
@@ -3253,7 +3253,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js",
       "name": "nwt-settings-viewer.js",
       "type": "file",
       "formalName": "NwtSettingsViewerJs",
@@ -3272,7 +3272,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js",
       "name": "nwt-source-viewer.js",
       "type": "file",
       "formalName": "NwtSourceViewerJs",
@@ -3289,7 +3289,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js",
       "name": "nwt-stars-background.js",
       "type": "file",
       "formalName": "NwtStarsBackgroundJs",
@@ -3305,7 +3305,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js",
       "name": "nwt-tester-node.js",
       "type": "file",
       "formalName": "NwtTesterNodeJs",
@@ -3322,7 +3322,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js",
       "name": "nwt-tester-viewer.js",
       "type": "file",
       "formalName": "NwtTesterViewerJs",
