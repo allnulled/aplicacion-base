@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1",
-  "generatedAt": "2026-02-08T10:55:56.717Z",
+  "generatedAt": "2026-02-08T11:06:09.494Z",
   "nodes": [
     {
       "path": "assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -27,6 +27,7 @@
         "NwtBoxViewerHtml",
         "NwtBoxViewerCss"
       ],
+      "apiName": "NwtBoxViewer",
       "dependencies": [
         "NwtBoxViewer"
       ]
@@ -56,6 +57,7 @@
         "NwtChatgptFilesManagerViewerHtml",
         "NwtChatgptFilesManagerViewerCss"
       ],
+      "apiName": "NwtChatgptFilesManagerViewer",
       "dependencies": [
         "NwtChatgptFilesManagerViewer",
         "NwtChatgpt",
@@ -87,6 +89,7 @@
         "NwtCodeHighlighterHtml",
         "NwtCodeHighlighterCss"
       ],
+      "apiName": "NwtCodeHighlighter",
       "dependencies": [
         "NwtCodeHighlighter",
         "NwtUtils",
@@ -98,6 +101,7 @@
       "name": "nwt-lazy-component.js",
       "type": "file",
       "formalName": "NwtLazyComponentJs",
+      "apiName": "NwtLazyComponent",
       "dependencies": [
         "NwtLazyComponent",
         "NwtPaths",
@@ -111,6 +115,7 @@
       "name": "nwt-lazy-control.js",
       "type": "file",
       "formalName": "NwtLazyControlJs",
+      "apiName": "NwtLazyControl",
       "dependencies": [
         "NwtLazyControl",
         "NwtLazyComponent",
@@ -122,6 +127,7 @@
       "name": "nwt-feature-mixer.js",
       "type": "file",
       "formalName": "NwtFeatureMixerJs",
+      "apiName": "NwtFeatureMixer",
       "dependencies": [
         "NwtFeatureMixer",
         "NwtFormulatorResource",
@@ -134,6 +140,7 @@
       "name": "nwt-feature-statics.js",
       "type": "file",
       "formalName": "NwtFeatureStaticsJs",
+      "apiName": "NwtFeatureStatics",
       "dependencies": [
         "NwtFeatureStatics",
         "NwtValidationContext"
@@ -144,6 +151,7 @@
       "name": "nwt-lazy-feature.js",
       "type": "file",
       "formalName": "NwtLazyFeatureJs",
+      "apiName": "NwtLazyFeature",
       "dependencies": [
         "NwtLazyFeature",
         "NwtPaths",
@@ -176,6 +184,7 @@
         "NwtFileExplorerHtml",
         "NwtFileExplorerCss"
       ],
+      "apiName": "NwtFileExplorer",
       "dependencies": [
         "NwtFileExplorer",
         "NwtUtils",
@@ -209,6 +218,7 @@
         "NwtFormControlButtonsHtml",
         "NwtFormControlButtonsCss"
       ],
+      "apiName": "NwtFormControlButtons",
       "dependencies": [
         "NwtFormControlButtons"
       ]
@@ -238,6 +248,7 @@
         "NwtFormControlHandlerHtml",
         "NwtFormControlHandlerCss"
       ],
+      "apiName": "NwtFormControlHandler",
       "dependencies": [
         "NwtFormControlHandler"
       ]
@@ -267,6 +278,7 @@
         "NwtFormControlStatementHtml",
         "NwtFormControlStatementCss"
       ],
+      "apiName": "NwtFormControlStatement",
       "dependencies": [
         "NwtFormControlStatement",
         "NwtFramework"
@@ -277,6 +289,7 @@
       "name": "nwt-form-element-to-any.js",
       "type": "file",
       "formalName": "NwtFormElementToAnyJs",
+      "apiName": "NwtFormElementToAny",
       "dependencies": [
         "NwtFormElementToAny",
         "NwtFormElementToForm",
@@ -291,6 +304,7 @@
       "name": "nwt-form-element-to-control.js",
       "type": "file",
       "formalName": "NwtFormElementToControlJs",
+      "apiName": "NwtFormElementToControl",
       "dependencies": [
         "NwtFormElementToControl",
         "NwtFormElementToAny",
@@ -308,6 +322,7 @@
       "name": "nwt-form-element-to-form.js",
       "type": "file",
       "formalName": "NwtFormElementToFormJs",
+      "apiName": "NwtFormElementToForm",
       "dependencies": [
         "NwtFormElementToForm",
         "NwtFormElementToAny",
@@ -323,6 +338,7 @@
       "name": "nwt-form-element-to-handler.js",
       "type": "file",
       "formalName": "NwtFormElementToHandlerJs",
+      "apiName": "NwtFormElementToHandler",
       "dependencies": [
         "NwtFormElementToHandler",
         "NwtFormElementToAny",
@@ -337,6 +353,7 @@
       "name": "nwt-form-utils.js",
       "type": "file",
       "formalName": "NwtFormUtilsJs",
+      "apiName": "NwtFormUtils",
       "dependencies": [
         "NwtFormUtils",
         "NwtFramework",
@@ -360,6 +377,7 @@
       "name": "nwt-form-schema.js",
       "type": "file",
       "formalName": "NwtFormSchemaJs",
+      "apiName": "NwtFormSchema",
       "dependencies": [
         "NwtFormSchema"
       ]
@@ -369,6 +387,7 @@
       "name": "nwt-formulator.js",
       "type": "file",
       "formalName": "NwtFormulatorJs",
+      "apiName": "NwtFormulator",
       "dependencies": [
         "NwtFormulator",
         "NwtFormulatorResource",
@@ -380,6 +399,7 @@
       "name": "nwt-formulator-resource.js",
       "type": "file",
       "formalName": "NwtFormulatorResourceJs",
+      "apiName": "NwtFormulatorResource",
       "dependencies": [
         "NwtFormulatorResource",
         "NwtLazyFeature",
@@ -392,6 +412,7 @@
       "name": "nwt-formulator-control-manager.js",
       "type": "file",
       "formalName": "NwtFormulatorControlManagerJs",
+      "apiName": "NwtFormulatorControlManager",
       "dependencies": [
         "NwtFormulatorControlManager",
         "NwtPaths",
@@ -403,6 +424,7 @@
       "name": "nwt-formulator-lazy-control.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyControlJs",
+      "apiName": "NwtFormulatorLazyControl",
       "dependencies": [
         "NwtFormulatorLazyControl"
       ]
@@ -412,6 +434,7 @@
       "name": "nwt-formulator-database-manager.js",
       "type": "file",
       "formalName": "NwtFormulatorDatabaseManagerJs",
+      "apiName": "NwtFormulatorDatabaseManager",
       "dependencies": [
         "NwtFormulatorDatabaseManager"
       ]
@@ -421,6 +444,7 @@
       "name": "nwt-formulator-dialog-manager.js",
       "type": "file",
       "formalName": "NwtFormulatorDialogManagerJs",
+      "apiName": "NwtFormulatorDialogManager",
       "dependencies": [
         "NwtFormulatorDialogManager",
         "NwtPaths",
@@ -433,6 +457,7 @@
       "name": "nwt-formulator-lazy-dialog.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyDialogJs",
+      "apiName": "NwtFormulatorLazyDialog",
       "dependencies": [
         "NwtFormulatorLazyDialog"
       ]
@@ -442,6 +467,7 @@
       "name": "nwt-formulator-feature-manager.js",
       "type": "file",
       "formalName": "NwtFormulatorFeatureManagerJs",
+      "apiName": "NwtFormulatorFeatureManager",
       "dependencies": [
         "NwtFormulatorFeatureManager",
         "NwtPaths",
@@ -454,6 +480,7 @@
       "name": "nwt-formulator-feature-mixer-previous.js",
       "type": "file",
       "formalName": "NwtFormulatorFeatureMixerPreviousJs",
+      "apiName": "NwtFormulatorFeatureMixerPrevious",
       "dependencies": [
         "NwtFormulatorFeatureMixer",
         "NwtFormulatorLazyFeature",
@@ -465,6 +492,7 @@
       "name": "nwt-formulator-feature-mixer.js",
       "type": "file",
       "formalName": "NwtFormulatorFeatureMixerJs",
+      "apiName": "NwtFormulatorFeatureMixer",
       "dependencies": [
         "NwtFormulatorFeatureMixer",
         "NwtFormulatorLazyFeature",
@@ -476,6 +504,7 @@
       "name": "nwt-formulator-lazy-feature.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyFeatureJs",
+      "apiName": "NwtFormulatorLazyFeature",
       "dependencies": [
         "NwtFormulatorLazyFeature",
         "NwtFormulatorFeatureManager",
@@ -488,6 +517,7 @@
       "name": "nwt-formulator.js",
       "type": "file",
       "formalName": "NwtFormulatorJs",
+      "apiName": "NwtFormulator",
       "dependencies": [
         "NwtFormulator",
         "NwtFormulatorUtils",
@@ -502,6 +532,7 @@
       "name": "nwt-formulator-utils.js",
       "type": "file",
       "formalName": "NwtFormulatorUtilsJs",
+      "apiName": "NwtFormulatorUtils",
       "dependencies": [
         "NwtFormulatorUtils"
       ]
@@ -511,6 +542,7 @@
       "name": "nwt-formulator-lazy-control.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyControlJs",
+      "apiName": "NwtFormulatorLazyControl",
       "dependencies": [
         "NwtFormulatorLazyControl",
         "NwtPaths",
@@ -523,6 +555,7 @@
       "name": "nwt-formulator-feature-mixer.js",
       "type": "file",
       "formalName": "NwtFormulatorFeatureMixerJs",
+      "apiName": "NwtFormulatorFeatureMixer",
       "dependencies": [
         "NwtFormulatorFeatureMixer",
         "NwtFormulatorLazyFeature",
@@ -534,6 +567,7 @@
       "name": "nwt-formulator-lazy-feature.js",
       "type": "file",
       "formalName": "NwtFormulatorLazyFeatureJs",
+      "apiName": "NwtFormulatorLazyFeature",
       "dependencies": [
         "NwtFormulatorLazyFeature",
         "NwtPaths",
@@ -546,6 +580,7 @@
       "name": "nwt-formulator.js",
       "type": "file",
       "formalName": "NwtFormulatorJs",
+      "apiName": "NwtFormulator",
       "dependencies": [
         "NwtFormulator",
         "NwtFormulatorLazyFeature",
@@ -579,6 +614,7 @@
         "NwtMatrixBackgroundHtml",
         "NwtMatrixBackgroundCss"
       ],
+      "apiName": "NwtMatrixBackground",
       "dependencies": [
         "NwtMatrixBackground",
         "window.innerWidth",
@@ -610,6 +646,7 @@
         "NwtProcedureDocumentationViewerHtml",
         "NwtProcedureDocumentationViewerCss"
       ],
+      "apiName": "NwtProcedureDocumentationViewer",
       "dependencies": [
         "NwtProcedureSeed",
         "NwtProcedureDefinition",
@@ -642,6 +679,7 @@
         "NwtProceduresManagerViewerHtml",
         "NwtProceduresManagerViewerCss"
       ],
+      "apiName": "NwtProceduresManagerViewer",
       "dependencies": [
         "NwtProceduresManagerViewer",
         "NwtProceduresManager"
@@ -672,6 +710,7 @@
         "NwtProcessManagerViewerHtml",
         "NwtProcessManagerViewerCss"
       ],
+      "apiName": "NwtProcessManagerViewer",
       "dependencies": [
         "NwtProcessManager",
         "NwtProcessManagerViewer",
@@ -703,6 +742,7 @@
         "NwtProgressBarViewerHtml",
         "NwtProgressBarViewerCss"
       ],
+      "apiName": "NwtProgressBarViewer",
       "dependencies": [
         "NwtProgressBar",
         "NwtProgressBarViewer"
@@ -733,6 +773,7 @@
         "NwtPromptsManagerViewerHtml",
         "NwtPromptsManagerViewerCss"
       ],
+      "apiName": "NwtPromptsManagerViewer",
       "dependencies": [
         "NwtPromptsManagerViewer",
         "NwtPromptsManager",
@@ -767,6 +808,7 @@
         "NwtSettingsViewerHtml",
         "NwtSettingsViewerCss"
       ],
+      "apiName": "NwtSettingsViewer",
       "dependencies": [
         "NwtSettings",
         "NwtSettingsViewer",
@@ -799,6 +841,7 @@
         "NwtSourceViewerHtml",
         "NwtSourceViewerCss"
       ],
+      "apiName": "NwtSourceViewer",
       "dependencies": [
         "NwtSourceViewer",
         "NwtRandomizer"
@@ -829,6 +872,7 @@
         "NwtStarsBackgroundHtml",
         "NwtStarsBackgroundCss"
       ],
+      "apiName": "NwtStarsBackground",
       "dependencies": [
         "NwtStarsBackground"
       ]
@@ -858,6 +902,7 @@
         "NwtTesterNodeHtml",
         "NwtTesterNodeCss"
       ],
+      "apiName": "NwtTesterNode",
       "dependencies": [
         "NwtTesterNode",
         "NwtTesterViewer"
@@ -888,6 +933,7 @@
         "NwtTesterViewerHtml",
         "NwtTesterViewerCss"
       ],
+      "apiName": "NwtTesterViewer",
       "dependencies": [
         "NwtTester",
         "NwtTesterViewer"
@@ -898,6 +944,7 @@
       "name": "nwt-validable-schema.js",
       "type": "file",
       "formalName": "NwtValidableSchemaJs",
+      "apiName": "NwtValidableSchema",
       "dependencies": [
         "NwtValidableSchema"
       ]
@@ -907,6 +954,7 @@
       "name": "nwt-validation-context-pointer.js",
       "type": "file",
       "formalName": "NwtValidationContextPointerJs",
+      "apiName": "NwtValidationContextPointer",
       "dependencies": [
         "NwtValidationContextPointer"
       ]
@@ -916,6 +964,7 @@
       "name": "nwt-validation-context.js",
       "type": "file",
       "formalName": "NwtValidationContextJs",
+      "apiName": "NwtValidationContext",
       "dependencies": [
         "NwtValidationContext",
         "NwtPrototyper",
@@ -930,6 +979,7 @@
       "name": "nwt-abort.js",
       "type": "file",
       "formalName": "NwtAbortJs",
+      "apiName": "NwtAbort",
       "dependencies": [
         "NwtAbort"
       ]
@@ -939,6 +989,7 @@
       "name": "nwt-argumenter.js",
       "type": "file",
       "formalName": "NwtArgumenterJs",
+      "apiName": "NwtArgumenter",
       "dependencies": [
         "NwtArgumentes",
         "NwtArgumenter",
@@ -951,6 +1002,7 @@
       "name": "nwt-array-utils.js",
       "type": "file",
       "formalName": "NwtArrayUtilsJs",
+      "apiName": "NwtArrayUtils",
       "dependencies": [
         "NwtArrayUtils",
         "NwtFramework"
@@ -961,6 +1013,7 @@
       "name": "nwt-asserter.js",
       "type": "file",
       "formalName": "NwtAsserterJs",
+      "apiName": "NwtAsserter",
       "dependencies": [
         "NwtAsserter",
         "window.assertion",
@@ -972,6 +1025,7 @@
       "name": "nwt-ast-tree-class.js",
       "type": "file",
       "formalName": "NwtAstTreeClassJs",
+      "apiName": "NwtAstTreeClass",
       "dependencies": [
         "NwtAstTreeClass",
         "NwtTemplates",
@@ -983,6 +1037,7 @@
       "name": "nwt-ast-tree-template-source.js",
       "type": "file",
       "formalName": "NwtAstTreeTemplateSourceJs",
+      "apiName": "NwtAstTreeTemplateSource",
       "dependencies": [
         "NwtAstTreeTemplateSource"
       ]
@@ -992,6 +1047,7 @@
       "name": "nwt-boot.js",
       "type": "file",
       "formalName": "NwtBootJs",
+      "apiName": "NwtBoot",
       "dependencies": [
         "NwtFramework"
       ]
@@ -1001,6 +1057,7 @@
       "name": "nwt-cache-directory.js",
       "type": "file",
       "formalName": "NwtCacheDirectoryJs",
+      "apiName": "NwtCacheDirectory",
       "dependencies": [
         "NwtCacheDirectory",
         "NwtFramework",
@@ -1016,6 +1073,7 @@
       "name": "nwt-chatgpt.js",
       "type": "file",
       "formalName": "NwtChatgptJs",
+      "apiName": "NwtChatgpt",
       "dependencies": [
         "NwtChatgpt",
         "NwtFramework",
@@ -1033,6 +1091,7 @@
       "name": "nwt-clipboard.js",
       "type": "file",
       "formalName": "NwtClipboardJs",
+      "apiName": "NwtClipboard",
       "dependencies": [
         "NwtClipboard",
         "NwtFramework",
@@ -1045,6 +1104,7 @@
       "name": "nwt-code-composer.js",
       "type": "file",
       "formalName": "NwtCodeComposerJs",
+      "apiName": "NwtCodeComposer",
       "dependencies": [
         "NwtCodeComposer",
         "NwtFramework",
@@ -1059,6 +1119,7 @@
       "name": "nwt-collection-utils.js",
       "type": "file",
       "formalName": "NwtCollectionUtilsJs",
+      "apiName": "NwtCollectionUtils",
       "dependencies": [
         "NwtCollectionUtils",
         "NwtFramework"
@@ -1069,6 +1130,7 @@
       "name": "nwt-command-context-interface.js",
       "type": "file",
       "formalName": "NwtCommandContextInterfaceJs",
+      "apiName": "NwtCommandContextInterface",
       "dependencies": [
         "NwtCommandContextInterface"
       ]
@@ -1078,6 +1140,7 @@
       "name": "nwt-command-form-interface.js",
       "type": "file",
       "formalName": "NwtCommandFormInterfaceJs",
+      "apiName": "NwtCommandFormInterface",
       "dependencies": [
         "NwtCommandFormInterface",
         "NwtCommandContextInterface",
@@ -1089,6 +1152,7 @@
       "name": "nwt-command-view-interface.js",
       "type": "file",
       "formalName": "NwtCommandViewInterfaceJs",
+      "apiName": "NwtCommandViewInterface",
       "dependencies": [
         "NwtCommandViewInterface",
         "NwtCommandContextInterface",
@@ -1123,6 +1187,7 @@
         "NwtAnonymousCommandFormHtml",
         "NwtAnonymousCommandFormCss"
       ],
+      "apiName": "NwtAnonymousCommandForm",
       "dependencies": [
         "NwtAnonymousCommandForm",
         "NwtCommandFormInterface"
@@ -1153,6 +1218,7 @@
         "NwtAnonymousCommandViewHtml",
         "NwtAnonymousCommandViewCss"
       ],
+      "apiName": "NwtAnonymousCommandView",
       "dependencies": [
         "NwtAnonymousCommandView",
         "NwtCommandViewInterface"
@@ -1183,6 +1249,7 @@
         "NwtCommandsManagerViewerHtml",
         "NwtCommandsManagerViewerCss"
       ],
+      "apiName": "NwtCommandsManagerViewer",
       "dependencies": [
         "NwtCommandsManagerViewer",
         "NwtCommandsManager",
@@ -1196,6 +1263,7 @@
       "name": "nwt-command-synchronizer.js",
       "type": "file",
       "formalName": "NwtCommandSynchronizerJs",
+      "apiName": "NwtCommandSynchronizer",
       "dependencies": [
         "NwtCommandSynchronizer",
         "NwtAbort",
@@ -1208,6 +1276,7 @@
       "name": "nwt-command.js",
       "type": "file",
       "formalName": "NwtCommandJs",
+      "apiName": "NwtCommand",
       "dependencies": [
         "NwtCommand",
         "NwtCommandFormFor",
@@ -1223,6 +1292,7 @@
       "name": "nwt-commands-manager.js",
       "type": "file",
       "formalName": "NwtCommandsManagerJs",
+      "apiName": "NwtCommandsManager",
       "dependencies": [
         "NwtCommandsManager",
         "NwtFilesystem",
@@ -1236,6 +1306,7 @@
       "name": "nwt-constrainer.js",
       "type": "file",
       "formalName": "NwtConstrainerJs",
+      "apiName": "NwtConstrainer",
       "dependencies": [
         "NwtConstrainer"
       ]
@@ -1245,6 +1316,7 @@
       "name": "nwt-csv.js",
       "type": "file",
       "formalName": "NwtCsvJs",
+      "apiName": "NwtCsv",
       "dependencies": [
         "NwtCsv",
         "NwtFramework",
@@ -1256,6 +1328,7 @@
       "name": "nwt-debug.js",
       "type": "file",
       "formalName": "NwtDebugJs",
+      "apiName": "NwtDebug",
       "dependencies": [
         "NwtDebug",
         "NwtFramework",
@@ -1267,6 +1340,7 @@
       "name": "nwt-dialog-definition.js",
       "type": "file",
       "formalName": "NwtDialogDefinitionJs",
+      "apiName": "NwtDialogDefinition",
       "dependencies": [
         "NwtProcess",
         "NwtDialogDefinition",
@@ -1281,6 +1355,7 @@
       "name": "nwt-dom.js",
       "type": "file",
       "formalName": "NwtDomJs",
+      "apiName": "NwtDom",
       "dependencies": [
         "NwtDom",
         "NwtFramework",
@@ -1292,6 +1367,7 @@
       "name": "nwt-environment.js",
       "type": "file",
       "formalName": "NwtEnvironmentJs",
+      "apiName": "NwtEnvironment",
       "dependencies": [
         "NwtEnvironment",
         "NwtFramework",
@@ -1307,6 +1383,7 @@
       "name": "nwt-error-utils.js",
       "type": "file",
       "formalName": "NwtErrorUtilsJs",
+      "apiName": "NwtErrorUtils",
       "dependencies": [
         "NwtErrorUtils",
         "NwtFramework"
@@ -1317,6 +1394,7 @@
       "name": "nwt-errors-manager.js",
       "type": "file",
       "formalName": "NwtErrorsManagerJs",
+      "apiName": "NwtErrorsManager",
       "dependencies": [
         "NwtErrorsManager",
         "NwtFramework",
@@ -1336,6 +1414,7 @@
       "name": "nwt-exporter.js",
       "type": "file",
       "formalName": "NwtExporterJs",
+      "apiName": "NwtExporter",
       "dependencies": [
         "NwtExporter",
         "NwtFilesystem",
@@ -1347,6 +1426,7 @@
       "name": "nwt-file-chooser.js",
       "type": "file",
       "formalName": "NwtFileChooserJs",
+      "apiName": "NwtFileChooser",
       "dependencies": [
         "NwtFileChooser",
         "NwtFramework"
@@ -1357,6 +1437,7 @@
       "name": "nwt-filesystem.js",
       "type": "file",
       "formalName": "NwtFilesystemJs",
+      "apiName": "NwtFilesystem",
       "dependencies": [
         "NwtFilesystem",
         "NwtFramework",
@@ -1374,6 +1455,7 @@
       "name": "nwt-filetree-directory.js",
       "type": "file",
       "formalName": "NwtFiletreeDirectoryJs",
+      "apiName": "NwtFiletreeDirectory",
       "dependencies": [
         "NwtFiletreeDirectory",
         "NwtFiletreeNode",
@@ -1385,6 +1467,7 @@
       "name": "nwt-filetree-file.js",
       "type": "file",
       "formalName": "NwtFiletreeFileJs",
+      "apiName": "NwtFiletreeFile",
       "dependencies": [
         "NwtFiletreeFile",
         "NwtFiletreeNode"
@@ -1395,6 +1478,7 @@
       "name": "nwt-filetree-glob.js",
       "type": "file",
       "formalName": "NwtFiletreeGlobJs",
+      "apiName": "NwtFiletreeGlob",
       "dependencies": [
         "NwtFiletreeGlob",
         "NwtFiletreeNode"
@@ -1405,6 +1489,7 @@
       "name": "nwt-filetree-json.js",
       "type": "file",
       "formalName": "NwtFiletreeJsonJs",
+      "apiName": "NwtFiletreeJson",
       "dependencies": [
         "NwtFiletreeJson",
         "NwtFiletreeNode"
@@ -1415,6 +1500,7 @@
       "name": "nwt-filetree-node.js",
       "type": "file",
       "formalName": "NwtFiletreeNodeJs",
+      "apiName": "NwtFiletreeNode",
       "dependencies": [
         "NwtFiletreeNode",
         "NwtFiletreeSelectorInterpreter"
@@ -1425,6 +1511,7 @@
       "name": "nwt-filetree-property.js",
       "type": "file",
       "formalName": "NwtFiletreePropertyJs",
+      "apiName": "NwtFiletreeProperty",
       "dependencies": [
         "NwtFiletreeProperty",
         "NwtFiletreeNode"
@@ -1435,6 +1522,7 @@
       "name": "nwt-filetree.js",
       "type": "file",
       "formalName": "NwtFiletreeJs",
+      "apiName": "NwtFiletree",
       "dependencies": [
         "NwtFiletree",
         "NwtFiletreeSelector",
@@ -1455,6 +1543,7 @@
       "name": "nwt-filetree-selector-interpreter.js",
       "type": "file",
       "formalName": "NwtFiletreeSelectorInterpreterJs",
+      "apiName": "NwtFiletreeSelectorInterpreter",
       "dependencies": [
         "NwtFiletreeSelectorInterpreter",
         "NwtFiletreeSelector",
@@ -1484,6 +1573,7 @@
       "name": "nwt-filetree-selector-parser.fix.js",
       "type": "file",
       "formalName": "NwtFiletreeSelectorParserFixJs",
+      "apiName": "NwtFiletreeSelectorParserFix",
       "dependencies": [
         "require(\"fs\")",
         "require(\"path\")"
@@ -1494,6 +1584,7 @@
       "name": "nwt-filetree-selector-parser.js",
       "type": "file",
       "formalName": "NwtFiletreeSelectorParserJs",
+      "apiName": "NwtFiletreeSelectorParser",
       "dependencies": [
         "NwtFiletreeSelectorParser"
       ]
@@ -1510,6 +1601,7 @@
       "name": "nwt-filetree-selector.js",
       "type": "file",
       "formalName": "NwtFiletreeSelectorJs",
+      "apiName": "NwtFiletreeSelector",
       "dependencies": [
         "NwtFiletreeSelector",
         "NwtFiletreeSelectorParser",
@@ -1521,6 +1613,7 @@
       "name": "nwt-globalizer.js",
       "type": "file",
       "formalName": "NwtGlobalizerJs",
+      "apiName": "NwtGlobalizer",
       "dependencies": [
         "NwtGlobalizer",
         "NwtFramework"
@@ -1531,6 +1624,7 @@
       "name": "nwt-importer.js",
       "type": "file",
       "formalName": "NwtImporterJs",
+      "apiName": "NwtImporter",
       "dependencies": [
         "NwtImporter",
         "NwtFramework",
@@ -1545,6 +1639,7 @@
       "name": "nwt-injection.js",
       "type": "file",
       "formalName": "NwtInjectionJs",
+      "apiName": "NwtInjection",
       "dependencies": [
         "NwtFramework",
         "NwtTracer",
@@ -1556,6 +1651,7 @@
       "name": "nwt-interruptible.js",
       "type": "file",
       "formalName": "NwtInterruptibleJs",
+      "apiName": "NwtInterruptible",
       "dependencies": [
         "NwtInterruptible",
         "NwtInterruptionHandler"
@@ -1566,6 +1662,7 @@
       "name": "nwt-interruption-handler.js",
       "type": "file",
       "formalName": "NwtInterruptionHandlerJs",
+      "apiName": "NwtInterruptionHandler",
       "dependencies": [
         "NwtInterruptionHandler",
         "NwtInterruption"
@@ -1576,6 +1673,7 @@
       "name": "nwt-interruption.js",
       "type": "file",
       "formalName": "NwtInterruptionJs",
+      "apiName": "NwtInterruption",
       "dependencies": [
         "NwtInterruption",
         "NwtUtils"
@@ -1586,6 +1684,7 @@
       "name": "nwt-iterable-class.js",
       "type": "file",
       "formalName": "NwtIterableClassJs",
+      "apiName": "NwtIterableClass",
       "dependencies": [
         "NwtIterableClass",
         "NwtFramework"
@@ -1596,6 +1695,7 @@
       "name": "nwt-iterable-command-class.js",
       "type": "file",
       "formalName": "NwtIterableCommandClassJs",
+      "apiName": "NwtIterableCommandClass",
       "dependencies": [
         "NwtIterableCommandClass",
         "NwtFramework",
@@ -1607,6 +1707,7 @@
       "name": "nwt-iterable-function.js",
       "type": "file",
       "formalName": "NwtIterableFunctionJs",
+      "apiName": "NwtIterableFunction",
       "dependencies": [
         "NwtIterableFunction",
         "NwtTemplates",
@@ -1621,6 +1722,7 @@
       "name": "nwt-js-controller.js",
       "type": "file",
       "formalName": "NwtJsControllerJs",
+      "apiName": "NwtJsController",
       "dependencies": [
         "NwtJsController"
       ]
@@ -1630,6 +1732,7 @@
       "name": "nwt-js-return-controller.js",
       "type": "file",
       "formalName": "NwtJsReturnControllerJs",
+      "apiName": "NwtJsReturnController",
       "dependencies": [
         "NwtJsReturnController",
         "NwtJsController",
@@ -1641,6 +1744,7 @@
       "name": "nwt-js-throw-controller.js",
       "type": "file",
       "formalName": "NwtJsThrowControllerJs",
+      "apiName": "NwtJsThrowController",
       "dependencies": [
         "NwtJsThrowController",
         "NwtJsController",
@@ -1652,6 +1756,7 @@
       "name": "nwt-json-storer.js",
       "type": "file",
       "formalName": "NwtJsonStorerJs",
+      "apiName": "NwtJsonStorer",
       "dependencies": [
         "NwtJsonStorer",
         "NwtFramework",
@@ -1664,6 +1769,7 @@
       "name": "nwt-lazy-loader.js",
       "type": "file",
       "formalName": "NwtLazyLoaderJs",
+      "apiName": "NwtLazyLoader",
       "dependencies": [
         "NwtLazyLoader",
         "NwtFramework",
@@ -1676,6 +1782,7 @@
       "name": "nwt-live-injector.js",
       "type": "file",
       "formalName": "NwtLiveInjectorJs",
+      "apiName": "NwtLiveInjector",
       "dependencies": [
         "NwtLiveInjector",
         "NwtFramework",
@@ -1690,6 +1797,7 @@
       "name": "nwt-module-manager.js",
       "type": "file",
       "formalName": "NwtModuleManagerJs",
+      "apiName": "NwtModuleManager",
       "dependencies": [
         "NwtModuleManager",
         "NwtUtils",
@@ -1703,6 +1811,7 @@
       "name": "nwt-object-utils.js",
       "type": "file",
       "formalName": "NwtObjectUtilsJs",
+      "apiName": "NwtObjectUtils",
       "dependencies": [
         "NwtObjectUtils",
         "NwtFramework"
@@ -1713,6 +1822,7 @@
       "name": "nwt-pack.js",
       "type": "file",
       "formalName": "NwtPackJs",
+      "apiName": "NwtPack",
       "dependencies": [
         "NwtFramework",
         "NwtAsserter",
@@ -1751,6 +1861,7 @@
       "name": "nwt-paths.js",
       "type": "file",
       "formalName": "NwtPathsJs",
+      "apiName": "NwtPaths",
       "dependencies": [
         "NwtPaths",
         "NwtEnvironment",
@@ -1764,6 +1875,7 @@
       "name": "nwt-directory-persister.js",
       "type": "file",
       "formalName": "NwtDirectoryPersisterJs",
+      "apiName": "NwtDirectoryPersister",
       "dependencies": [
         "NwtDirectoryPersister",
         "NwtFramework",
@@ -1776,6 +1888,7 @@
       "name": "nwt-file-persister.js",
       "type": "file",
       "formalName": "NwtFilePersisterJs",
+      "apiName": "NwtFilePersister",
       "dependencies": [
         "NwtFilePersister",
         "NwtFramework",
@@ -1787,6 +1900,7 @@
       "name": "nwt-json-persister.js",
       "type": "file",
       "formalName": "NwtJsonPersisterJs",
+      "apiName": "NwtJsonPersister",
       "dependencies": [
         "NwtJsonPersister",
         "require(\"fs\")"
@@ -1797,6 +1911,7 @@
       "name": "nwt-jsonl-persister.js",
       "type": "file",
       "formalName": "NwtJsonlPersisterJs",
+      "apiName": "NwtJsonlPersister",
       "dependencies": [
         "NwtJsonlPersister",
         "NwtFilePersister",
@@ -1810,6 +1925,7 @@
       "name": "nwt-persister.js",
       "type": "file",
       "formalName": "NwtPersisterJs",
+      "apiName": "NwtPersister",
       "dependencies": [
         "NwtPersister",
         "NwtFramework",
@@ -1824,6 +1940,7 @@
       "name": "nwt-procedure-definition.js",
       "type": "file",
       "formalName": "NwtProcedureDefinitionJs",
+      "apiName": "NwtProcedureDefinition",
       "dependencies": [
         "NwtProcedureDefinition",
         "NwtEnvironment",
@@ -1837,6 +1954,7 @@
       "name": "nwt-procedure-injections.js",
       "type": "file",
       "formalName": "NwtProcedureInjectionsJs",
+      "apiName": "NwtProcedureInjections",
       "dependencies": [
         "NwtProcedureInjections",
         "NwtProceduresManager",
@@ -1848,6 +1966,7 @@
       "name": "nwt-procedure-seed.js",
       "type": "file",
       "formalName": "NwtProcedureSeedJs",
+      "apiName": "NwtProcedureSeed",
       "dependencies": [
         "NwtProcedureSeed",
         "NwtEnvironment",
@@ -1860,6 +1979,7 @@
       "name": "nwt-procedures-manager.js",
       "type": "file",
       "formalName": "NwtProceduresManagerJs",
+      "apiName": "NwtProceduresManager",
       "dependencies": [
         "NwtProceduresManager",
         "NwtEnvironment",
@@ -1875,6 +1995,7 @@
       "name": "nwt-process-manager.js",
       "type": "file",
       "formalName": "NwtProcessManagerJs",
+      "apiName": "NwtProcessManager",
       "dependencies": [
         "NwtProcessManager",
         "NwtFramework",
@@ -1886,6 +2007,7 @@
       "name": "nwt-process.js",
       "type": "file",
       "formalName": "NwtProcessJs",
+      "apiName": "NwtProcess",
       "dependencies": [
         "NwtProcess",
         "NwtFramework",
@@ -1898,6 +2020,7 @@
       "name": "nwt-progress-bar.js",
       "type": "file",
       "formalName": "NwtProgressBarJs",
+      "apiName": "NwtProgressBar",
       "dependencies": [
         "NwtProgressBar",
         "NwtFramework"
@@ -1908,6 +2031,7 @@
       "name": "nwt-prompts-manager.js",
       "type": "file",
       "formalName": "NwtPromptsManagerJs",
+      "apiName": "NwtPromptsManager",
       "dependencies": [
         "NwtPromptsManager",
         "NwtFramework",
@@ -1925,6 +2049,7 @@
       "name": "nwt-prototyper.js",
       "type": "file",
       "formalName": "NwtPrototyperJs",
+      "apiName": "NwtPrototyper",
       "dependencies": [
         "NwtPrototyper"
       ]
@@ -1934,6 +2059,7 @@
       "name": "nwt-proxy-chain.js",
       "type": "file",
       "formalName": "NwtProxyChainJs",
+      "apiName": "NwtProxyChain",
       "dependencies": [
         "NwtProxyChain",
         "NwtFramework",
@@ -1945,6 +2071,7 @@
       "name": "nwt-randomizer.js",
       "type": "file",
       "formalName": "NwtRandomizerJs",
+      "apiName": "NwtRandomizer",
       "dependencies": [
         "NwtRandomizer",
         "NwtFramework"
@@ -1955,6 +2082,7 @@
       "name": "nwt-settings.js",
       "type": "file",
       "formalName": "NwtSettingsJs",
+      "apiName": "NwtSettings",
       "dependencies": [
         "NwtSettings",
         "NwtFramework",
@@ -1970,6 +2098,7 @@
       "name": "nwt-shell.js",
       "type": "file",
       "formalName": "NwtShellJs",
+      "apiName": "NwtShell",
       "dependencies": [
         "NwtShell",
         "NwtFramework",
@@ -1986,6 +2115,7 @@
       "name": "nwt-string-shortener.js",
       "type": "file",
       "formalName": "NwtStringShortenerJs",
+      "apiName": "NwtStringShortener",
       "dependencies": [
         "NwtStringShortener",
         "NwtFramework",
@@ -2000,6 +2130,7 @@
       "name": "nwt-strings.js",
       "type": "file",
       "formalName": "NwtStringsJs",
+      "apiName": "NwtStrings",
       "dependencies": [
         "NwtStrings",
         "NwtStringUtils",
@@ -2017,6 +2148,7 @@
       "name": "nwt-templates.js",
       "type": "file",
       "formalName": "NwtTemplatesJs",
+      "apiName": "NwtTemplates",
       "dependencies": [
         "NwtTemplates",
         "NwtPaths",
@@ -2030,6 +2162,7 @@
       "name": "nwt-tester.js",
       "type": "file",
       "formalName": "NwtTesterJs",
+      "apiName": "NwtTester",
       "dependencies": [
         "NwtTester",
         "NwtFramework",
@@ -2045,6 +2178,7 @@
       "name": "nwt-timer.js",
       "type": "file",
       "formalName": "NwtTimerJs",
+      "apiName": "NwtTimer",
       "dependencies": [
         "NwtTimer",
         "NwtFramework"
@@ -2055,6 +2189,7 @@
       "name": "nwt-tracer.js",
       "type": "file",
       "formalName": "NwtTracerJs",
+      "apiName": "NwtTracer",
       "dependencies": [
         "NwtTracer",
         "NwtFramework",
@@ -2067,6 +2202,7 @@
       "name": "nwt-utils.js",
       "type": "file",
       "formalName": "NwtUtilsJs",
+      "apiName": "NwtUtils",
       "dependencies": [
         "NwtUtils",
         "NwtFramework",
@@ -2079,6 +2215,7 @@
       "name": "nwt-vue2.js",
       "type": "file",
       "formalName": "NwtVue2Js",
+      "apiName": "NwtVue2",
       "dependencies": [
         "NwtVue2",
         "NwtFramework",

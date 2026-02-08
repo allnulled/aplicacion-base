@@ -17,12 +17,12 @@ function toCamelCase(t) {
 }
 
 function fromCaseToCapitalized(t) {
-  return t.substr(0,1).toUpperCase() + toCamelCase(t.substr(1));
+  return t.substr(0, 1).toUpperCase() + toCamelCase(t.substr(1));
 }
 
 async function getExtraAttributesFrom(entry, relPath, entryType) {
   const extra = {};
-  if(entryType === "file") {
+  if (entryType === "file") {
     extra.formalName = fromCaseToCapitalized(entry.name.replace(/\.[^\.]+/g, m => "-" + m.substr(1)));
   }
   return extra;
@@ -70,19 +70,19 @@ function comprimeTree(tree) {
   const foundHtml = {};
   const foundCss = {};
   Extract_compressables:
-  for(let index=0; index<tree.nodes.length; index++) {
+  for (let index = 0; index < tree.nodes.length; index++) {
     const nodeName = tree.nodes[index].formalName;
     const isHtml = nodeName.endsWith("Html");
     const isCss = nodeName.endsWith("Css");
     const itsJs = nodeName.replace(/(Html|Css)$/g, "Js");
-    if(isHtml || isCss) {
+    if (isHtml || isCss) {
       let foundStore = isHtml ? foundHtml : isCss ? foundCss : false;
       foundStore[itsJs] = nodeName;
     }
   }
   // diehere(foundHtml, foundCss); // sale bien
-  Inject_with_compressables: 
-  for(let index=0; index<tree.nodes.length; index++) {
+  Inject_with_compressables:
+  for (let index = 0; index < tree.nodes.length; index++) {
     const item = tree.nodes[index];
     const nodeName = item.formalName;
     const isHtml = nodeName.endsWith("Html");
@@ -91,34 +91,40 @@ function comprimeTree(tree) {
     const hasHtml = nodeName in foundHtml;
     const hasCss = nodeName in foundCss;
     const isVue = hasHtml || hasCss;
-    if(isJs && isVue) {
+    let output = item;
+    Add_component_data:
+    if (isJs && isVue) {
       let outputName = [nodeName];
-      if(hasHtml) {
+      if (hasHtml) {
         outputName.push(foundHtml[nodeName]);
       }
-      if(hasCss) {
+      if (hasCss) {
         outputName.push(foundCss[nodeName]);
       }
-      let output = item;
-        output = {
-          ...item,
-          formalName: nodeName,
-          isVueComponent: true,
-          componentName: outputName,
-        };
-      compression.push(output);
-    } else {
-      compression.push(item);
+      output = {
+        ...item,
+        formalName: nodeName,
+        isVueComponent: true,
+        componentName: outputName,
+      };
     }
+    Add_other_data:
+    if(isJs) {
+      output = {
+        ...output,
+        apiName: nodeName.replace(/Js$/g, ""),
+      };
+    }
+    compression.push(output);
   }
   tree.nodes = compression;
 }
 
 function deduplicateStrings(list) {
   const out = [];
-  for(let index=0; index<list.length; index++) {
+  for (let index = 0; index < list.length; index++) {
     const item = list[index];
-    if(!out.includes(item)) {
+    if (!out.includes(item)) {
       out.push(item);
     }
   }
@@ -126,7 +132,7 @@ function deduplicateStrings(list) {
 }
 
 async function addDependencies(tree) {
-  for(let index=0; index<tree.nodes.length; index++) {
+  for (let index = 0; index < tree.nodes.length; index++) {
     const item = tree.nodes[index];
     const fullpath = require("path").resolve(tree.root, item.path);
     const content = await require("fs").promises.readFile(fullpath, "utf8");
