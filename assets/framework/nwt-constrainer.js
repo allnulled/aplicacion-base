@@ -35,7 +35,7 @@
 
     }
 
-    static ContraintError = class extends this.ErrorInterface {
+    static ConstraintError = class extends this.ErrorInterface {
 
       constructor(message) {
         super(message);
@@ -51,7 +51,7 @@
         super(undefined);
         this.name = "MultipleConstraintError";
         this.errors = messages;
-        this.throwOnFail = false;
+        this.throwOnFail = true;
       }
 
       get message() {
@@ -68,9 +68,16 @@
         }
       }
 
-      absorve(multipleConstraintErrors) {
-        assertion(multipleConstraintErrors instanceof NwtConstrainer.MultipleConstraintErrors, "Parameter «multipleConstraintErrors» must be instance of «MultipleConstraintErrors» on «MultipleConstraintErrors.prototype.absorve»");
-        this.errors = this.errors.concat(multipleConstraintErrors.errors);
+      add(constraintMessage) {
+        if(constraintMessage instanceof NwtConstrainer.ConstraintError) {
+          this.errors.push(constraintMessage);
+        } else if(typeof constraintMessage === "string") {
+          this.errors.push(NwtConstrainer.ConstraintError.create(constraintMessage));
+        } else if(constraintMessage instanceof NwtConstrainer.MultipleConstraintErrors) {
+          this.errors = this.errors.concat(constraintMessage.errors);
+        } else {
+          this.errors.push(constraintMessage);
+        }
         return this;
       }
 

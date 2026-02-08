@@ -30,6 +30,7 @@ Está el framework y la aplicación (sobre él):
 
 - [README-NWT.md](https://github.com/allnulled/aplicacion-base/tree/main/README-NWT.md) contiene la documentación del `NwtFramework`.
 - [README-APP.md](https://github.com/allnulled/aplicacion-base/tree/main/README-APP.md) contiene la documentación de la aplicación.
+- [README-API.md](https://github.com/allnulled/aplicacion-base/tree/main/README-API.md) contiene la documentación de la aplicación.
 
 ## Pendientes
 

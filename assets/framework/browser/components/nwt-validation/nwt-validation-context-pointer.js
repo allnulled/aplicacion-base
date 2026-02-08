@@ -32,6 +32,7 @@
     }
 
     clone() {
+      trace("NwtValidationContextPointer.prototype.clone");
       return this.constructor.create(...this.indexes);
     }
 

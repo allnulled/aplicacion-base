@@ -260,6 +260,9 @@
           }
         };
       }
+      // Acceso al objeto de definición desde statics:
+      out.statics.definition = out;
+      out.statics = NwtFeatureStatics.create(out.statics);
       return out;
     }
 

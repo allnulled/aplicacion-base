@@ -13,9 +13,34 @@
   
   const NwtFeatureStatics = class {
 
-    static validateStaticsObject (statics) {
-      trace("NwtFeatureStatics.validateStaticsObject");
-      assertion(typeof statics === "object", "Required parameter «statics» to be object on «NwtFeatureStatics.validateStaticsObject»");
+    static create (...args) {
+      return new this(...args);
+    }
+
+    constructor(scope = {}) {
+      trace("NwtFeatureStatics.constructor");
+      Object.assign(this, scope);
+    }
+
+    api = {
+      validate: async (context) => {
+        trace("NwtFeatureStatics.prototype.api.validate");
+        const validationContext = NwtValidationContext.create({
+          value: null,
+          componentId: this.id,
+          component: null,
+          ...context,
+        });
+        try {
+          await this.onValidate(validationContext);
+        } catch (error) {
+          validationContext.errors.add(error);
+        }
+        if(validationContext.errors.length) {
+          throw validationContext.errors;
+        }
+        return true;
+      }
     }
 
   };

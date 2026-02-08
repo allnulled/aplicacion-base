@@ -35,7 +35,7 @@
           // event.detail.component.startProcesos();
           // event.detail.component.startGestorDeFicherosDeChatgpt();
           // event.detail.component.startNewFeature();
-          event.detail.component.startProcedimientos();
+          // event.detail.component.startProcedimientos();
         }
         window.dispatchEvent(new CustomEvent("app-started"));
       });
@@ -44,7 +44,7 @@
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {
-          const builderPath = NwtPaths.global.relative("assets/framework/browser/components/nwt-formulator/tests/check-form-builder.js");
+          const builderPath = NwtPaths.global.relative("assets/app/app-last-feature.js");
           await NwtImporter.asyncSource(builderPath, {});
         }
       });

@@ -1,0 +1,22 @@
+<div class="nwt_control_validator pad_1 pad_right_2">
+    <div class="card position_relative" v-if="control.validationErrors && control.validationErrors.errors && control.validationErrors.errors.length">
+        <div class="position_absolute_fixed" style="top: 1px; right: 1px; left: auto; bottom: auto;">
+            <button class="mini" v-on:click="() => control.clearValidationErrors()">
+                ❎
+            </button>
+        </div>
+        <div class=""
+            v-for="contraintError, errorIndex in control.validationErrors.errors"
+            v-bind:key="'validation-error-' + errorIndex">
+            <span>⛔️ </span>
+            <span>{{ contraintError.name }}: </span>
+            <span>{{ contraintError.message }}</span>
+            <span>
+                <button class="mini" v-on:click="() => toggleValidationErrorDetailsOf(errorIndex)">🦠</button>
+            </span>
+            <div class="pad_top_1" v-if="isShowingValidationErrorDetailsOf.indexOf(errorIndex) !== -1">
+                <pre>{{ contraintError.stack }}</pre>
+            </div>
+        </div>
+    </div>
+</div>

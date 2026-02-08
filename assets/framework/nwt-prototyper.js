@@ -73,7 +73,7 @@
         }
         if (!valid) {
           throw new TypeError(
-            `Invalid type for property «${key}». Expected ${allowedTypes.map(t => (t?.name) || ((t === null) ? "Null" : t === undefined ? "Undefined" : typeof t)).join(" | ")}, got ${value?.constructor?.name ||( (value === null) ? "Null" : (value === undefined) ? "Undefined" : typeof value)}`
+            `Invalid type for property «${key}». Expected «${allowedTypes.map(t => (t?.name) || ((t === null) ? "Null" : t === undefined ? "Undefined" : typeof t)).join(" | ")}, got ${value?.constructor?.name ||( (value === null) ? "Null" : (value === undefined) ? "Undefined" : typeof value)}» but «${typeof value}» found`
           );
         }
       }

@@ -24,6 +24,12 @@ return {
       },
     };
   },
+  data() {
+    return {
+      isShowingValidator: true,
+      validationErrors: NwtConstrainer.MultipleConstraintErrors.create(),
+    };
+  },
   methods: {
     async validate(externalValue = undefined) {
       trace("feature/for/control/trait/validate.methods.validate");
@@ -42,6 +48,22 @@ return {
         throw errors;
       }
       return true;
+    },
+    clearValidationErrors() {
+      trace("feature/for/control/trait/validate.methods.clearValidationErrors");
+      this.isShowingValidator = false;
+      this.validationErrors.errors = [];
+      this.$nextTick(() => {
+        this.isShowingValidator = true;
+      });
+    },
+    addValidationError(message) {
+      trace("feature/for/control/trait/validate.methods.addValidationError");
+      this.isShowingValidator = false;
+      this.validationErrors.add(message);
+      this.$nextTick(() => {
+        this.isShowingValidator = true;
+      });
     }
   },
   watch: {

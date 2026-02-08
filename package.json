@@ -22,7 +22,8 @@
     "up": "bash gitup.sh"
   },
   "devDependencies": {
-    "@allnulled/javadoc-brute": "^1.0.4"
+    "@allnulled/javadoc-brute": "^1.0.4",
+    "ejs": "^4.0.1"
   },
   "dependencies": {
     "chokidar": "^3.6.0",

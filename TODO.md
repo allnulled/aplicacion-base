@@ -1,9 +1,25 @@
 02/02/2026
 
-- [ ] Tener una API abstracta heredable a nivel Feature en:
-   - [ ] Esto afecta al mixer, que tiene que añadir un `Object.assign` a:
-   - [ ] `statics.traits[featureId].property`
-- [ ] 
+- [x] Tener una API abstracta heredable a nivel Feature en:
+   - [x] Esto afecta al mixer, que tiene que añadir un `Object.assign` a:
+   - [x] `statics.traits[featureId].property`
+- [ ] Conseguir que el validation funcione:
+   - [ ] Usando por debajo la validación del trait del id statics del último componente sobreescritor.
+   - [ ] Usando para llamar la API de validación estática paralela.
+      - [ ] Que llame al onValidate del trait estático correspondiente
+      - [ ] Que llame al onValidate del componente después si es que lo hay
+      - [ ] Que continúe llamando a todos los onValidate necesarios
+      - [ ] Que devuelva los errores acumulados
+- [ ] Hacer un test de la validación para que se vea que ya funciona
+- [ ] Hacer los componentes:
+   - [ ] @control/for/text
+   - [ ] @control/for/list
+   - [ ] @control/for/structure
+   - [ ] @control/for/option
+   - [ ] Que tengan validación
+      - [ ] Tanto estática
+      - [ ] Como dinámica
+         - [ ] La dinámica propaga los errores a los handlers
 
 AHORA:
 

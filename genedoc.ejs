@@ -1,0 +1,43 @@
+# `Nwt API`
+
+A continuación se muestran todas las APIs del proyecto con sus dependencias internas:
+
+<%
+const list = tree.nodes;
+const sortedList = list.sort((a,b) => {
+    const aIsComponent = a.isVueComponent;
+    const bIsComponent = b.isVueComponent;
+    const bothAreComponents = aIsComponent && bIsComponent;
+    const noneAreComponents = (!aIsComponent) && (!bIsComponent);
+    if(bothAreComponents || noneAreComponents) {
+        return a.formalName < b.formalName ? -1 : 1;
+    }
+    return aIsComponent ? 1 : bIsComponent ? -1 : 0;
+});
+let counter = 0;
+Iterating_list:
+for(let index=0; index<sortedList.length; index++) {
+  const item = sortedList[index];
+  const isVue = item.isVueComponent;
+  const isHtml = item.formalName.endsWith("Html");
+  const isCss = item.formalName.endsWith("Css");
+  if(isHtml || isCss) {
+    continue Iterating_list;
+  }
+  %>
+- <%-++counter%>. <%-isVue ? "[vue2] " : ""%>`The <%-isVue ? item.componentName.join(" + ") : item.formalName%> API`<%
+  if(item.dependencies) {
+    for(let indexDep=0; indexDep<item.dependencies.length; indexDep++) {
+      const depn = item.dependencies[indexDep];
+      %>
+   - **@uses** `<%-depn%>`<%
+    }
+  }
+}
+%>
+
+JSON original:
+
+```json
+<%-JSON.stringify(tree, null, 2)%>
+```

@@ -19,26 +19,31 @@
 
     static defaultBase = {
       value: undefined,
-      pointer: undefined,
+      valuePointer: undefined,
+      schemaPointer: undefined,
       componentId: undefined,
-      componentInstance: undefined,
+      component: undefined,
+      errors: undefined,
     };
 
     constructor(base = {}) {
       trace("NwtValidationContext.constructor");
       NwtPrototyper.initializePropertiesOf(this, [this.constructor.defaultBase, base], {
         value: [NwtPrototyper.type.AnyExcept(null, undefined)],
-        pointer: [[NwtValidationContextPointer], NwtValidationContextPointer.create()],
+        valuePointer: [[NwtValidationContextPointer], NwtValidationContextPointer.create()],
+        schema: [[NwtValidableSchema], null],
+        schemaPointer: [[NwtValidationContextPointer], NwtValidationContextPointer.create()],
         componentId: [[String]],
-        componentInstance: [[Vue, null, undefined]],
+        component: [[Vue, null, undefined]],
+        errors: [[NwtConstrainer.MultipleConstraintErrors], NwtConstrainer.MultipleConstraintErrors.create()],
       });
     }
 
     getPointedValue() {
       trace("NwtValidationContext.prototype.getPointerValue");
-      let output = value;
-      for(let indexPointer=0; indexPointer<this.pointer.length; indexPointer++) {
-        const pointerItem = this.pointer[indexPointer];
+      let output = this.value;
+      for(let indexPointer=0; indexPointer<this.valuePointer.length; indexPointer++) {
+        const pointerItem = this.valuePointer[indexPointer];
         output = output[pointerItem];
       }
       return output;
@@ -52,16 +57,17 @@
     clone() {
       trace("NwtValidationContext.prototype.clone");
       const overridings = {
-        // only new pointer with same values:
-        pointer: this.pointer.clone()
+        // only new pointers with same values:
+        valuePointer: this.valuePointer.clone(),
+        schemaPointer: this.schemaPointer.clone(),
       };
       const cloned = Object.assign({}, this, overridings);
       return this.constructor.create(cloned);
     }
 
-    appendPointer(pointerId) {
-      trace("NwtValidationContext.prototype.appendPointer");
-      this.pointer.add(pointerId);
+    appendToValuePointer(pointerId) {
+      trace("NwtValidationContext.prototype.appendToValuePointer");
+      this.valuePointer.add(pointerId);
       return this;
     }
 

@@ -3,6 +3,7 @@ return await NwtFeatureMixer.component({
   statics: {
     id: "@control/for/list",
     inherits: [
+      "@feature/for/control/trait/validate",
       
     ],
   },
