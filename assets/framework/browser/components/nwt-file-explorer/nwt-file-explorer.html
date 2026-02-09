@@ -1,0 +1,147 @@
+<div class="nwt_file_explorer">
+    <div class="dialog_container">
+        <div class="dialog_structure">
+            <div class="dialog_header">
+                <div class="">
+                    <div class="flex_row centered pad_top_1 pad_bottom_1 pad_horizontal_1 border_bottom_style_1">
+                        <div class="flex_1 text_align_center"
+                            style="min-width:32px;">📂</div>
+                        <div class="flex_100">
+                            <input class="width_100"
+                                type="text"
+                                v-model="openedNode"
+                                v-on:keypress.enter="reload" />
+                        </div>
+                    </div>
+                    <div class="pad_1 border_bottom_style_1">
+                        <div class="flex_row centered">
+                            <div class="flex_1 pad_right_1">
+                                <button class="mini no_wrap"
+                                    v-on:click="createDirectory">📁➕</button>
+                            </div>
+                            <div class="flex_1 pad_right_1">
+                                <button class="mini no_wrap"
+                                    v-on:click="createFile">📄➕</button>
+                            </div>
+                            <div class="flex_100"></div>
+                            <template v-if="chooserOf !== 'none'">
+                                <div class="flex_1 pad_left_1">
+                                    <button class=""
+                                        v-on:click="acceptChooser">Aceptar</button>
+                                </div>
+                                <div class="flex_1 pad_left_1">
+                                    <button class=""
+                                        v-on:click="cancelChooser">Cancelar</button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="pad_1 border_bottom_style_1"
+                        v-if="chooserOf !== 'none'">
+                        <template v-if="saveFile === false">
+                            <div class="file_explorer_selected_nodes_container">
+                                <div v-if="selectedNodes.length"
+                                    class="table file_explorer_selected_nodes_table">
+                                    <div class="tbody">
+                                        <div class="row"
+                                            v-for="node, nodeIndex in selectedNodes"
+                                            v-bind:key="'selected_node_' + node">
+                                            <div class="cell buttons_cell text_align_center cursor_pointer">
+                                                <div class="checkbox active"
+                                                    v-on:click="() => toggleNode(node)"></div>
+                                            </div>
+                                            <div class="cell"
+                                                :title="node">
+                                                {{ node }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=""
+                                    v-else-if="chooserOf === 'file'">
+                                    No hay ficheros seleccionados.
+                                </div>
+                                <div class=""
+                                    v-else-if="chooserOf === 'directory'">
+                                    <div class="table file_explorer_selected_nodes_table">
+                                        <div class="tbody">
+                                            <div class="row">
+                                                <div class="cell buttons_cell text_align_center cursor_pointer">
+                                                    <div class="checkbox active"></div>
+                                                </div>
+                                                <div class="cell"
+                                                    :title="openedNode">
+                                                    {{ openedNode }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <input class="width_100"
+                                type="text"
+                                placeholder="Nombre del nuevo fichero"
+                                v-on:keypress.enter="acceptChooser"
+                                v-model="savedFileName"
+                                v-focus />
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog_body">
+                <div class="dialog_content pad_1">
+                    <div class="table file_explorer_table">
+                        <div class="tbody">
+                            <div class="row">
+                                <div class="cell">
+                                    <div class="visibility_hidden checkbox"></div>
+                                </div>
+                                <div class="cell">📂</div>
+                                <div class="cell clickable"
+                                    v-on:click="() => goUp()">..</div>
+                                <div class="cell"></div>
+                            </div>
+                            <div class="row"
+                                v-for="subnode, subnodeIndex in subnodes"
+                                v-bind:key="'subnode_' + subnode.path"
+                                :title="subnode.name">
+                                <template
+                                    v-if="(chooserOf === 'file') && (!saveFile) && subnode.isFile && isAcceptedExtension(subnode.name)">
+                                    <div class="cell clickable"
+                                        v-on:click="() => toggleNode(subnode.path)">
+                                        <div class="checkbox"
+                                            :class="{active: selectedNodes.indexOf(subnode.path) !== -1}"></div>
+                                    </div>
+                                </template>
+                                <template v-else-if="chooserOf === 'directory' && subnode.isDirectory">
+                                    <div class="cell"></div>
+                                </template>
+                                <template v-else>
+                                    <div class="cell"></div>
+                                </template>
+                                <div class="cell">
+                                    {{ subnode.isFile ? "📄" : "" }}
+                                    {{ subnode.isDirectory ? "📁" : "" }}
+                                    {{ subnode.isSymbolicLink ? "🔗" : "" }}
+                                </div>
+                                <div class="cell clickable"
+                                    :title="subnode.name"
+                                    v-on:click="() => subnode.isDirectory ? open(subnode.path) : null">
+                                    {{ subnode.name }}
+                                </div>
+                                <div class="cell text_align_right">
+                                    {{ $nwt.Filesystem.formatBytes(subnode.size) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog_footer" v-if="saveFile !== false">
+
+            </div>
+        </div>
+    </div>
+</div>

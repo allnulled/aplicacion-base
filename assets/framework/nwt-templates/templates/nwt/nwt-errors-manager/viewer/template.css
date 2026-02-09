@@ -1,0 +1,76 @@
+.window.common_errors_window {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    overflow: hidden;
+    user-select: auto !important;
+    opacity: 0.6;
+}
+
+.window.common_errors_window.focused,
+.window.common_errors_window:hover {
+    opacity: 1;
+}
+
+.window.common_errors_window.focused {
+    z-index: 1000;
+}
+
+pre.error_code_box {
+    background-color: rgb(5 2 37);
+    border: 3px double #F33;
+    color: #f3e9e9;
+
+}
+
+.window.common_errors_window:before,
+.window.common_errors_window>.title-bar {
+    background-color: #cb3c3c;
+}
+
+.selectable_common_error_block {
+    font-size: 11px;
+}
+
+/* scrollbar completa */
+.error_code_box::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* fondo */
+.error_code_box::-webkit-scrollbar-track {
+    background: transparent;
+    border: 1px solid rgb(15, 15, 71);
+}
+
+/* thumb */
+.error_code_box::-webkit-scrollbar-thumb {
+    background: rgba(10, 35, 80, 0.898);
+    border: 1px solid white;
+}
+
+/* hover */
+.error_code_box::-webkit-scrollbar-thumb:hover {
+    background: rgba(58, 105, 191, 0.802);
+    resize: vertical;
+    cursor: pointer;
+}
+
+/* Botones de la barra superior */
+.window.common_errors_window .hide_on_focused {
+    display: block;
+}
+.window.common_errors_window.focused .hide_on_focused {
+    display: none;
+}
+.window.common_errors_window .show_on_focused {
+    display: none;
+}
+.window.common_errors_window.focused .show_on_focused {
+    display: block;
+}

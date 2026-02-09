@@ -1,0 +1,135 @@
+<div class="global_nwt_errors_manager">
+    <% if(errors.length) { %>
+        <div class="window common_errors_window focused">
+            <div class="title-bar" onclick="NwtErrorsManagerViewerUtils.dispatchToggleFocus()">
+                <div class="title-bar-text">Errores activos</div>
+                <div class="title-bar-controls">
+                    <button class="show_on_focused" aria-label="Minimize" onclick="event.stopPropagation(); NwtErrorsManagerViewerUtils.dispatchLoseFocus()"></button>
+                    <button class="hide_on_focused" aria-label="Restore" onclick="event.stopPropagation(); NwtErrorsManagerViewerUtils.dispatchGainFocus()"></button>
+                    <button aria-label="Close" onclick="event.stopPropagation(); CommonErrors.clearErrors()"></button>
+                </div>
+            </div>
+            <div class="window-body has-space overflow_scroll">
+                <div class="">
+                    <div class="card position_relative">
+                        <div class="nwt_stars_background">
+                            <div class="stars">
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                                <div class="star"></div>
+                            </div>
+                        </div>
+                        <div class="position_relative">
+                            <% for(let indexError = 0; indexError < errors.length; indexError++) { %>
+                                <button class="mini selectable_common_error_button" onclick="NwtErrorsManagerViewerUtils.dispatchSelectError(<%= indexError %>)">💥 <%= indexError + 1 %></button>
+                            <% } %>
+                            <button class="mini" onclick="NwtErrorsManagerViewerUtils.dispatchSelectError('*')">*️⃣ Todos</button>
+                            <button class="position_absolute_top_right" onclick="NwtErrorsManagerViewerUtils.dispatchCopyErrors()">📜 Copiar</button>
+                        </div>
+                    </div>
+                    <% for(let indexError = 0; indexError < errors.length; indexError++) {
+                        const error = errors[indexError]; %>
+                        <div class="card selectable_common_error_block">
+                            <div class="error_header pad_bottom_1">
+                                <div class="copìable"><b>Nº de error: </b><%= indexError + 1 %></div>
+                                <hr />
+                                <div class="copìable"><b>Tipo: </b><%= error.name %></div>
+                                <hr />
+                                <div class="copìable"><b>Mensaje: </b> </div>
+                                <div>
+                                    <pre class="copiable error_code_box white_space_wrap"><%= error.message %></pre>
+                                </div>
+                                <hr />
+                                <div><b>Traza: </b></div>
+                                <div>
+                                    <pre class="copiable error_code_box"><%= error.stack %></pre>
+                                </div>
+                            </div>
+                            <%
+                            if(error.injectedStack) { %>
+                                <div>
+                                    <hr />
+                                    <div class="copìable"><b>Traza externa: </b></div>
+                                    <div>
+                                        <pre class="copiable error_code_box"><%= error.injectedStack %></pre>
+                                    </div>
+                                </div>
+                            <% }
+                            if(Array.isArray(error.expandedStack)) {
+                                for(let indexCall = 0; indexCall < error.expandedStack.length; indexCall++) {
+                                    const errorCall = error.expandedStack[indexCall];
+                                    if(typeof errorCall === "string") { %>
+                                        <div>
+                                            <hr />
+                                            <div class="copìable"><b>Subtraza <%= indexError + 1 %>.<%= indexCall + 1 %></b>:</div>
+                                            <div class="copìable"><b>Tipo: </b> textual</div>
+                                            <div>
+                                                <pre class="copiable error_code_box white_space_wrap"><%= errorCall %></pre>
+                                            </div>
+                                        </div>
+                                    <% } else if(typeof errorCall === "object") { %>
+                                        <div>
+                                            <hr />
+                                            <div class="copìable"><b>Subtraza <%= indexError + 1 %>.<%= indexCall + 1 %></b>:</div>
+                                            <div class="copìable"><b>Tipo: </b> objeto</div>
+                                            <div class="copìable"><b>Fichero: </b><%= errorCall.file %>:<%= errorCall.line %>:<%= errorCall.column %></div>
+                                            <div class="copìable"><b>Función: </b><%= errorCall.function %></div>
+                                            <pre class="copiable js error_code_box"><%= Array.isArray(errorCall.fragment) ? errorCall.fragment.join("\n") : errorCall.fragment %></pre>
+                                        </div>
+                                    <% } %>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>

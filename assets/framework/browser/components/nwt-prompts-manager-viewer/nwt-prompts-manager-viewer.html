@@ -1,0 +1,111 @@
+<div class="nwt_prompts_manager_viewer">
+    <div class="dialog_container">
+        <div class="dialog_structure">
+            <div class="dialog_header">
+                <div class="border_bottom_style_1">
+                    <div class="title">
+                        <div class="flex_row centered">
+                            <div class="flex_100">
+                                Prompts disponibles
+                            </div>
+                            <div class="flex_1 pad_left_1">
+                                <button class="mini no_wrap"
+                                    v-on:click="openPromptsFolder">📂↗️</button>
+                            </div>
+                            <div class="flex_1 pad_left_1">
+                                <button class="mini"
+                                    v-on:click="addPrompt">➕</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pad_1"
+                        v-if="chooser">
+                        <div class="flex_row centered">
+                            <div class="flex_1 no_wrap">
+                                Prompt seleccionado:
+                            </div>
+                            <div class="flex_100 pad_left_2 no_wrap ellipsable"
+                                :title="selectedPrompt">{{ selectedPrompt || "-" }}</div>
+                        </div>
+                    </div>
+                    <div class="flex_row centered pad_1">
+                        <div class="flex_100">
+                            <input type="text"
+                                class="width_100 searcher_box"
+                                :class="{is_searching: state === 'searching'}"
+                                placeholder="Filtra prompt aquí"
+                                v-model="searchText"
+                                v-on:keypress.enter="reload"
+                                v-on:input="delayedSearch" />
+                        </div>
+                        <div class="flex_1 pad_left_1">
+                            <button class="mini"
+                                v-on:click="reload">
+                                <template v-if="state === 'searching'">⏳</template>
+                                <template v-else>🔎</template>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="pad_top_1"
+                        v-if="chooser">
+                        <div class="flex_row centered">
+                            <div class="flex_100"></div>
+                            <div class="flex_1 pad_left_1">
+                                <button class="mini"
+                                    v-on:click="acceptPrompt">Aceptar</button>
+                            </div>
+                            <div class="flex_1 pad_left_1">
+                                <button class="mini"
+                                    v-on:click="() => dialog.cancel()">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog_body">
+                <div class="dialog_content">
+                    <div class="pad_1">
+                        <template v-if="Array.isArray(filteredPromptPaths) && filteredPromptPaths.length">
+                            <div class="table prompts_table"
+                                :class="{prompt_chooser: chooser}">
+                                <div class="tbody">
+                                    <div class="row"
+                                        v-for="promptPath, promptPathId in filteredPromptPaths"
+                                        v-bind:key="'prompt_' + promptPath">
+                                        <div class="cell">{{ promptPathId + 1 }}</div>
+                                        <div class="cell"
+                                            v-if="chooser"
+                                            v-on:click="() => togglePrompt(promptPath)">
+                                            <div class="checkbox"
+                                                :class="{active:selectedPrompt === promptPath}"></div>
+                                        </div>
+                                        <div class="cell"
+                                            :title="promptPath">{{ promptPath }}</div>
+                                        <div class="cell buttons_cell">
+                                            <div class="flex_row centered">
+                                                <div class="flex_1 pad_left_1">
+                                                    <button class="mini"
+                                                        v-on:click="() => editPrompt(promptPath)">✏️</button>
+                                                </div>
+                                                <div class="flex_1 pad_left_1">
+                                                    <button class="mini"
+                                                        v-on:click="() => deletePrompt(promptPath)">❌</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else-if="filteredPromptPaths === false">
+                            Cargando...
+                        </template>
+                        <template v-else-if="filteredPromptPaths.length === 0">
+                            No se encontraton prompts coincidentes.
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,85 @@
+<div class="nwt_process_manager_viewer">
+    <div class="dialog_container">
+        <div class="dialog_structure">
+            <div class="dialog_header">
+                <div class="title">
+                    <div class="flex_row centered">
+                        <div class="flex_1 no_wrap">
+                            Procesos activos
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog_body">
+                <div class="dialog_content">
+                    <div class="pad_1 pad_right_2">
+                        <template v-if="isLoaded">
+                            <template v-if="processManager.$list.length === 0">
+                                <div class="pad_1">No hay procesos activos actualmente.</div>
+                            </template>
+                            <template v-else>
+                                <!--div class="pad_bottom_1">Hay {{ processManager.$list.length }} procesos activos actualmente:</div-->
+                                <div class="table width_100 process_manager_viewer_table">
+                                    <div class="thead">
+                                        <div class="row">
+                                            <div class="hcell">Proceso:</div>
+                                            <div class="hcell">Creado:</div>
+                                            <div class="hcell">Padre:</div>
+                                            <div class="hcell">Gestor:</div>
+                                            <div class="hcell">Hijos:</div>
+                                            <div class="hcell"
+                                                style="min-width: 55px;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="tbody">
+                                        <div class="row"
+                                            v-for="dialogProcess, dialogProcessIndex in processManager.$list"
+                                            v-bind:key="'process_item_' + dialogProcessIndex">
+                                            <div class="cell">
+                                                <div class=""
+                                                    :title="dialogProcess.$id">{{ dialogProcess.$id }}</div>
+                                            </div>
+                                            <div class="cell">
+                                                <div class=""
+                                                    :title="$nwt.Timer.fromDateToString(dialogProcess.$createdAt)">{{
+                                                    $nwt.Timer.fromDateToString(dialogProcess.$createdAt) }}</div>
+                                            </div>
+                                            <div class="cell">
+                                                <div class=""
+                                                    :title="dialogProcess.$parent?.$id">{{ dialogProcess.$parent?.$id || "-" }}</div>
+                                            </div>
+                                            <div class="cell">
+                                                <div class=""
+                                                    :title="dialogProcess.$manager?.$id">{{ dialogProcess.$manager?.$id }}</div>
+                                            </div>
+                                            <div class="cell">
+                                                <div class=""
+                                                    :title="dialogProcess.$children.length">{{ dialogProcess.$children.length }}</div>
+                                            </div>
+                                            <div class="cell buttons_cell">
+                                                <div class="flex_row centered">
+                                                    <div class="flex_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => toggleProcess(dialogProcess)">{{ dialogProcess.$isHidden ? "➕"
+                                                            : "➖" }}</button>
+                                                    </div>
+                                                    <div class="flex_1 pad_left_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => dialogProcess.close()">❌</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                        <template v-else>
+                            <nwt-progress-bar-viewer :progress-bar="progressBar" />
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

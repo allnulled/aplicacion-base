@@ -1,0 +1,81 @@
+<div class="nwt_tester_node">
+    <template v-if="node instanceof $nwt.Tester.Assertion">
+        <div :class="'test ' + node.status"
+            class="flex_row centered">
+            <div class="flex_1"
+                style="min-width: 8px;"
+                v-for="it, index in new Array(node.level)"
+                v-bind:key="'node_tab_' + node.name + '_iteration_' + index"></div>
+            <div class="flex_1">
+                <template v-if="node.status === 'ok'">✅</template>
+                <template v-else-if="node.status === 'failed'">❌</template>
+            </div>
+            <div class="flex_1 no_wrap"
+                style="color: #333;">
+                {{ node.name }}
+            </div>
+            <div class="flex_100 no_wrap times_cell pad_left_1">
+                <template v-if="node.status === 'ok'">
+                    <template v-if="node.successMoment">
+                        <span>@{{ node.successMoment }}</span>
+                        <span></span>
+                        <b>+{{ node.totalTime }}</b>
+                    </template>
+                </template>
+                <template v-if="node.status === 'failed'">
+                    <template v-if="node.errorMoment">
+                        <span>@{{ node.errorMoment }}</span>
+                        <span></span>
+                        <b>+{{ node.totalTime }}</b>
+                    </template>
+                </template>
+            </div>
+        </div>
+    </template>
+    <template v-else>
+        <template if="hasParent">
+            <div :class="'test ' + node.status">
+                <div class="flex_row centered">
+                    <div class="flex_1"
+                        style="min-width: 8px;"
+                        v-for="it, index in new Array(node.level)"
+                        v-bind:key="'node_tab_' + node.name + '_iteration_' + index"></div>
+                    <div class="flex_1">
+                        <template v-if="node.status === 'pending'">⚪️</template>
+                        <template v-if="node.status === 'running'">🟡</template>
+                        <template v-if="node.status === 'ok'">🟢</template>
+                        <template v-if="node.status === 'failed'">🔴</template>
+                    </div>
+                    <div class="flex_1 no_wrap"
+                        style="color: #333;">
+                        {{ node.name }}
+                    </div>
+                    <div class="flex_100 no_wrap times_cell pad_left_1">
+                        <template v-if="node.successMoment">
+                            <span>@{{ node.successMoment }}</span>
+                            <span></span>
+                            <b>+{{ node.totalTime }}</b>
+                        </template>
+                        <template v-else-if="node.status === 'pending'">
+                            <span>📎</span>
+                        </template>
+                        <template v-else>
+                            <span>⏳</span>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="progress"
+                v-if="(node.progressBar.percent !== '100.00%') || true">
+                <nwt-progress-bar-viewer :progress-bar="node.progressBar" />
+            </div>
+        </template>
+        <div class="children">
+            <nwt-tester-node v-for="(child,i) in node.children"
+                v-bind:key="'node_' + node.name + '_child_' + i"
+                :node="child"
+                :has-parent="true"
+                :viewer="viewer" />
+        </div>
+    </template>
+</div>

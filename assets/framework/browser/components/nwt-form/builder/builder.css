@@ -1,0 +1,23 @@
+.nwt_form_builder .table.built_form_table {}
+
+.nwt_form_builder .table.built_form_table > .thead > .row,
+.nwt_form_builder .table.built_form_table > .tfooter > .row {
+    display: grid;
+    grid-template-columns: auto 100fr auto auto auto;
+    align-items: start;
+}
+.nwt_form_builder .table.built_form_table > .tbody > .row {
+    display: grid;
+    grid-template-columns: auto 100fr;
+    align-items: start;
+}
+.nwt_form_builder .table.built_form_table > .tfooter > .row > .hcell,
+.nwt_form_builder .table.built_form_table > .thead > .row > .hcell {
+    padding: 2px;
+}
+
+.nwt_form_builder .footer_text {
+    font-size: 10px;
+    color: #444;
+}
+

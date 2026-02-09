@@ -1,0 +1,1 @@
+console.log(`Hello, ${ typeof world !== "undefined" ? world : "world" }!`);

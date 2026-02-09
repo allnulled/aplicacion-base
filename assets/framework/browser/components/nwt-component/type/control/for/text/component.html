@@ -1,0 +1,5 @@
+<div class="nwt_control_text">
+    Control para <button v-on:click="() => addValidationError('whatever')">texto</button>
+    {{ $options.statics.traits["@feature/for/control/trait/validate"] }}
+    <nwt-control-validator :control="this" v-if="isShowingValidator" />
+</div>

@@ -1,0 +1,66 @@
+<div class="procedure_form">
+    <div class="title">Formulario para flujo desde PDF en japonés especificación 1 hasta CSV con traducción y análisis gramatical</div>
+    <div class="card">
+        <div>
+            <div><b>Parámetro 1.</b> Ficheros (*.pdf) de entrada:</div>
+            <div>
+                <div class="">
+                    <button class="width_100 text_align_left" v-on:click="selectFiles">Seleccionar ficheros PDF</button>
+                </div>
+                <div class="text_align_center">
+                    o
+                </div>
+                <div class="">
+                    <div class="dropzone"
+                        v-on:dragover.prevent
+                        v-on:dragleave="() => isDragging = false"
+                        v-on:drop.prevent="onDrop"
+                        :class="{ dragover: isDragging }">
+                        Arrastrar aquí los ficheros
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="pad_vertical_1">
+            <div><b>Parámetro 2.</b> Directorio de salida:</div>
+            <button class="width_100 text_align_left" v-on:click="selectOutputDirectory">Seleccionar directorio de salida</button>
+        </div>
+        <template v-if="value.files">
+            <hr />
+            <div class="pad_vertical_1">
+                <div class="pad_bottom_2"><b>Respuesta 1.</b> Ficheros de entrada seleccionados:</div>
+                <div class="scrollable no_wrap">
+                    <div class="" v-for="file, fileIndex in value.files">
+                        <div class="">{{ fileIndex + 1 }}. {{ file }}</div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template v-if="value.output">
+            <hr />
+            <div class="pad_vertical_1">
+                <div class="pad_bottom_2"><b>Respuesta 2.</b> Directorio de salida seleccionado:</div>
+                <div>📂 {{ value.output }}</div>
+            </div>
+        </template>
+        <hr />
+        <div>
+            <b>Código equivalente:</b>
+        </div>
+        <template v-if="!isLoadingCode">
+            <nwt-code-highlighter syntax="javascript">NwtProceduresManager.global.findById("Flujo desde PDF en japonés especificación 1 hasta CSV con traducción y análisis gramatical").startViewer({{ $nwt.Utils.jsonify(value, 2) }});</nwt-code-highlighter>
+            <hr />
+        </template>
+        <div class="flex_row centered">
+            <div class="flex_100"></div>
+            <div class="flex_1 pad_left_1">
+                <button class="" v-on:click="() => dialog.accept(value)"
+                    :disabled="(value.files && value.files.length && value.output) ? false : true">Aceptar</button>
+            </div>
+            <div class="flex_1 pad_left_1">
+                <button class="" v-on:click="() => dialog.cancel()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>

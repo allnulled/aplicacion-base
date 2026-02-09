@@ -1,0 +1,16 @@
+.nwt_anonymous_command_form .question_text_1,
+.nwt_anonymous_command_form .question_text_2,
+.nwt_anonymous_command_form .question_text_3 {
+    display: inline-block;
+}
+.nwt_anonymous_command_form .question_text_1 {
+    font-size: 11px;
+}
+.nwt_anonymous_command_form .question_text_2 {
+    font-size: 9px;
+    color: #333;
+}
+.nwt_anonymous_command_form .question_text_3 {
+    font-size: 9px;
+    color: #AAA;
+}

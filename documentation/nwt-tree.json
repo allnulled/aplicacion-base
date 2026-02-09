@@ -1,0 +1,1456 @@
+{
+  "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1",
+  "generatedAt": "2026-02-08T09:06:54.890Z",
+  "nodes": [
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
+      "name": "nwt-box-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html",
+      "name": "nwt-box-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js",
+      "name": "nwt-box-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer",
+      "name": "nwt-box-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css",
+      "name": "nwt-chatgpt-files-manager-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html",
+      "name": "nwt-chatgpt-files-manager-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js",
+      "name": "nwt-chatgpt-files-manager-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer",
+      "name": "nwt-chatgpt-files-manager-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css",
+      "name": "nwt-code-highlighter.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html",
+      "name": "nwt-code-highlighter.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js",
+      "name": "nwt-code-highlighter.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter",
+      "name": "nwt-code-highlighter",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-component.js",
+      "name": "nwt-lazy-component.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-control.js",
+      "name": "nwt-lazy-control.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component",
+      "name": "nwt-component",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js",
+      "name": "nwt-feature-mixer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js",
+      "name": "nwt-feature-statics.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js",
+      "name": "nwt-lazy-feature.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature",
+      "name": "nwt-feature",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css",
+      "name": "nwt-file-explorer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html",
+      "name": "nwt-file-explorer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js",
+      "name": "nwt-file-explorer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer",
+      "name": "nwt-file-explorer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.css",
+      "name": "nwt-form-control-buttons.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.html",
+      "name": "nwt-form-control-buttons.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.js",
+      "name": "nwt-form-control-buttons.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.css",
+      "name": "nwt-form-control-handler.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.html",
+      "name": "nwt-form-control-handler.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.js",
+      "name": "nwt-form-control-handler.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.css",
+      "name": "nwt-form-control-statement.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.html",
+      "name": "nwt-form-control-statement.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.js",
+      "name": "nwt-form-control-statement.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js",
+      "name": "nwt-form-element-to-any.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-control.js",
+      "name": "nwt-form-element-to-control.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-form.js",
+      "name": "nwt-form-element-to-form.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-handler.js",
+      "name": "nwt-form-element-to-handler.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-utils.js",
+      "name": "nwt-form-utils.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form",
+      "name": "nwt-form",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-schema/nwt-form-schema-language.pegjs",
+      "name": "nwt-form-schema-language.pegjs",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-schema/nwt-form-schema.js",
+      "name": "nwt-form-schema.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-schema",
+      "name": "nwt-form-schema",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/nwt-formulator.js",
+      "name": "nwt-formulator.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/resource/nwt-formulator-resource.js",
+      "name": "nwt-formulator-resource.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/resource/nwt-lazy-resource",
+      "name": "nwt-lazy-resource",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator",
+      "name": "nwt-formulator",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/control/nwt-formulator-control-manager.js",
+      "name": "nwt-formulator-control-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/control/nwt-formulator-lazy-control.js",
+      "name": "nwt-formulator-lazy-control.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/database/nwt-formulator-database-manager.js",
+      "name": "nwt-formulator-database-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/dialog/nwt-formulator-dialog-manager.js",
+      "name": "nwt-formulator-dialog-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/dialog/nwt-formulator-lazy-dialog.js",
+      "name": "nwt-formulator-lazy-dialog.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-feature-manager.js",
+      "name": "nwt-formulator-feature-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-feature-mixer-previous.js",
+      "name": "nwt-formulator-feature-mixer-previous.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-feature-mixer.js",
+      "name": "nwt-formulator-feature-mixer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/feature/nwt-formulator-lazy-feature.js",
+      "name": "nwt-formulator-lazy-feature.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/nwt-formulator.js",
+      "name": "nwt-formulator.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous/utils/nwt-formulator-utils.js",
+      "name": "nwt-formulator-utils.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous",
+      "name": "nwt-formulator-previous",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous-2/control/nwt-formulator-lazy-control.js",
+      "name": "nwt-formulator-lazy-control.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous-2/feature/nwt-formulator-feature-mixer.js",
+      "name": "nwt-formulator-feature-mixer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous-2/feature/nwt-formulator-lazy-feature.js",
+      "name": "nwt-formulator-lazy-feature.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous-2/nwt-formulator.js",
+      "name": "nwt-formulator.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator-previous-2",
+      "name": "nwt-formulator-previous-2",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css",
+      "name": "nwt-matrix-background.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html",
+      "name": "nwt-matrix-background.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js",
+      "name": "nwt-matrix-background.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background",
+      "name": "nwt-matrix-background",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css",
+      "name": "nwt-procedure-documentation-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html",
+      "name": "nwt-procedure-documentation-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js",
+      "name": "nwt-procedure-documentation-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer",
+      "name": "nwt-procedure-documentation-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css",
+      "name": "nwt-procedures-manager-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html",
+      "name": "nwt-procedures-manager-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js",
+      "name": "nwt-procedures-manager-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer",
+      "name": "nwt-procedures-manager-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css",
+      "name": "nwt-process-manager-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html",
+      "name": "nwt-process-manager-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js",
+      "name": "nwt-process-manager-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer",
+      "name": "nwt-process-manager-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css",
+      "name": "nwt-progress-bar-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html",
+      "name": "nwt-progress-bar-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js",
+      "name": "nwt-progress-bar-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer",
+      "name": "nwt-progress-bar-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css",
+      "name": "nwt-prompts-manager-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html",
+      "name": "nwt-prompts-manager-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js",
+      "name": "nwt-prompts-manager-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer",
+      "name": "nwt-prompts-manager-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css",
+      "name": "nwt-settings-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html",
+      "name": "nwt-settings-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js",
+      "name": "nwt-settings-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer",
+      "name": "nwt-settings-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css",
+      "name": "nwt-source-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html",
+      "name": "nwt-source-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js",
+      "name": "nwt-source-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer",
+      "name": "nwt-source-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css",
+      "name": "nwt-stars-background.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html",
+      "name": "nwt-stars-background.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js",
+      "name": "nwt-stars-background.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background",
+      "name": "nwt-stars-background",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css",
+      "name": "nwt-tester-node.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html",
+      "name": "nwt-tester-node.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js",
+      "name": "nwt-tester-node.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node",
+      "name": "nwt-tester-node",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css",
+      "name": "nwt-tester-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html",
+      "name": "nwt-tester-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js",
+      "name": "nwt-tester-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer",
+      "name": "nwt-tester-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-validation/nwt-validable-schema.js",
+      "name": "nwt-validable-schema.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-validation/nwt-validation-context-pointer.js",
+      "name": "nwt-validation-context-pointer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-validation/nwt-validation-context.js",
+      "name": "nwt-validation-context.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-validation",
+      "name": "nwt-validation",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
+      "name": "nwt-abort.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-argumenter.js",
+      "name": "nwt-argumenter.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-array-utils.js",
+      "name": "nwt-array-utils.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-asserter.js",
+      "name": "nwt-asserter.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js",
+      "name": "nwt-ast-tree-class.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js",
+      "name": "nwt-ast-tree-template-source.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-boot.js",
+      "name": "nwt-boot.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js",
+      "name": "nwt-cache-directory.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js",
+      "name": "nwt-chatgpt.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js",
+      "name": "nwt-clipboard.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js",
+      "name": "nwt-code-composer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-collection-utils.js",
+      "name": "nwt-collection-utils.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js",
+      "name": "nwt-command-context-interface.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js",
+      "name": "nwt-command-form-interface.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js",
+      "name": "nwt-command-view-interface.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css",
+      "name": "nwt-anonymous-command-form.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html",
+      "name": "nwt-anonymous-command-form.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js",
+      "name": "nwt-anonymous-command-form.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form",
+      "name": "nwt-anonymous-command-form",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css",
+      "name": "nwt-anonymous-command-view.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html",
+      "name": "nwt-anonymous-command-view.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js",
+      "name": "nwt-anonymous-command-view.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view",
+      "name": "nwt-anonymous-command-view",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css",
+      "name": "nwt-commands-manager-viewer.css",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html",
+      "name": "nwt-commands-manager-viewer.html",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js",
+      "name": "nwt-commands-manager-viewer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer",
+      "name": "nwt-commands-manager-viewer",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js",
+      "name": "nwt-command-synchronizer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js",
+      "name": "nwt-command.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js",
+      "name": "nwt-commands-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command",
+      "name": "nwt-command",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-constrainer.js",
+      "name": "nwt-constrainer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js",
+      "name": "nwt-csv.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-debug.js",
+      "name": "nwt-debug.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dialog-definition.js",
+      "name": "nwt-dialog-definition.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js",
+      "name": "nwt-dom.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-environment.js",
+      "name": "nwt-environment.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-error-utils.js",
+      "name": "nwt-error-utils.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-errors-manager.js",
+      "name": "nwt-errors-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js",
+      "name": "nwt-exporter.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js",
+      "name": "nwt-file-chooser.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js",
+      "name": "nwt-filesystem.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js",
+      "name": "nwt-filetree-directory.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js",
+      "name": "nwt-filetree-file.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js",
+      "name": "nwt-filetree-glob.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js",
+      "name": "nwt-filetree-json.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js",
+      "name": "nwt-filetree-node.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js",
+      "name": "nwt-filetree-property.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js",
+      "name": "nwt-filetree.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js",
+      "name": "nwt-filetree-selector-interpreter.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.build.sh",
+      "name": "nwt-filetree-selector-parser.build.sh",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.dev.sh",
+      "name": "nwt-filetree-selector-parser.dev.sh",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.fix.js",
+      "name": "nwt-filetree-selector-parser.fix.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js",
+      "name": "nwt-filetree-selector-parser.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.pegjs",
+      "name": "nwt-filetree-selector-parser.pegjs",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js",
+      "name": "nwt-filetree-selector.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree",
+      "name": "nwt-filetree",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js",
+      "name": "nwt-globalizer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-importer.js",
+      "name": "nwt-importer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js",
+      "name": "nwt-injection.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js",
+      "name": "nwt-interruptible.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js",
+      "name": "nwt-interruption-handler.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js",
+      "name": "nwt-interruption.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption",
+      "name": "nwt-interruption",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js",
+      "name": "nwt-iterable-class.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js",
+      "name": "nwt-iterable-command-class.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js",
+      "name": "nwt-iterable-function.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js",
+      "name": "nwt-js-controller.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js",
+      "name": "nwt-js-return-controller.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js",
+      "name": "nwt-js-throw-controller.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers",
+      "name": "nwt-js-controllers",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js",
+      "name": "nwt-json-storer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js",
+      "name": "nwt-lazy-loader.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js",
+      "name": "nwt-live-injector.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-module-manager/nwt-module-manager.js",
+      "name": "nwt-module-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-module-manager",
+      "name": "nwt-module-manager",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-object-utils.js",
+      "name": "nwt-object-utils.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js",
+      "name": "nwt-pack.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-paths.js",
+      "name": "nwt-paths.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js",
+      "name": "nwt-directory-persister.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js",
+      "name": "nwt-file-persister.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js",
+      "name": "nwt-json-persister.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js",
+      "name": "nwt-jsonl-persister.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js",
+      "name": "nwt-persister.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister",
+      "name": "nwt-persister",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js",
+      "name": "nwt-procedure-definition.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js",
+      "name": "nwt-procedure-injections.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js",
+      "name": "nwt-procedure-seed.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js",
+      "name": "nwt-procedures-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js",
+      "name": "nwt-process-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js",
+      "name": "nwt-process.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js",
+      "name": "nwt-progress-bar.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js",
+      "name": "nwt-prompts-manager.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prototyper.js",
+      "name": "nwt-prototyper.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js",
+      "name": "nwt-proxy-chain.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js",
+      "name": "nwt-randomizer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js",
+      "name": "nwt-settings.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js",
+      "name": "nwt-shell.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js",
+      "name": "nwt-string-shortener.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener",
+      "name": "nwt-string-shortener",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-strings.js",
+      "name": "nwt-strings.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js",
+      "name": "nwt-templates.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-ast-tree",
+      "name": "nwt-ast-tree",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager",
+      "name": "nwt-errors-manager",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-example-1",
+      "name": "nwt-example-1",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-iterable-function",
+      "name": "nwt-iterable-function",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates",
+      "name": "nwt-templates",
+      "type": "directory"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js",
+      "name": "nwt-tester.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-timer.js",
+      "name": "nwt-timer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tracer.js",
+      "name": "nwt-tracer.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js",
+      "name": "nwt-utils.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2.js",
+      "name": "nwt-vue2.js",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-argumenter.js.md",
+      "name": "nwt-argumenter.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-array-utils.js.md",
+      "name": "nwt-array-utils.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-asserter.js.md",
+      "name": "nwt-asserter.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-ast-tree-class.js.md",
+      "name": "nwt-ast-tree-class.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-ast-tree-template-source.js.md",
+      "name": "nwt-ast-tree-template-source.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-boot.js.md",
+      "name": "nwt-boot.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-cache-directory.js.md",
+      "name": "nwt-cache-directory.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-chatgpt.js.md",
+      "name": "nwt-chatgpt.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-clipboard.js.md",
+      "name": "nwt-clipboard.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-code-composer.js.md",
+      "name": "nwt-code-composer.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-collection-utils.js.md",
+      "name": "nwt-collection-utils.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-command.nwt-command.js.md",
+      "name": "nwt-command.nwt-command.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-command.nwt-commands-manager.js.md",
+      "name": "nwt-command.nwt-commands-manager.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-csv.js.md",
+      "name": "nwt-csv.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-debug.js.md",
+      "name": "nwt-debug.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-dialog-definition.js.md",
+      "name": "nwt-dialog-definition.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-dom.js.md",
+      "name": "nwt-dom.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-environment.js.md",
+      "name": "nwt-environment.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-error-utils.js.md",
+      "name": "nwt-error-utils.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-errors-manager.js.md",
+      "name": "nwt-errors-manager.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-exporter.js.md",
+      "name": "nwt-exporter.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-file-chooser.js.md",
+      "name": "nwt-file-chooser.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-filesystem.js.md",
+      "name": "nwt-filesystem.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-filetree.md",
+      "name": "nwt-filetree.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-globalizer.js.md",
+      "name": "nwt-globalizer.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-importer.js.md",
+      "name": "nwt-importer.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-injection.js.md",
+      "name": "nwt-injection.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-interruption.md",
+      "name": "nwt-interruption.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-iterable-class.js.md",
+      "name": "nwt-iterable-class.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-iterable-command-class.js.md",
+      "name": "nwt-iterable-command-class.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-iterable-function.js.md",
+      "name": "nwt-iterable-function.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-js-controllers.md",
+      "name": "nwt-js-controllers.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-json-storer.js.md",
+      "name": "nwt-json-storer.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-lazy-loader.js.md",
+      "name": "nwt-lazy-loader.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-live-injector.js.md",
+      "name": "nwt-live-injector.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-object-utils.js.md",
+      "name": "nwt-object-utils.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-pack.js.md",
+      "name": "nwt-pack.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-paths.js.md",
+      "name": "nwt-paths.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-persister.md",
+      "name": "nwt-persister.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-persister.nwt-directory-persister.js.md",
+      "name": "nwt-persister.nwt-directory-persister.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-persister.nwt-file-persister.js.md",
+      "name": "nwt-persister.nwt-file-persister.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-persister.nwt-json-persister.js.md",
+      "name": "nwt-persister.nwt-json-persister.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-persister.nwt-jsonl-persister.js.md",
+      "name": "nwt-persister.nwt-jsonl-persister.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-persister.nwt-persister.js.md",
+      "name": "nwt-persister.nwt-persister.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-procedure-definition.js.md",
+      "name": "nwt-procedure-definition.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-procedure-injections.js.md",
+      "name": "nwt-procedure-injections.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-procedure-seed.js.md",
+      "name": "nwt-procedure-seed.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-procedures-manager.js.md",
+      "name": "nwt-procedures-manager.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-process-manager.js.md",
+      "name": "nwt-process-manager.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-process.js.md",
+      "name": "nwt-process.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-progress-bar.js.md",
+      "name": "nwt-progress-bar.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-prompts-manager.js.md",
+      "name": "nwt-prompts-manager.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-proxy-chain.js.md",
+      "name": "nwt-proxy-chain.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-randomizer.js.md",
+      "name": "nwt-randomizer.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-settings.js.md",
+      "name": "nwt-settings.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-shell.js.md",
+      "name": "nwt-shell.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-string-shortener.js.md",
+      "name": "nwt-string-shortener.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-string-shortener.md",
+      "name": "nwt-string-shortener.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-strings.js.md",
+      "name": "nwt-strings.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-submemory.md",
+      "name": "nwt-submemory.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-templates.md",
+      "name": "nwt-templates.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-templates.nwt-templates.js.md",
+      "name": "nwt-templates.nwt-templates.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-tester.js.md",
+      "name": "nwt-tester.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-timer.js.md",
+      "name": "nwt-timer.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-tracer.js.md",
+      "name": "nwt-tracer.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-tree.json",
+      "name": "nwt-tree.json",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-utils.js.md",
+      "name": "nwt-utils.js.md",
+      "type": "file"
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/documentation/nwt-vue2.js.md",
+      "name": "nwt-vue2.js.md",
+      "type": "file"
+    }
+  ]
+}

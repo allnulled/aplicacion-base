@@ -1,0 +1,122 @@
+<div class="nwt_settings_viewer">
+    <div class="dialog_container">
+        <div class="dialog_structure">
+            <div class="dialog_header">
+                <div class="title">
+                    <div class="flex_row centered">
+                        <div class="flex_100 no_wrap">
+                            Reglas de configuración
+                        </div>
+                        <div class="flex_1 pad_left_1">
+                            <button class="mini"
+                                v-on:click="reload">♻️</button>
+                        </div>
+                        <div class="flex_1 pad_left_1">
+                            <button class="mini width_100"
+                                v-on:click="createNewSetting">➕</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex_row centered pad_1 border_bottom_style_1">
+                    <div class="flex_100">
+                        <input type="text"
+                            class="width_100 searcher_box"
+                            :class="{is_searching: state === 'searching'}"
+                            v-model="searchFilter"
+                            v-on:keypress.enter="reload"
+                            v-on:input="delayedSearch"
+                            placeholder="Filtra configuración aquí" />
+                    </div>
+                    <div class="flex_1 pad_left_1">
+                        <button class="mini"
+                            v-on:click="reload">
+                            {{ state === "searching" ? "⏳" : "🔎" }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog_body">
+                <div class="dialog_content">
+                    <div class="">
+                        <div class=""
+                            v-if="!settingsObject">
+                            Cargando...
+                        </div>
+                        <template v-else>
+                            <div class=""
+                                v-if="Object.keys(allSettings).length && !Object.keys(settingsObject).length">
+                                No hay configuraciones coincidentes.
+                            </div>
+                            <div class=""
+                                v-else-if="!Object.keys(allSettings).length">
+                                No hay configuraciones actualmente.
+                            </div>
+                            <div class="pad_1"
+                                v-else>
+                                <div class="table settings_table">
+                                    <div class="thead">
+                                        <div class="row header_row">
+                                            <div class="hcell"
+                                                style="padding: 0px;">
+
+                                            </div>
+                                            <div class="hcell">
+                                                <div class="cell_container"
+                                                    style="padding: 3px;">
+                                                    <div class="cell_content">Nombre</div>
+                                                </div>
+                                            </div>
+                                            <div class="hcell">
+                                                <div class="cell_container"
+                                                    style="padding: 3px;">
+                                                    <div class="cell_content">Valor</div>
+                                                </div>
+                                            </div>
+                                            <div class="hcell buttons_cell"></div>
+                                        </div>
+                                    </div>
+                                    <div class="tbody">
+                                        <div class="row"
+                                            :class="{'last_row_of_list':settingCounter === (Object.keys(settingsObject).length - 1)}"
+                                            v-for="settingData, settingId, settingCounter in settingsObject"
+                                            v-bind:key="'global_setting_' + settingId">
+                                            <div class="cell index_cell">
+                                                <span>
+                                                    {{ settingCounter + 1 }}
+                                                </span>
+                                            </div>
+                                            <div class="cell name_cell"
+                                                :title="settingId">
+                                                <span>
+                                                    {{ settingId }}
+                                                </span>
+                                            </div>
+                                            <div class="cell value_cell"
+                                                :title="$nwt.Utils.jsonify(settingData)">
+                                                <span>
+                                                    = {{ settingData }}
+                                                </span>
+                                            </div>
+                                            <div class="cell buttons_cell">
+                                                <div class="flex_row centered">
+                                                    <div class="flex_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => editSetting(settingId, settingData)">✏️</button>
+                                                    </div>
+                                                    <div class="flex_1 pad_left_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => deleteSetting(settingId)">❌</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

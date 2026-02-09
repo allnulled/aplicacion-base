@@ -1,0 +1,36 @@
+{
+  "main": "index.html",
+  "name": "aplicacion-base",
+  "description": "Punto de partida para el desarrollo de aplicaciones basadas en vue2",
+  "window": {
+    "frame": true,
+    "transparent": false
+  },
+  "scripts": {
+    "install:all": "npm install && npm run install:reloader",
+    "install:reloader": "cd assets/framework/browser/reloader && npm install",
+    "build:docs": "node assets/builder/build-docs.js",
+    "build": "node assets/builder/bundle.js",
+    "dev": "npx nodemon -w 'assets/framework' -w 'assets/directives' -w 'assets/app' -w 'assets/components' -w 'assets/css' -w 'assets/builder' -i 'assets/framework/nwt-ast-tree-template-source.js' -e 'js,css,html' -x 'npm run build'",
+    "refresh": "node assets/framework/browser/reloader/starter.js",
+    "start": "nw .",
+    "ui": "nw .",
+    "ui:desktop": "nw .",
+    "ui:server": "npx http-server -c-1 . -o",
+    "ui:own": "~/.node-webkit/nw/nwjs-sdk-v0.82.0-linux-x64/nw .",
+    "tree:generate": "tree -I node_modules -I 'trash*' -I temporary . > tree.txt",
+    "up": "bash gitup.sh"
+  },
+  "devDependencies": {
+    "@allnulled/javadoc-brute": "^1.0.4",
+    "ejs": "^4.0.1"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.2",
+    "openai": "^6.15.0",
+    "papaparse": "^5.5.3",
+    "which": "^6.0.0"
+  }
+}

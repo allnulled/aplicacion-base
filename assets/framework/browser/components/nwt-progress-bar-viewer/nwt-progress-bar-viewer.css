@@ -1,0 +1,18 @@
+.progress_bar_viewer {}
+.progress_bar_viewer > div {
+    position: relative;
+}
+.progress_bar_viewer > div > div {
+    transition: width .2s linear;
+}
+.progress_bar_viewer > div > div > .progress_bar_message {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    color: #3a543f;
+}
+.progress_bar_viewer > div > div > .progress_bar_message > div {
+    text-align: center;
+}

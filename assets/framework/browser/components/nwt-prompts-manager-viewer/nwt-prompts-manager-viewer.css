@@ -1,0 +1,9 @@
+.table.prompts_table > .thead > .row,
+.table.prompts_table > .tbody > .row {
+    display: grid;
+    grid-template-columns: 50px 100fr auto;
+    align-items: center;
+}
+.table.prompts_table.prompt_chooser > .tbody > .row {
+    grid-template-columns: 50px 25px 100fr auto;
+}

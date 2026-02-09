@@ -1,0 +1,103 @@
+<div class="nwt_commands_manager_viewer">
+    <div class="dialog_container">
+        <div class="dialog_structure">
+            <div class="dialog_header">
+                <div class="title">
+                    <div class="flex_row centered">
+                        <div class="flex_100">
+                            Comandos disponibles
+                        </div>
+                        <div class="flex_1">
+                            <div class="pad_left_1">
+                                <button class="mini no_wrap"
+                                    v-on:click="openCommandsDirectory">📂↗️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pad_1 border_bottom_style_1">
+                    <div class="flex_row centered">
+                        <div class="flex_100">
+                            <input class="width_100 searcher_box"
+                                :class="{is_searching:isSearching}"
+                                type="text"
+                                v-model="searchText"
+                                v-on:input="delayReload"
+                                v-on:keypress.enter="loadCommands" />
+                        </div>
+                        <div class="flex_1 pad_left_1">
+                            <button class="mini"
+                                v-on:click="loadCommands">
+                                <template v-if="isSearching">⏳</template>
+                                <template v-else>🔎</template>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog_body">
+                <div class="dialog_content">
+
+                    <div class="">
+                        <div class="pad_1 pad_bottom_0">
+                            <div class="table commands_table"
+                                :class="{mode_selectable: mode === 'selectable'}">
+                                <div class="thead">
+                                    <div class="row">
+                                        <div class="hcell"
+                                            v-if="mode === 'selectable'"></div>
+                                        <div class="hcell">Comando:</div>
+                                        <div class="hcell"></div>
+                                    </div>
+                                </div>
+                                <div class="tbody">
+                                    <template v-if="!filteredCommands.length">
+                                        <div class="row unicell">
+                                            <div class="cell">
+                                                <template v-if="!commands.length">No hay comandos actualmente.</template>
+                                                <template v-else>No se encontraron comandos coincidentes.</template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-for="command, commandIndex in filteredCommands"
+                                        v-else>
+                                        <div class="row"
+                                            v-bind:key="'command_normal_row_' + commandIndex">
+                                            <div class="cell"
+                                                v-if="mode === 'selectable'"></div>
+                                            <div class="cell">{{ command.name }}</div>
+                                            <div class="cell">
+                                                <div class="flex_row centered">
+                                                    <div class="flex_100"></div>
+                                                    <div class="flex_1 pad_left_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => toggleReadme(command.name)">📖</button>
+                                                    </div>
+                                                    <div class="flex_1 pad_left_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => startForm(command.name)">📋</button>
+                                                    </div>
+                                                    <div class="flex_1 pad_left_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => startView(command.name)">▶️</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row no_cells"
+                                            v-if="openedReadmes.indexOf(command.name) !== -1"
+                                            v-bind:key="'command_readme_row_' + commandIndex">
+                                            <div class="cell">
+                                                <nwt-source-viewer :source="openedReadmeContents[command.name]" />
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

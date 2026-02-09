@@ -1,0 +1,70 @@
+.common_dialogs_container {}
+.common_dialogs_container_2 {
+    position: fixed;
+    top: 0;
+    bottom: auto;
+    left: 0;
+    right: auto;
+}
+.common_dialogs {}
+.common_dialogs_window.window {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: 10px;
+    overflow: hidden;
+    user-select: auto !important;
+}
+.common_dialogs_window.window > .window-body {
+    height: 100%;
+    overflow: scroll;
+}
+
+.common_dialogs_window.window.no_scroll > .window-body {
+    overflow: hidden;
+}
+
+.window.common_dialogs_window {
+
+}
+
+.window.common_dialogs_window .title-bar-text {
+    cursor: default;
+}
+
+/* CLASES PARA EL DIALOG-LAYOUT BUENO: */
+
+.window.common_dialogs_window .dialog_container {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_header {
+    flex: 1;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_body {
+    flex: 100;
+    padding: 2px;
+    position: relative;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_body > .dialog_content {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: scroll;
+}
+.window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_footer {
+    flex: 1;
+}

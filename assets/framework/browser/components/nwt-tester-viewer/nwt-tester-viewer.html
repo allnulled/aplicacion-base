@@ -1,0 +1,12 @@
+<div class="nwt_tester_viewer">
+    <div class="title" v-if="title">
+        <div class="flex_row centered">
+            {{ title }}
+        </div>
+    </div>
+    <div class="tester_viewer_box_container">
+        <div class="tester_viewer_box" :class="{all_passed: tester.status === 'ok'}" ref="viewerBox">
+            <nwt-tester-node :node="tester" :viewer="this" />
+        </div>
+    </div>
+</div>

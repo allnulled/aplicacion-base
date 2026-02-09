@@ -1,0 +1,19 @@
+<div class="procedure_form">
+    <div class="title">Formulario de procedimiento</div>
+    <div class="card">
+        <div>Título del procedimiento:</div>
+        <div class="pad_vertical_1">
+            <input class="width_100" type="text" v-model="value.title" />
+        </div>
+        <hr />
+        <div class="flex_row centered">
+            <div class="flex_100"></div>
+            <div class="flex_1">
+                <button class="" v-on:click="() => dialog.accept(value)">Aceptar</button>
+            </div>
+            <div class="flex_1 pad_left_1">
+                <button class="" v-on:click="() => dialog.cancel()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>

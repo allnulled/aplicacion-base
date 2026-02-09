@@ -1,0 +1,95 @@
+<div class="nwt_chatgpt_files_manager_viewer">
+    <div class="dialog_container">
+        <div class="dialog_structure">
+            <div class="dialog_header">
+                <div class="title">
+                    <div class="flex_row centered">
+                        <div class="flex_100">
+                            Ficheros subidos a ChatGPT
+                        </div>
+                        <div class="flex_1 pad_left_1">
+                            <button class="mini"
+                                v-on:click="fullyReload">♻️</button>
+                        </div>
+                        <div class="flex_1 pad_left_1">
+                            <button class="mini"
+                                v-on:click="uploadNewFile">➕</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex_row centered pad_1 border_bottom_style_1">
+                    <div class="flex_100">
+                        <input type="text"
+                            class="width_100 searcher_box"
+                            :class="{is_searching: state === 'searching'}"
+                            v-on:input="delayedSearch"
+                            v-on:keypress.enter="reload"
+                            v-model="searchText"
+                            placeholder="Filtra fichero aquí" />
+                    </div>
+                    <div class="flex_1 pad_left_1">
+                        <button class="mini">
+                            <template v-if="state === 'searching'">⏳</template>
+                            <template v-else>🔎</template>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog_body">
+                <div class="dialog_content">
+                    <div class="pad_1">
+                        <div class="table_viewer overflow_hidden"
+                            v-if="Array.isArray(allFiles) && allFiles.length">
+                            <div class="table chatgpt_files_table">
+                                <div class="thead">
+                                    <div class="row">
+                                        <div class="hcell"></div>
+                                        <div class="hcell">Nombre</div>
+                                        <div class="hcell">ID</div>
+                                        <div class="hcell"></div>
+                                        <div class="hcell buttons_cell"
+                                            style="min-width: 26px;"></div>
+                                    </div>
+                                </div>
+                                <div class="tbody">
+                                    <div class="row"
+                                        v-for="file, fileIndex in filteredFiles"
+                                        v-bind:key="'chatgpt_file_' + file.id">
+                                        <div class="cell">{{ fileIndex + 1 }}</div>
+                                        <div class="cell"
+                                            :title="file.filename">{{ file.filename }}</div>
+                                        <div class="cell ellipsable"
+                                            :title="file.id">{{ file.id }}</div>
+                                        <div class="cell">{{ $nwt.Filesystem.formatBytes(file.bytes) }}</div>
+                                        <div class="cell buttons_cell">
+                                            <div class="flex_row centered">
+                                                <!--div class="flex_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => downloadFile(file)">📥</button>
+                                                    </div-->
+                                                <!--div class="flex_1 pad_left_1">
+                                                        <button class="mini"
+                                                            v-on:click="() => viewFile(file)">📖</button>
+                                                    </div-->
+                                                <div class="flex_1 pad_left_1">
+                                                    <button class="mini"
+                                                        v-on:click="() => deleteFile(file)">❌</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else-if="Array.isArray(allFiles) && !allFiles.length">
+                            No hay ficheros subidos a los servidores de OpenAI actualmente.
+                        </div>
+                        <div v-else-if="!Array.isArray(allFiles)">
+                            Cargando, un momento, por favor.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

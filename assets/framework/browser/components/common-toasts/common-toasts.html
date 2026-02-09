@@ -1,0 +1,29 @@
+<div class="common_toasts_container">
+    <div class="common_toasts_container_2"
+        v-if="activeToasts.length">
+        <div class="common_toasts_container_3">
+            <template v-for="toast, toastIndex in activeToasts">
+                <div class="common_toasts_container_4"
+                    v-bind:key="'toast_' + toastIndex">
+                    <div class="window common_toasts_window">
+                        <div class="title-bar">
+                            <div class="title-bar-text">{{ toast.title }}</div>
+                            <div class="title-bar-controls">
+                                <button aria-label="Close"
+                                    v-on:click="() => closeToast(toast)"></button>
+                            </div>
+                        </div>
+                        <div class="window-body has-space">
+                            <pre v-if="toast.code">{{ toast.code }}</pre>
+                            <div v-else>{{ toast.text }}</div>
+                        </div>
+                        <div class="status-bar"
+                            v-if="toast.footer">
+                            <p class="status-bar-field no_wrap">{{ toast.footer }}</p>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>

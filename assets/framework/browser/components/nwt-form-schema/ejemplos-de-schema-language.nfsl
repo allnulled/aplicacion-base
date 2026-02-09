@@ -1,0 +1,9 @@
+@"group/list" {"statement":"Formulario de fichaje"} ."controls" [
+ @"text/oneline" {"statement":"Descripción del fichaje"},
+ @"time/datetime" {"statement":"Última modificación"},
+ @"group/structure" {"statement":"Persona responsable"} ."controls" {
+  "name": @"text/oneline",
+  "age": @"math/number",
+  "birthdate": @"time/date"
+ }
+]

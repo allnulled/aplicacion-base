@@ -1,0 +1,48 @@
+<div class="main_window_container">
+
+    <div class="main_window pad_1 pad_right_2">
+        <div class="title">Programas disponibles</div>
+        <div class="card">
+            <div class="pad_bottom_1">
+                <div class="flex_row centered">
+                    <div class="flex_100">
+                        <input class="width_100 searcher_box"
+                            :class="{is_searching: state === 'searching'}"
+                            type="text"
+                            placeholder="Filtra programa aquí"
+                            v-model="searchFilter"
+                            v-on:input="delayedReload"
+                            v-on:keypress.enter="reload" />
+                    </div>
+                    <div class="flex_1 pad_left_1">
+                        <button class="mini"
+                            v-on:click="reload">
+                            {{ state === 'searching' ? '⏳' : '🔎' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="pad_right_1">
+                <div class="table programs_table">
+                    <div class="tbody">
+                        <div class="row"
+                            v-for="program, programIndex in filteredPrograms"
+                            v-bind:key="'program_' + programIndex">
+                            <div class="cell text_align_right pad_right_2">{{ programIndex + 1 }}</div>
+                            <div class="cell buttons_cell">
+                                <button class="mini width_100 min_height_auto text_align_left"
+                                    v-on:click="program.event">{{ program.text }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <common-injections />
+    <common-dialogs />
+    <common-toasts />
+    <div class="position_absolute_fixed pad_bottom_1" style="top:auto;bottom:0px;">
+        <!--nwt-form-builder :settings="{type: 'group/structure'}" /-->
+    </div>
+</div>

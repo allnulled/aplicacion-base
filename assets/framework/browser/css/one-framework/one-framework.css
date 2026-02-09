@@ -1,0 +1,319 @@
+html,
+body {
+    margin: 0px;
+    padding: 0px;
+    background: transparent;
+}
+
+button {
+    cursor: pointer;
+}
+
+button.mini {
+    min-width: auto;
+    padding: 2px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.table_viewer {
+    overflow: scroll;
+    min-height: 140px;
+}
+
+.no_wrap {
+    white-space: nowrap;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.scrollable {
+    overflow: scroll;
+}
+
+.overflow_hidden {
+    overflow: hidden;
+}
+
+.width_100 {
+    width: 100%;
+}
+
+.width_1 {
+    width: 1%;
+}
+
+.width_auto {
+    width: auto;
+}
+
+.height_100 {
+    height: 100%;
+}
+
+.height_1 {
+    height: 1%;
+}
+
+.height_auto {
+    height: auto;
+}
+
+.flex_column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex_row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex_column.centered,
+.flex_row.centered {
+    align-items: center;
+}
+
+.flex_100 {
+    flex: 100;
+}
+
+.flex_1 {
+    flex: 1;
+}
+
+.font_weight_bold {
+    font-weight: bold;
+}
+
+.pad_0 {
+    padding: 0px;
+}
+
+.pad_horizontal_0 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.pad_vertical_0 {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.pad_top_0 {
+    padding-top: 0px;
+}
+
+.pad_bottom_0 {
+    padding-bottom: 0px;
+}
+
+.pad_left_0 {
+    padding-left: 0px;
+}
+
+.pad_right_0 {
+    padding-right: 0px;
+}
+
+.pad_1 {
+    padding: 2px;
+}
+
+.pad_horizontal_1 {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.pad_vertical_1 {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.pad_top_1 {
+    padding-top: 2px;
+}
+
+.pad_bottom_1 {
+    padding-bottom: 2px;
+}
+
+.pad_left_1 {
+    padding-left: 2px;
+}
+
+.pad_right_1 {
+    padding-right: 2px;
+}
+
+.pad_2 {
+    padding: 4px;
+}
+
+.pad_horizontal_2 {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.pad_vertical_2 {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.pad_top_2 {
+    padding-top: 4px;
+}
+
+.pad_bottom_2 {
+    padding-bottom: 4px;
+}
+
+.pad_left_2 {
+    padding-left: 4px;
+}
+
+.pad_right_2 {
+    padding-right: 4px;
+}
+
+.float_right {
+    float: right;
+}
+
+.float_left {
+    float: left;
+}
+
+.text_align_left {
+    text-align: left;
+}
+
+.text_align_right {
+    text-align: right;
+}
+
+.text_align_center {
+    text-align: center;
+}
+
+.position_relative {
+    position: relative;
+}
+
+.position_absolute {
+    position: absolute;
+}
+
+.position_absolute_fixed {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.position_absolute_top_right {
+    position: absolute;
+    top: 0px;
+    bottom: auto;
+    left: auto;
+    right: 0px;
+}
+
+.display_none {
+    display: none;
+}
+
+.display_inline_block {
+    display: inline-block;
+}
+
+button.bg_danger {
+    background: linear-gradient(#eec4c4 45%, #d3b6b6 45%, #d9b1b1);
+}
+
+button.bg_danger.active {}
+
+.min_height_auto {
+    min-height: auto;
+}
+
+.searcher_box {}
+
+.searcher_box.is_searching {
+    background-color: #ece7dd;
+}
+
+.visibility_hidden {
+    visibility: hidden;
+}
+
+.cursor_pointer {
+    cursor: pointer !important;
+}
+
+.dropzone {
+    display: grid;
+    align-items: center;
+    height: 80px;
+    width: 100%;
+    border: 2px dashed #333;
+    background-color: #bfd3db;
+    text-align: center;
+}
+
+.ellipsable {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.expanded_vertically_button_1 {
+    height: calc(100% - 4px);
+}
+
+.text_align_top {
+    display: flex;
+    align-items: flex-start;
+}
+
+.cell.empty_cell {
+    padding: 0px !important;
+}
+.align_self_start {
+    align-self: start;
+}
+
+.white_space_wrap {
+    white-space: pre-wrap;
+}
+
+.monospaced_1 {
+    font-family: monospace;
+    font-size: 11px;
+}
+
+.overflow_scroll {
+    overflow: scroll;
+}
+
+.background_gray_1 {
+    background-color: rgb(203, 203, 203);
+}
+
+.border_bottom_style_1 {
+    border-bottom: 1px solid #CCC;
+}
+
+.hidden {
+    display: none !important;
+}

@@ -1,0 +1,90 @@
+<div class="app_procedures_manager_viewer">
+    <div class="title">
+        <div class="flex_row centered">
+            <div class="flex_100">Procedimientos disponibles</div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="flex_row centered pad_bottom_1">
+            <div class="flex_100">
+                <input class="searcher_box width_100"
+                    :class="{ is_searching: state === 'searching' }"
+                    type="text"
+                    placeholder="Filtra procedimiento aquí"
+                    v-model="searchFilter"
+                    v-on:input="delayedSearch"
+                    v-on:keypress.enter="reload"
+                />
+            </div>
+            <div class="flex_1 pad_left_1">
+                <button class="mini min_height_auto" v-on:click="reload">
+                    {{ state === "searching" ? "⏳" : "🔎" }}
+                </button>
+            </div>
+        </div>
+        <div v-if="!procedureSeeds"
+            class="">
+            Cargando procedimientos...
+        </div>
+        <div v-else-if="!allProcedureSeeds.length"
+            class="">
+            No hay procedimientos actualmente.
+        </div>
+        <div v-else-if="!procedureSeeds.length"
+            class="">
+            No se encontraron procedimientos coincidentes.
+        </div>
+        <div v-else
+            class="">
+            <div class="table no_thead procedures_table">
+                <!--div class="thead">
+                    <div class="row">
+                        <div class="hcell cell_1"></div>
+                        <div class="hcell cell_2">Procedimiento</div>
+                        <div class="hcell cell_3"></div>
+                    </div>
+                </div-->
+                <div class="tbody">
+                    <template v-for="procedureSeed, procedureIndex in procedureSeeds">
+                        <div class="row"
+                            :class="getCssClassFromId(procedureSeed.id)"
+                            v-bind:key="'procedure_seed_' + procedureIndex + '_main_row'">
+                            <div class="cell cell_1">
+                                {{ procedureIndex+1 }}
+                            </div>
+                            <div class="cell cell_2"
+                                :title="procedureSeed.id">
+                                {{ procedureSeed.id }}
+                            </div>
+                            <div class="cell cell_3 buttons_cell"
+                                style="min-height: 21px;">
+                                <div class="flex_row pad_top_1">
+                                    <div class="flex_1">
+                                        <button class="mini min_height_auto"
+                                            v-on:click="() => startFormOf(procedureSeed.id)">📝</button>
+                                    </div>
+                                    <div class="flex_1 pad_left_1">
+                                        <button class="mini min_height_auto"
+                                            v-on:click="() => startViewerOf(procedureSeed.id)">▶️</button>
+                                    </div>
+                                    <div class="flex_1 pad_left_1">
+                                        <button class="mini min_height_auto"
+                                            :class="{active: openedDocumentation.indexOf(procedureSeed.id) !== -1}"
+                                            v-on:click="() => toggleDocumentation(procedureSeed.id)">📖</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row documentation_row no_hover_row"
+                            v-bind:key="'procedure_seed_' + procedureIndex + '_documentation_row'"
+                            v-if="openedDocumentation.indexOf(procedureSeed.id) !== -1">
+                            <div class="cell">
+                                <app-procedure-documentation-viewer :procedure-seed="procedureSeed" />
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

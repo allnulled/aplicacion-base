@@ -1,0 +1,17 @@
+{
+  "name": "reloader",
+  "version": "1.0.0",
+  "main": "reloader.js",
+  "scripts": {
+    "start": "node starter.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
+  }
+}

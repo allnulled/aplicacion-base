@@ -1,0 +1,30 @@
+<div class="common_dialogs_container">
+    <div class="common_dialogs_container_2"
+        v-if="processManager.$list.length">
+        <template v-for="processItem, processIndex in processManager.$list">
+            <div class="window common_dialogs_window"
+                :class="processItem.definition.$original?.windowClasses || ''"
+                v-resizable
+                v-draggable
+                v-on:mousedown="() => focusDialog(processItem)"
+                v-bind:key="'processItem_' + processItem.$id"
+                :style="{zIndex:processItem.dialog?.deepness}"
+                v-show="!processItem.$isHidden">
+                <div class="title-bar drag-handle">
+                    <div class="title-bar-text drag-handle">{{ processItem.$id }}</div>
+                    <div class="title-bar-controls">
+                        <button class="drag-handle-excluded"
+                            aria-label="Minimize"
+                            v-on:click="() => minimizeDialog(processItem)"></button>
+                        <button class="drag-handle-excluded"
+                            aria-label="Close"
+                            v-on:click="() => closeDialog(processItem)"></button>
+                    </div>
+                </div>
+                <div class="window-body position_relative">
+                    <nwt-box-viewer :component="processItem.definition.$factory" />
+                </div>
+            </div>
+        </template>
+    </div>
+</div>

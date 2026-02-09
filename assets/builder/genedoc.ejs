@@ -1,0 +1,93 @@
+# `Nwt APIs Documentation`
+
+Documentación de las APIs de Nwt.
+
+## Indice
+
+- [`Nwt APIs Documentation`](#nwt-apis-documentation)
+  - [Indice](#indice)
+  - [Lista de APIs y dependencias](#lista-de-apis-y-dependencias)
+  - [Dependencias y apariciones](#dependencias-y-apariciones)
+  - [El JSON original](#el-json-original)
+
+## Lista de APIs y dependencias
+
+<%
+const list = tree.nodes;
+const sortedList = list.sort((a,b) => {
+    const aIsComponent = a.isVueComponent;
+    const bIsComponent = b.isVueComponent;
+    const bothAreComponents = aIsComponent && bIsComponent;
+    const noneAreComponents = (!aIsComponent) && (!bIsComponent);
+    if(bothAreComponents || noneAreComponents) {
+        return a.formalName < b.formalName ? -1 : 1;
+    }
+    return aIsComponent ? 1 : bIsComponent ? -1 : 0;
+});
+const dependenciesReport = {};
+const makeDependencyReport = function(depId, item) {
+    if(!(depId in dependenciesReport)) {
+        dependenciesReport[depId] = [];
+    }
+    dependenciesReport[depId].push(item.apiName || item.formalName);
+}
+let counter = 0;
+Iterating_list:
+for(let index=0; index<sortedList.length; index++) {
+  const item = sortedList[index];
+  const isVue = item.isVueComponent;
+  const isHtml = item.formalName.endsWith("Html");
+  const isCss = item.formalName.endsWith("Css");
+  const itemName = item.apiName || item.formalName.replace(/Js$/g, "");
+  if(isHtml || isCss) {
+    continue Iterating_list;
+  }
+  %>
+- `<%-++counter%>. <%-isVue ? "[vue2] " : ""%>The <%-itemName%> API`<%
+  if(item.dependencies) {
+    Iterating_dependencies:
+    for(let indexDep=0; indexDep<item.dependencies.length; indexDep++) {
+      const depn = item.dependencies[indexDep];
+      if(depn === itemName) {
+        continue Iterating_dependencies;
+      }
+      %>
+   - **@uses** `<%-depn%>`<%
+      makeDependencyReport(depn, item);
+    }
+  }
+}
+%>
+
+## Dependencias y apariciones
+
+Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
+
+<%
+
+const depReportKeys = Object.keys(dependenciesReport).sort((key1, key2) => {
+    const q1 = dependenciesReport[key1].length; 
+    const q2 = dependenciesReport[key2].length;
+    return q1 < q2 ? 1 : -1;
+});
+for(let index=0; index<depReportKeys.length; index++) {
+  const dependencyId = depReportKeys[index];
+  const dependencyMatches = dependenciesReport[dependencyId];
+  %>
+- <%-dependencyId%> ✖️ <%-dependencyMatches.length%><%
+  for(let indexMatch=0; indexMatch<dependencyMatches.length; indexMatch++) {
+    const match = dependencyMatches[indexMatch];
+    %>
+   - <%-match%><%
+  }
+}
+
+%>
+
+## El JSON original
+
+El JSON original es:
+
+```json
+<%-JSON.stringify(tree, null, 2)%>
+```
