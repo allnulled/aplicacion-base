@@ -20541,7 +20541,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     relative(...subpaths) {
       trace("NwtPaths.prototype.relative");
       const path = require("path");
-      console.log(this.projectRoot);
       return path.resolve(this.projectRoot, ...subpaths);
     }
 
@@ -34279,7 +34278,7 @@ Vue.component("NwtControlValidator", {
           const resourceOnValidate = supertypeTraits.onValidate;
           const customAssertion = NwtAsserter.createAssertionFunction(() => true, error => { throw error });
           // @THROWABLE aquí:
-          console.log("VALIDANDO:", supertypeId, "\nID:", resource.statics.id, "\nSTATICS:",resource.statics, "\nSCHEMA:", resource.statics.controls);
+          // console.log("VALIDANDO:", supertypeId, "\nID:", resource.statics.id, "\nSTATICS:",resource.statics, "\nSCHEMA:", resource.statics.controls);
           const validation = await resourceOnValidate.call(resource.statics, value, {
             type: supertypeId,
             controls: resource.statics.controls

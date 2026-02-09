@@ -1,3 +1,21 @@
+09/02/2026
+
+- [x] Que soporte subtypeOf en validación
+   - [x] como una capa anterior que si la tiene, la usa como validator anterior
+- [ ] Que la validación se pueda pasar un índice del value
+   - [ ] y de un mejor reporte de los errores
+
+10/02/2026
+
+- [ ] Constructor de formularios lazy
+   - [ ] como componente vue2
+   - [ ] que le pasas lo que le pasarías al validator
+   - [ ] pero te construye un formulario con resources lazy
+- [ ] Hacer compatible la validación con los questions.js
+   - [ ] soporte para files
+   - [ ] ...
+
+
 08/02/2026
 
 - [ ] Conseguir que el validation funcione:

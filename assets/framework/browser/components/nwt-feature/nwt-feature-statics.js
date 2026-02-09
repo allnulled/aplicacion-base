@@ -53,7 +53,7 @@
           const resourceOnValidate = supertypeTraits.onValidate;
           const customAssertion = NwtAsserter.createAssertionFunction(() => true, error => { throw error });
           // @THROWABLE aquí:
-          console.log("VALIDANDO:", supertypeId, "\nID:", resource.statics.id, "\nSTATICS:",resource.statics, "\nSCHEMA:", resource.statics.controls);
+          // console.log("VALIDANDO:", supertypeId, "\nID:", resource.statics.id, "\nSTATICS:",resource.statics, "\nSCHEMA:", resource.statics.controls);
           const validation = await resourceOnValidate.call(resource.statics, value, {
             type: supertypeId,
             controls: resource.statics.controls

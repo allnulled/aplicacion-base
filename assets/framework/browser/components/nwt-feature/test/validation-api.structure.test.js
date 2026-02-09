@@ -11,7 +11,6 @@ Un_control_simple: {
   assertion(validation === false, "err 2");
   assertion(isPassing === true, "err 3");
   validation = await oneFeature.api.validate("500", { type: "@control/for/text" });
-  console.log(validation);
   assertion(validation === true, "err 4");
 }
 
@@ -57,6 +56,5 @@ Un_control_structure: {
       }
     }
   });
-  console.log(validation);
   break Un_control_structure;
 }

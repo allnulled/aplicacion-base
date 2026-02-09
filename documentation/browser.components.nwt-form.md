@@ -239,6 +239,12 @@ NwtFormUtils.from.element.to.handler(htmlElement);  // se aplica cuando v-forms.
 
 
 
+
+
+
+
+
+
 # NwtFormBuilder
 
 Componente vue2 que construye formularios.
@@ -290,12 +296,6 @@ Y luego están todos los controles que hay bajo:
    - text/multiline
 
 En el momento de documentar esto, estos son los controles disponibles. Para estar actualizado, revisar el directorio.
-
-
-
-
-
-
 
 
 

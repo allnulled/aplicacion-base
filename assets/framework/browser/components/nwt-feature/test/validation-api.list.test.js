@@ -57,6 +57,5 @@ Un_control_list: {
       }
     }
   });
-  console.log(validation);
   break Un_control_list;
 }

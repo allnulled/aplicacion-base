@@ -65,7 +65,6 @@
     relative(...subpaths) {
       trace("NwtPaths.prototype.relative");
       const path = require("path");
-      console.log(this.projectRoot);
       return path.resolve(this.projectRoot, ...subpaths);
     }
 
