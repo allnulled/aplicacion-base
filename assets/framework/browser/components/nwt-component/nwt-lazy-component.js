@@ -37,16 +37,16 @@
       assertion(await NwtFilesystem.existsAsFile(targetHtml), `Component «html» file not found at «${targetHtml}» on «NwtFormulatorLazyComponent.prototype.load»`);
       assertion(await NwtFilesystem.existsAsFile(targetCss), `Component «css» file not found at «${targetCss}» on «NwtFormulatorLazyComponent.prototype.load»`);
       this.loaded = await NwtImporter.vueComponentByFilesystem(targetComponent);
-      await this.validateLazyComponent();
+      await this.confirmLazyComponent();
       return this.loaded;
     }
 
-    async validateLazyComponent(loaded = this.loaded) {
-      trace("NwtLazyComponent.prototype.validateLazyComponent");
-      assertion(typeof loaded === "object", "Required parameter «loaded» to be object on «NwtLazyComponent.validateLazyComponent»");
-      assertion(typeof loaded.name === "string", "Required parameter «loaded.name» to be string on «NwtLazyComponent.validateLazyComponent»");
-      assertion(typeof loaded.statics === "object", "Required parameter «loaded.statics» to be object on «NwtLazyComponent.validateLazyComponent»");
-      assertion(typeof loaded.statics.id === "string", "Required parameter «loaded.statics.id» to be string on «NwtLazyComponent.validateLazyComponent»");
+    async confirmLazyComponent(loaded = this.loaded) {
+      trace("NwtLazyComponent.prototype.confirmLazyComponent");
+      assertion(typeof loaded === "object", "Required parameter «loaded» to be object on «NwtLazyComponent.confirmLazyComponent»");
+      assertion(typeof loaded.name === "string", "Required parameter «loaded.name» to be string on «NwtLazyComponent.confirmLazyComponent»");
+      assertion(typeof loaded.statics === "object", "Required parameter «loaded.statics» to be object on «NwtLazyComponent.confirmLazyComponent»");
+      assertion(typeof loaded.statics.id === "string", "Required parameter «loaded.statics.id» to be string on «NwtLazyComponent.confirmLazyComponent»");
     }
 
   };
