@@ -20,4 +20,10 @@ Demo_that_fails_too: {
   }
   assertion(hasPassed, "Must have passed (err 1)");
 }
+await NwtValidator.validate({
+  x: 10,
+  y: 10,
+}, {
+  type: "@control/for/class/point",
+});
 //*/

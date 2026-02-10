@@ -14,16 +14,16 @@ return await NwtFeatureMixer.component({
     ],
     traits: {
       "@control/for/structure": {
-        onValidate: async function(value, schema, component = {}, assertion) {
+        onValidate: async function(value, schema, component = {}, assertion, indexes) {
           trace("NwtControlForStructure.statics.traits['@control/for/structure'].onValidate");
-          assertion(typeof value === "object", "Parameter «value» must be object on «NwtControlForStructure.statics.traits['@control/for/structure'].onValidate»");
-          assertion(typeof schema === "object", "Parameter «schema» must be object on «NwtControlForStructure.statics.traits['@control/for/structure'].onValidate»");
-          assertion(typeof schema.type === "string", "Parameter «schema.type» must be string on «NwtControlForStructure.statics.traits['@control/for/structure'].onValidate»");
-          assertion(typeof schema.controls === "object", "Parameter «schema.controls» must be object on «NwtControlForStructure.statics.traits['@control/for/structure'].onValidate»");
+          assertion(typeof value === "object", `Parameter «value» must be object @index «${indexes.join(".")}» on «NwtControlForStructure.statics.traits['@control/for/structure'].onValidate»`);
+          assertion(typeof schema === "object", `Parameter «schema» must be object @index «${indexes.join(".")}» on «NwtControlForStructure.statics.traits['@control/for/structure'].onValidate»`);
+          assertion(typeof schema.type === "string", `Parameter «schema.type» must be string @index «${indexes.join(".")}» on «NwtControlForStructure.statics.traits['@control/for/structure'].onValidate»`);
+          assertion(typeof schema.controls === "object", `Parameter «schema.controls» must be object @index «${indexes.join(".")}» on «NwtControlForStructure.statics.traits['@control/for/structure'].onValidate»`);
           for(let prop in schema.controls) {
             const subvalue = value[prop];
             const subschema = schema.controls[prop];
-            await this.api.validate(subvalue, subschema, component);
+            await this.api.validate(subvalue, subschema, component, indexes.concat([prop]));
           }
         }
       }

@@ -25,7 +25,11 @@ Un_control_structure: {
     birth: {
       street: "ok",
       city: "ok",
-      day: "500"
+      day: "500",
+      events: [{
+        date: "ok",
+        name: 500
+      }]
     }
   }, {
     // Esto es el overrider del settings.controls para que se sepa que es un parámetro importante:
@@ -51,6 +55,20 @@ Un_control_structure: {
           },
           day: {
             type: "@control/for/text"
+          },
+          events: {
+            type: "@control/for/list",
+            controls: {
+              type: "@control/for/structure",
+              controls: {
+                date: {
+                  type: "@control/for/text"
+                },
+                name: {
+                  type: "@control/for/text"
+                }
+              }
+            }
           }
         }
       }

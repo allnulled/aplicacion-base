@@ -14,9 +14,9 @@ return await NwtFeatureMixer.component({
     ],
     traits: {
       "@control/for/number": {
-        onValidate(value, schema, component, assertion) {
+        onValidate(value, schema, component, assertion, indexes) {
           trace("NwtControlForNumber.statics.traits['@control/for/number'].onValidate");
-          assertion(typeof value === "number", `Parameter «value» must be number but «${typeof value}» was found instead on «NwtControlForNumber.statics.traits['@control/for/number'].onValidate»`);
+          assertion(typeof value === "number", `Parameter «value» must be number but «${typeof value}» was found instead @index «${indexes.join(".")}» on «NwtControlForNumber.statics.traits['@control/for/number'].onValidate»`);
         }
       }
     },

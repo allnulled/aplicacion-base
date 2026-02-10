@@ -14,7 +14,7 @@ return await NwtFeatureMixer.component({
     ],
     traits: {
       "@control/for/list": {
-        onValidate: async function(value, schema, component = {}, assertion) {
+        onValidate: async function(value, schema, component = {}, assertion, indexes) {
           trace("NwtControlForList.statics.traits['@control/for/list'].onValidate");
           assertion(typeof value === "object", "Parameter «value» must be object on «NwtControlForList.statics.traits['@control/for/list'].onValidate»");
           assertion(Array.isArray(value), "Parameter «value» must be array on «NwtControlForList.statics.traits['@control/for/list'].onValidate»");
@@ -24,7 +24,7 @@ return await NwtFeatureMixer.component({
           for(let index=0; index<value.length; index++) {
             const subvalue = value[index];
             const subschema = schema.controls;
-            await this.api.validate(subvalue, subschema, component);
+            await this.api.validate(subvalue, subschema, component, indexes.concat([index]));
           }
         }
       }

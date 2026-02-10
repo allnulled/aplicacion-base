@@ -239,13 +239,13 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
 - [NwtFormControlStatement](#nwtformcontrolstatement)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
+- [NwtFormControlForTextOneline](#nwtformcontrolfortextoneline)
+  - [Exposición](#exposicin)
+  - [Ventajas](#ventajas)
 - [NwtFormControlForGroupList](#nwtformcontrolforgrouplist)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 - [NwtFormControlForGroupStructure](#nwtformcontrolforgroupstructure)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
-- [NwtFormControlForTextOneline](#nwtformcontrolfortextoneline)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 
@@ -2700,12 +2700,6 @@ NwtFormUtils.from.element.to.handler(htmlElement);  // se aplica cuando v-forms.
 
 
 
-
-
-
-
-
-
 # NwtFormBuilder
 
 Componente vue2 que construye formularios.
@@ -2757,6 +2751,12 @@ Y luego están todos los controles que hay bajo:
    - text/multiline
 
 En el momento de documentar esto, estos son los controles disponibles. Para estar actualizado, revisar el directorio.
+
+
+
+
+
+
 
 
 
@@ -2854,6 +2854,49 @@ Otra cosa es que el control, por diseño, permita traspasar un parámetro propio
 
 
 
+
+
+
+
+
+
+# NwtFormControlForTextOneline
+
+Componente de control de formulario para textos de una sola línea.
+
+## Exposición
+
+```js
+Vue.options.components.NwtFormControlForTextOneline
+```
+
+## Ventajas
+
+```html
+<nwt-form-control-for-text-oneline
+  :buttons="[{text:'texto de boton',click:() => {}}]"
+  extraClases="clase1 clase2"
+  placeholder="Texto de relleno"
+  v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
+/>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # NwtFormControlForGroupList
 
 Componente de control de formulario para listas de controles.
@@ -2930,49 +2973,6 @@ Vue.options.components.NwtFormControlForGroupStructure
   v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
 />
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# NwtFormControlForTextOneline
-
-Componente de control de formulario para textos de una sola línea.
-
-## Exposición
-
-```js
-Vue.options.components.NwtFormControlForTextOneline
-```
-
-## Ventajas
-
-```html
-<nwt-form-control-for-text-oneline
-  :buttons="[{text:'texto de boton',click:() => {}}]"
-  extraClases="clase1 clase2"
-  placeholder="Texto de relleno"
-  v-forms.control="{}" # Esto solo si lo estás usando en un formulario que tiene v-forms.form
-/>
-```
-
-
-
-
-
-
 
 
 
