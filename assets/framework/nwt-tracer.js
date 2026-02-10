@@ -56,6 +56,7 @@
     constructor(id, isActivated = false) {
       this.id = id;
       this.isActivated = isActivated;
+      this.originalDate = new Date();
     }
 
     activate() {
@@ -68,8 +69,13 @@
 
     trace(message, args = []) {
       if(this.isActivated) {
-        console.log(`[trace][${this.id}] ${message}`, args);
+        console.log(`[trace][${this.id}][${this.getCurrentMillisecond()}] ${message}`, args);
       }
+    }
+
+    getCurrentMillisecond() {
+      if(typeof NwtTimer === "undefined") return "-";
+      return NwtTimer.fromMilisecondsToDuration((new Date()) - this.originalDate);
     }
 
     createTrace() {

@@ -61,6 +61,19 @@
       }
     }
 
+    static opinionify(callback, defaultValue) {
+      trace("NwtUtils.opinionify");
+      try {
+        const output = callback();
+        if(typeof output === "undefined") {
+          return defaultValue;
+        }
+        return output;
+      } catch (error) {
+        return onFail;
+      }
+    }
+
     static copify(data) {
       return JSON.parse(JSON.stringify(data));
     }

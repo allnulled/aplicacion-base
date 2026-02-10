@@ -132,6 +132,7 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtArrayUtils`
    - **@uses** `NwtFeatureStatics`
 - `31. The NwtFeatureStatics API`
+   - **@uses** `NwtUtils`
    - **@uses** `NwtResource`
    - **@uses** `NwtAsserter`
 - `32. The NwtFileChooser API`
@@ -490,6 +491,7 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtFramework`
 - `116. The NwtTracer API`
    - **@uses** `NwtFramework`
+   - **@uses** `NwtTimer`
    - **@uses** `window.trace`
    - **@uses** `global.trace`
 - `117. The NwtUtils API`
@@ -741,9 +743,10 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtModuleManager
    - NwtPack
    - NwtProcedureDefinition
-- NwtUtils ✖️ 11
+- NwtUtils ✖️ 12
    - NwtDebug
    - NwtErrorsManager
+   - NwtFeatureStatics
    - NwtFiletreeSelectorInterpreter
    - NwtFormulatorFeatureMixerPrevious
    - NwtInterruption
@@ -782,6 +785,13 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPromptsManager
    - NwtChatgptFilesManagerViewer
    - NwtPromptsManagerViewer
+- NwtTimer ✖️ 6
+   - NwtArgumenter
+   - NwtChatgpt
+   - NwtCommandSynchronizer
+   - NwtPack
+   - NwtTester
+   - NwtTracer
 - NwtFormulatorLazyFeature ✖️ 5
    - NwtFormulatorFeatureManager
    - NwtFormulatorFeatureMixer
@@ -812,12 +822,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtCommandsManagerViewer
    - NwtPromptsManagerViewer
    - NwtSettingsViewer
-- NwtTimer ✖️ 5
-   - NwtArgumenter
-   - NwtChatgpt
-   - NwtCommandSynchronizer
-   - NwtPack
-   - NwtTester
 - NwtProgressBar ✖️ 4
    - NwtPack
    - NwtTester
@@ -1119,7 +1123,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-10T13:04:31.545Z",
+  "generatedAt": "2026-02-10T14:42:08.303Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1600,6 +1604,7 @@ El JSON original es:
       "apiName": "NwtFeatureStatics",
       "dependencies": [
         "NwtFeatureStatics",
+        "NwtUtils",
         "NwtResource",
         "NwtAsserter"
       ]
@@ -2918,6 +2923,7 @@ El JSON original es:
       "dependencies": [
         "NwtTracer",
         "NwtFramework",
+        "NwtTimer",
         "window.trace",
         "global.trace"
       ]

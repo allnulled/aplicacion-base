@@ -24,10 +24,16 @@
 
     api = {
       getDefaultSchema: () => {
+        trace("NwtFeatureStatics.prototype.api.getDefaultSchema");
         return {
           type: this.id,
           controls: false
         };
+      },
+      getControlsById: (defaultValue = undefined, statics = this) => {
+        trace("NwtFeatureStatics.prototype.api.getControlsById");
+        const output = NwtUtils.opinionify(() => statics.traits[statics.id].controls, defaultValue);
+        return output;
       },
       validateRecursively: async (value, schema, component = {}, indexes = []) => {
         trace("NwtFeatureStatics.prototype.api.validateRecursively");
@@ -39,15 +45,15 @@
         assertion(typeof resource.statics === "object", `Parameter «resource.statics» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         assertion(typeof resource.statics.traits === "object", `Parameter «resource.statics.traits» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         Validate_by_subtype: {
-          let staticControls = resource.statics.controls || false;
-          if(typeof staticControls === "function") {
-            staticControls = resource.statics.controls.call(resource.statics);
+          let staticControls = resource.statics.api.getControlsById(false, resource.statics);
+          if (typeof staticControls === "function") {
+            staticControls = staticControls.call(resource.statics);
           }
           if (staticControls === false) {
             break Validate_by_subtype;
           }
-          assertion(typeof staticControls === "object", `Parameter «resource.statics.controls» must be function, undefined or object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
-          assertion(typeof staticControls.type === "string", `Parameter «resource.statics.controls.type» must be string @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
+          assertion(typeof staticControls === "object", `Parameter «staticControls» must be function, undefined or object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
+          assertion(typeof staticControls.type === "string", `Parameter «staticControls.type» must be string @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
           const supertype = await NwtResource.for(staticControls.type).load();
           assertion(typeof supertype.statics === "object", `Parameter «supertype.statics» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
           assertion(staticControls.type === supertype.statics.id, `Parameter «supertype.statics.id» and «staticControls.type» should match @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);

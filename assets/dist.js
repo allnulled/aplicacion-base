@@ -18781,6 +18781,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     constructor(id, isActivated = false) {
       this.id = id;
       this.isActivated = isActivated;
+      this.originalDate = new Date();
     }
 
     activate() {
@@ -18793,8 +18794,13 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     trace(message, args = []) {
       if(this.isActivated) {
-        console.log(`[trace][${this.id}] ${message}`, args);
+        console.log(`[trace][${this.id}][${this.getCurrentMillisecond()}] ${message}`, args);
       }
+    }
+
+    getCurrentMillisecond() {
+      if(typeof NwtTimer === "undefined") return "-";
+      return NwtTimer.fromMilisecondsToDuration((new Date()) - this.originalDate);
     }
 
     createTrace() {
@@ -21136,6 +21142,23 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       });
     }
 
+    static fromMilisecondsToDuration(ms) {
+      const sign = ms < 0 ? "-" : "";
+      ms = Math.abs(ms);
+      const parts = [];
+      const h = Math.floor(ms / 3600000);
+      ms %= 3600000;
+      const m = Math.floor(ms / 60000);
+      ms %= 60000;
+      const s = Math.floor(ms / 1000);
+      ms %= 1000;
+      if (h) parts.push(h + "h");
+      if (m) parts.push(m + "min");
+      if (s) parts.push(s + "s");
+      if (ms || parts.length === 0) parts.push(ms + "ms");
+      return sign + parts.join(" ");
+    }
+
   };
 
   return NwtTimer;
@@ -23192,6 +23215,19 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       trace("NwtUtils.trify");
       try {
         return callback();
+      } catch (error) {
+        return onFail;
+      }
+    }
+
+    static opinionify(callback, defaultValue) {
+      trace("NwtUtils.opinionify");
+      try {
+        const output = callback();
+        if(typeof output === "undefined") {
+          return defaultValue;
+        }
+        return output;
       } catch (error) {
         return onFail;
       }
@@ -34254,10 +34290,16 @@ Vue.component("NwtControlValidator", {
 
     api = {
       getDefaultSchema: () => {
+        trace("NwtFeatureStatics.prototype.api.getDefaultSchema");
         return {
           type: this.id,
           controls: false
         };
+      },
+      getControlsById: (defaultValue = undefined, statics = this) => {
+        trace("NwtFeatureStatics.prototype.api.getControlsById");
+        const output = NwtUtils.opinionify(() => statics.traits[statics.id].controls, defaultValue);
+        return output;
       },
       validateRecursively: async (value, schema, component = {}, indexes = []) => {
         trace("NwtFeatureStatics.prototype.api.validateRecursively");
@@ -34269,15 +34311,15 @@ Vue.component("NwtControlValidator", {
         assertion(typeof resource.statics === "object", `Parameter «resource.statics» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         assertion(typeof resource.statics.traits === "object", `Parameter «resource.statics.traits» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         Validate_by_subtype: {
-          let staticControls = resource.statics.controls || false;
-          if(typeof staticControls === "function") {
-            staticControls = resource.statics.controls.call(resource.statics);
+          let staticControls = resource.statics.api.getControlsById(false, resource.statics);
+          if (typeof staticControls === "function") {
+            staticControls = staticControls.call(resource.statics);
           }
           if (staticControls === false) {
             break Validate_by_subtype;
           }
-          assertion(typeof staticControls === "object", `Parameter «resource.statics.controls» must be function, undefined or object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
-          assertion(typeof staticControls.type === "string", `Parameter «resource.statics.controls.type» must be string @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
+          assertion(typeof staticControls === "object", `Parameter «staticControls» must be function, undefined or object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
+          assertion(typeof staticControls.type === "string", `Parameter «staticControls.type» must be string @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
           const supertype = await NwtResource.for(staticControls.type).load();
           assertion(typeof supertype.statics === "object", `Parameter «supertype.statics» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
           assertion(staticControls.type === supertype.statics.id, `Parameter «supertype.statics.id» and «staticControls.type» should match @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
@@ -34406,6 +34448,8 @@ Vue.component("NwtControlValidator", {
       return loaded;
     }
 
+    static exceptionalProperties = ["settings", "traits"];
+
     static async mix(component) {
       trace("NwtFeatureMixer.mix");
       assertion(typeof component === "object", "Required parameter «component» to be object on «NwtFeatureMixer.mix»");
@@ -34414,9 +34458,9 @@ Vue.component("NwtControlValidator", {
       assertion(Array.isArray(component.statics.inherits), "Required parameter «component.statics.inherits» to be array on «NwtFeatureMixer.mix»");
       // datos iniciales:
       const inheritsList = await this.extractFeaturesInheritance(component.statics.inherits);
-      const inheritsMap = {};
+      // const inheritsMap = {};
       inheritsList.push(component);
-      inheritsMap[component.statics.id] = component;
+      // inheritsMap[component.statics.id] = component;
       const out = {
         // NWT API:
         statics: {
@@ -34435,7 +34479,7 @@ Vue.component("NwtControlValidator", {
       Iterate_interfaces:
       for (const interfaze of inheritsList) {
         counter++;
-        inheritsMap[interfaze.statics.id] = interfaze;
+        // inheritsMap[interfaze.statics.id] = interfaze;
         // class
         let className = undefined;
         Plugin_for_class_specification:
@@ -34453,7 +34497,7 @@ Vue.component("NwtControlValidator", {
           Propagating_statics:
           for (let prop in interfaze.statics) {
             const val = interfaze.statics[prop];
-            if (!["settings"].includes(prop)) {
+            if (!this.exceptionalProperties.includes(prop)) {
               Object.assign(out.statics, { [prop]: val });
             }
           }
@@ -34470,6 +34514,27 @@ Vue.component("NwtControlValidator", {
               Object.assign(out.statics.settings, interfaze.statics.settings.$hard);
             }
             Object.assign(out.statics.settings, interfaze.statics.settings);
+          }
+        }
+        // traits abstract inheritance → con Object.assign pero dentro de cada trait
+        On_traits_abstract_inheritance: {
+          const hasTraits = interfaze.statics && interfaze.statics.traits;
+          if(!hasTraits) {
+            break On_traits_abstract_inheritance;
+          }
+          if(!out.statics.traits) {
+            out.statics.traits = {};
+          }
+          for(const traitId in interfaze.statics.traits) {
+            if(!out.statics.traits[traitId]) {
+              out.statics.traits[traitId] = {};
+            }
+            const traitMap = interfaze.statics.traits[traitId];
+            assertion(typeof traitMap === "object", `Trait «${traitId}» on interface «${interfaze.statics.id}» must be object on «NwtFeatureMixer.mix»`);
+            for(const traitProperty in traitMap) {
+              const traitValue = traitMap[traitProperty];
+              Object.assign(out.statics.traits[traitId], { [traitProperty]: traitValue });
+            }
           }
         }
         // data
@@ -34512,27 +34577,6 @@ Vue.component("NwtControlValidator", {
             hooks[propertyId].push(interfaze[propertyId]);
           }
         }
-        // traits abstract inheritance → con Object.assign pero dentro de cada trait
-        On_traits_abstract_inheritance: {
-          const hasTraits = interfaze.statics && interfaze.statics.traits;
-          if(!hasTraits) {
-            break On_traits_abstract_inheritance;
-          }
-          if(!out.statics.traits) {
-            out.statics.traits = {};
-          }
-          for(const traitId in interfaze.statics.traits) {
-            if(!out.statics.traits[traitId]) {
-              out.statics.traits[traitId] = {};
-            }
-            const traitMap = interfaze.statics.traits[traitId];
-            assertion(typeof traitMap === "object", `Trait «${traitId}» on interface «${interfaze.statics.id}» must be object on «NwtFeatureMixer.mix»`);
-            for(const traitProperty in traitMap) {
-              const traitValue = traitMap[traitProperty];
-              Object.assign(out.statics.traits[traitId], { [traitProperty]: traitValue });
-            }
-          }
-        }
         // name:
         On_name_by_the_way: {
           if(interfaze.name) {
@@ -34551,7 +34595,7 @@ Vue.component("NwtControlValidator", {
         // inherits plugin:
         Plugin_for_settings_specification: {
           // mejor dejar el componente ligero, solo con seeds:
-          out.statics.inheritance = inheritsMap;
+          // out.statics.inheritance = inheritsMap;
           delete out.statics.inherits;
           break Plugin_for_settings_specification;
         }

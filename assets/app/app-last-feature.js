@@ -3,6 +3,7 @@ const files = [
   NwtPaths.global.relative("assets/framework/browser/components/nwt-feature/test/validation-api.list.test.js"),
   NwtPaths.global.relative("assets/framework/browser/components/nwt-feature/test/validation-api.option.test.js"),
   NwtPaths.global.relative("assets/framework/browser/components/nwt-feature/test/validation-api.validator.test.js"),
+  NwtPaths.global.relative("assets/framework/browser/components/nwt-feature/test/validation-api.feature-inheritance.test.js"),
   NwtPaths.global.relative("assets/framework/browser/components/nwt-feature/test/validation-api.subtypes.test.js"),
 ];
 for(let index=0; index<files.length; index++) {

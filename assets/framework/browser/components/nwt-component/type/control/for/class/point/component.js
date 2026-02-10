@@ -5,19 +5,19 @@ return await NwtFeatureMixer.component({
     inherits: [
       "@control/for/structure",
     ],
-    controls: {
-      type: "@control/for/structure",
-      controls: {
-        x: {
-          type: "@control/for/number"
-        },
-        y: {
-          type: "@control/for/number"
-        }
-      }
-    },
     traits: {
       "@control/for/class/point": {
+        controls: {
+          type: "@control/for/structure",
+          controls: {
+            x: {
+              type: "@control/for/number"
+            },
+            y: {
+              type: "@control/for/number"
+            }
+          }
+        },
         onValidate: async function (value, schema, component = {}, assertion) {
           trace("NwtControlForPoint.statics.traits['@control/for/class/point'].onValidate");
           console.log("OKKKK:", this);

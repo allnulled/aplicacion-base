@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-10T13:04:31.545Z",
+  "generatedAt": "2026-02-10T14:42:08.303Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -143,6 +143,7 @@
       "apiName": "NwtFeatureStatics",
       "dependencies": [
         "NwtFeatureStatics",
+        "NwtUtils",
         "NwtResource",
         "NwtAsserter"
       ]
@@ -2170,6 +2171,7 @@
       "dependencies": [
         "NwtTracer",
         "NwtFramework",
+        "NwtTimer",
         "window.trace",
         "global.trace"
       ]

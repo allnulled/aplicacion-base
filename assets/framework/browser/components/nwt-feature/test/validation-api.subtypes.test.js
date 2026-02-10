@@ -7,7 +7,7 @@ await NwtValidator.validate({
 });
 
 Demo_that_fails_too: {
-  let hasPassed = false;
+  let hasFailed = false;
   try {
     await NwtValidator.validate({
       x: 10,
@@ -16,9 +16,9 @@ Demo_that_fails_too: {
       type: "@control/for/class/point",
     });
   } catch (error) {
-    hasPassed = true;
+    hasFailed = true;
   }
-  assertion(hasPassed, "Should have passed (err 1)");
+  assertion(hasFailed, "Should have failed (err 1 from subtypes)");
 }
 await NwtValidator.validate({
   x: 10,
@@ -35,7 +35,7 @@ await NwtValidator.validate({
 });
 // Ejemplo de herencia de que point3d hereda la estructura de point:
 Demo_that_fails_too: {
-  let hasPassed = false;
+  let hasFailed = false;
   try {
     await NwtValidator.validate({
       // x: 10,
@@ -45,8 +45,8 @@ Demo_that_fails_too: {
       type: "@control/for/class/point3d",
     });
   } catch (error) {
-    hasPassed = true;
+    hasFailed = true;
   }
-  assertion(hasPassed, "Should have passed (err 2)");
+  assertion(hasFailed, "Should have failed (err 2 from subtypes)");
 }
 //*/

@@ -90,6 +90,8 @@
       return loaded;
     }
 
+    static exceptionalProperties = ["settings", "traits"];
+
     static async mix(component) {
       trace("NwtFeatureMixer.mix");
       assertion(typeof component === "object", "Required parameter «component» to be object on «NwtFeatureMixer.mix»");
@@ -98,9 +100,9 @@
       assertion(Array.isArray(component.statics.inherits), "Required parameter «component.statics.inherits» to be array on «NwtFeatureMixer.mix»");
       // datos iniciales:
       const inheritsList = await this.extractFeaturesInheritance(component.statics.inherits);
-      const inheritsMap = {};
+      // const inheritsMap = {};
       inheritsList.push(component);
-      inheritsMap[component.statics.id] = component;
+      // inheritsMap[component.statics.id] = component;
       const out = {
         // NWT API:
         statics: {
@@ -119,7 +121,7 @@
       Iterate_interfaces:
       for (const interfaze of inheritsList) {
         counter++;
-        inheritsMap[interfaze.statics.id] = interfaze;
+        // inheritsMap[interfaze.statics.id] = interfaze;
         // class
         let className = undefined;
         Plugin_for_class_specification:
@@ -137,7 +139,7 @@
           Propagating_statics:
           for (let prop in interfaze.statics) {
             const val = interfaze.statics[prop];
-            if (!["settings"].includes(prop)) {
+            if (!this.exceptionalProperties.includes(prop)) {
               Object.assign(out.statics, { [prop]: val });
             }
           }
@@ -154,6 +156,27 @@
               Object.assign(out.statics.settings, interfaze.statics.settings.$hard);
             }
             Object.assign(out.statics.settings, interfaze.statics.settings);
+          }
+        }
+        // traits abstract inheritance → con Object.assign pero dentro de cada trait
+        On_traits_abstract_inheritance: {
+          const hasTraits = interfaze.statics && interfaze.statics.traits;
+          if(!hasTraits) {
+            break On_traits_abstract_inheritance;
+          }
+          if(!out.statics.traits) {
+            out.statics.traits = {};
+          }
+          for(const traitId in interfaze.statics.traits) {
+            if(!out.statics.traits[traitId]) {
+              out.statics.traits[traitId] = {};
+            }
+            const traitMap = interfaze.statics.traits[traitId];
+            assertion(typeof traitMap === "object", `Trait «${traitId}» on interface «${interfaze.statics.id}» must be object on «NwtFeatureMixer.mix»`);
+            for(const traitProperty in traitMap) {
+              const traitValue = traitMap[traitProperty];
+              Object.assign(out.statics.traits[traitId], { [traitProperty]: traitValue });
+            }
           }
         }
         // data
@@ -196,27 +219,6 @@
             hooks[propertyId].push(interfaze[propertyId]);
           }
         }
-        // traits abstract inheritance → con Object.assign pero dentro de cada trait
-        On_traits_abstract_inheritance: {
-          const hasTraits = interfaze.statics && interfaze.statics.traits;
-          if(!hasTraits) {
-            break On_traits_abstract_inheritance;
-          }
-          if(!out.statics.traits) {
-            out.statics.traits = {};
-          }
-          for(const traitId in interfaze.statics.traits) {
-            if(!out.statics.traits[traitId]) {
-              out.statics.traits[traitId] = {};
-            }
-            const traitMap = interfaze.statics.traits[traitId];
-            assertion(typeof traitMap === "object", `Trait «${traitId}» on interface «${interfaze.statics.id}» must be object on «NwtFeatureMixer.mix»`);
-            for(const traitProperty in traitMap) {
-              const traitValue = traitMap[traitProperty];
-              Object.assign(out.statics.traits[traitId], { [traitProperty]: traitValue });
-            }
-          }
-        }
         // name:
         On_name_by_the_way: {
           if(interfaze.name) {
@@ -235,7 +237,7 @@
         // inherits plugin:
         Plugin_for_settings_specification: {
           // mejor dejar el componente ligero, solo con seeds:
-          out.statics.inheritance = inheritsMap;
+          // out.statics.inheritance = inheritsMap;
           delete out.statics.inherits;
           break Plugin_for_settings_specification;
         }
