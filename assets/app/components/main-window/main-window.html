@@ -43,6 +43,16 @@
     <common-dialogs />
     <common-toasts />
     <div class="position_absolute_fixed pad_bottom_1" style="top:auto;bottom:0px;">
-        <!--nwt-form-builder :settings="{type: 'group/structure'}" /-->
+        <nwt-lazy-form :controls="{
+            type: '@control/for/structure',
+            controls: {
+                name: {
+                    type: '@control/for/text'
+                },
+                city: {
+                    type: '@control/for/text'
+                }
+            }
+        }" />
     </div>
 </div>

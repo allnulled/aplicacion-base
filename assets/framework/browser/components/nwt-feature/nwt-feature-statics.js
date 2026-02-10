@@ -39,11 +39,14 @@
         assertion(typeof resource.statics === "object", `Parameter «resource.statics» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         assertion(typeof resource.statics.traits === "object", `Parameter «resource.statics.traits» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         Validate_by_subtype: {
-          const staticControls = resource.statics.controls || false;
+          let staticControls = resource.statics.controls || false;
+          if(typeof staticControls === "function") {
+            staticControls = resource.statics.controls.call(resource.statics);
+          }
           if (staticControls === false) {
             break Validate_by_subtype;
           }
-          assertion(typeof staticControls === "object", `Parameter «resource.statics.controls» must be undefined or object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
+          assertion(typeof staticControls === "object", `Parameter «resource.statics.controls» must be function, undefined or object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
           assertion(typeof staticControls.type === "string", `Parameter «resource.statics.controls.type» must be string @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
           const supertype = await NwtResource.for(staticControls.type).load();
           assertion(typeof supertype.statics === "object", `Parameter «supertype.statics» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);

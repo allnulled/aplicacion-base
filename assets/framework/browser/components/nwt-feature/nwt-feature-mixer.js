@@ -98,7 +98,9 @@
       assertion(Array.isArray(component.statics.inherits), "Required parameter «component.statics.inherits» to be array on «NwtFeatureMixer.mix»");
       // datos iniciales:
       const inheritsList = await this.extractFeaturesInheritance(component.statics.inherits);
+      const inheritsMap = {};
       inheritsList.push(component);
+      inheritsMap[component.statics.id] = component;
       const out = {
         // NWT API:
         statics: {
@@ -117,6 +119,7 @@
       Iterate_interfaces:
       for (const interfaze of inheritsList) {
         counter++;
+        inheritsMap[interfaze.statics.id] = interfaze;
         // class
         let className = undefined;
         Plugin_for_class_specification:
@@ -232,9 +235,9 @@
         // inherits plugin:
         Plugin_for_settings_specification: {
           // mejor dejar el componente ligero, solo con seeds:
+          out.statics.inheritance = inheritsMap;
           delete out.statics.inherits;
           break Plugin_for_settings_specification;
-          out.statics.inherits = inheritsList;
         }
         out.data = function () {
           let result = {};

@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-10T06:33:17.355Z",
+  "generatedAt": "2026-02-10T13:04:31.545Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -195,21 +195,21 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/control-buttons/nwt-form-control-buttons.css",
       "name": "nwt-form-control-buttons.css",
       "type": "file",
       "formalName": "NwtFormControlButtonsCss",
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/control-buttons/nwt-form-control-buttons.html",
       "name": "nwt-form-control-buttons.html",
       "type": "file",
       "formalName": "NwtFormControlButtonsHtml",
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-buttons/nwt-form-control-buttons.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/control-buttons/nwt-form-control-buttons.js",
       "name": "nwt-form-control-buttons.js",
       "type": "file",
       "formalName": "NwtFormControlButtonsJs",
@@ -225,21 +225,21 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/control-handler/nwt-form-control-handler.css",
       "name": "nwt-form-control-handler.css",
       "type": "file",
       "formalName": "NwtFormControlHandlerCss",
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/control-handler/nwt-form-control-handler.html",
       "name": "nwt-form-control-handler.html",
       "type": "file",
       "formalName": "NwtFormControlHandlerHtml",
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-handler/nwt-form-control-handler.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/control-handler/nwt-form-control-handler.js",
       "name": "nwt-form-control-handler.js",
       "type": "file",
       "formalName": "NwtFormControlHandlerJs",
@@ -255,21 +255,21 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/control-statement/nwt-form-control-statement.css",
       "name": "nwt-form-control-statement.css",
       "type": "file",
       "formalName": "NwtFormControlStatementCss",
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/control-statement/nwt-form-control-statement.html",
       "name": "nwt-form-control-statement.html",
       "type": "file",
       "formalName": "NwtFormControlStatementHtml",
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/control-statement/nwt-form-control-statement.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/control-statement/nwt-form-control-statement.js",
       "name": "nwt-form-control-statement.js",
       "type": "file",
       "formalName": "NwtFormControlStatementJs",
@@ -286,7 +286,7 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-any.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/nwt-form-element-to-any.js",
       "name": "nwt-form-element-to-any.js",
       "type": "file",
       "formalName": "NwtFormElementToAnyJs",
@@ -301,7 +301,7 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-control.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/nwt-form-element-to-control.js",
       "name": "nwt-form-element-to-control.js",
       "type": "file",
       "formalName": "NwtFormElementToControlJs",
@@ -319,7 +319,7 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-form.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/nwt-form-element-to-form.js",
       "name": "nwt-form-element-to-form.js",
       "type": "file",
       "formalName": "NwtFormElementToFormJs",
@@ -335,7 +335,7 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-element-to-handler.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/nwt-form-element-to-handler.js",
       "name": "nwt-form-element-to-handler.js",
       "type": "file",
       "formalName": "NwtFormElementToHandlerJs",
@@ -350,7 +350,7 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-utils.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-anterior/nwt-form-utils.js",
       "name": "nwt-form-utils.js",
       "type": "file",
       "formalName": "NwtFormUtilsJs",
@@ -772,15 +772,16 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-formulator-resource.js",
-      "name": "nwt-formulator-resource.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js",
+      "name": "nwt-resource.js",
       "type": "file",
-      "formalName": "NwtFormulatorResourceJs",
-      "apiName": "NwtFormulatorResource",
+      "formalName": "NwtResourceJs",
+      "apiName": "NwtResource",
       "dependencies": [
         "NwtResource",
         "NwtLazyFeature",
         "NwtLazyControl",
+        "NwtLazyComponent",
         "NwtFeatureMixer"
       ]
     },

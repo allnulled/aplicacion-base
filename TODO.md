@@ -7,8 +7,8 @@
 
 - [x] Que la validación se pueda pasar un índice del value
    - [x] y de un mejor reporte de los errores
-- [ ] Eliminar completamente subtypeOf para validación y para todo
-   - [ ] en su lugar, si statics.controls tiene algo, se valida
+- [x] Eliminar completamente subtypeOf para validación y para todo
+   - [x] en su lugar, si statics.controls tiene algo, se valida
 - [ ] Constructor de formularios lazy
    - [ ] como componente vue2
    - [ ] que le pasas lo que le pasarías al validator

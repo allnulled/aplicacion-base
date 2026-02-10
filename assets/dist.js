@@ -33927,7 +33927,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 // @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-formulator-resource.js
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33947,11 +33947,14 @@ Vue.component("NwtChatgptFilesManagerViewer", {
       trace("NwtResource.for");
       const isFeature = resourceIdBrute.startsWith("@feature/for/");
       const isControl = resourceIdBrute.startsWith("@control/for/");
+      const isComponent = resourceIdBrute.startsWith("@");
       const resourceId = resourceIdBrute.replace(/^\@/g, "");
       if (isFeature) {
         return NwtLazyFeature.create(resourceId);
       } else if (isControl) {
         return NwtLazyControl.create(resourceId);
+      } else if (isComponent) {
+        return NwtLazyComponent.create(resourceId);
       } else {
         assertion(resourceId in Vue.options.component, `Required parameter «resourceId» now «${resourceId}» to exist as component or start with «@control/for» or «@feature/for» on «NwtFeatureMixer.extractFeaturesInheritance»`);
         return {
@@ -34001,16 +34004,14 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 Vue.component("NwtLazyResource", {
   name: "NwtLazyResource",
   template: `<div class="nwt_lazy_resource">
-    <component :is="loaded.name" :settings="{}" />
+    <template v-if="isLoaded">
+        <component :is="loaded.name" :settings="{ controls }" />
+    </template>
 </div>`,
   props: {
-    type: {
-      type: String,
-      required: true,
-    },
-    settings: {
+    controls: {
       type: Object,
-      default: () => ({})
+      required: true,
     },
   },
   mixins: [],
@@ -34021,10 +34022,14 @@ Vue.component("NwtLazyResource", {
     };
   },
   methods: {},
-  created() {},
+  created() {
+    trace("NwtLazyResource.created");
+    assertion(typeof this.controls === "object", "Property «controls» must be object on «NwtLazyResource.created»");
+    assertion(typeof this.controls.type === "string", "Property «controls.type» must be string on «NwtLazyResource.created»");
+  },
   async mounted() {
     trace("NwtLazyResource.mounted");
-    this.loaded = await NwtResource.load(this.type);
+    this.loaded = await NwtResource.load(this.controls.type);
     this.isLoaded = true;
   },
 });
@@ -34264,11 +34269,14 @@ Vue.component("NwtControlValidator", {
         assertion(typeof resource.statics === "object", `Parameter «resource.statics» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         assertion(typeof resource.statics.traits === "object", `Parameter «resource.statics.traits» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         Validate_by_subtype: {
-          const staticControls = resource.statics.controls || false;
+          let staticControls = resource.statics.controls || false;
+          if(typeof staticControls === "function") {
+            staticControls = resource.statics.controls.call(resource.statics);
+          }
           if (staticControls === false) {
             break Validate_by_subtype;
           }
-          assertion(typeof staticControls === "object", `Parameter «resource.statics.controls» must be undefined or object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
+          assertion(typeof staticControls === "object", `Parameter «resource.statics.controls» must be function, undefined or object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
           assertion(typeof staticControls.type === "string", `Parameter «resource.statics.controls.type» must be string @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
           const supertype = await NwtResource.for(staticControls.type).load();
           assertion(typeof supertype.statics === "object", `Parameter «supertype.statics» should be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
@@ -34406,7 +34414,9 @@ Vue.component("NwtControlValidator", {
       assertion(Array.isArray(component.statics.inherits), "Required parameter «component.statics.inherits» to be array on «NwtFeatureMixer.mix»");
       // datos iniciales:
       const inheritsList = await this.extractFeaturesInheritance(component.statics.inherits);
+      const inheritsMap = {};
       inheritsList.push(component);
+      inheritsMap[component.statics.id] = component;
       const out = {
         // NWT API:
         statics: {
@@ -34425,6 +34435,7 @@ Vue.component("NwtControlValidator", {
       Iterate_interfaces:
       for (const interfaze of inheritsList) {
         counter++;
+        inheritsMap[interfaze.statics.id] = interfaze;
         // class
         let className = undefined;
         Plugin_for_class_specification:
@@ -34540,9 +34551,9 @@ Vue.component("NwtControlValidator", {
         // inherits plugin:
         Plugin_for_settings_specification: {
           // mejor dejar el componente ligero, solo con seeds:
+          out.statics.inheritance = inheritsMap;
           delete out.statics.inherits;
           break Plugin_for_settings_specification;
-          out.statics.inherits = inheritsList;
         }
         out.data = function () {
           let result = {};
@@ -34580,71 +34591,82 @@ Vue.component("NwtControlValidator", {
 
 });
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/form/builder/component.html
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-structure/component.html
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/form/builder/component.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormBuilder'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormBuilder'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormBuilder = class {
-
-  };
-
-  Vue.component("NwtFormBuilder", {
-    name: "NwtFormBuilder",
-    template: `<div class="nwt_form_builder">
-    Form builder here.
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-structure/component.js
+Vue.component("NwtLazyStructure", {
+  name: "NwtLazyStructure",
+  template: `<div class="nwt_lazy_structure">
+    Lazy structure here:
+    <nwt-lazy-resource :controls="controls" />
 </div>`,
-    props: {},
-    data() {
-      return {};
-    },
-    methods: {},
-  });
-
-  return NwtFormBuilder;
-
-});
-
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/form/builder/component.css
-
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-formulator/nwt-formulator.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtFormulator'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtFormulator'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtFormulator = class {
-
-    static resource = NwtResource;
-
-    static form = {
-      builder: NwtFormBuilder,
+  props: {
+    controls: {
+      type: Object,
+      required: true,
+    }
+  },
+  data() {
+    return {
+      structure: false,
+      loadingErrors: false,
     };
-
-  };
-
-  return NwtFormulator;
-
+  },
+  methods: {
+    validateControls() {
+      trace("NwtLazyStructure.methods.validateControls");
+      assertion(typeof this.controls === "object", "Property «controls» must be object on «NwtLazyStructure.methods.validateControls»");
+      assertion(typeof this.controls.type === "string", "Property «controls.type» must be string on «NwtLazyStructure.methods.validateControls»");
+    },
+  },
+  created() {
+    trace("NwtLazyStructure.created");
+    return this.validateControls();
+  },
+  mounted() {
+    trace("NwtLazyStructure.mounted");
+    
+  },
 });
+
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-structure/component.css
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form/component.html
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form/component.js
+Vue.component("NwtLazyForm", {
+  name: "NwtLazyForm",
+  template: `<div class="nwt_lazy_form">
+    Lazy form here:
+    <nwt-lazy-structure :controls="controls" />
+</div>`,
+  props: {
+    controls: {
+      type: Object,
+      required: true,
+    }
+  },
+  mixins: [Vue.options.components.NwtLazyStructure],
+  data() {
+    return {
+      
+    };
+  },
+  methods: {
+    
+  },
+  created() {
+    trace("NwtLazyForm.created");
+    assertion(typeof this.controls === "object", "Property «controls» must be object on «NwtLazyForm.created»");
+    assertion(typeof this.controls.type === "string", "Property «controls.type» must be string on «NwtLazyForm.created»");
+  },
+  mounted() {
+    trace("NwtLazyForm.mounted");
+    
+  },
+});
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form/component.css
 
 // @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
 
@@ -35300,7 +35322,17 @@ Vue.component("MainWindow", {
     <common-dialogs />
     <common-toasts />
     <div class="position_absolute_fixed pad_bottom_1" style="top:auto;bottom:0px;">
-        <!--nwt-form-builder :settings="{type: 'group/structure'}" /-->
+        <nwt-lazy-form :controls="{
+            type: '@control/for/structure',
+            controls: {
+                name: {
+                    type: '@control/for/text'
+                },
+                city: {
+                    type: '@control/for/text'
+                }
+            }
+        }" />
     </div>
 </div>`,
   props: {},

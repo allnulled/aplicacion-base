@@ -2,13 +2,9 @@ Vue.component("NwtLazyResource", {
   name: "NwtLazyResource",
   template: $template,
   props: {
-    type: {
-      type: String,
-      required: true,
-    },
-    settings: {
+    controls: {
       type: Object,
-      default: () => ({})
+      required: true,
     },
   },
   mixins: [],
@@ -19,10 +15,14 @@ Vue.component("NwtLazyResource", {
     };
   },
   methods: {},
-  created() {},
+  created() {
+    trace("NwtLazyResource.created");
+    assertion(typeof this.controls === "object", "Property «controls» must be object on «NwtLazyResource.created»");
+    assertion(typeof this.controls.type === "string", "Property «controls.type» must be string on «NwtLazyResource.created»");
+  },
   async mounted() {
     trace("NwtLazyResource.mounted");
-    this.loaded = await NwtResource.load(this.type);
+    this.loaded = await NwtResource.load(this.controls.type);
     this.isLoaded = true;
   },
 });

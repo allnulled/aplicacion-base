@@ -1,3 +1,5 @@
 <div class="nwt_lazy_resource">
-    <component :is="loaded.name" :settings="{}" />
+    <template v-if="isLoaded">
+        <component :is="loaded.name" :settings="{ controls }" />
+    </template>
 </div>
