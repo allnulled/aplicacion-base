@@ -28,7 +28,7 @@ Un_control_structure: {
       day: "500",
       events: [{
         date: "ok",
-        name: 500
+        name: "500"
       }]
     }
   }, {
