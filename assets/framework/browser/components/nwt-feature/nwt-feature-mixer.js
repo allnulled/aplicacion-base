@@ -90,6 +90,15 @@
       return loaded;
     }
 
+    static async loadComposedBy(composedBy, staticsId) {
+      trace("NwtFeatureMixer.loadComposedBy");
+      assertion(Array.isArray(composedBy), `Property «composedBy» of «${staticsId}» must be array on «NwtFeatureMixer.loadComposedBy»`);
+      for(let index=0; index<composedBy.length; index++) {
+        const componentId = composedBy[index];
+        await NwtResource.for(componentId).load();
+      }
+    }
+
     static exceptionalProperties = ["settings", "traits"];
 
     static async mix(component) {
@@ -100,6 +109,7 @@
       assertion(Array.isArray(component.statics.inherits), "Required parameter «component.statics.inherits» to be array on «NwtFeatureMixer.mix»");
       // datos iniciales:
       const inheritsList = await this.extractFeaturesInheritance(component.statics.inherits);
+      await this.loadComposedBy(component.statics.composedBy || [], component.statics.id);
       // const inheritsMap = {};
       inheritsList.push(component);
       // inheritsMap[component.statics.id] = component;

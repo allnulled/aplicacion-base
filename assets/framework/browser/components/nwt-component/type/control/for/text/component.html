@@ -1,18 +1,44 @@
 <div class="nwt_control_text">
-    <div class="pad_1">
-        <div class="control_statement"
-            v-if="settings.hasStatement">
-            {{ settings.hasStatement }}
-        </div>
-        <div>
-            <input class="width_100"
-                type="text"
-                :placeholder="settings.hasPlaceholder" />
-        </div>
-        <div class="pad_top_1">
-            <button v-on:click="() => addValidationError('whatever')">Error</button>
-        </div>
+    <div class="pad_horizontal_1" v-if="isShown">
+        <template v-if="!isExpanded">
+            <nwt-control-partial-for-statement :control="this" />
+        </template>
+        <template v-else-if="isExpanded">
+            <div>
+                <div class="control_statement"
+                    v-if="settings.hasStatement">
+                    <nwt-control-partial-for-statement :control="this" />
+                </div>
+                <div class="control_text_box for_textarea position_relative"
+                    v-if="isLongText">
+                    <textarea class="width_100"
+                        type="text"
+                        v-model="value"
+                        :placeholder="settings.hasPlaceholder"></textarea>
+                    <div class="position_absolute_fixed"
+                        style="top:2px;right:2px;left:auto;">
+                        <button class="mini active"
+                            v-on:click="deactivateLongText">➖</button>
+                    </div>
+                </div>
+                <div class="control_text_box for_input"
+                    v-else>
+                    <div class="flex_row">
+                        <div class="flex_100">
+                            <input class="width_100"
+                                type="text"
+                                v-model="value"
+                                :placeholder="settings.hasPlaceholder" />
+                        </div>
+                        <div class="flex_1 pad_left_1">
+                            <button class="mini"
+                                v-on:click="activateLongText">➕</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nwt-control-validator :control="this"
+                v-if="isShowingValidator" />
+        </template>
     </div>
-    <nwt-control-validator :control="this"
-        v-if="isShowingValidator" />
 </div>

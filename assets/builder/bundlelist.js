@@ -82,5 +82,6 @@ module.exports = [
   // @OK
   ...bundlelistExternal,
   `${projectRoot}/assets/framework/browser/css/one-framework/one-framework.css`,
+  `${projectRoot}/assets/framework/browser/css/one-framework/one-theme.css`,
   `${projectRoot}/assets/framework/browser/css/custom/custom.css`,
 ];

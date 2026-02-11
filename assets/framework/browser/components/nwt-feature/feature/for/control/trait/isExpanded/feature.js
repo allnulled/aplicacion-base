@@ -27,5 +27,9 @@ return {
       trace("trait/isExpanded.methods.hideExpansion");
       this.isExpanded = false;
     }
+  },
+  mounted() {
+    trace("trait/isExpanded.mounted");
+    this.isExpanded = this.settings.isExpanded;
   }
 };

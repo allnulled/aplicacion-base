@@ -3646,6 +3646,10 @@ hr {
     margin-bottom: 0px;
 }
 
+.help_icon {
+    min-width: 15px !important;
+}
+
 .table_viewer {
     overflow: scroll;
     min-height: 140px;
@@ -3940,7 +3944,24 @@ button.bg_danger.active {}
     display: none !important;
 }
 
-/* @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
+/* @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css*/
+.control_type_text {
+    font-size: 8px;
+    font-weight: bold;
+    background-color: rgb(163, 163, 163);
+    color: rgb(43, 41, 41);
+    border-radius: 3pt;
+    padding: 3px;
+    vertical-align: middle;
+    padding-bottom: 4px;
+}
+
+.more_info_text {
+    font-size: 10px;
+    color: #555;
+}
+
+/* @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
 body {
     font: var(--w7-font);
 }

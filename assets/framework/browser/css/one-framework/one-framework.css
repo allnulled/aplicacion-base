@@ -24,6 +24,10 @@ hr {
     margin-bottom: 0px;
 }
 
+.help_icon {
+    min-width: 15px !important;
+}
+
 .table_viewer {
     overflow: scroll;
     min-height: 140px;

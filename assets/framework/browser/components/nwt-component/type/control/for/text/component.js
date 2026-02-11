@@ -6,11 +6,16 @@ return await NwtFeatureMixer.component({
       "@feature/for/control/trait/statics",
       "@feature/for/control/trait/settings",
       "@feature/for/control/trait/getValue",
+      "@feature/for/control/trait/isShown",
       "@feature/for/control/trait/isExpanded",
+      "@feature/for/control/trait/isLongText",
       "@feature/for/control/trait/hasDescription",
       "@feature/for/control/trait/hasPlaceholder",
       "@feature/for/control/trait/hasStatement",
       "@feature/for/control/trait/validate",
+    ],
+    composedBy: [
+      "@control/partial/for/statement"
     ],
     traits: {
       "@control/for/text": {
@@ -26,5 +31,7 @@ return await NwtFeatureMixer.component({
   mixins: [],
   methods: {},
   created() {},
-  mounted() {},
+  mounted() {
+    
+  },
 });

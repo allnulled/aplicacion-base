@@ -34421,6 +34421,15 @@ Vue.component("NwtControlValidator", {
       return loaded;
     }
 
+    static async loadComposedBy(composedBy, staticsId) {
+      trace("NwtFeatureMixer.loadComposedBy");
+      assertion(Array.isArray(composedBy), `Property «composedBy» of «${staticsId}» must be array on «NwtFeatureMixer.loadComposedBy»`);
+      for(let index=0; index<composedBy.length; index++) {
+        const componentId = composedBy[index];
+        await NwtResource.for(componentId).load();
+      }
+    }
+
     static exceptionalProperties = ["settings", "traits"];
 
     static async mix(component) {
@@ -34431,6 +34440,7 @@ Vue.component("NwtControlValidator", {
       assertion(Array.isArray(component.statics.inherits), "Required parameter «component.statics.inherits» to be array on «NwtFeatureMixer.mix»");
       // datos iniciales:
       const inheritsList = await this.extractFeaturesInheritance(component.statics.inherits);
+      await this.loadComposedBy(component.statics.composedBy || [], component.statics.id);
       // const inheritsMap = {};
       inheritsList.push(component);
       // inheritsMap[component.statics.id] = component;
@@ -35363,7 +35373,9 @@ Vue.component("MainWindow", {
             controls: {
                 name: {
                     type: '@control/for/text',
-                    hasStatement: 'El nombre:'
+                    hasStatement: 'El nombre:',
+                    hasDescription: 'Aquí va el nombre de la persona',
+                    initialValue: 'valor inicial',
                 },
                 city: {
                     type: '@control/for/text',
@@ -35697,4 +35709,6 @@ Vue.component("MainWindow", {
 
 // @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+
+// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
