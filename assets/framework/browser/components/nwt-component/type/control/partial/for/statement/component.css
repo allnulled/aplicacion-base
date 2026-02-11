@@ -1,0 +1,9 @@
+.more_info_text {
+    background-color: #c3c4eb;
+    box-shadow: 0px 0px 0px black;
+    border: 1px solid #b3cdf1;
+    border-radius: 3pt;
+    font-size: 10px;
+    color: rgb(1, 6, 37);
+    padding: 4px;
+}

@@ -1,34 +1,43 @@
 <div class="nwt_control_partial_for_control_statement">
-    <div class="flex_row centered pad_bottom_1" v-if="isShown">
-        <div class="flex_1">
-            <button class="mini nowrap" :class="{active:control.isExpanded}" v-on:click="control.toggleExpansion">
-                <template v-if="control.isExpanded">🔹</template>
-                <template v-else>🔸</template>
-            </button>
-        </div>
-        <div class="flex_1 pad_left_1">
-            <div class="control_validation_state_icon">
-                <button class="mini" v-on:click="control.validate">
-                    <template v-if="control.validationErrors.errors.length">⛔️</template>
-                    <template v-else>✳️</template>
+    <div v-if="isShown">
+        <div class="flex_row centered">
+            <div class="flex_1">
+                <button class="mini nowrap"
+                    :class="{active:control.isExpanded}"
+                    v-on:click="control.toggleExpansion">
+                    <template v-if="control.isExpanded">🔹</template>
+                    <template v-else>🔸</template>
                 </button>
             </div>
-        </div>
-        <div class="flex_1 pad_left_1" style="align-self: center;">
-            <div class="control_type_text">
-                {{ control.$options.statics.id.replace("@control/for/", "") }}
+            <div class="flex_1 pad_left_1">
+                <div class="control_validation_state_icon">
+                    <button class="mini"
+                        v-on:click="control.validate">
+                        <template v-if="control.validationErrors.errors.length">⛔️</template>
+                        <template v-else>✳️</template>
+                    </button>
+                </div>
+            </div>
+            <div class="flex_1 pad_left_1">
+                <div class="control_type_text">
+                    {{ control.$options.statics.id.replace("@control/for/", "") }}
+                </div>
+            </div>
+            <div class="flex_100 pad_left_1">
+                <span class="control_statement">
+                    {{ control.hasStatement }}
+                </span>
+                <template v-if="control.isExpanded && control.hasDescription">
+                    <span class="more_info_icon">
+                        <button class="mini help_icon"
+                            :class="{active:control.isShowingDescription}"
+                            v-on:click="control.toggleDescription">ℹ️</button>
+                    </span>
+                </template>
             </div>
         </div>
-        <div class="flex_100 pad_left_1">
-            <span class="control_statement">
-                {{ control.hasStatement }}
-            </span>
-            <template v-if="control.isExpanded && control.hasDescription">
-                <span class="more_info_icon">
-                    <button class="mini help_icon":class="{active:control.isShowingDescription}"  v-on:click="control.toggleDescription">ℹ️</button>
-                </span>
-                <span class="more_info_text" v-if="control.isShowingDescription">{{ control.hasDescription }}</span>
-            </template>
+        <div class="pad_top_1" v-if="control.isExpanded && control.isShowingDescription">
+            <div class="more_info_text">🔵 {{ control.hasDescription }}</div>
         </div>
     </div>
 </div>

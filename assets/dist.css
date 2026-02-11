@@ -3020,9 +3020,23 @@ hr {
 
 /* @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/type/control/validator/component.css*/
 .card.validation_error_card {
-    background-color: #e96a6a;
-    box-shadow: 2px 2px 0px black;
-    border: 1px solid #311010;
+    background-color: #f2d0d0;
+    box-shadow: 0px 0px 0px black;
+    border: 1px solid #edbdbd;
+    border-radius: 3pt;
+    font-size: 10px;
+    color: rgb(37, 1, 1);
+    margin-bottom: 0px;
+    padding: 4px;
+}
+.card.validation_error_card .validation_error_details {
+    background-color: #FFFFFF;
+    box-shadow: 0px 0px 0px black;
+    border: 1px solid #edbdbd;
+    border-radius: 0pt;
+    font-size: 9px;
+    overflow: scroll;
+    padding: 8px;
 }
 
 /* @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-component.js*/
@@ -3645,6 +3659,7 @@ textarea {
     min-height: 90px;
 }
 
+pre,
 hr {
     margin-top: 0px;
     margin-bottom: 0px;

@@ -33,6 +33,7 @@ Vue.component("NwtLazyFormControl", {
   async mounted() {
     trace("NwtLazyFormControl.mounted");
     this.loaded = await NwtLazyControl.create(this.definition.type.replace(/^\@/g,"")).load();
+    // Expandir loaded con definition: inyectar el settings?
     this.wasLoaded = true;
   },
 });

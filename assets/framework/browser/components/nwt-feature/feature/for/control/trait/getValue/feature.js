@@ -20,6 +20,11 @@ return {
       trace("feature/for/control/trait/getValue.methods.getValue");
       const formatted = this.settings.onFormat(this.value, this);
       return formatted;
+    },
+    setValue(value) {
+      trace("feature/for/control/trait/getValue.methods.setValue");
+      this.value = value;
+      return this.value;
     }
   },
   watch: {

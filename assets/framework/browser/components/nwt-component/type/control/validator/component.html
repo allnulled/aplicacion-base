@@ -1,6 +1,6 @@
-<div class="nwt_control_validator pad_right_2">
+<div class="nwt_control_validator">
     <div class="card validation_error_card position_relative" v-if="control.validationErrors && control.validationErrors.errors && control.validationErrors.errors.length">
-        <div class="position_absolute_fixed" style="top: 1px; right: 1px; left: auto; bottom: auto;">
+        <div class="position_absolute_fixed" style="top: 4px; right: 4px; left: auto; bottom: auto;">
             <button class="mini" v-on:click="() => control.clearValidationErrors()">
                 ❎
             </button>
@@ -8,14 +8,13 @@
         <div class=""
             v-for="contraintError, errorIndex in control.validationErrors.errors"
             v-bind:key="'validation-error-' + errorIndex">
-            <span>⛔️ </span>
+            <span>
+                <button class="mini" :class="{active:isShowingValidationErrorDetailsOf.indexOf(errorIndex) !== -1}" v-on:click="() => toggleValidationErrorDetailsOf(errorIndex)">⛔️ 🔍</button>
+            </span>
             <span>{{ contraintError.name }}: </span>
             <span>{{ contraintError.message }}</span>
-            <span>
-                <button class="mini" v-on:click="() => toggleValidationErrorDetailsOf(errorIndex)">🦠</button>
-            </span>
             <div class="pad_top_1" v-if="isShowingValidationErrorDetailsOf.indexOf(errorIndex) !== -1">
-                <pre>{{ contraintError.stack }}</pre>
+                <pre class="validation_error_details">{{ contraintError.stack }}</pre>
             </div>
         </div>
     </div>

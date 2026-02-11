@@ -34039,9 +34039,9 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 // @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/type/control/validator/component.js
 Vue.component("NwtControlValidator", {
   name: "NwtControlValidator",
-  template: `<div class="nwt_control_validator pad_right_2">
+  template: `<div class="nwt_control_validator">
     <div class="card validation_error_card position_relative" v-if="control.validationErrors && control.validationErrors.errors && control.validationErrors.errors.length">
-        <div class="position_absolute_fixed" style="top: 1px; right: 1px; left: auto; bottom: auto;">
+        <div class="position_absolute_fixed" style="top: 4px; right: 4px; left: auto; bottom: auto;">
             <button class="mini" v-on:click="() => control.clearValidationErrors()">
                 ❎
             </button>
@@ -34049,14 +34049,13 @@ Vue.component("NwtControlValidator", {
         <div class=""
             v-for="contraintError, errorIndex in control.validationErrors.errors"
             v-bind:key="'validation-error-' + errorIndex">
-            <span>⛔️ </span>
+            <span>
+                <button class="mini" :class="{active:isShowingValidationErrorDetailsOf.indexOf(errorIndex) !== -1}" v-on:click="() => toggleValidationErrorDetailsOf(errorIndex)">⛔️ 🔍</button>
+            </span>
             <span>{{ contraintError.name }}: </span>
             <span>{{ contraintError.message }}</span>
-            <span>
-                <button class="mini" v-on:click="() => toggleValidationErrorDetailsOf(errorIndex)">🦠</button>
-            </span>
             <div class="pad_top_1" v-if="isShowingValidationErrorDetailsOf.indexOf(errorIndex) !== -1">
-                <pre>{{ contraintError.stack }}</pre>
+                <pre class="validation_error_details">{{ contraintError.stack }}</pre>
             </div>
         </div>
     </div>
@@ -34669,19 +34668,19 @@ Vue.component("NwtControlValidator", {
 Vue.component("NwtLazyFormControl", {
   name: "NwtLazyFormControl",
   template: `<div class="nwt_lazy_form_control">
-    <template v-if="isStructure">
-        <div v-for="subcontrol, key in definition.controls" v-bind:key="'lazy_form_structure_property_' + key">
-            <nwt-lazy-form-control :definition="subcontrol" />
-        </div>
-    </template>
-    <template v-else-if="isList">
-        <div v-for="subcontrol, key in definition.controls" v-bind:key="'lazy_form_list_item_' + key">
-            <nwt-lazy-form-control :definition="subcontrol" />
-        </div>
-    </template>
-    <template v-else>
+    <div class="is_structure" v-if="isStructure">
+        <template v-for="subcontrol, key in definition.controls">
+            <nwt-lazy-form-control :definition="subcontrol" v-bind:key="'lazy_form_structure_property_' + key" />
+        </template>
+    </div>
+    <div class="is_list" v-else-if="isList">
+        <template v-for="subcontrol, key in definition.controls">
+            <nwt-lazy-form-control :definition="subcontrol" v-bind:key="'lazy_form_list_item_' + key" />
+        </template>
+    </div>
+    <div class="is_component" v-else>
         <component :is="loaded.name" :settings="definition" />
-    </template>
+    </div>
 </div>`,
   props: {
     definition: {
@@ -34715,6 +34714,7 @@ Vue.component("NwtLazyFormControl", {
   async mounted() {
     trace("NwtLazyFormControl.mounted");
     this.loaded = await NwtLazyControl.create(this.definition.type.replace(/^\@/g,"")).load();
+    // Expandir loaded con definition: inyectar el settings?
     this.wasLoaded = true;
   },
 });
