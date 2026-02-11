@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-10T14:42:08.303Z",
+  "generatedAt": "2026-02-11T06:13:24.156Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -118,8 +118,7 @@
       "apiName": "NwtLazyControl",
       "dependencies": [
         "NwtLazyControl",
-        "NwtLazyComponent",
-        "NwtPaths"
+        "NwtLazyComponent"
       ]
     },
     {

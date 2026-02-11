@@ -13,7 +13,18 @@
 
   const NwtLazyControl = class extends NwtLazyComponent {
 
-    static defaultBasedir = NwtPaths.global.relative("assets/framework/browser/components/nwt-component/type");
+    async confirmLazyComponent(loaded = this.loaded) {
+      trace("NwtLazyControl.prototype.confirmLazyComponent");
+      super.confirmLazyComponent(loaded);
+      assertion(typeof loaded === "object", "Required parameter «loaded» to be object on «NwtLazyControl.confirmLazyComponent»");
+      assertion(typeof loaded.name === "string", "Required parameter «loaded.name» to be string on «NwtLazyControl.confirmLazyComponent»");
+      assertion(typeof loaded.template === "string", "Required parameter «loaded.template» to be string on «NwtLazyControl.confirmLazyComponent»");
+      assertion(typeof loaded.statics === "object", "Required parameter «loaded.statics» to be object on «NwtLazyControl.confirmLazyComponent»");
+      if(loaded.statics.inherits) {
+        assertion(typeof loaded.statics.inherits === "object", "Required parameter «loaded.statics.inherits» to be object on «NwtLazyControl.confirmLazyComponent»");
+        assertion(Array.isArray(loaded.statics.inherits), "Required parameter «loaded.statics.inherits» to be array on «NwtLazyControl.confirmLazyComponent»");
+      }
+    }
 
   };
 

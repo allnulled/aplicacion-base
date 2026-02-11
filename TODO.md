@@ -9,11 +9,11 @@
    - [x] y de un mejor reporte de los errores
 - [x] Eliminar completamente subtypeOf para validación y para todo
    - [x] en su lugar, si statics.controls tiene algo, se valida
-- [ ] Que control se herede estáticamente vía traits
-   - [ ] que el trait de controls pueda ser objeto directo o función que retorna objeto
-   - [ ] que desde el trait de controls funcional se pueda acceder al statics con el this
-   - [ ] así para heredar controls solo:
-      - [ ] `...this.traits['@control/for/supertype'].controls`
+- [x] Que control se herede estáticamente vía traits
+   - [x] que el trait de controls pueda ser objeto directo o función que retorna objeto
+   - [x] que desde el trait de controls funcional se pueda acceder al statics con el this
+   - [x] así para heredar controls solo:
+      - [x] `...this.traits['@control/for/supertype'].controls`
 - [ ] Constructor de formularios lazy
    - [ ] como componente vue2
    - [ ] que le pasas lo que le pasarías al validator

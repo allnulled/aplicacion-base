@@ -1,0 +1,15 @@
+<div class="nwt_lazy_form_control">
+    <template v-if="isStructure">
+        <div v-for="subcontrol, key in definition.controls" v-bind:key="'lazy_form_structure_property_' + key">
+            <nwt-lazy-form-control :definition="subcontrol" />
+        </div>
+    </template>
+    <template v-else-if="isList">
+        <div v-for="subcontrol, key in definition.controls" v-bind:key="'lazy_form_list_item_' + key">
+            <nwt-lazy-form-control :definition="subcontrol" />
+        </div>
+    </template>
+    <template v-else>
+        <component :is="loaded.name" :settings="definition" />
+    </template>
+</div>

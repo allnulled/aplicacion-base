@@ -2,12 +2,11 @@ Vue.component("NwtLazyForm", {
   name: "NwtLazyForm",
   template: $template,
   props: {
-    controls: {
+    definition: {
       type: Object,
       required: true,
     }
   },
-  mixins: [Vue.options.components.NwtLazyStructure],
   data() {
     return {
       
@@ -16,13 +15,16 @@ Vue.component("NwtLazyForm", {
   methods: {
     
   },
+  computed: {
+    
+  },
   created() {
     trace("NwtLazyForm.created");
-    assertion(typeof this.controls === "object", "Property «controls» must be object on «NwtLazyForm.created»");
-    assertion(typeof this.controls.type === "string", "Property «controls.type» must be string on «NwtLazyForm.created»");
+    assertion(typeof this.definition === "object", "Property «definition» must be object on «NwtLazyForm.created»");
+    assertion(typeof this.definition.type === "string", "Property «definition.type» must be string on «NwtLazyForm.created»");
+    assertion(["@control/for/structure", "@control/for/list"].indexOf(this.definition.type) !== -1, "Property «definition.type» must be either «@control/for/structure» or «@control/for/list» on «NwtLazyForm.created»");
   },
   mounted() {
     trace("NwtLazyForm.mounted");
-    
   },
 });

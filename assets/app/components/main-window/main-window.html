@@ -43,14 +43,16 @@
     <common-dialogs />
     <common-toasts />
     <div class="position_absolute_fixed pad_bottom_1" style="top:auto;bottom:0px;">
-        <nwt-lazy-form :controls="{
+        <nwt-lazy-form :definition="{
             type: '@control/for/structure',
             controls: {
                 name: {
-                    type: '@control/for/text'
+                    type: '@control/for/text',
+                    hasStatement: 'El nombre:'
                 },
                 city: {
-                    type: '@control/for/text'
+                    type: '@control/for/text',
+                    hasStatement: 'La ciudad:'
                 }
             }
         }" />

@@ -333,7 +333,6 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtImporter`
 - `88. The NwtLazyControl API`
    - **@uses** `NwtLazyComponent`
-   - **@uses** `NwtPaths`
 - `89. The NwtLazyFeature API`
    - **@uses** `NwtPaths`
    - **@uses** `NwtFilesystem`
@@ -629,7 +628,7 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtUtils
    - NwtVue2
    - NwtFormControlStatement
-- NwtPaths ✖️ 23
+- NwtPaths ✖️ 22
    - NwtCacheDirectory
    - NwtChatgpt
    - NwtCommandsManager
@@ -642,7 +641,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtFormulatorLazyControl
    - NwtFormulatorLazyFeature
    - NwtLazyComponent
-   - NwtLazyControl
    - NwtLazyFeature
    - NwtLiveInjector
    - NwtModuleManager
@@ -1123,7 +1121,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-10T14:42:08.303Z",
+  "generatedAt": "2026-02-11T06:13:24.156Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -2359,8 +2357,7 @@ El JSON original es:
       "apiName": "NwtLazyControl",
       "dependencies": [
         "NwtLazyControl",
-        "NwtLazyComponent",
-        "NwtPaths"
+        "NwtLazyComponent"
       ]
     },
     {

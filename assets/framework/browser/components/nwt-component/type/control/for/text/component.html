@@ -1,5 +1,18 @@
 <div class="nwt_control_text">
-    Control para <button v-on:click="() => addValidationError('whatever')">texto</button>
-    {{ $options.statics.traits["@feature/for/control/trait/validate"] }}
-    <nwt-control-validator :control="this" v-if="isShowingValidator" />
+    <div class="pad_1">
+        <div class="control_statement"
+            v-if="settings.hasStatement">
+            {{ settings.hasStatement }}
+        </div>
+        <div>
+            <input class="width_100"
+                type="text"
+                :placeholder="settings.hasPlaceholder" />
+        </div>
+        <div class="pad_top_1">
+            <button v-on:click="() => addValidationError('whatever')">Error</button>
+        </div>
+    </div>
+    <nwt-control-validator :control="this"
+        v-if="isShowingValidator" />
 </div>

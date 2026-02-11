@@ -59,7 +59,6 @@ module.exports = [
   //*/
   // Recursos basados en componentes NwtComponent
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-lazy-resource/component`,
   // Formulator: la API buena de fomularios
   `${projectRoot}/assets/framework/browser/components/nwt-component/type/control/validator/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-component/nwt-lazy-component.js`,
@@ -67,7 +66,7 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js`,
-  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-lazy-structure/component`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-lazy-form-control/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-lazy-form/component`,
   // Fondos exóticos:
   `${projectRoot}/assets/framework/browser/components/nwt-stars-background/nwt-stars-background`,
