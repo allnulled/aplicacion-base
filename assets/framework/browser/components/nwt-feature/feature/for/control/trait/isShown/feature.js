@@ -15,6 +15,13 @@ return {
     };
   },
   methods: {
+    reloadShown() {
+      trace("trait/isShown.methods.reloadShown");
+      this.isShown = false;
+      this.$nextTick(() => {
+        this.isShown = true;
+      });
+    },
     toggleShown() {
       trace("trait/isShown.methods.toggleShown");
       this.isShown = !this.isShown;

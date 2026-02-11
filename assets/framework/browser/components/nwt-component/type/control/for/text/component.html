@@ -1,13 +1,13 @@
 <div class="nwt_control_text">
     <div class="pad_horizontal_1" v-if="isShown">
         <template v-if="!isExpanded">
-            <nwt-control-partial-for-statement :control="this" />
+            <nwt-control-partial-for-statement :control="this" ref="statement" />
         </template>
         <template v-else-if="isExpanded">
             <div>
                 <div class="control_statement"
                     v-if="settings.hasStatement">
-                    <nwt-control-partial-for-statement :control="this" />
+                    <nwt-control-partial-for-statement :control="this" ref="statement" />
                 </div>
                 <div class="control_text_box for_textarea position_relative"
                     v-if="isLongText">
@@ -37,9 +37,9 @@
                     </div>
                 </div>
             </div>
-            <nwt-control-validator :control="this"
-                ref="validator"
-                v-if="isShowingValidator" />
+            <template v-if="isShowingValidator">
+                <nwt-control-validator :control="this" ref="validator" />
+            </template>
         </template>
     </div>
 </div>
