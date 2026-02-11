@@ -34269,13 +34269,20 @@ Vue.component("NwtControlValidator", {
           controls: false
         };
       },
+      getCurrentTrait: (statics = this) => {
+        trace("NwtFeatureStatics.prototype.api.getCurrentTrait");
+        return NwtUtils.opinionify(() => statics.traits[statics.id], {});
+      },
       getControlsById: (defaultValue = undefined, statics = this) => {
         trace("NwtFeatureStatics.prototype.api.getControlsById");
         const output = NwtUtils.opinionify(() => statics.traits[statics.id].controls, defaultValue);
         return output;
       },
-      validateRecursively: async (value, schema, component = {}, indexes = []) => {
+      validateRecursively: async (value, schema = false, component = {}, indexes = []) => {
         trace("NwtFeatureStatics.prototype.api.validateRecursively");
+        if(!schema) {
+          schema = this.api.getDefaultSchema();
+        }
         assertion(typeof schema === "object", `Parameter «schema» must be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         assertion(typeof component === "object", `Parameter «component» must be object @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
         assertion(typeof schema.type === "string", `Parameter «schema.type» must be string @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
@@ -34314,9 +34321,21 @@ Vue.component("NwtControlValidator", {
           // @THROWABLE aquí:
           const validation = await resourceOnValidate.call(this, value, schema, component, customAssertion, indexes);
         }
+        Validate_by_component: {
+          if(!(component instanceof Vue)) {
+            break Validate_by_component;
+          }
+          if(typeof component.settings.onValidate !== "function") {
+            break Validate_by_component;
+          }
+          assertion(typeof component.settings.onValidate === "function", `Parameter «component.settings.onValidate» must be function @index «${indexes.join(".")}» on «NwtFeatureStatics.api.validateRecursively»`);
+          const customAssertion = NwtAsserter.createAssertionFunction(() => true, error => { throw error });
+          // @THROWABLE aquí:
+          const validation = await component.settings.onValidate.call(component, value, schema, component, customAssertion, indexes);
+        }
         return true;
       },
-      validate: (value, schema = this.api.getDefaultSchema(), component = {}, indexes = []) => {
+      validate: (value, schema = false, component = {}, indexes = []) => {
         trace("NwtFeatureStatics.prototype.api.validate");
         return this.api.validateRecursively(value, schema, component, indexes);
       }
@@ -35373,9 +35392,10 @@ Vue.component("MainWindow", {
             controls: {
                 name: {
                     type: '@control/for/text',
-                    hasStatement: 'El nombre:',
+                    hasStatement: 'El nombre que debe empezar por c:',
                     hasDescription: 'Aquí va el nombre de la persona',
                     initialValue: 'valor inicial',
+                    onValidate: onValidate1
                 },
                 city: {
                     type: '@control/for/text',
@@ -35630,6 +35650,12 @@ Vue.component("MainWindow", {
           }
         }
       });
+    },
+
+    onValidate1: function (value, ...args) {
+      console.log("ONVALIDATE1", args);
+      const [schema, component, assertion, indexes] = args;
+      assertion(value.startsWith('c'), `Parameter «value» must start with «c» @index «${indexes.join(".")}» on «onValidate1»`);
     }
 
   },

@@ -251,6 +251,12 @@ Vue.component("MainWindow", {
           }
         }
       });
+    },
+
+    onValidate1: function (value, ...args) {
+      console.log("ONVALIDATE1", args);
+      const [schema, component, assertion, indexes] = args;
+      assertion(value.startsWith('c'), `Parameter «value» must start with «c» @index «${indexes.join(".")}» on «onValidate1»`);
     }
 
   },

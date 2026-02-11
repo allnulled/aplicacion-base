@@ -4,7 +4,7 @@ return {
     settings: {
       $once: {
         initialValue: [[String, Number, Boolean, Object, Array, Function, undefined, null], ""],
-        onFormat: [Function, NwtUtils.noop],
+        onFormat: [Function, NwtUtils.noopSelf],
         onChange: [Function, NwtUtils.noop],
       }
     },
@@ -13,7 +13,6 @@ return {
     trace("feature/for/control/trait/getValue.data");
     return {
       value: this.settings.initialValue,
-      valueType: "control/text",
     };
   },
   methods: {

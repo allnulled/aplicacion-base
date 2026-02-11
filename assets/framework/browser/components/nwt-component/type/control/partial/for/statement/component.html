@@ -1,12 +1,20 @@
 <div class="nwt_control_partial_for_control_statement">
-    <div class="flex_row pad_bottom_1">
+    <div class="flex_row centered pad_bottom_1">
         <div class="flex_1">
             <button class="mini nowrap" :class="{active:control.isExpanded}" v-on:click="control.toggleExpansion">
                 <template v-if="control.isExpanded">🔹</template>
                 <template v-else>🔸</template>
             </button>
         </div>
-        <div class="flex_1 pad_1">
+        <div class="flex_1 pad_left_1">
+            <div class="control_validation_state_icon">
+                <button class="mini" v-on:click="control.validate">
+                    <template v-if="control.validationErrors.length">⛔️</template>
+                    <template v-else>✳️</template>
+                </button>
+            </div>
+        </div>
+        <div class="flex_1 pad_left_1" style="align-self: center;">
             <div class="control_type_text">
                 {{ control.$options.statics.id.replace("@control/for/", "") }}
             </div>

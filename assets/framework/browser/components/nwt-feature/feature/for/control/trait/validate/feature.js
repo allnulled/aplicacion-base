@@ -16,12 +16,6 @@ return {
           validate: (...args) => this.methods.validate(...args),
         }
       },
-      // Propiedades y métodos a exportar a la api de statics:
-      validate: (value) => {
-        trace("feature/for/control/trait/validate.statics.validate");
-        // @TODO:
-        this.statics.settings.onValidate();
-      },
     };
   },
   data() {
@@ -31,22 +25,12 @@ return {
     };
   },
   methods: {
-    async validate(externalValue = undefined) {
+    async validate() {
       trace("feature/for/control/trait/validate.methods.validate");
       // @REQUIRED-TRAIT: "feature/for/control/trait/getValue"
-      const value = typeof externalValue !== "undefined" ? externalValue : await this.getValue();
-      const constraintErrors = await this.$options.statics.validate(value);
-      assertion(constraintErrors.errors.length === 0, constraintErrors.toString());
-      await this.settings.onValidate(value);
-      let errors = undefined;
-      try {
-        await this.$options.statics.validate(value);
-      } catch (error) {
-        errors = error;
-      }
-      if (errors) {
-        throw errors;
-      }
+      const value = await this.getValue();
+      const lastTrait = this.$options.statics.api.getCurrentTrait();
+      await this.$options.statics.api.validate(value, lastTrait.controls || false, this);
       return true;
     },
     clearValidationErrors() {
@@ -68,5 +52,9 @@ return {
   },
   watch: {
 
+  },
+  mounted() {
+    trace("feature/for/control/trait/validate.mounted");
+    
   }
 };
