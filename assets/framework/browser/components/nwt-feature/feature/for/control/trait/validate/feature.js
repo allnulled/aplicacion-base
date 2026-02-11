@@ -38,6 +38,7 @@ return {
       this.validationErrors.errors = [];
       this.$nextTick(() => {
         this.isShowingValidator = true;
+        this.$emit("validation-error", { error: false });
       });
     },
     addValidationError(message) {
@@ -46,6 +47,7 @@ return {
       this.validationErrors.add(message);
       this.$nextTick(() => {
         this.isShowingValidator = true;
+        this.$emit("validation-error", { error: message });
       });
     }
   },

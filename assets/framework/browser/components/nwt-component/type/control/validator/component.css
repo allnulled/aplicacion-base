@@ -1,0 +1,5 @@
+.card.validation_error_card {
+    background-color: #e96a6a;
+    box-shadow: 2px 2px 0px black;
+    border: 1px solid #311010;
+}

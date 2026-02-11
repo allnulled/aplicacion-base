@@ -3019,7 +3019,11 @@ hr {
 /* @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/type/control/validator/component.js*/
 
 /* @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/type/control/validator/component.css*/
-
+.card.validation_error_card {
+    background-color: #e96a6a;
+    box-shadow: 2px 2px 0px black;
+    border: 1px solid #311010;
+}
 
 /* @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-component.js*/
 

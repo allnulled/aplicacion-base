@@ -34039,8 +34039,8 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 // @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/type/control/validator/component.js
 Vue.component("NwtControlValidator", {
   name: "NwtControlValidator",
-  template: `<div class="nwt_control_validator pad_1 pad_right_2">
-    <div class="card position_relative" v-if="control.validationErrors && control.validationErrors.errors && control.validationErrors.errors.length">
+  template: `<div class="nwt_control_validator pad_right_2">
+    <div class="card validation_error_card position_relative" v-if="control.validationErrors && control.validationErrors.errors && control.validationErrors.errors.length">
         <div class="position_absolute_fixed" style="top: 1px; right: 1px; left: auto; bottom: auto;">
             <button class="mini" v-on:click="() => control.clearValidationErrors()">
                 ❎
@@ -34340,7 +34340,6 @@ Vue.component("NwtControlValidator", {
           }
           if(component instanceof Vue) {
             component.clearValidationErrors();
-            component.$emit("validation-error", { error: false });
           }
         } catch (error) {
           if(component instanceof Vue) {
@@ -35427,6 +35426,19 @@ Vue.component("MainWindow", {
                 city: {
                     type: '@control/for/text',
                     hasStatement: 'La ciudad:'
+                },
+                organization: {
+                    type: '@control/for/structure',
+                    controls: {
+                        name: {
+                            type: '@control/for/text',
+                            hasStatement: 'Nombre de la organización:',
+                            initialValue: 'Organización 1',
+                            onValidate: (v,s,c,assertion) => {
+                                assertion(v.startsWith('C'), 'Value must start with C');
+                            },
+                        },
+                    }
                 }
             }
         }" />

@@ -56,6 +56,19 @@
                 city: {
                     type: '@control/for/text',
                     hasStatement: 'La ciudad:'
+                },
+                organization: {
+                    type: '@control/for/structure',
+                    controls: {
+                        name: {
+                            type: '@control/for/text',
+                            hasStatement: 'Nombre de la organización:',
+                            initialValue: 'Organización 1',
+                            onValidate: (v,s,c,assertion) => {
+                                assertion(v.startsWith('C'), 'Value must start with C');
+                            },
+                        },
+                    }
                 }
             }
         }" />

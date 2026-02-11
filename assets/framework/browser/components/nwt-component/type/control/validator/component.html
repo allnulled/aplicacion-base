@@ -1,5 +1,5 @@
-<div class="nwt_control_validator pad_1 pad_right_2">
-    <div class="card position_relative" v-if="control.validationErrors && control.validationErrors.errors && control.validationErrors.errors.length">
+<div class="nwt_control_validator pad_right_2">
+    <div class="card validation_error_card position_relative" v-if="control.validationErrors && control.validationErrors.errors && control.validationErrors.errors.length">
         <div class="position_absolute_fixed" style="top: 1px; right: 1px; left: auto; bottom: auto;">
             <button class="mini" v-on:click="() => control.clearValidationErrors()">
                 ❎

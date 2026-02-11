@@ -101,7 +101,6 @@
           }
           if(component instanceof Vue) {
             component.clearValidationErrors();
-            component.$emit("validation-error", { error: false });
           }
         } catch (error) {
           if(component instanceof Vue) {
