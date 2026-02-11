@@ -115,6 +115,17 @@
       validate: (value, schema = false, component = {}, indexes = []) => {
         trace("NwtFeatureStatics.prototype.api.validate");
         return this.api.validateRecursively(value, schema, component, indexes);
+      },
+      safely: {
+        validate: async (...args) => {
+          trace("NwtFeatureStatics.prototype.api.safely.validate");
+          try {
+            await this.api.validate(...args);
+            return true;
+          } catch (error) {
+            return error;
+          }
+        }
       }
     }
 

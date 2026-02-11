@@ -30,8 +30,7 @@ return {
       // @REQUIRED-TRAIT: "feature/for/control/trait/getValue"
       const value = await this.getValue();
       const lastTrait = this.$options.statics.api.getCurrentTrait();
-      await this.$options.statics.api.validate(value, lastTrait.controls || false, this);
-      return true;
+      return await this.$options.statics.api.safely.validate(value, lastTrait.controls || false, this);
     },
     clearValidationErrors() {
       trace("feature/for/control/trait/validate.methods.clearValidationErrors");

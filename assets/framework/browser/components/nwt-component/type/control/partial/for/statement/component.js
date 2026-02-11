@@ -18,7 +18,13 @@ return await NwtFeatureMixer.component({
     };
   },
   methods: {
-    
+    reloadShown() {
+      trace("NwtControlPartialForStatement.methods.reloadShown");
+      this.isShown = false;
+      this.$nextTick(() => {
+        this.isShown = true;
+      });
+    }
   },
   created() {},
   mounted() {
