@@ -2,7 +2,9 @@ return await NwtFeatureMixer.component({
   name: "NwtControlPartialForStatement",
   statics: {
     id: "@control/partial/for/statement",
-    inherits: [],
+    inherits: [
+      "@feature/for/control/trait/isShown",
+    ],
     traits: {},
   },
   template: $template,
@@ -14,17 +16,11 @@ return await NwtFeatureMixer.component({
   },
   data() {
     return {
-      isShown: false,
+      
     };
   },
   methods: {
-    reloadShown() {
-      trace("NwtControlPartialForStatement.methods.reloadShown");
-      this.isShown = false;
-      this.$nextTick(() => {
-        this.isShown = true;
-      });
-    }
+    
   },
   created() {},
   mounted() {

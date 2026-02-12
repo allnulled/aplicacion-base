@@ -159,8 +159,8 @@
         out[key] = typeof parameters[key];
         return out;
       }, {});
-      // trace("js-injection://", code);
-      // trace("js-injected://", JSON.stringify(keysTyped, null, 2));
+      trace("js-injected://", JSON.stringify(keysTyped, null, 2));
+      trace("js-injection://", code);
       return asyncFunction.call(scope, ...values);
     }
 

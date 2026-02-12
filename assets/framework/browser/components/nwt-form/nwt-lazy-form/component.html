@@ -2,19 +2,19 @@
     <div class="flex_row centered pad_1">
         <div class="flex_1">
             <button class="mini" v-on:click="toggleAllSubcontrols">
-                🔶
+                ❓
             </button>
+        </div>
+        <div class="flex_100 pad_left_1">
+            <div class="form_title">
+                <span class="control_type_text pad_1">form</span>
+                <span v-if="definition.hasStatement">{{ definition.hasStatement }}</span>
+            </div>
         </div>
         <div class="flex_1 pad_left_1">
             <button class="mini" v-on:click="validateForm">
                 ❇️
             </button>
-        </div>
-        <div class="flex_100 pad_left_1">
-            <div class="form_title" v-if="definition.hasStatement">
-                <span class="control_type_text">form</span>
-                <span>{{ definition.hasStatement }}</span>
-            </div>
         </div>
         <div class="flex_1 pad_left_1">
             <button class="mini" v-on:click="submitForm">
@@ -22,7 +22,7 @@
             </button>
         </div>
     </div>
-    <div class="pad_horizontal_1">
+    <div class="pad_horizontal_1 pad_left_2">
         <nwt-lazy-form-control :definition="definition" />
     </div>
 </div>

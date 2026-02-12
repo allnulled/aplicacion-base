@@ -37,6 +37,6 @@ return {
   },
   mounted() {
     trace("trait/isShown.mounted");
-    this.isShown = this.settings.isShown;
+    this.isShown = this.settings?.isShown;
   }
 };

@@ -1,5 +1,11 @@
-Vue.component("NwtControlValidator", {
+return await NwtFeatureMixer.component({
   name: "NwtControlValidator",
+  statics: {
+    id: "@control/validator",
+    inherits: [
+      "@feature/for/control/trait/isShown",
+    ]
+  },
   template: $template,
   props: {
     control: {
@@ -24,6 +30,13 @@ Vue.component("NwtControlValidator", {
       }
     }
   },
-  created() {},
-  mounted() {},
+  created() {
+    trace("NwtControlValidator.created");
+    this.isShown = true;
+    this.control.$on("validation-error", this.reloadShown);
+  },
+  mounted() {
+    trace("NwtControlValidator.mounted");
+    this.control.$off("validation-error", this.reloadShown);
+  },
 });

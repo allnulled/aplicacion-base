@@ -4,8 +4,10 @@
     padding: 0px;
     font-size: 10px;
 }
+
 .structure_mark {
-    
-    box-shadow: 0 0 4px black;
     padding: 2px;
+    box-shadow: 0 0 2px black;
+    margin-left: -2px;
+    padding-left: 2px;
 }

@@ -4,20 +4,29 @@
             v-if="!isExpanded">
             <nwt-control-partial-for-statement :control="this" />
         </div>
-        <div v-else class="pad_1 structure_mark">
+        <div v-else
+            class="structure_mark">
             <div class="pad_bottom_1">
                 <nwt-control-partial-for-statement :control="this" />
             </div>
-            <div v-for="subcontrol, key in value || []"
-                v-bind:key="'lazy_form_list_property_' + key"
-                class="pad_left_1">
-                <div class="flex_row">
-                    <div class="flex_100">
-                        <nwt-lazy-form-control :ref="'control_' + key"
-                            :definition="{...subcontrol, parentKey: key}" />
-                    </div>
-                    <div class="flex_1 pad_left_1 pad_top_1">
-                        <button class="mini" v-on:click="() => removeItem(key)">❌</button>
+            <div class="pad_top_1">
+                <div v-for="subcontrol, key in value || []"
+                    v-bind:key="'lazy_form_list_property_' + key"
+                    class="pad_left_1">
+                    <div class="flex_row">
+                        <div class="flex_100">
+                            <nwt-lazy-form-control :ref="'control_' + key"
+                                :definition="{
+                                ...settings.controls,
+                                parentKey: key,
+                                parentControl: self,
+                                respectiveValue: value[key],
+                            }" />
+                        </div>
+                        <div class="flex_1 pad_1">
+                            <button class="mini height_100"
+                                v-on:click="() => removeItem(key)">❌</button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -335,6 +335,7 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtImporter`
 - `89. The NwtLazyControl API`
    - **@uses** `NwtLazyComponent`
+   - **@uses** `NwtControlValidator`
    - **@uses** `NwtControlForStructure`
    - **@uses** `NwtControlForList`
    - **@uses** `NwtControlForOption`
@@ -1064,6 +1065,8 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtLazyControl
 - NwtControlForStructure ✖️ 1
    - NwtLazyControl
+- NwtControlValidator ✖️ 1
+   - NwtLazyControl
 - NwtFormulatorLazyComponent ✖️ 1
    - NwtLazyComponent
 - require("readline") ✖️ 1
@@ -1146,7 +1149,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-12T10:21:45.931Z",
+  "generatedAt": "2026-02-12T16:10:52.115Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -2394,6 +2397,7 @@ El JSON original es:
       "dependencies": [
         "NwtLazyControl",
         "NwtLazyComponent",
+        "NwtControlValidator",
         "NwtControlForStructure",
         "NwtControlForList",
         "NwtControlForOption",

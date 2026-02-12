@@ -6,6 +6,7 @@ return await NwtFeatureMixer.component({
       "@feature/for/control/trait/statics",
       "@feature/for/control/trait/settings",
       "@feature/for/control/trait/getValue",
+      "@feature/for/control/trait/getRootForm",
       "@feature/for/control/trait/isShown",
       "@feature/for/control/trait/isExpanded",
       "@feature/for/control/trait/isLongText",

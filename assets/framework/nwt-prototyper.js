@@ -37,13 +37,10 @@
       }
     };
 
-    static initializePropertiesOf(target, ...moreArgs) {
-      const [extensions, schema] = Array.isArray(moreArgs[0]) ? moreArgs : [false, moreArgs[0]];
+    static initializePropertiesOf(target, moreArgs, extraErrorMessage = false) {
+      const [schema] = Array.isArray(moreArgs) ? moreArgs : [moreArgs];
       assertion(typeof target === "object", "Parameter «target» must be object on «NwtPrototyper.initializePropertiesOf»");
       assertion(typeof schema === "object", "Parameter «schema» must be object on «NwtPrototyper.initializePropertiesOf»");
-      if(extensions) {
-        Object.assign(target, ...extensions);
-      }
       Iterating_schema:
       for (const key in schema) {
         const rule = schema[key];
@@ -53,7 +50,7 @@
         const hasNotDefaultValue = rule.length === 1;
         if (isMissingProperty) {
           if(hasNotDefaultValue) {
-            throw new TypeError(`Invalid empty value for property «${key}». Required ${allowedTypes.map(t => (t?.name) || ((t === null) ? "Null" : t === undefined ? "Undefined" : typeof t)).join(" | ")}`);
+            throw new TypeError(`Invalid empty value for property «${key}» required ${allowedTypes.map(t => (t?.name) || ((t === null) ? "null" : t === undefined ? "undefined" : typeof t)).join("|")}` + (extraErrorMessage ? extraErrorMessage : ""));
           }
           target[key] = defaultValue;
         }
@@ -73,7 +70,7 @@
         }
         if (!valid) {
           throw new TypeError(
-            `Invalid type for property «${key}». Expected «${allowedTypes.map(t => (t?.name) || ((t === null) ? "Null" : t === undefined ? "Undefined" : typeof t)).join(" | ")}» but «${typeof value}» was found instead`
+            `Invalid type for property «${key}» expected «${allowedTypes.map(t => (t?.name) || ((t === null) ? "null" : t === undefined ? "undefined" : typeof t)).join("|")}» but «${typeof value}» was found instead` + (extraErrorMessage ? extraErrorMessage : "")
           );
         }
       }

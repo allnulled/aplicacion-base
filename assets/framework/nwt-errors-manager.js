@@ -96,6 +96,7 @@
         const globalErrorVueHandler = (...args) => {
           this.debug(1);
           const [errorOrWarn, component, stack, ...others] = args;
+          console.error("[error][vue]", component?.$options?._componentTag || component, component);
           this.debug(2, errorOrWarn);
           let error = undefined;
           if (errorOrWarn instanceof Error) {
@@ -132,13 +133,13 @@
         window.addEventListener("error", (event) => {
           const error = new Error(event.message);
           this.showError(event.error || error);
-          console.error(error);
+          console.error("[error][event]", error);
         });
         window.addEventListener("unhandledrejection", (event) => {
           const error = new Error(event.reason);
           // @DECIDED: mejor sí lanzar error gráfico cada vez que se escapa una promise rota
           this.showError(error);
-          console.error(error);
+          console.error("[error][unhandledrejection]", error);
         });
         Load_dist_source_once: {
           await NwtStrings.getDistJsSource();

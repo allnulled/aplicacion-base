@@ -18,7 +18,8 @@ return {
   methods: {
     getValue() {
       trace("feature/for/control/trait/getValue.methods.getValue");
-      const formatted = this.settings.onFormat(this.value, this);
+      const obtained = this.value;
+      const formatted = NwtUtils.opinionify(() => this.settings.onFormat(obtained, this), obtained);
       return formatted;
     },
     setValue(value) {

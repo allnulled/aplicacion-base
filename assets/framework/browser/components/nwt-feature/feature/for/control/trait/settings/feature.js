@@ -10,6 +10,6 @@ return {
     }
   },
   created() {
-    NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statics.settings || {});
+    NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statics.settings || {}, ` on component «${this.$options.name}»`);
   },
 };

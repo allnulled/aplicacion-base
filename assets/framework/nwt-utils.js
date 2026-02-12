@@ -52,6 +52,11 @@
       return s;
     }
 
+    static printify(...args) {
+      console.log("[printify]", ...args);
+      return args[0];
+    }
+
     static trify(callback, onFail) {
       trace("NwtUtils.trify");
       try {

@@ -7,3 +7,18 @@
     color: rgb(1, 6, 37);
     padding: 4px;
 }
+
+.control_type_text {
+    font-size: 8px;
+    font-weight: bold;
+    background-color: rgb(163, 163, 163);
+    color: rgb(43, 41, 41);
+    border-radius: 3pt;
+    vertical-align: middle;
+}
+
+.control_type_text.property_name {
+    background-color: #01112a;
+    color: white;
+    border: 1px solid #333;
+}

@@ -4,27 +4,36 @@
             v-if="!isExpanded">
             <nwt-control-partial-for-statement :control="this" />
         </div>
-        <div v-else class="structure_mark">
+        <div v-else
+            class="structure_mark">
             <div class="pad_bottom_1">
-                <nwt-control-partial-for-statement :control="this" />
+                <nwt-control-partial-for-statement :control="this">
+                    <span class="">
+                        <span class="pad_left_1"> ▸ </span>
+                        <span v-for="subcontrol, key in settings.controls"
+                            v-bind:key="'lazy_form_structure_property_button_' + key"
+                            class="pad_left_1">
+                            <button class="mini supermini"
+                                style="font-size:10px;"
+                                v-on:click="() => toggleExpansionByKey(key)">{{ key }}</button>
+                        </span>
+                    </span>
+                </nwt-control-partial-for-statement>
             </div>
-            <div class="pad_left_2 pad_bottom_1">
-                <span class="pad_left_1"> ▸ </span>
-                <span v-for="subcontrol, key in settings.controls"
-                    v-bind:key="'lazy_form_structure_property_button_' + key"
-                    class="pad_left_1">
-                    <button class="mini supermini"
-                        style="font-size:10px;"
-                        v-on:click="() => toggleExpansionByKey(key)">{{ key }}</button>
-                </span>
+            <div class="">
+                <div v-for="subcontrol, key in settings.controls"
+                    v-bind:key="'lazy_form_structure_property_' + key"
+                    class="pad_left_1 pad_top_1">
+                    <nwt-lazy-form-control :ref="'control_' + key"
+                        :definition="{
+                        ...subcontrol,
+                        parentKey: key,
+                        parentControl: self,
+                        respectiveValue: value[key] || undefined
+                    }" />
+                </div>
+                <nwt-control-validator :control="this" />
             </div>
-            <div v-for="subcontrol, key in settings.controls"
-                v-bind:key="'lazy_form_structure_property_' + key"
-                class="pad_left_1 pad_top_1">
-                <nwt-lazy-form-control :ref="'control_' + key"
-                    :definition="{...subcontrol, parentKey: key}" />
-            </div>
-            <nwt-control-validator :control="this" />
         </div>
     </div>
 </div>

@@ -29,6 +29,7 @@
     static async loadBasicControls() {
       trace("NwtLazyControl.loadBasicControls");
       const basicControls = [
+        ["NwtControlValidator", "@control/validator"],
         ["NwtControlForStructure", "@control/for/structure"],
         ["NwtControlForList", "@control/for/list"],
         ["NwtControlForOption", "@control/for/option"],
