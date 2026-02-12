@@ -13,12 +13,20 @@
 
   const NwtResource = class {
 
+    static cache = new NwtComponentsCache();
+
     static for(resourceIdBrute) {
       trace("NwtResource.for");
       const isFeature = resourceIdBrute.startsWith("@feature/for/");
       const isControl = resourceIdBrute.startsWith("@control/for/");
       const isComponent = resourceIdBrute.startsWith("@");
       const resourceId = resourceIdBrute.replace(/^\@/g, "");
+      const componentId = NwtVue2.fromTagToIdNotation(resourceId);
+      if(this.cache.has(componentId)) return {
+        load: () => {
+          return this.cache.get(componentId).options;
+        },
+      };
       if (isFeature) {
         return NwtLazyFeature.create(resourceId);
       } else if (isControl) {

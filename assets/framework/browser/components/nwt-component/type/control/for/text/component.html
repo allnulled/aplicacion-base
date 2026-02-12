@@ -1,5 +1,5 @@
 <div class="nwt_control_text">
-    <div class="pad_horizontal_1 pad_bottom_1" v-if="isShown">
+    <div class="pad_bottom_1" v-if="isShown">
         <template v-if="!isExpanded">
             <nwt-control-partial-for-statement :control="this" />
         </template>
@@ -33,7 +33,7 @@
                         </div>
                         <div class="flex_1 pad_left_1">
                             <button class="mini"
-                                v-on:click="() => setValue('') || focusMainInputDelayed()">❌</button>
+                                v-on:click="() => setValue('') || focusMainInputDelayed()">🧹</button>
                         </div>
                         <div class="flex_1 pad_left_1">
                             <button class="mini"

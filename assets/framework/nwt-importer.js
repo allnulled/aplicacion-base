@@ -125,10 +125,27 @@
       return style;
     }
 
+    static asyncSourceCache = {};
+
+    static async asyncSourceSaveInCache(fullpath) {
+      trace("NwtImporter.asyncSourceSaveInCache", fullpath);
+      const content = await require("fs").promises.readFile(fullpath, "utf8");
+      this.asyncSourceCache[fullpath] = content;
+      return content;
+    }
+
+    static asyncSourceLoadFromCache(id) {
+      if(!(id in this.asyncSourceCache)) {
+        return false;
+      }
+      trace("NwtImporter.asyncSourceLoadFromCache", id);
+      return this.asyncSourceCache[id];
+    }
+
     static async asyncSource(subpath, parameters = {}, scope = window) {
       trace("NwtImporter.asyncSource");
       const fullpath = require("path").resolve(subpath);
-      const content = await require("fs").promises.readFile(fullpath, "utf8");
+      const content = this.asyncSourceLoadFromCache(fullpath) || await this.asyncSourceSaveInCache(fullpath);
       return this.asyncFunction(content, parameters, scope);
     }
 
@@ -142,8 +159,8 @@
         out[key] = typeof parameters[key];
         return out;
       }, {});
-      trace("js-injection://", code);
-      trace("js-injected://", JSON.stringify(keysTyped, null, 2));
+      // trace("js-injection://", code);
+      // trace("js-injected://", JSON.stringify(keysTyped, null, 2));
       return asyncFunction.call(scope, ...values);
     }
 

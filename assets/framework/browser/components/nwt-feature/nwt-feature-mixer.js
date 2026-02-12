@@ -222,7 +222,7 @@
         // hooks → se encadenan
         On_callbacks:
         for (const propertyId in interfaze) {
-          if (typeof interfaze[propertyId] === "function" && this.hookables.includes(propertyId)) {
+          if ((typeof interfaze[propertyId] === "function") && this.hookables.includes(propertyId)) {
             if (!(propertyId in hooks)) {
               hooks[propertyId] = [];
             }

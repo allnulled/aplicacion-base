@@ -19,12 +19,13 @@
  * 
  */
 if (typeof window !== "undefined") {
-    window.addEventListener("load", function () {
+    window.addEventListener("load", async function () {
         trace("Nwt injection on Vue.prototype.$*");
         Vue.prototype.$window = window;
         Vue.prototype.$nwt = NwtFramework;
         Vue.prototype.$tracer = NwtTracer.global;
         Vue.prototype.$trace = NwtTracer.global.createTrace();
+        await NwtLazyControl.loadBasicControls();
         new Vue({
             render: h => h(Vue.options.components.MainWindow),
         }).$mount("#app");

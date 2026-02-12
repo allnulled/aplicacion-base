@@ -6,11 +6,17 @@ return await NwtFeatureMixer.component({
       "@feature/for/control/trait/statics",
       "@feature/for/control/trait/settings",
       "@feature/for/control/trait/getValue",
+      //"@feature/for/control/trait/isShown",
       "@feature/for/control/trait/isExpanded",
+      //"@feature/for/control/trait/isLongText",
       "@feature/for/control/trait/hasDescription",
       "@feature/for/control/trait/hasPlaceholder",
       "@feature/for/control/trait/hasStatement",
+      //"@feature/for/control/trait/refMainInput",
       "@feature/for/control/trait/validate",
+    ],
+    composedBy: [
+      "@control/partial/for/statement"
     ],
     traits: {
       "@control/for/structure": {
@@ -33,9 +39,20 @@ return await NwtFeatureMixer.component({
   props: {},
   mixins: [],
   data() {
-    return {};
+    return {
+      hasStatement: this.settings.hasStatement || this.settings.parentKey || "",
+    };
   },
-  methods: {},
+  methods: {
+    
+    toggleExpansionByKey(id) {
+      trace("NwtLazyFormControl.methods.toggleExpansionByKey");
+      const list = this.$refs["control_" + id];
+      console.log(list[0]);
+      list[0].control.toggleExpansion();
+    }
+
+  },
   created() {},
   mounted() {},
 });

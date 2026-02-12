@@ -17,18 +17,23 @@ Vue.component("NwtLazyFormControl", {
     
   },
   computed: {
+    control() {
+      return this.$refs.structure || this.$refs.list || this.$refs.component;
+    },
     isStructure() {
       return this.definition.type === "@control/for/structure";
     },
     isList() {
       return this.definition.type === "@control/for/list";
+    },
+    isComponent() {
+      return (this.definition.type !== "@control/for/structure") && (this.definition.type !== "@control/for/list");
     }
   },
-  created() {
+  async created() {
     trace("NwtLazyFormControl.created");
     assertion(typeof this.definition === "object", "Property «definition» must be object on «NwtLazyFormControl.created»");
     assertion(typeof this.definition.type === "string", "Property «definition.type» must be string on «NwtLazyFormControl.created»");
-    
   },
   async mounted() {
     trace("NwtLazyFormControl.mounted");

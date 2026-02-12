@@ -6,11 +6,22 @@ return await NwtFeatureMixer.component({
       "@feature/for/control/trait/statics",
       "@feature/for/control/trait/settings",
       "@feature/for/control/trait/getValue",
+      //"@feature/for/control/trait/isShown",
       "@feature/for/control/trait/isExpanded",
+      //"@feature/for/control/trait/isLongText",
       "@feature/for/control/trait/hasDescription",
       "@feature/for/control/trait/hasPlaceholder",
       "@feature/for/control/trait/hasStatement",
+      //"@feature/for/control/trait/refMainInput",
       "@feature/for/control/trait/validate",
+    ],
+    settings: {
+      $hard: {
+        initialValue: [Array, []],
+      }
+    },
+    composedBy: [
+      "@control/partial/for/statement"
     ],
     traits: {
       "@control/for/list": {
@@ -34,9 +45,20 @@ return await NwtFeatureMixer.component({
   props: {},
   mixins: [],
   data() {
-    return {};
+    return {
+      
+    };
   },
-  methods: {},
+  methods: {
+    removeItem(key) {
+      trace("NwtControlForList.methods.removeItem");
+      this.value.splice(key, 1);
+    },
+    appendNewItem() {
+      trace("NwtControlForList.methods.appendNewItem");
+      this.value.push(NwtUtils.copify(this.settings.controls));
+    }
+  },
   created() {},
   mounted() {},
 });

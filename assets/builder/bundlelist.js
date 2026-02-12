@@ -58,6 +58,7 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/group/structure/control`,
   //*/
   // Recursos basados en componentes NwtComponent
+  `${projectRoot}/assets/framework/browser/components/nwt-component/nwt-components-cache.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource.js`,
   // Formulator: la API buena de fomularios
   `${projectRoot}/assets/framework/browser/components/nwt-component/type/control/validator/component`,

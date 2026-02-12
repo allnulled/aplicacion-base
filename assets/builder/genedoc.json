@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-11T21:51:49.290Z",
+  "generatedAt": "2026-02-12T10:21:45.931Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -97,6 +97,16 @@
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-components-cache.js",
+      "name": "nwt-components-cache.js",
+      "type": "file",
+      "formalName": "NwtComponentsCacheJs",
+      "apiName": "NwtComponentsCache",
+      "dependencies": [
+        "NwtComponentsCache"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-component.js",
       "name": "nwt-lazy-component.js",
       "type": "file",
@@ -118,7 +128,13 @@
       "apiName": "NwtLazyControl",
       "dependencies": [
         "NwtLazyControl",
-        "NwtLazyComponent"
+        "NwtLazyComponent",
+        "NwtControlForStructure",
+        "NwtControlForList",
+        "NwtControlForOption",
+        "NwtControlForText",
+        "NwtResource",
+        "NwtLazyFormControl"
       ]
     },
     {
@@ -779,6 +795,8 @@
       "apiName": "NwtResource",
       "dependencies": [
         "NwtResource",
+        "NwtComponentsCache",
+        "NwtVue2",
         "NwtLazyFeature",
         "NwtLazyControl",
         "NwtLazyComponent",
@@ -1620,6 +1638,7 @@
       "dependencies": [
         "NwtFramework",
         "NwtTracer",
+        "NwtLazyControl",
         "window.addEventListener"
       ]
     },

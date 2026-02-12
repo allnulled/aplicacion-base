@@ -1,4 +1,31 @@
 <div class="nwt_control_list">
-    Control para lista:
-    <nwt-control-validator :control="this" />
+    <div class="pad_bottom_1">
+        <div class=""
+            v-if="!isExpanded">
+            <nwt-control-partial-for-statement :control="this" />
+        </div>
+        <div v-else class="pad_1 structure_mark">
+            <div class="pad_bottom_1">
+                <nwt-control-partial-for-statement :control="this" />
+            </div>
+            <div v-for="subcontrol, key in value || []"
+                v-bind:key="'lazy_form_list_property_' + key"
+                class="pad_left_1">
+                <div class="flex_row">
+                    <div class="flex_100">
+                        <nwt-lazy-form-control :ref="'control_' + key"
+                            :definition="{...subcontrol, parentKey: key}" />
+                    </div>
+                    <div class="flex_1 pad_left_1 pad_top_1">
+                        <button class="mini" v-on:click="() => removeItem(key)">❌</button>
+                    </div>
+                </div>
+            </div>
+            <div class="pad_right_1">
+                <button class="width_100"
+                    v-on:click="appendNewItem">➕ Nuevo ítem</button>
+            </div>
+            <nwt-control-validator :control="this" />
+        </div>
+    </div>
 </div>

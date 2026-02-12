@@ -76,11 +76,11 @@ Vue.component("CommonInjections", {
           });
         }
       });
-    }
+    },
 
   },
   watch: {},
-  mounted() {
+  async mounted() {
     this.injectTouchability();
     this.injectKeyEventForProcessManager();
     this.injectKeyEventForSettings();

@@ -9,14 +9,22 @@ Vue.component("NwtLazyForm", {
   },
   data() {
     return {
-      
+
     };
   },
   methods: {
-    
+    toggleAllSubcontrols() {
+      trace("NwtLazyForm.methods.toggleAllSubcontrols");
+    },
+    validateForm() {
+      trace("NwtLazyForm.methods.validateForm");
+    },
+    submitForm() {
+      trace("NwtLazyForm.methods.submitForm");
+    }
   },
   computed: {
-    
+
   },
   created() {
     trace("NwtLazyForm.created");

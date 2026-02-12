@@ -30,7 +30,11 @@ return {
   watch: {
     value(newValue, oldValue) {
       trace("feature/for/control/trait/getValue.watch.value");
-      this.settings.onChange(newValue, oldValue, this);
+      NwtUtils.trify(() => this.settings.onChange(newValue, oldValue, this));
     }
+  },
+  mounted() {
+    trace("feature/for/control/trait/getValue.mounted");
+    this.value = this.settings.initialValue;
   }
 };
