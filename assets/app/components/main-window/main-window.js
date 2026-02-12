@@ -32,6 +32,9 @@ Vue.component("MainWindow", {
       }, {
         text: "Ficheros de ChatGPT",
         event: () => this.startGestorDeFicherosDeChatgpt(),
+      }, {
+        text: "Tests de la aplicación",
+        event: () => this.startDynamicTesterViewer(),
       }]
     };
   },
@@ -82,6 +85,15 @@ Vue.component("MainWindow", {
       this.$dialogs.open({
         title: "Gestor de ficheros de ChatGPT",
         template: `<nwt-chatgpt-files-manager-viewer />`,
+        windowClasses: "no_scroll"
+      });
+    },
+
+    startDynamicTesterViewer() {
+      trace("MainWindow.methods.startDynamicTesterViewer");
+      this.$dialogs.open({
+        title: "Tests de la aplicación",
+        template: `<nwt-dynamic-tester-viewer />`,
         windowClasses: "no_scroll"
       });
     },

@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-12T16:10:52.115Z",
+  "generatedAt": "2026-02-12T22:23:05.537Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -136,6 +136,42 @@
         "NwtControlForText",
         "NwtResource",
         "NwtLazyFormControl"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css",
+      "name": "nwt-dynamic-tester-viewer.css",
+      "type": "file",
+      "formalName": "NwtDynamicTesterViewerCss",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html",
+      "name": "nwt-dynamic-tester-viewer.html",
+      "type": "file",
+      "formalName": "NwtDynamicTesterViewerHtml",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.js",
+      "name": "nwt-dynamic-tester-viewer.js",
+      "type": "file",
+      "formalName": "NwtDynamicTesterViewerJs",
+      "isVueComponent": true,
+      "componentName": [
+        "NwtDynamicTesterViewerJs",
+        "NwtDynamicTesterViewerHtml",
+        "NwtDynamicTesterViewerCss"
+      ],
+      "apiName": "NwtDynamicTesterViewer",
+      "dependencies": [
+        "NwtDynamicTesterViewer",
+        "NwtFilesystem",
+        "NwtPaths",
+        "NwtDialogs",
+        "NwtTester",
+        "NwtImporter",
+        "NwtTimer"
       ]
     },
     {

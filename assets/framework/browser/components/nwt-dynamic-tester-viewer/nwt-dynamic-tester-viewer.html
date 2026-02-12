@@ -1,0 +1,18 @@
+<div class="nwt_dynamic_tester_viewer">
+    <div class="title">Tests dinámicos</div>
+    <div class="pad_1">
+        <div class=""
+            v-for="test, testIndex in testsFound"
+            v-bind:key="'test-path-' + testIndex">
+            <div class="flex_row centered pad_bottom_1">
+                <div class="flex_1 pad_right_1">
+                    <button class="mini"
+                        v-on:click="() => runTest(test)">▶️</button>
+                </div>
+                <div class="flex_100">
+                    <b style="font-size: 10px;">{{ testIndex + 1 }}. {{ test.id.replace(new RegExp("\\/", "g"), " » ") }}</b>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

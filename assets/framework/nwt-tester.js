@@ -289,6 +289,7 @@
 
     failBranch(subtest, error) {
       trace("NwtTester.prototype.failBranch");
+      subtest.accumulatedErrors.push(error);
       let parent = subtest.parent;
       while(parent !== null) {
         subtest.status = "failed";
@@ -322,6 +323,7 @@
             this.status = "running";
             await this.callback(this, assertion, this.progressBar);
           } catch (error) {
+            this.status = "failed";
             this.failBranch(this, error);
             return this.hooks.onTestFailure(this, error);
           }
@@ -332,6 +334,7 @@
               await subtest.start();
             }
           } catch (error) {
+            this.status = "failed";
             this.failBranch(subtest, error);
             return this.hooks.onTestFailure(this, error);
           }
@@ -344,6 +347,7 @@
         this.totalTime = NwtTimer.secondsDiff(new Date(), this.startedAt);
         this.hooks.onTestSuccess(this);
       } catch (err) {
+        this.status = "failed";
         this.hooks.onTestFailure(this, err);
       }
     }

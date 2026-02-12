@@ -537,46 +537,53 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtSettings`
    - **@uses** `NwtShell`
-- `130. [vue2] The NwtFileExplorer API`
+- `130. [vue2] The NwtDynamicTesterViewer API`
+   - **@uses** `NwtFilesystem`
+   - **@uses** `NwtPaths`
+   - **@uses** `NwtDialogs`
+   - **@uses** `NwtTester`
+   - **@uses** `NwtImporter`
+   - **@uses** `NwtTimer`
+- `131. [vue2] The NwtFileExplorer API`
    - **@uses** `NwtUtils`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
    - **@uses** `require("path")`
-- `131. [vue2] The NwtFormControlButtons API`
-- `132. [vue2] The NwtFormControlHandler API`
-- `133. [vue2] The NwtFormControlStatement API`
+- `132. [vue2] The NwtFormControlButtons API`
+- `133. [vue2] The NwtFormControlHandler API`
+- `134. [vue2] The NwtFormControlStatement API`
    - **@uses** `NwtFramework`
-- `134. [vue2] The NwtMatrixBackground API`
+- `135. [vue2] The NwtMatrixBackground API`
    - **@uses** `window.innerWidth`
    - **@uses** `window.innerHeight`
-- `135. [vue2] The NwtProcedureDocumentationViewer API`
+- `136. [vue2] The NwtProcedureDocumentationViewer API`
    - **@uses** `NwtProcedureSeed`
    - **@uses** `NwtProcedureDefinition`
    - **@uses** `NwtEnvironment`
    - **@uses** `require("fs")`
-- `136. [vue2] The NwtProceduresManagerViewer API`
+- `137. [vue2] The NwtProceduresManagerViewer API`
    - **@uses** `NwtProceduresManager`
-- `137. [vue2] The NwtProcessManagerViewer API`
+- `138. [vue2] The NwtProcessManagerViewer API`
    - **@uses** `NwtProcessManager`
    - **@uses** `NwtProgressBar`
-- `138. [vue2] The NwtProgressBarViewer API`
+- `139. [vue2] The NwtProgressBarViewer API`
    - **@uses** `NwtProgressBar`
-- `139. [vue2] The NwtPromptsManagerViewer API`
+- `140. [vue2] The NwtPromptsManagerViewer API`
    - **@uses** `NwtPromptsManager`
    - **@uses** `NwtDialogs`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtSettings`
    - **@uses** `NwtShell`
-- `140. [vue2] The NwtSettingsViewer API`
+- `141. [vue2] The NwtSettingsViewer API`
    - **@uses** `NwtSettings`
    - **@uses** `NwtDialog`
    - **@uses** `NwtUtils`
-- `141. [vue2] The NwtSourceViewer API`
+- `142. [vue2] The NwtSourceViewer API`
    - **@uses** `NwtRandomizer`
-- `142. [vue2] The NwtStarsBackground API`
-- `143. [vue2] The NwtTesterNode API`
+- `143. [vue2] The NwtStarsBackground API`
+- `144. [vue2] The NwtTesterNode API`
    - **@uses** `NwtTesterViewer`
-- `144. [vue2] The NwtTesterViewer API`
+- `145. [vue2] The NwtTesterViewer API`
    - **@uses** `NwtTester`
 
 ## Dependencias y apariciones
@@ -639,7 +646,7 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtUtils
    - NwtVue2
    - NwtFormControlStatement
-- NwtPaths ✖️ 22
+- NwtPaths ✖️ 23
    - NwtCacheDirectory
    - NwtChatgpt
    - NwtCommandsManager
@@ -661,8 +668,9 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtStringShortener
    - NwtStrings
    - NwtTemplates
+   - NwtDynamicTesterViewer
    - NwtFileExplorer
-- NwtFilesystem ✖️ 21
+- NwtFilesystem ✖️ 22
    - NwtCacheDirectory
    - NwtChatgpt
    - NwtCommand
@@ -682,6 +690,7 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtStrings
    - NwtTemplates
    - NwtCommandsManagerViewer
+   - NwtDynamicTesterViewer
    - NwtFileExplorer
    - NwtPromptsManagerViewer
 - require("path") ✖️ 20
@@ -738,7 +747,7 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtStrings
    - NwtVue2
    - NwtProcedureDocumentationViewer
-- NwtImporter ✖️ 13
+- NwtImporter ✖️ 14
    - NwtCommandFormInterface
    - NwtCommand
    - NwtCommandViewInterface
@@ -752,6 +761,7 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtModuleManager
    - NwtPack
    - NwtProcedureDefinition
+   - NwtDynamicTesterViewer
 - NwtUtils ✖️ 12
    - NwtDebug
    - NwtErrorsManager
@@ -765,6 +775,14 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtCodeHighlighter
    - NwtFileExplorer
    - NwtSettingsViewer
+- NwtDialogs ✖️ 7
+   - NwtCommand
+   - NwtDialogDefinition
+   - NwtProcedureDefinition
+   - NwtPromptsManager
+   - NwtChatgptFilesManagerViewer
+   - NwtDynamicTesterViewer
+   - NwtPromptsManagerViewer
 - NwtToasts ✖️ 7
    - NwtClipboard
    - NwtCommandSynchronizer
@@ -773,6 +791,14 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtIterableFunction
    - NwtShell
    - NwtTester
+- NwtTimer ✖️ 7
+   - NwtArgumenter
+   - NwtChatgpt
+   - NwtCommandSynchronizer
+   - NwtPack
+   - NwtTester
+   - NwtTracer
+   - NwtDynamicTesterViewer
 - NwtCodeComposer ✖️ 6
    - NwtIterableFunction
    - NwtJsReturnController
@@ -794,20 +820,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtProcess
    - NwtStringShortener
    - NwtSourceViewer
-- NwtDialogs ✖️ 6
-   - NwtCommand
-   - NwtDialogDefinition
-   - NwtProcedureDefinition
-   - NwtPromptsManager
-   - NwtChatgptFilesManagerViewer
-   - NwtPromptsManagerViewer
-- NwtTimer ✖️ 6
-   - NwtArgumenter
-   - NwtChatgpt
-   - NwtCommandSynchronizer
-   - NwtPack
-   - NwtTester
-   - NwtTracer
 - NwtFormulatorLazyFeature ✖️ 5
    - NwtFormulatorFeatureManager
    - NwtFormulatorFeatureMixer
@@ -857,6 +869,11 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPack
    - NwtProcess
    - NwtProcessManagerViewer
+- NwtTester ✖️ 4
+   - NwtCommandViewInterface
+   - NwtPack
+   - NwtDynamicTesterViewer
+   - NwtTesterViewer
 - require("os") ✖️ 3
    - NwtPaths
    - NwtSettings
@@ -909,10 +926,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtDialogDefinition
    - NwtPack
    - NwtProcessManager
-- NwtTester ✖️ 3
-   - NwtCommandViewInterface
-   - NwtPack
-   - NwtTesterViewer
 - NwtLazyLoader ✖️ 3
    - NwtCodeComposer
    - NwtPack
@@ -1149,7 +1162,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-12T16:10:52.115Z",
+  "generatedAt": "2026-02-12T22:23:05.537Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1559,6 +1572,20 @@ El JSON original es:
         "NwtFramework",
         "NwtStrings"
       ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css",
+      "name": "nwt-dynamic-tester-viewer.css",
+      "type": "file",
+      "formalName": "NwtDynamicTesterViewerCss",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html",
+      "name": "nwt-dynamic-tester-viewer.html",
+      "type": "file",
+      "formalName": "NwtDynamicTesterViewerHtml",
+      "dependencies": []
     },
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-environment.js",
@@ -3148,6 +3175,28 @@ El JSON original es:
         "NwtFilesystem",
         "NwtSettings",
         "NwtShell"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.js",
+      "name": "nwt-dynamic-tester-viewer.js",
+      "type": "file",
+      "formalName": "NwtDynamicTesterViewerJs",
+      "isVueComponent": true,
+      "componentName": [
+        "NwtDynamicTesterViewerJs",
+        "NwtDynamicTesterViewerHtml",
+        "NwtDynamicTesterViewerCss"
+      ],
+      "apiName": "NwtDynamicTesterViewer",
+      "dependencies": [
+        "NwtDynamicTesterViewer",
+        "NwtFilesystem",
+        "NwtPaths",
+        "NwtDialogs",
+        "NwtTester",
+        "NwtImporter",
+        "NwtTimer"
       ]
     },
     {

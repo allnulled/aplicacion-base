@@ -25,6 +25,10 @@
       Vue.options.components[id] = value;
     }
 
+    get all() {
+      return Vue.options.components;
+    }
+
   };
 
   NwtComponentsCache.global = new NwtComponentsCache();

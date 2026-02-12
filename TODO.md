@@ -1,3 +1,16 @@
+12/02/2026
+
+- [ ] Que se imprima bien el control de option
+   - [ ] ...
+- [ ] Que pase el valor a su descendiente
+- [ ] Que admita también la validación desde tipos intermedios
+   - [ ] structure
+   - [ ] list
+   - [ ] option
+- [ ] Que admita también la validación desde el formulario
+   - [ ] en principio, como structure
+
+
 09/02/2026
 
 - [x] Que soporte subtypeOf en validación

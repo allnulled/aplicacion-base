@@ -46,7 +46,7 @@
                         <template v-if="node.status === 'ok'">🟢</template>
                         <template v-if="node.status === 'failed'">🔴</template>
                     </div>
-                    <div class="flex_1 no_wrap"
+                    <div class="flex_1 no_wrap pad_left_1"
                         style="color: #333;">
                         {{ node.name }}
                     </div>
@@ -67,7 +67,17 @@
             </div>
             <div class="progress"
                 v-if="(node.progressBar.percent !== '100.00%') || true">
-                <nwt-progress-bar-viewer :progress-bar="node.progressBar" />
+                <!--nwt-progress-bar-viewer :progress-bar="node.progressBar" /-->
+                <div class="progress_bar_viewer">
+                    <div role="progressbar"
+                        :class="{animate: node.progressBar.percent !== '100.00%', paused: node.status === 'running', error: node.status === 'failed'}">
+                        <div :style="{width: node.progressBar.percent}">
+                            <div class="progress_bar_message">
+                                <div>{{ node.progressBar.percent }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </template>
         <div class="children">

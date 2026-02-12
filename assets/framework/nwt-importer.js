@@ -135,9 +135,12 @@
     }
 
     static asyncSourceLoadFromCache(id) {
-      if(!(id in this.asyncSourceCache)) {
+      const isKnown = id in this.asyncSourceCache;
+      if(!isKnown) {
         return false;
       }
+      // @FLAG: Comment to have cache:
+      return false;
       trace("NwtImporter.asyncSourceLoadFromCache", id);
       return this.asyncSourceCache[id];
     }
