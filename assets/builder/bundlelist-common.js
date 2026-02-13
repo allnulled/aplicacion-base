@@ -37,6 +37,8 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-error-utils.js`,
   `${projectRoot}/assets/framework/nwt-dialog-definition.js`,
   `${projectRoot}/assets/framework/nwt-importer.js`,
+  `${projectRoot}/assets/framework/nwt-events/nwt-events-manager.js`,
+  `${projectRoot}/assets/framework/nwt-events/nwt-events.js`,
   `${projectRoot}/assets/framework/nwt-paths.js`,
   `${projectRoot}/assets/framework/nwt-abort.js`,
   `${projectRoot}/assets/framework/nwt-strings.js`,

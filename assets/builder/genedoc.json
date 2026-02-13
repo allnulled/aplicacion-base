@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-13T09:21:21.960Z",
+  "generatedAt": "2026-02-13T10:27:36.418Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -1439,6 +1439,27 @@
         "NwtImporter",
         "NwtUtils",
         "window.addEventListener"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-events/nwt-events-manager.js",
+      "name": "nwt-events-manager.js",
+      "type": "file",
+      "formalName": "NwtEventsManagerJs",
+      "apiName": "NwtEventsManager",
+      "dependencies": [
+        "NwtEventsManager"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-events/nwt-events.js",
+      "name": "nwt-events.js",
+      "type": "file",
+      "formalName": "NwtEventsJs",
+      "apiName": "NwtEvents",
+      "dependencies": [
+        "NwtEvents",
+        "NwtEventsManager"
       ]
     },
     {

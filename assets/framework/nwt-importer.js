@@ -163,8 +163,19 @@
         return out;
       }, {});
       trace("js-injected://", JSON.stringify(keysTyped, null, 2));
-      trace("js-injection://", code);
+      trace("js-injection://", this.wrapIntoTryCatch(code));
       return asyncFunction.call(scope, ...values);
+    }
+
+    static wrapIntoTryCatch(code) {
+      let js = 'try {\n';
+      js += '  ' + code + '\n';
+      js += '} catch(error) {\n';
+      js += '  console.error(error);\n';
+      js += '  console.error(error.stack);\n';
+      js += '  console.error("From source code:", ' + JSON.stringify(code) + ');\n';
+      js += '}\n';
+      return js;
     }
 
     static asyncFactory(code, parameters = []) {
