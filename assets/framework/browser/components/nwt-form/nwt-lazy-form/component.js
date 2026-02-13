@@ -5,7 +5,7 @@ Vue.component("NwtLazyForm", {
     definition: {
       type: Object,
       required: true,
-    }
+    },
   },
   data() {
     return {
@@ -16,15 +16,24 @@ Vue.component("NwtLazyForm", {
     toggleAllSubcontrols() {
       trace("NwtLazyForm.methods.toggleAllSubcontrols");
     },
-    validateForm() {
+    async validateForm() {
       trace("NwtLazyForm.methods.validateForm");
+      const value = this.getValue();
+      const validation = await this.$options.statics.api.validate(value, this.definition);
+      return value;
     },
-    submitForm() {
+    async submitForm() {
       trace("NwtLazyForm.methods.submitForm");
+      const value = this.validateForm();
+      if(typeof this.definition.onSubmit === "function") {
+        this.definition.onSubmit.call(this, value);
+      }
     }
   },
   computed: {
-
+    control() {
+      return this.$refs.control;
+    }
   },
   created() {
     trace("NwtLazyForm.created");

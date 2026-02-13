@@ -70,6 +70,7 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-lazy-form-control/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-lazy-form/component`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-builder/nwt-form-builder.js`,
   // Fondos exóticos:
   `${projectRoot}/assets/framework/browser/components/nwt-stars-background/nwt-stars-background`,
   `${projectRoot}/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background`,

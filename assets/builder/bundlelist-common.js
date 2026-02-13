@@ -49,6 +49,7 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-timer.js`,
   `${projectRoot}/assets/framework/nwt-vue2.js`,
   `${projectRoot}/assets/framework/nwt-prototyper.js`,
+  `${projectRoot}/assets/framework/nwt-dom-automator.js`,
   `${projectRoot}/assets/framework/nwt-lazy-loader.js`,
   `${projectRoot}/assets/framework/nwt-json-storer.js`,
   `${projectRoot}/assets/framework/nwt-settings.js`,

@@ -174,6 +174,7 @@
       js += '  console.error(error);\n';
       js += '  console.error(error.stack);\n';
       js += '  console.error("From source code:", ' + JSON.stringify(code) + ');\n';
+      js += '  throw error;\n';
       js += '}\n';
       return js;
     }

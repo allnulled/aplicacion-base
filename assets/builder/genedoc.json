@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-13T10:27:36.418Z",
+  "generatedAt": "2026-02-13T18:19:57.094Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -245,6 +245,17 @@
         "NwtFilesystem",
         "NwtPaths",
         "require(\"path\")"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder/nwt-form-builder.js",
+      "name": "nwt-form-builder.js",
+      "type": "file",
+      "formalName": "NwtFormBuilderJs",
+      "apiName": "NwtFormBuilder",
+      "dependencies": [
+        "NwtFormBuilder",
+        "NwtDialogs"
       ]
     },
     {
@@ -1380,6 +1391,17 @@
         "NwtDialogs",
         "NwtProcessManager",
         "NwtRandomizer"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom-automator.js",
+      "name": "nwt-dom-automator.js",
+      "type": "file",
+      "formalName": "NwtDomAutomatorJs",
+      "apiName": "NwtDomAutomator",
+      "dependencies": [
+        "NwtDomAutomator",
+        "NwtTimer"
       ]
     },
     {

@@ -20494,6 +20494,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       js += '  console.error(error);\n';
       js += '  console.error(error.stack);\n';
       js += '  console.error("From source code:", ' + JSON.stringify(code) + ');\n';
+      js += '  throw error;\n';
       js += '}\n';
       return js;
     }
@@ -20578,17 +20579,6 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return this;
     }
 
-    off(eventType, callback) {
-      trace("NwtEventsManager.prototype.off");
-      assertion(typeof eventType  === "string", "Parameter «eventType» must be string on «NwtEventsManager.prototype.off»");
-      assertion(typeof callback  === "function", "Parameter «callback» must be function on «NwtEventsManager.prototype.off»");
-      this.listeners[eventType].delete(callback);
-      if (this.listeners[eventType].size === 0) {
-        delete this.listeners[eventType];
-      }
-      return this;
-    }
-
     once(eventType, callback) {
       trace("NwtEventsManager.prototype.once");
       assertion(typeof eventType  === "string", "Parameter «eventType» must be string on «NwtEventsManager.prototype.once»");
@@ -20601,6 +20591,17 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         callback(...args);
       };
       this.on(eventType, wrap);
+      return this;
+    }
+
+    off(eventType, callback) {
+      trace("NwtEventsManager.prototype.off");
+      assertion(typeof eventType  === "string", "Parameter «eventType» must be string on «NwtEventsManager.prototype.off»");
+      assertion(typeof callback  === "function", "Parameter «callback» must be function on «NwtEventsManager.prototype.off»");
+      this.listeners[eventType].delete(callback);
+      if (this.listeners[eventType].size === 0) {
+        delete this.listeners[eventType];
+      }
       return this;
     }
 
@@ -21567,7 +21568,54 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][31]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
+// @vuebundler[Proyecto_base_001][31]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom-automator.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtDomAutomator'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtDomAutomator'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtDomAutomator = class {
+
+    static find(baseElement, selector, text = false) {
+      trace("NwtDomAutomator.find");
+      const matchedBySelector = baseElement.querySelectorAll(selector);
+      if (text === false) {
+        return matchedBySelector;
+      }
+      const matchedByText = [...matchedBySelector].filter(el => {
+        return el.textContent.trim().toLowerCase().includes(text.toLowerCase());
+      });
+      const deepest = matchedByText.filter(el => {
+        return !matchedByText.some(other => {
+          return (other !== el) && el.contains(other);
+        });
+      });
+      return deepest;
+    }
+
+    static async abrirTestsDeLaAplicacion() {
+      trace("NwtDomAutomator.abrirTestsDeLaAplicacion");
+      NwtDomAutomator.find(document.body, "*", "Tests de la aplicación")[0].click();
+      await NwtTimer.timeout(100);
+      const selectedTest = NwtDomAutomator.find(document.body, "*", "nwt » api » 90010. Can close everything before leaving")[0];
+      selectedTest.parentElement.previousElementSibling.children[0].click();
+    }
+
+  };
+
+  return NwtDomAutomator;
+
+});
+
+// @vuebundler[Proyecto_base_001][32]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
 /**
  * 
  * # Nwt Lazy Loader API
@@ -21679,7 +21727,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][32]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
+// @vuebundler[Proyecto_base_001][33]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
 /**
  * 
  * # Nwt Json Storer API
@@ -21846,7 +21894,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][33]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
+// @vuebundler[Proyecto_base_001][34]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
 /**
  * 
  * # Nwt Settings API
@@ -21976,7 +22024,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][34]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-accessor.js
+// @vuebundler[Proyecto_base_001][35]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-accessor.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22017,7 +22065,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][35]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
+// @vuebundler[Proyecto_base_001][36]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22056,7 +22104,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][36]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
+// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22104,7 +22152,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
+// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22152,7 +22200,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
+// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -23094,7 +23142,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
+// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
 /**
  * 
  * # NwtTemplates
@@ -23329,7 +23377,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
+// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
 /**
  * 
  * # Nwt Utils API
@@ -23570,7 +23618,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
+// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -23686,7 +23734,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
+// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -23745,7 +23793,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
+// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -23796,7 +23844,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
+// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
 /**
  * 
  * # Nwt Code Composer
@@ -23986,7 +24034,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
+// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
 /**
  * 
  * # Nwt Randomizer API
@@ -24079,7 +24127,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
+// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
 /**
  * 
  * # Nwt Progress Bar API
@@ -24206,7 +24254,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
+// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
 /**
  * 
  * # Nwt Globalizer API
@@ -24266,7 +24314,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
+// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
 /**
  * 
  * # Nwt Tester API
@@ -24630,7 +24678,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
+// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
 /**
  * 
  * # Nwt Process API
@@ -24777,7 +24825,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
+// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
 /**
  * 
  * # NwtProcessManager
@@ -24848,7 +24896,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
+// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24906,7 +24954,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
+// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25070,7 +25118,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
+// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25131,7 +25179,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
+// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25174,7 +25222,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
+// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
 /**
  * 
  * # NwtCsv
@@ -25263,7 +25311,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
+// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
 /**
  * 
  * # NwtIterableFunction
@@ -25497,7 +25545,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
+// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
 /**
  * 
  * # NwtIterableClass
@@ -25673,7 +25721,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
+// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
 /**
  * 
  * # NwtIterableCommandClass
@@ -25774,7 +25822,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
+// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
 /**
  * 
  * # NwtFilesystem
@@ -26211,7 +26259,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
+// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
 /**
  * 
  * # NwtFileChooser
@@ -26317,7 +26365,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
+// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
 /**
  * 
  * # Nwt Shell API
@@ -26530,7 +26578,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
+// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
 /**
  * 
  * # NwtLiveInjector
@@ -26610,7 +26658,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
+// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
 /**
  * 
  * # Nwt Prompt Manager API
@@ -26709,7 +26757,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
+// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
 /**
  * 
  * # NwtChatgpt
@@ -26885,7 +26933,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
+// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
 /**
  * 
  * # NwtStringShortener
@@ -27027,7 +27075,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
+// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
 /**
  * 
  * # NwtJsonPersister
@@ -27359,7 +27407,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
+// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
 /**
  * 
  * # NwtJsonlPersister
@@ -27521,7 +27569,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
+// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
 /**
  * 
  * # NwtFilePersister
@@ -27682,7 +27730,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 
-// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
+// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
 /**
  * 
  * # NwtDirectoryPersister
@@ -27875,7 +27923,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
+// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
 /**
  * 
  * # NwtPersister
@@ -27931,7 +27979,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
+// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
 (function (factory) {
       const mod = factory();
       if (typeof window !== 'undefined') {
@@ -27947,7 +27995,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       return "{\n  const /**<?=localMemoryName?>**/localMemory = {};\n  /**<?#onFunctionStart?>**/\n  /**<?#onInitializeCollection?>**/\n  /**<?#onInitializeDimensions?>**/\n  try {\n    /**<?#onNextIteration?>**/\n    /**<?=localMemoryName?>**/localMemory.conditionalCallback = async () => {\n      /**<?#onCondition?>**/\n    };\n    /**<?=localMemoryName?>**/localMemory.output = undefined;\n    /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n    /**<?=onIdentifier + \":\"?>**/\n    while (/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n      /**<?#onIterationStart?>**/\n      try {\n        /**<?#onIteration?>**/\n        /**<?#onIterationSuccess?>**/\n      } catch (error) {\n        /**<?#onIterationError?>**/\n      } finally {\n        /**<?#onIterationFinally?>**/\n      }\n      /**<?#onIterationEnd?>**/\n      /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n      if (!/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n        break /**<?=onIdentifier?>**/;\n      }\n      /**<?#onInterlapse?>**/\n      /**<?#onNextIteration?>**/\n      /**<?#onProgression?>**/\n    }\n    /**<?#onFunctionSuccess?>**/\n  } catch (error) {\n    /**<?#onFunctionError?>**/\n  } finally {\n    /**<?#onFunctionFinally?>**/\n  }\n  /**<?#onFunctionEnd?>**/\n  return /**<?=localMemoryName?>**/localMemory.output;\n}"
     });
 
-// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
+// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28056,7 +28104,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
+// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -29508,7 +29556,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
+// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29536,7 +29584,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
+// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29623,7 +29671,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
+// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29719,7 +29767,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
+// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29757,7 +29805,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
+// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29794,7 +29842,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
+// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29821,7 +29869,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
+// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29848,7 +29896,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
+// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29875,7 +29923,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
+// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
 /**
  * 
  * # NwtDom
@@ -30066,7 +30114,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
+// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
 /**
  * 
  * # NwtExporter
@@ -30161,7 +30209,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
+// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
 /**
  * 
  * # NwtClipboard
@@ -30214,7 +30262,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
+// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30298,7 +30346,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
+// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
 /**
  * 
  * # NwtCacheDirectory
@@ -30414,7 +30462,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js
+// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js
 /**
  * 
  * # NwtProxyChain
@@ -30495,7 +30543,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30704,7 +30752,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30907,7 +30955,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30958,7 +31006,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context-pointer.js
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context-pointer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31003,7 +31051,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context.js
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31118,7 +31166,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validable-schema.js
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validable-schema.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31162,7 +31210,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validator.js
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validator.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31189,7 +31237,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
 /**
  * 
  * # Nwt Framework API
@@ -31287,7 +31335,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 })();
 
-// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
 /**
  * 
  * # Nwt Injection API
@@ -31322,7 +31370,7 @@ if (typeof window !== "undefined") {
     });
 }
 
-// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
 /**
  * 
  * # Nwt V-Resizable Directive - Vue directive
@@ -31429,7 +31477,7 @@ Vue.directive("resizable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
 /**
  * 
  * 
@@ -31499,7 +31547,7 @@ Vue.directive("draggable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
 /**
  * 
  * # Nwt V-Focus Directive - Vue directive
@@ -31524,7 +31572,7 @@ Vue.directive("focus", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
 Vue.directive("forms", {
   bind(el, binding, vnode) {
     const value = binding.value || {};
@@ -31542,9 +31590,9 @@ Vue.directive("forms", {
 });
 
 
-// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
 
-// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
 /**
  * 
  * # Common Dialogs
@@ -31773,11 +31821,11 @@ Vue.component("CommonDialogs", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
 
-// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
 
-// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
 /**
  * 
  * # Nwt Toasts API
@@ -31891,11 +31939,11 @@ Vue.component("CommonToasts", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
 
-// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
 
-// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
 /**
  * 
  * # Nwt Common Injections API
@@ -31987,11 +32035,11 @@ Vue.component("CommonInjections", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
 
-// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
 
-// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
 /**
  * 
  * # Nwt Tester Viewer API / Componente Vue2
@@ -32076,11 +32124,11 @@ Vue.component("NwtTesterViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
 /**
  * 
  * # NwtTesterNode
@@ -32207,11 +32255,11 @@ Vue.component("NwtTesterNode", {
 });
 
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
 
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html
+// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html
 
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.js
+// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.js
 /**
  * 
  * # Nwt Dynamic Tester Viewer API / Componente Vue2
@@ -32333,11 +32381,11 @@ Vue.component("NwtDynamicTesterViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css
+// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css
 
-// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
+// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
 
-// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
+// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
 /**
  * 
  * # Nwt Progress Bar Viewer API / Componente Vue2
@@ -32399,11 +32447,11 @@ Vue.component("NwtProgressBarViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
+// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
 
-// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html
+// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html
 
-// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js
+// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js
 /**
  * 
  * # Nwt Box Viewer API / Componente Vue2
@@ -32481,11 +32529,11 @@ Vue.component("NwtBoxViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css
+// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css
 
-// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html
 
-// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
 /**
  * 
  * # NwtSourceViewer
@@ -32568,11 +32616,11 @@ Vue.component("NwtSourceViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css
 
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
 /**
  * 
  * # Nwt Process Manager Viewer API / Componente Vue2
@@ -32736,11 +32784,11 @@ Vue.component("NwtProcessManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html
 
-// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js
 /**
  * 
  * # Nwt Settings Viewer API / Componente Vue2
@@ -33049,11 +33097,11 @@ Vue.component("NwtSettingsViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css
 
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
 Vue.component("NwtProceduresManagerViewer", {
   template: `<div class="app_procedures_manager_viewer">
     <div class="title">
@@ -33212,11 +33260,11 @@ Vue.component("NwtProceduresManagerViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
 
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
 Vue.component("AppProcedureDocumentationViewer", {
   template: `<div class="app_procedure_documentation_viewer">
     <template v-if="markdownContentToHtml">
@@ -33258,11 +33306,11 @@ Vue.component("AppProcedureDocumentationViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
 /**
  * 
  * # NwtFileExplorer
@@ -33640,11 +33688,11 @@ Vue.component("NwtFileExplorer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js
 /**
  * 
  * # Nwt Code Highlighter API / Componente Vue2
@@ -33725,11 +33773,11 @@ Vue.component("NwtCodeHighlighter", {
 });
 
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
 /**
  * 
  * # NwtPromptsManagerViewer
@@ -34047,11 +34095,11 @@ Vue.component("NwtPromptsManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
 /**
  * 
  * # Nwt Chatgpt Files Manager Viewer API / Componente Vue2
@@ -34284,9 +34332,9 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-components-cache.js
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-components-cache.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34326,7 +34374,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34405,7 +34453,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-component.js
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-component.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34463,7 +34511,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-control.js
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-control.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34519,7 +34567,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34572,7 +34620,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34709,7 +34757,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34999,9 +35047,9 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form-control/component.html
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form-control/component.html
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form-control/component.js
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form-control/component.js
 Vue.component("NwtLazyFormControl", {
   name: "NwtLazyFormControl",
   template: `<div class="nwt_lazy_form_control">
@@ -35012,6 +35060,10 @@ Vue.component("NwtLazyFormControl", {
     <div class="is_list"
         v-else-if="isList">
         <nwt-control-for-list :settings="definition" ref="list" />
+    </div>
+    <div class="is_option"
+        v-else-if="isOption">
+        <nwt-control-for-option :settings="definition" ref="option" />
     </div>
     <div class="is_component"
         v-else>
@@ -35038,7 +35090,7 @@ Vue.component("NwtLazyFormControl", {
   },
   computed: {
     control() {
-      return this.$refs.structure || this.$refs.list || this.$refs.component;
+      return this.$refs.structure || this.$refs.list || this.$refs.option || this.$refs.component;
     },
     isStructure() {
       return this.definition.type === "@control/for/structure";
@@ -35046,8 +35098,11 @@ Vue.component("NwtLazyFormControl", {
     isList() {
       return this.definition.type === "@control/for/list";
     },
+    isOption() {
+      return this.definition.type === "@control/for/option";
+    },
     isComponent() {
-      return (this.definition.type !== "@control/for/structure") && (this.definition.type !== "@control/for/list");
+      return (this.definition.type !== "@control/for/structure") && (this.definition.type !== "@control/for/list") && (this.definition.type !== "@control/for/option");
     }
   },
   async created() {
@@ -35063,16 +35118,16 @@ Vue.component("NwtLazyFormControl", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form-control/component.css
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form-control/component.css
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form/component.html
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form/component.html
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form/component.js
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form/component.js
 Vue.component("NwtLazyForm", {
   name: "NwtLazyForm",
   template: `<div class="nwt_lazy_form">
-    <div class="flex_row centered pad_1">
-        <div class="flex_1">
+    <div class="flex_row pad_2">
+        <!--div class="flex_1">
             <button class="mini" v-on:click="toggleAllSubcontrols">
                 ❓
             </button>
@@ -35082,27 +35137,32 @@ Vue.component("NwtLazyForm", {
                 <span class="control_type_text pad_1">form</span>
                 <span v-if="definition.hasStatement">{{ definition.hasStatement }}</span>
             </div>
+        </div-->
+        <div class="flex_100 pad_horizontal_1 align_self_start">
+            <nwt-lazy-form-control :definition="definition"
+                :ref="control" />
         </div>
-        <div class="flex_1 pad_left_1">
-            <button class="mini" v-on:click="validateForm">
-                ❇️
-            </button>
+        <div class="flex_1 pad_left_1 align_self_start">
+            <div class="pad_bottom_1">
+                <button class="mini"
+                    v-on:click="submitForm">
+                    ⚡️
+                </button>
+            </div>
+            <div class="">
+                <button class="mini"
+                    v-on:click="validateForm">
+                    ❇️
+                </button>
+            </div>
         </div>
-        <div class="flex_1 pad_left_1">
-            <button class="mini" v-on:click="submitForm">
-                ⚡️
-            </button>
-        </div>
-    </div>
-    <div class="pad_horizontal_1 pad_left_2">
-        <nwt-lazy-form-control :definition="definition" />
     </div>
 </div>`,
   props: {
     definition: {
       type: Object,
       required: true,
-    }
+    },
   },
   data() {
     return {
@@ -35113,15 +35173,24 @@ Vue.component("NwtLazyForm", {
     toggleAllSubcontrols() {
       trace("NwtLazyForm.methods.toggleAllSubcontrols");
     },
-    validateForm() {
+    async validateForm() {
       trace("NwtLazyForm.methods.validateForm");
+      const value = this.getValue();
+      const validation = await this.$options.statics.api.validate(value, this.definition);
+      return value;
     },
-    submitForm() {
+    async submitForm() {
       trace("NwtLazyForm.methods.submitForm");
+      const value = this.validateForm();
+      if(typeof this.definition.onSubmit === "function") {
+        this.definition.onSubmit.call(this, value);
+      }
     }
   },
   computed: {
-
+    control() {
+      return this.$refs.control;
+    }
   },
   created() {
     trace("NwtLazyForm.created");
@@ -35134,11 +35203,46 @@ Vue.component("NwtLazyForm", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form/component.css
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-lazy-form/component.css
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder/nwt-form-builder.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtFormBuilder'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtFormBuilder'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtFormBuilder = class {
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+    static build(formDefinition) {
+      trace("NwtFormBuilder.build");
+      return NwtDialogs.open({
+        title: "Formulario",
+        template: `<nwt-lazy-form :definition="Object.assign(formDefinition, { dialog: this })" />`,
+        factory: {
+          data: {
+            formDefinition,
+          }
+        }
+      });
+    }
+
+  };
+
+  return NwtFormBuilder;
+
+});
+
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
 /**
  * 
  * # NwtStarsBackground
@@ -35226,11 +35330,11 @@ Vue.component("NwtStarsBackground", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
 /**
  * 
  * # NwtMatrixBackground
@@ -35302,9 +35406,9 @@ Vue.component("NwtMatrixBackground", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35335,7 +35439,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35377,7 +35481,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
+// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35443,9 +35547,9 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
 
-// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
 Vue.component("NwtAnonymousCommandForm", {
   name: "NwtAnonymousCommandForm",
   template: `<div class="nwt_anonymous_command_form">
@@ -35468,11 +35572,11 @@ Vue.component("NwtAnonymousCommandForm", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
 Vue.component("NwtAnonymousCommandView", {
   name: "NwtAnonymousCommandView",
   template: `<div class="nwt_anonymous_command_view">
@@ -35489,11 +35593,11 @@ Vue.component("NwtAnonymousCommandView", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
 Vue.component("NwtCommandsManagerViewer", {
   name: "NwtCommandsManagerViewer",
   template: `<div class="nwt_commands_manager_viewer">
@@ -35683,11 +35787,11 @@ Vue.component("NwtCommandsManagerViewer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
+// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
 
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
+// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
 /**
  * 
  * # App Root API
@@ -35735,9 +35839,9 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
+// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
+// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
 /**
  * 
  * 
@@ -35789,7 +35893,7 @@ Vue.component("MainWindow", {
     <common-injections />
     <common-dialogs />
     <common-toasts />
-    <div class="position_absolute_fixed pad_bottom_1" style="top:auto;bottom:0px;">
+    <!--div class="position_absolute_fixed pad_bottom_1" style="top:auto;bottom:0px;">
         <nwt-lazy-form :definition="{
             type: '@control/for/structure',
             controls: {
@@ -35828,7 +35932,7 @@ Vue.component("MainWindow", {
                 }
             }
         }" />
-    </div>
+    </div-->
 </div>`,
   props: {},
   data() {
@@ -36105,9 +36209,9 @@ Vue.component("MainWindow", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
+// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
 
-// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
+// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
 /**
  * 
  * # App Payload API
@@ -36168,8 +36272,8 @@ Vue.component("MainWindow", {
 
 });
 
-// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
 
-// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

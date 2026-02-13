@@ -18,7 +18,7 @@ Vue.component("NwtLazyFormControl", {
   },
   computed: {
     control() {
-      return this.$refs.structure || this.$refs.list || this.$refs.component;
+      return this.$refs.structure || this.$refs.list || this.$refs.option || this.$refs.component;
     },
     isStructure() {
       return this.definition.type === "@control/for/structure";
@@ -26,8 +26,11 @@ Vue.component("NwtLazyFormControl", {
     isList() {
       return this.definition.type === "@control/for/list";
     },
+    isOption() {
+      return this.definition.type === "@control/for/option";
+    },
     isComponent() {
-      return (this.definition.type !== "@control/for/structure") && (this.definition.type !== "@control/for/list");
+      return (this.definition.type !== "@control/for/structure") && (this.definition.type !== "@control/for/list") && (this.definition.type !== "@control/for/option");
     }
   },
   async created() {

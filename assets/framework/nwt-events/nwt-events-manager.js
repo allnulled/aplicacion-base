@@ -64,17 +64,6 @@
       return this;
     }
 
-    off(eventType, callback) {
-      trace("NwtEventsManager.prototype.off");
-      assertion(typeof eventType  === "string", "Parameter «eventType» must be string on «NwtEventsManager.prototype.off»");
-      assertion(typeof callback  === "function", "Parameter «callback» must be function on «NwtEventsManager.prototype.off»");
-      this.listeners[eventType].delete(callback);
-      if (this.listeners[eventType].size === 0) {
-        delete this.listeners[eventType];
-      }
-      return this;
-    }
-
     once(eventType, callback) {
       trace("NwtEventsManager.prototype.once");
       assertion(typeof eventType  === "string", "Parameter «eventType» must be string on «NwtEventsManager.prototype.once»");
@@ -87,6 +76,17 @@
         callback(...args);
       };
       this.on(eventType, wrap);
+      return this;
+    }
+
+    off(eventType, callback) {
+      trace("NwtEventsManager.prototype.off");
+      assertion(typeof eventType  === "string", "Parameter «eventType» must be string on «NwtEventsManager.prototype.off»");
+      assertion(typeof callback  === "function", "Parameter «callback» must be function on «NwtEventsManager.prototype.off»");
+      this.listeners[eventType].delete(callback);
+      if (this.listeners[eventType].size === 0) {
+        delete this.listeners[eventType];
+      }
       return this;
     }
 

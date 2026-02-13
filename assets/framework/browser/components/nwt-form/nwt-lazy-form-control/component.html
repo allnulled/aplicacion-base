@@ -7,6 +7,10 @@
         v-else-if="isList">
         <nwt-control-for-list :settings="definition" ref="list" />
     </div>
+    <div class="is_option"
+        v-else-if="isOption">
+        <nwt-control-for-option :settings="definition" ref="option" />
+    </div>
     <div class="is_component"
         v-else>
         <component :is="loaded.name"

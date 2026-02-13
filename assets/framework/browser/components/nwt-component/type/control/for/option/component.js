@@ -6,6 +6,7 @@ return await NwtFeatureMixer.component({
       "@feature/for/control/trait/statics",
       "@feature/for/control/trait/settings",
       "@feature/for/control/trait/getValue",
+      "@feature/for/control/trait/getRootForm",
       "@feature/for/control/trait/isExpanded",
       "@feature/for/control/trait/hasDescription",
       "@feature/for/control/trait/hasPlaceholder",
@@ -50,9 +51,25 @@ return await NwtFeatureMixer.component({
   props: {},
   mixins: [],
   data() {
-    return {};
+    return {
+      isLoadingControl: false,
+      hasSelectedOption: 0,
+      hasStatement: this.settings.hasStatement || this.settings.parentKey || "",
+    };
   },
-  methods: {},
+  methods: {
+    reloadControl() {
+      this.isLoadingControl = true;
+      this.$nextTick(() => {
+        this.isLoadingControl = false;
+      });
+    }
+  },
+  watch: {
+    hasSelectedOption() {
+      this.reloadControl();
+    }
+  },
   created() {},
   mounted() {},
 });
