@@ -273,7 +273,8 @@
 
     define(name, callback) {
       trace("NwtTester.prototype.define");
-      const test = new NwtTester(name, callback, this.hooks, this, this.root || this, this.level+1);
+      const newHooks = {}; // Hooks no se heredan: this.hooks
+      const test = new NwtTester(name, callback, newHooks, this, this.root || this, this.level+1);
       this.children.push(test);
       this.progressBar.total = this.children.length;
       this.hooks.onTestDefined(this, test);
@@ -342,9 +343,9 @@
         if(this.accumulatedErrors.length) {
           throw new Error(`Test «${this.name}» failed with ${this.accumulatedErrors.length} errors`);
         }
-        this.status = "ok";
         this.successMoment = NwtTimer.secondsDiff(new Date(), (this.root || this).startedAt);
         this.totalTime = NwtTimer.secondsDiff(new Date(), this.startedAt);
+        this.status = "ok";
         this.hooks.onTestSuccess(this);
       } catch (err) {
         this.status = "failed";

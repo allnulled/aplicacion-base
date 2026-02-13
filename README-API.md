@@ -540,9 +540,9 @@ Documentación de las APIs de Nwt.
 - `130. [vue2] The NwtDynamicTesterViewer API`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
+   - **@uses** `NwtImporter`
    - **@uses** `NwtDialogs`
    - **@uses** `NwtTester`
-   - **@uses** `NwtImporter`
    - **@uses** `NwtTimer`
 - `131. [vue2] The NwtFileExplorer API`
    - **@uses** `NwtUtils`
@@ -1162,7 +1162,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-12T22:23:05.537Z",
+  "generatedAt": "2026-02-13T09:21:21.960Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -3193,9 +3193,9 @@ El JSON original es:
         "NwtDynamicTesterViewer",
         "NwtFilesystem",
         "NwtPaths",
+        "NwtImporter",
         "NwtDialogs",
         "NwtTester",
-        "NwtImporter",
         "NwtTimer"
       ]
     },

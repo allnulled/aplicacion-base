@@ -1,4 +1,4 @@
-<div class="nwt_tester_node">
+<div class="nwt_tester_node pad_right_1">
     <template v-if="node instanceof $nwt.Tester.Assertion">
         <div :class="'test ' + node.status"
             class="flex_row centered">
@@ -70,7 +70,7 @@
                 <!--nwt-progress-bar-viewer :progress-bar="node.progressBar" /-->
                 <div class="progress_bar_viewer">
                     <div role="progressbar"
-                        :class="{animate: node.progressBar.percent !== '100.00%', paused: node.status === 'running', error: node.status === 'failed'}">
+                        :class="{animate: node.progressBar.percent !== '100.00%', error: node.status === 'failed'}">
                         <div :style="{width: node.progressBar.percent}">
                             <div class="progress_bar_message">
                                 <div>{{ node.progressBar.percent }}</div>
@@ -80,7 +80,7 @@
                 </div>
             </div>
         </template>
-        <div class="children">
+        <div class="children" ref="childrenBox">
             <nwt-tester-node v-for="(child,i) in node.children"
                 v-bind:key="'node_' + node.name + '_child_' + i"
                 :node="child"

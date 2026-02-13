@@ -21,5 +21,3 @@ for(let index=0; index<files.length; index++) {
   await NwtImporter.asyncSource(file);
   tester.progressBar.advance(1);
 }
-
-assertion(false, "Something went wrong!");

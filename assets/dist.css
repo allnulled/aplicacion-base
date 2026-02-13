@@ -2773,6 +2773,10 @@ hr {
 .nwt_tester_node .times_cell {
     font-size: 8px;
 }
+.nwt_tester_node .children {
+    overflow: scroll;
+    /*max-height: 300px;*/
+}
 
 /* @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html*/
 

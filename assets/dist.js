@@ -24387,7 +24387,8 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     define(name, callback) {
       trace("NwtTester.prototype.define");
-      const test = new NwtTester(name, callback, this.hooks, this, this.root || this, this.level+1);
+      const newHooks = {}; // Hooks no se heredan: this.hooks
+      const test = new NwtTester(name, callback, newHooks, this, this.root || this, this.level+1);
       this.children.push(test);
       this.progressBar.total = this.children.length;
       this.hooks.onTestDefined(this, test);
@@ -24456,9 +24457,9 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         if(this.accumulatedErrors.length) {
           throw new Error(`Test «${this.name}» failed with ${this.accumulatedErrors.length} errors`);
         }
-        this.status = "ok";
         this.successMoment = NwtTimer.secondsDiff(new Date(), (this.root || this).startedAt);
         this.totalTime = NwtTimer.secondsDiff(new Date(), this.startedAt);
+        this.status = "ok";
         this.hooks.onTestSuccess(this);
       } catch (err) {
         this.status = "failed";
@@ -31933,7 +31934,7 @@ Vue.component("NwtTesterViewer", {
  * 
  */
 Vue.component("NwtTesterNode", {
-  template: `<div class="nwt_tester_node">
+  template: `<div class="nwt_tester_node pad_right_1">
     <template v-if="node instanceof \$nwt.Tester.Assertion">
         <div :class="'test ' + node.status"
             class="flex_row centered">
@@ -32005,7 +32006,7 @@ Vue.component("NwtTesterNode", {
                 <!--nwt-progress-bar-viewer :progress-bar="node.progressBar" /-->
                 <div class="progress_bar_viewer">
                     <div role="progressbar"
-                        :class="{animate: node.progressBar.percent !== '100.00%', paused: node.status === 'running', error: node.status === 'failed'}">
+                        :class="{animate: node.progressBar.percent !== '100.00%', error: node.status === 'failed'}">
                         <div :style="{width: node.progressBar.percent}">
                             <div class="progress_bar_message">
                                 <div>{{ node.progressBar.percent }}</div>
@@ -32015,7 +32016,7 @@ Vue.component("NwtTesterNode", {
                 </div>
             </div>
         </template>
-        <div class="children">
+        <div class="children" ref="childrenBox">
             <nwt-tester-node v-for="(child,i) in node.children"
                 v-bind:key="'node_' + node.name + '_child_' + i"
                 :node="child"
@@ -32043,7 +32044,10 @@ Vue.component("NwtTesterNode", {
     return {};
   },
   mounted() {
-    this.viewer.$refs.viewerBox.scrollTop = this.viewer.$refs.viewerBox.scrollHeight - this.viewer.$refs.viewerBox.clientHeight;
+    trace("NwtTesterNode.mounted");
+    if(this.$refs.childrenBox) {
+      this.$refs.childrenBox.scrollTop = this.$refs.childrenBox.scrollHeight - this.$refs.childrenBox.clientHeight;
+    }
   }
 });
 
@@ -32067,7 +32071,16 @@ Vue.component("NwtTesterNode", {
  */
 Vue.component("NwtDynamicTesterViewer", {
   template: `<div class="nwt_dynamic_tester_viewer">
-    <div class="title">Tests dinámicos</div>
+    <div class="title">
+        <div class="flex_row centered">
+            <div class="flex_100">
+                Tests dinámicos
+            </div>
+            <div class="flex_1">
+                <button class="mini" v-on:click="runAllTests">▶️</button>
+            </div>
+        </div>
+    </div>
     <div class="pad_1">
         <div class=""
             v-for="test, testIndex in testsFound"
@@ -32105,10 +32118,27 @@ Vue.component("NwtDynamicTesterViewer", {
         };
       });
     },
-    async runTest(test) {
+    runAllTests() {
+      trace("NwtDynamicTesterViewer.methods.runAllTests");
+      const allTests = this.testsFound;
+      return this.runTest({id: "Todos los tests dinámicos"}, async function(tester, assertion, dialog) {
+        trace("NwtDynamicTesterViewer.methods.runAllTests#TestCallback");
+        for(let index=0; index<allTests.length; index++) {
+          const test = allTests[index];
+          await tester.define(`Test de: ${test.id}`, async (subtest,assertion) => {
+            await NwtImporter.asyncSource(test.js, { tester: subtest, assertion });
+          });
+        }
+      });
+    },
+    async runTestCallback(tester, assertion, dialog, test) {
+      await NwtImporter.asyncSource(test.js, { tester, assertion });
+    },
+    runTest(test, coreCallback = this.runTestCallback) {
       trace("NwtDynamicTesterViewer.methods.runTest");
+      const testerViewer = this;
       const testUniqueId = `Test de: ${test.id}`;
-      NwtDialogs.open({
+      return NwtDialogs.open({
         title: testUniqueId,
         template: `
           <div class="pad_1">
@@ -32121,12 +32151,12 @@ Vue.component("NwtDynamicTesterViewer", {
               hasFailed: false,
               tester: NwtTester.create(testUniqueId, async (tester, assertion) => {
                 tester.dialog = this;
-                await NwtImporter.asyncSource(test.js, { tester, assertion });
+                await coreCallback.call(testerViewer, tester, assertion, this, test);
               }, {
                 onTestSuccess: async () => {
-                  await NwtTimer.timeout(1000 * 2);
+                  await NwtTimer.timeout(1000 * 0.5);
                   if(this.hasFailed) return;
-                  this.tester.dialog.cancel();
+                  this.cancel();
                 },
                 onTestFailure: async () => {
                   this.hasFailed = true;

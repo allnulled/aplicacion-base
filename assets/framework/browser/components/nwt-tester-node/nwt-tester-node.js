@@ -26,6 +26,9 @@ Vue.component("NwtTesterNode", {
     return {};
   },
   mounted() {
-    this.viewer.$refs.viewerBox.scrollTop = this.viewer.$refs.viewerBox.scrollHeight - this.viewer.$refs.viewerBox.clientHeight;
+    trace("NwtTesterNode.mounted");
+    if(this.$refs.childrenBox) {
+      this.$refs.childrenBox.scrollTop = this.$refs.childrenBox.scrollHeight - this.$refs.childrenBox.clientHeight;
+    }
   }
 });

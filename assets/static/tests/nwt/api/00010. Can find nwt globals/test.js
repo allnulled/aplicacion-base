@@ -105,5 +105,5 @@ for(let index=0; index<whatGlobals.length; index++) {
   const findGlobal = whatGlobals[index];
   const globalValue = findGlobal();
   assertion(typeof globalValue !== "undefined", `Global «${findGlobal.toString().replace("() => ", "")}» is found`);
-  await NwtTimer.timeout(100);
+  await NwtTimer.timeout(20);
 }

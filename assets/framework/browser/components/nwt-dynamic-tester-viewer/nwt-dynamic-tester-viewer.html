@@ -1,5 +1,14 @@
 <div class="nwt_dynamic_tester_viewer">
-    <div class="title">Tests dinámicos</div>
+    <div class="title">
+        <div class="flex_row centered">
+            <div class="flex_100">
+                Tests dinámicos
+            </div>
+            <div class="flex_1">
+                <button class="mini" v-on:click="runAllTests">▶️</button>
+            </div>
+        </div>
+    </div>
     <div class="pad_1">
         <div class=""
             v-for="test, testIndex in testsFound"

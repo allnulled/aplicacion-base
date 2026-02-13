@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-12T22:23:05.537Z",
+  "generatedAt": "2026-02-13T09:21:21.960Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -168,9 +168,9 @@
         "NwtDynamicTesterViewer",
         "NwtFilesystem",
         "NwtPaths",
+        "NwtImporter",
         "NwtDialogs",
         "NwtTester",
-        "NwtImporter",
         "NwtTimer"
       ]
     },

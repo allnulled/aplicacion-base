@@ -1,3 +1,7 @@
 .nwt_tester_node .times_cell {
     font-size: 8px;
 }
+.nwt_tester_node .children {
+    overflow: scroll;
+    /*max-height: 300px;*/
+}

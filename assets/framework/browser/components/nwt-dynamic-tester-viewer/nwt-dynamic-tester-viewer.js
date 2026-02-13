@@ -33,10 +33,27 @@ Vue.component("NwtDynamicTesterViewer", {
         };
       });
     },
-    async runTest(test) {
+    runAllTests() {
+      trace("NwtDynamicTesterViewer.methods.runAllTests");
+      const allTests = this.testsFound;
+      return this.runTest({id: "Todos los tests dinámicos"}, async function(tester, assertion, dialog) {
+        trace("NwtDynamicTesterViewer.methods.runAllTests#TestCallback");
+        for(let index=0; index<allTests.length; index++) {
+          const test = allTests[index];
+          await tester.define(`Test de: ${test.id}`, async (subtest,assertion) => {
+            await NwtImporter.asyncSource(test.js, { tester: subtest, assertion });
+          });
+        }
+      });
+    },
+    async runTestCallback(tester, assertion, dialog, test) {
+      await NwtImporter.asyncSource(test.js, { tester, assertion });
+    },
+    runTest(test, coreCallback = this.runTestCallback) {
       trace("NwtDynamicTesterViewer.methods.runTest");
+      const testerViewer = this;
       const testUniqueId = `Test de: ${test.id}`;
-      NwtDialogs.open({
+      return NwtDialogs.open({
         title: testUniqueId,
         template: `
           <div class="pad_1">
@@ -49,12 +66,12 @@ Vue.component("NwtDynamicTesterViewer", {
               hasFailed: false,
               tester: NwtTester.create(testUniqueId, async (tester, assertion) => {
                 tester.dialog = this;
-                await NwtImporter.asyncSource(test.js, { tester, assertion });
+                await coreCallback.call(testerViewer, tester, assertion, this, test);
               }, {
                 onTestSuccess: async () => {
-                  await NwtTimer.timeout(1000 * 2);
+                  await NwtTimer.timeout(1000 * 0.5);
                   if(this.hasFailed) return;
-                  this.tester.dialog.cancel();
+                  this.cancel();
                 },
                 onTestFailure: async () => {
                   this.hasFailed = true;
