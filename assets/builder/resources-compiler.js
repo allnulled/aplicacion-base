@@ -334,8 +334,29 @@ const ResourcesCompiler = class {
     return traitsSource ? `traits: ${traitsSource},` : "";
   }
 
+  static renderSettingsSpec(definition, metadata) {
+    const allTraits = definition.$inheritedBy;
+    const settingsSpec = {};
+    for(let index=0; index<allTraits.length; index++) {
+      const oneTrait = allTraits[index];
+      Object.assign(settingsSpec, oneTrait.settingsSpec || {});
+    }
+    Object.assign(settingsSpec, definition.settingsSpec);
+    if(!Object.keys(settingsSpec).length) return "";
+    definition.settingsSpec = settingsSpec;
+    const settingsSpecSource = this.renderValue(definition.settingsSpec);
+    return `settingsSpec: ${settingsSpecSource},`;
+  }
+
   static renderOtherProperties(definition, metadata) {
-    const excludedProps = ["id", "apis", "inherits", "traits", "view"];
+    const excludedProps = [
+      "id",
+      "apis",
+      "inherits",
+      "traits",
+      "view",
+      "settingsSpec",
+    ];
     const output = [];
     Iterating_props:
     for (let prop in definition) {
@@ -375,6 +396,7 @@ const ResourcesCompiler = class {
       this.renderApis(definition, metadata),
       this.renderInherits(definition, metadata),
       this.renderTraits(definition, metadata),
+      this.renderSettingsSpec(definition, metadata),
       this.renderOtherProperties(definition, metadata),
       ...definition.view ? [
         `view: {`,
