@@ -25,7 +25,7 @@ if (typeof window !== "undefined") {
         Vue.prototype.$nwt = NwtFramework;
         Vue.prototype.$tracer = NwtTracer.global;
         Vue.prototype.$trace = NwtTracer.global.createTrace();
-        await NwtLazyControl.loadBasicControls();
+        // await NwtLazyControl.loadBasicControls();
         new Vue({
             render: h => h(Vue.options.components.MainWindow),
         }).$mount("#app");

@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-13T18:19:57.094Z",
+  "generatedAt": "2026-02-16T03:49:38.737Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -97,48 +97,6 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-components-cache.js",
-      "name": "nwt-components-cache.js",
-      "type": "file",
-      "formalName": "NwtComponentsCacheJs",
-      "apiName": "NwtComponentsCache",
-      "dependencies": [
-        "NwtComponentsCache"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-component.js",
-      "name": "nwt-lazy-component.js",
-      "type": "file",
-      "formalName": "NwtLazyComponentJs",
-      "apiName": "NwtLazyComponent",
-      "dependencies": [
-        "NwtLazyComponent",
-        "NwtPaths",
-        "NwtFilesystem",
-        "NwtFormulatorLazyComponent",
-        "NwtImporter"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-component/nwt-lazy-control.js",
-      "name": "nwt-lazy-control.js",
-      "type": "file",
-      "formalName": "NwtLazyControlJs",
-      "apiName": "NwtLazyControl",
-      "dependencies": [
-        "NwtLazyControl",
-        "NwtLazyComponent",
-        "NwtControlValidator",
-        "NwtControlForStructure",
-        "NwtControlForList",
-        "NwtControlForOption",
-        "NwtControlForText",
-        "NwtResource",
-        "NwtLazyFormControl"
-      ]
-    },
-    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css",
       "name": "nwt-dynamic-tester-viewer.css",
       "type": "file",
@@ -172,45 +130,6 @@
         "NwtDialogs",
         "NwtTester",
         "NwtTimer"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-mixer.js",
-      "name": "nwt-feature-mixer.js",
-      "type": "file",
-      "formalName": "NwtFeatureMixerJs",
-      "apiName": "NwtFeatureMixer",
-      "dependencies": [
-        "NwtFeatureMixer",
-        "NwtResource",
-        "NwtArrayUtils",
-        "NwtFeatureStatics"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-feature-statics.js",
-      "name": "nwt-feature-statics.js",
-      "type": "file",
-      "formalName": "NwtFeatureStaticsJs",
-      "apiName": "NwtFeatureStatics",
-      "dependencies": [
-        "NwtFeatureStatics",
-        "NwtUtils",
-        "NwtResource",
-        "NwtAsserter"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-feature/nwt-lazy-feature.js",
-      "name": "nwt-lazy-feature.js",
-      "type": "file",
-      "formalName": "NwtLazyFeatureJs",
-      "apiName": "NwtLazyFeature",
-      "dependencies": [
-        "NwtLazyFeature",
-        "NwtPaths",
-        "NwtFilesystem",
-        "NwtImporter"
       ]
     },
     {
@@ -836,7 +755,39 @@
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api-nexer.js",
+      "name": "nwt-resource-api-nexer.js",
+      "type": "file",
+      "formalName": "NwtResourceApiNexerJs",
+      "apiName": "NwtResourceApiNexer",
+      "dependencies": [
+        "NwtResourceApiNexer"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api.js",
+      "name": "nwt-resource-api.js",
+      "type": "file",
+      "formalName": "NwtResourceApiJs",
+      "apiName": "NwtResourceApi",
+      "dependencies": [
+        "NwtResourceApi",
+        "NwtResourceApiNexer"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js",
+      "name": "nwt-resource.js",
+      "type": "file",
+      "formalName": "NwtResourceJs",
+      "apiName": "NwtResource",
+      "dependencies": [
+        "NwtResource",
+        "NwtResourceApi"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource-before/nwt-resource.js",
       "name": "nwt-resource.js",
       "type": "file",
       "formalName": "NwtResourceJs",
@@ -1093,6 +1044,17 @@
       "apiName": "NwtBoot",
       "dependencies": [
         "NwtFramework"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-browser-polyfill.js",
+      "name": "nwt-browser-polyfill.js",
+      "type": "file",
+      "formalName": "NwtBrowserPolyfillJs",
+      "apiName": "NwtBrowserPolyfill",
+      "dependencies": [
+        "NwtBrowserPolyfill",
+        "NwtEnvironment"
       ]
     },
     {
@@ -1517,6 +1479,7 @@
         "NwtFilesystem",
         "NwtFramework",
         "NwtEnvironment",
+        "NwtBrowserPolyfill",
         "NwtRandomizer",
         "NwtPaths",
         "require(\"fs\")",
@@ -1607,6 +1570,7 @@
         "NwtFiletreeJson",
         "NwtFiletreeProperty",
         "NwtFiletreeGlob",
+        "NwtBrowserPolyfill",
         "NwtStringShortener",
         "NwtPaths",
         "require(\"fast-glob\")",

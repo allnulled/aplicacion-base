@@ -34,7 +34,11 @@
 
     static resolve(...subpaths) {
       trace("NwtPaths.resolve");
-      return require("path").resolve(...subpaths);
+      if(NwtEnvironment.isNode) {
+        return require("path").resolve(...subpaths);
+      } else {
+        return subpaths.join("/").replace(/\/+/g, "/");
+      }
     }
 
     constructor() {
@@ -64,14 +68,22 @@
 
     relative(...subpaths) {
       trace("NwtPaths.prototype.relative");
-      const path = require("path");
-      return path.resolve(this.projectRoot, ...subpaths);
+      if(NwtEnvironment.isNode) {
+        const path = require("path");
+        return require("path").resolve(...subpaths);
+      } else {
+        return [this.projectRoot, ...subpaths].join("/").replace(/\/+/g, "/");
+      }
     }
 
     relativeToAppData(...subpaths) {
       trace("NwtPaths.prototype.relativeToAppData");
-      const path = require("path");
-      return path.resolve(this.appData, ...subpaths);
+      if(NwtEnvironment.isNode) {
+        const path = require("path");
+        return require("path").resolve(...subpaths);
+      } else {
+        return [this.appData, ...subpaths].join("/").replace(/\/+/g, "/");
+      }
     }
 
   };

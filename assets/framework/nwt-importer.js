@@ -157,13 +157,14 @@
       const AsyncFunction = (async () => { }).constructor;
       const keys = Object.keys(parameters);
       const values = Object.values(parameters);
-      const asyncFunction = new AsyncFunction(...keys, code);
+      const safeCode = this.wrapIntoTryCatch(code);
+      const asyncFunction = new AsyncFunction(...keys, safeCode);
       const keysTyped = keys.reduce((out, key) => {
         out[key] = typeof parameters[key];
         return out;
       }, {});
       trace("js-injected://", JSON.stringify(keysTyped, null, 2));
-      trace("js-injection://", this.wrapIntoTryCatch(code));
+      trace("js-injection://", code);
       return asyncFunction.call(scope, ...values);
     }
 

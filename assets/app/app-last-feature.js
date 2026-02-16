@@ -1,1 +1,2 @@
-await NwtDomAutomator.abrirTestsDeLaAplicacion();
+// await NwtDomAutomator.abrirTodosLosTestsDeLaAplicacion();
+await NwtDomAutomator.abrirUltimosTests();

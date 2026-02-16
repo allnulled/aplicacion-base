@@ -1,8 +1,9 @@
 const projectRoot = require("path").resolve(__dirname, "..", "..");
 const bundlelistExternal = require(__dirname + "/bundlelist-external.js");
+const bundlelistResources = JSON.parse(require("fs").readFileSync(__dirname + "/bundlelist-resources.json").toString());
 const bundlelistCommon = require(__dirname + "/bundlelist-common.js");
 
-module.exports = [
+const allModules = [
   `${projectRoot}/assets/framework/browser/win7/win7.css`,
   `${projectRoot}/assets/framework/browser/win7/win7-patches.css`,
   `${projectRoot}/assets/framework/browser/vue2/vue2.js`,
@@ -59,7 +60,8 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/control-for/group/structure/control`,
   //*/
   // Recursos basados en componentes NwtComponent
-  `${projectRoot}/assets/framework/browser/components/nwt-component/nwt-components-cache.js`,
+  //`${projectRoot}/assets/framework/browser/components/nwt-component/nwt-components-cache.js`,
+  /*
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource.js`,
   // Formulator: la API buena de fomularios
   // `${projectRoot}/assets/framework/browser/components/nwt-component/type/control/validator/component`,
@@ -71,6 +73,16 @@ module.exports = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-lazy-form-control/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-lazy-form/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-builder/nwt-form-builder.js`,
+  //*/
+  // Resource API:
+  `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource-api-nexer.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource-api.js`,
+  ...(function() {
+    const apisDir = `${projectRoot}/assets/framework/browser/components/nwt-resource/api`;
+    const apiFiles = require("fs").readdirSync(apisDir).map(f => `${apisDir}/${f}`);
+    return apiFiles;
+  })(),
+  `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource.js`,
   // Fondos exóticos:
   `${projectRoot}/assets/framework/browser/components/nwt-stars-background/nwt-stars-background`,
   `${projectRoot}/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background`,
@@ -84,7 +96,12 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css`,
   // @OK
   ...bundlelistExternal,
+  ...bundlelistResources,
   `${projectRoot}/assets/framework/browser/css/one-framework/one-framework.css`,
   `${projectRoot}/assets/framework/browser/css/one-framework/one-theme.css`,
   `${projectRoot}/assets/framework/browser/css/custom/custom.css`,
 ];
+
+console.log("Composing source code from: ", JSON.stringify(allModules, null, 2));
+
+module.exports = allModules;

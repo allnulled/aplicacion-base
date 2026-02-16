@@ -11,7 +11,7 @@
     "install:reloader": "cd assets/framework/browser/reloader && npm install",
     "build:docs": "node assets/builder/build-docs.js",
     "build": "node assets/builder/bundle.js",
-    "dev": "npx nodemon -w 'assets/framework' -w 'assets/directives' -w 'assets/app' -w 'assets/components' -w 'assets/css' -w 'assets/builder' -i 'assets/framework/nwt-ast-tree-template-source.js' -e 'js,css,html' -x 'npm run build'",
+    "dev": "npx nodemon -w 'assets/framework' -w 'assets/directives' -w 'assets/app' -w 'assets/components' -w 'assets/css' -w 'assets/builder' -i 'assets/framework/nwt-ast-tree-template-source.js' -i 'assets/framework/browser/components/nwt-resource/compiled' -e 'js,css,html' -x 'npm run build'",
     "refresh": "node assets/framework/browser/reloader/starter.js",
     "start": "nw .",
     "ui": "nw .",

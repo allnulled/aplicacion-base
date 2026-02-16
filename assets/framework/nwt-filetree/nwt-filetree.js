@@ -54,7 +54,7 @@
     glob = new NwtFiletreeGlob(this);
 
     constructor(basedir) {
-      const path = require("path");
+      const path = NwtBrowserPolyfill.require("path");
       this.basedir = path.resolve(basedir);
       this.shortener = NwtStringShortener.create(this.basedir);
     }

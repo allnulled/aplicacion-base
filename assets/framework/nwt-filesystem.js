@@ -67,7 +67,7 @@
 
   const NwtFilesystem = class {
 
-    static fs = NwtEnvironment.isNode ? require("fs") : null;
+    static fs = NwtBrowserPolyfill.require("fs");
 
     static readFile(filepath, encoding = "utf8") {
       trace("NwtFilesystem.readFile");

@@ -33,8 +33,21 @@
     static async abrirTestsDeLaAplicacion() {
       trace("NwtDomAutomator.abrirTestsDeLaAplicacion");
       NwtDomAutomator.find(document.body, "*", "Tests de la aplicación")[0].click();
+    }
+
+    static async abrirTodosLosTestsDeLaAplicacion() {
+      trace("NwtDomAutomator.abrirTodosLosTestsDeLaAplicacion");
+      await this.abrirTestsDeLaAplicacion();
       await NwtTimer.timeout(100);
-      const selectedTest = NwtDomAutomator.find(document.body, "*", "nwt » api » 90010. Can close everything before leaving")[0];
+      const selectedTest = NwtDomAutomator.find(document.body, "*", "Tests dinámicos")[0];
+      selectedTest.nextElementSibling.children[0].click();
+    }
+
+    static async abrirUltimosTests() {
+      trace("NwtDomAutomator.abrirUltimosTests");
+      await this.abrirTestsDeLaAplicacion();
+      await NwtTimer.timeout(100);
+      const selectedTest = NwtDomAutomator.find(document.body, "*", "nwt » api » 02000. ")[0];
       selectedTest.parentElement.previousElementSibling.children[0].click();
     }
 

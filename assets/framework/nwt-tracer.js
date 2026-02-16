@@ -67,9 +67,9 @@
       this.isActivated = false;
     }
 
-    trace(message, args = []) {
+    trace(message, args = [], ...moreArgs) {
       if(this.isActivated) {
-        console.log(`[trace][${this.id}][${this.getCurrentMillisecond()}] ${message}`, args);
+        console.log(`[trace][${this.id}][${this.getCurrentMillisecond()}] ${message}`, ...Array.isArray(args) ? args : [args, moreArgs]);
       }
     }
 

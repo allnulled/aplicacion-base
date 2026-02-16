@@ -88,7 +88,7 @@
     }
 
     async deleteAllExceptValues(values) {
-      trace("NwtStringShortener.delete");
+      trace("NwtStringShortener.deleteAllExceptValues");
       const idsObject = await NwtFilesystem.readJson(this.filepath);
       const currentKeys = Object.keys(idsObject);
       let hadDeletes = 0;

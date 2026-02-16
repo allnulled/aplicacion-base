@@ -1,7 +1,13 @@
+Snippet_para_sacar_las_claves: {
+  console.log("[\n" + Object.keys(window).filter(k => k.startsWith("Nwt")).map(k => {
+    return `() => ${k},`;
+  }).join("\n  ") + "\n]");
+}
 const whatGlobals = [
-  () => NwtFramework,
+() => NwtFramework,
   () => NwtTracer,
   () => NwtEnvironment,
+  () => NwtBrowserPolyfill,
   () => NwtArgumenter,
   () => NwtAsserter,
   () => NwtDebug,
@@ -10,6 +16,8 @@ const whatGlobals = [
   () => NwtErrorUtils,
   () => NwtDialogDefinition,
   () => NwtImporter,
+  () => NwtEventsManager,
+  () => NwtEvents,
   () => NwtPaths,
   () => NwtAbort,
   () => NwtStrings,
@@ -20,6 +28,7 @@ const whatGlobals = [
   () => NwtTimer,
   () => NwtVue2,
   () => NwtPrototyper,
+  () => NwtDomAutomator,
   () => NwtLazyLoader,
   () => NwtJsonStorer,
   () => NwtSettings,
@@ -83,13 +92,9 @@ const whatGlobals = [
   () => NwtValidationContext,
   () => NwtValidableSchema,
   () => NwtValidator,
-  () => NwtComponentsCache,
+  () => NwtResourceApiNexer,
+  () => NwtResourceApi,
   () => NwtResource,
-  () => NwtLazyComponent,
-  () => NwtLazyControl,
-  () => NwtLazyFeature,
-  () => NwtFeatureStatics,
-  () => NwtFeatureMixer,
   () => NwtCommandContextInterface,
   () => NwtCommandFormInterface,
   () => NwtCommandViewInterface,

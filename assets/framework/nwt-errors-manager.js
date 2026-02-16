@@ -44,7 +44,7 @@
     }
 
     constructor(htmlElement = false) {
-      trace("NwtErrorsManager.constructor");
+      trace(...this.constructor.inRed("NwtErrorsManager.constructor"));
       this.isDebugging = false;
       this.htmlElement = htmlElement;
       this.errors = [];
@@ -65,8 +65,16 @@
       }
     }
 
+    static inRed(txt) {
+      if(!NwtEnvironment.hasWindow) {
+        return [`${txt}`];
+      } else {
+        return [`%c${txt}`, ["color:red;background-color:yellow;"]];
+      }
+    }
+
     async initialize() {
-      trace("NwtErrorsManager.prototype.initialize");
+      trace(...this.constructor.inRed("NwtErrorsManager.prototype.initialize"));
       this.debug("step1");
       if(!NwtEnvironment.hasWindow) {
         this.debug("step2");
@@ -117,8 +125,6 @@
           }
           if(this.isErrorDuplicated(error)) return false;
           this.debug(7);
-          this.inspect(error instanceof Error);
-          this.inspect(error, component);
           NwtErrorsManager.expandError(error, {
             byComponent: component?.$options?._componentTag || component,
           });
@@ -151,7 +157,7 @@
     }
 
     isErrorDuplicated(error) {
-      trace("NwtErrorsManager.prototype.isErrorDuplicated");
+      trace(...this.constructor.inRed("NwtErrorsManager.prototype.isErrorDuplicated"));
       const repeated = this.errors.filter(actualError => {
         return (error.name === actualError.name) && (error.message === actualError.message);
       });
@@ -163,7 +169,7 @@
     }
 
     showError(error) {
-      trace("NwtErrorsManager.prototype.showError");
+      trace(...this.constructor.inRed("NwtErrorsManager.prototype.showError"));
       Securers: {
         if (this.isErrorDuplicated(error)) return false;
         console.error("showError:", error);
@@ -174,19 +180,19 @@
     }
 
     clearErrors() {
-      trace("NwtErrorsManager.prototype.clearErrors");
+      trace(...this.constructor.inRed("NwtErrorsManager.prototype.clearErrors"));
       this.errors = [];
       this.reload();
     }
 
     clearError(pos) {
-      trace("NwtErrorsManager.prototype.clearError");
+      trace(...this.constructor.inRed("NwtErrorsManager.prototype.clearError"));
       this.errors.splice(pos, 1);
       this.reload();
     }
 
     async reload() {
-      trace("NwtErrorsManager.prototype.reload");
+      trace(...this.constructor.inRed("NwtErrorsManager.prototype.reload"));
       const { html, js } = await this.utils.formatErrorsToHtmlAndJs();
       this.htmlElement.innerHTML = html;
       await js(this.errors, this);
@@ -194,14 +200,14 @@
 
     utils = {
       formatErrorsToHtmlAndJs: async () => {
-        trace("NwtErrorsManager.prototype.utils.formatErrorsToHtmlAndJs");
+        trace(...this.constructor.inRed("NwtErrorsManager.prototype.utils.formatErrorsToHtmlAndJs"));
         const html = await NwtTemplates.global.render.ejs.file("nwt/nwt-errors-manager/viewer/template.html", this);
         const jsSource = await NwtFilesystem.readFile(NwtTemplates.global.resolve("nwt/nwt-errors-manager/viewer/template.js"));
         const js = NwtImporter.asyncFactory(jsSource, ["errors", "manager"]);
         return { html, js };
       },
       formatErrorsToText: () => {
-        trace("NwtErrorsManager.prototype.utils.formatErrorsToText");
+        trace(...this.constructor.inRed("NwtErrorsManager.prototype.utils.formatErrorsToText"));
         let text = "";
         for (let index = 0; index < this.errors.length; index++) {
           const error = this.errors[index];
@@ -225,7 +231,7 @@
     };
 
     static expandError(errorInput, overriders = false) {
-      trace("NwtUtils.expandError");
+      trace(...this.inRed("NwtUtils.expandError"));
       console.error("expandError", errorInput);
       Securers: {
         // Por si aún no está cargado:
@@ -246,7 +252,7 @@
     }
 
     static parseStackTrace(stack) {
-      trace("NwtUtils.parseStackTrace");
+      trace(...this.inRed("NwtUtils.parseStackTrace"));
       return stack.split("\n").map(line => {
         const m = line.match(/at\s+(.*?)\s+\((.*):(\d+):(\d+)\)/);
         let missing = false;

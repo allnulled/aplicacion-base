@@ -29,6 +29,7 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-boot.js`,
   `${projectRoot}/assets/framework/nwt-tracer.js`,
   `${projectRoot}/assets/framework/nwt-environment.js`,
+  `${projectRoot}/assets/framework/nwt-browser-polyfill.js`,
   `${projectRoot}/assets/framework/nwt-argumenter.js`,
   `${projectRoot}/assets/framework/nwt-asserter.js`,
   `${projectRoot}/assets/framework/nwt-debug.js`,

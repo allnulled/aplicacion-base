@@ -1,3 +1,58 @@
+16/02/2026
+
+
+- [ ] API de Settings Prop:
+   - [ ] settingsProp admite definiciones tipo vue2 pero aplicadas a settings
+
+- [x] Mejoras en resource-compiler:
+   - [x] $inheritedBy deja la huella de todos los traits aplicados por orden
+      - [x] Permite recursividad linial
+   - [x] Traits recursive inheritance automática en compilation-time
+      - [x] Gracias a recursividad linial
+   - [x] Libertad para importaciones en vivo en compilation-time
+      - [x] con __dirname
+      - [x] con __filename
+      - [x] con module.exports
+- [x] APIs automáticamente acopladas
+   - [x] Sin consumir scopes
+   - [x] ...etc etc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 12/02/2026
 
 - [ ] Que se imprima bien el control de option

@@ -68,6 +68,25 @@
       return -1;
     }
 
+    static filter(list, callback) {
+      trace("NwtCollectionUtils.filter");
+      const keys = Object.keys(list);
+      const output = [];
+      for(let index=0; index<keys.length; index++) {
+        const key = keys[index];
+        const item = list[key];
+        try {
+          const result = callback(item, key, index, output);
+          if(result === true) {
+            output.push(item);
+          }
+        } catch (error) {
+          // @IGNORED
+        }
+      }
+      return output;
+    }
+
   };
 
   return NwtCollectionUtils;

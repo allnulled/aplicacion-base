@@ -3,7 +3,8 @@ const path = require("path");
 const projectRoot = path.resolve(__dirname, "..", "..");
 
 require(`${projectRoot}/assets/builder/bundlelist-common.js`).forEach(filepath => require(filepath));
-  
+
+require(`${projectRoot}/assets/builder/resources-compiler.js`)(projectRoot);
 
 require(`${__dirname}/vuebundler.js`).bundle({
   list: `${__dirname}/bundlelist.js`,

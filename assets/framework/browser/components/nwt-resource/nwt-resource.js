@@ -13,61 +13,68 @@
 
   const NwtResource = class {
 
-    static cache = new NwtComponentsCache();
+    static definitions = {};
 
-    static for(resourceIdBrute) {
-      trace("NwtResource.for");
-      const isFeature = resourceIdBrute.startsWith("@feature/for/");
-      const isControl = resourceIdBrute.startsWith("@control/for/");
-      const isComponent = resourceIdBrute.startsWith("@");
-      const resourceId = resourceIdBrute.replace(/^\@/g, "");
-      const componentId = NwtVue2.fromTagToIdNotation(resourceId);
-      if(this.cache.has(componentId)) return {
-        load: () => {
-          return this.cache.get(componentId).options;
-        },
-      };
-      if (isFeature) {
-        return NwtLazyFeature.create(resourceId);
-      } else if (isControl) {
-        return NwtLazyControl.create(resourceId);
-      } else if (isComponent) {
-        return NwtLazyComponent.create(resourceId);
-      } else {
-        assertion(resourceId in Vue.options.component, `Required parameter «resourceId» now «${resourceId}» to exist as component or start with «@control/for» or «@feature/for» on «NwtFeatureMixer.extractFeaturesInheritance»`);
-        return {
-          load: () => Vue.options.components[resourceId].options
-        };
-      }
-    }
-
-    static load(resourceId) {
-      return this.for(resourceId).load();
-    }
-
-    static list = {
-      load: (resourceList) => {
-        return this.list.for(resourceList).load();
-      },
-      for: (resourceList) => {
-        const input = [];
-        for(let index=0; index<resourceList.length; index++) {
-          const resourceId = resourceList[index];
-          const resource = this.for(resourceId);
-          input.push(resource);
+    static validateDefinition(definition, isRedefining = false) {
+      trace("NwtResource.validateDefinition");
+      assertion(typeof definition === "object", "Parameter «definition» must be object on «NwtResource.validateDefinition»");
+      Check_id: {
+        assertion(typeof definition.id === "string", "Parameter «definition.id» must be string on «NwtResource.validateDefinition»");
+        if (!isRedefining) {
+          assertion(!(definition.id in this.definitions), `Parameter «definition.id» in this case «${definition.id}» cannot be registered twice on «NwtResource.validateDefinition»`);
         }
-        return {
-          async load() {
-            const output = [];
-            for(let index=0; index<input.length; index++) {
-              const resource = input[index];
-              const loaded = await resource.load();
-              output.push(loaded);
-            }
-            return output;
+      }
+      Check_type: {
+        if (definition.types) {
+          assertion(Array.isArray(definition.types), "Parameter «definition.types» must be array on «NwtResource.validateDefinition»");
+          for (let index = 0; index < definition.types.length; index++) {
+            assertion(typeof definition.types[index] === "string", `Parameter «definition.types[${index}]» must be string on «NwtResource.validateDefinition»`);
+            // assertion(definition.types[index] in this.definitions, `Parameter «definition.types[${index}]» which is «${definition.types[index]}» must be registered in «definitions» on «NwtResource.validateDefinition»`);
           }
         }
       }
+      Check_inherits: {
+        if (definition.inherits) {
+          assertion(Array.isArray(definition.inherits), "Parameter «definition.inherits» must be array on «NwtResource.validateDefinition»");
+          for (let index = 0; index < definition.inherits.length; index++) {
+            assertion(typeof definition.inherits[index] === "string", `Parameter «definition.inherits[${index}]» must be string on «NwtResource.validateDefinition»`);
+            // assertion(definition.inherits[index] in this.definitions, `Parameter «definition.inherits[${index}]» which is «${definition.inherits[index]}» must be registered in «definitions» on «NwtResource.validateDefinition»`);
+          }
+        }
+      }
+      Add_view_statically_if_so: {
+        if (definition.view) {
+          definition.view.statically = definition;
+        }
+      }
+      Add_definition: {
+        this.definitions[definition.id] = definition;
+      }
+      Pass_to_instance: {
+        NwtResourceApi.install(definition);
+      }
+      return definition;
+    }
+
+    static define(definition) {
+      trace("NwtResource.define");
+      return this.validateDefinition(definition, false);
+    }
+
+    static override(definition) {
+      trace("NwtResource.override");
+      return this.validateDefinition(definition, true);
+    }
+
+    static for(id) {
+      trace("NwtResource.for");
+      assertion(id in this.definitions, `Parameter «id» which is «${id}» must be registered in «definitions» on «NwtResource.for»`);
+      return this.definitions[id];
+    }
+
+    static remove(id) {
+      trace("NwtResource.remove");
+      delete this.definitions[id];
     }
 
   };
