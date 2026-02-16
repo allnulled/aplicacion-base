@@ -254,6 +254,8 @@ const ResourcesCompiler = class {
   }
 
   static resolveInheritedBy(definition, projectRoot, metadata, originalDefinition = false) {
+    assertion(typeof definition === "object", `Configuration «definition» must be object on «${metadata.id}» on «ResourcesCompiler.resolveInheritedBy»`);
+    assertion(definition !== null, `Configuration «definition» cannot be null on «${metadata.id}» on «ResourcesCompiler.resolveInheritedBy»`);
     if (!(definition.inherits)) return;
     assertion(typeof definition.id === "string", `Configuration «id» must be string on «${metadata.id}» on «ResourcesCompiler.resolveInheritedBy»`);
     definition.$inheritedBy = [];
@@ -264,6 +266,7 @@ const ResourcesCompiler = class {
     for (let index = 0; index < definition.inherits.length; index++) {
       const inheritedId = definition.inherits[index];
       const inheritedInterface = this.requireLive(`${compilablesDir}/${inheritedId}/compilable.js`);
+      assertion(typeof inheritedInterface === "object", `Inherited resource «${inheritedId}» while defining resource «${metadata.id}» must return object on «ResourcesCompiler.resolveInheritedBy»`);
       inheritedInterface.$id = inheritedId;
       inheritedInterface.$path = `assets/framework/browser/components/nwt-resource/compilable/${definition.$id}/compilable.js`;
       this.resolveInheritedBy(inheritedInterface, projectRoot, metadata, originalDefinition);
@@ -422,11 +425,17 @@ module.exports = function (projectRoot) {
     const definition = ResourcesCompiler.requireLive(item);
     assertion(typeof definition === "object", `Compilable source at «${id}» must return object from export function on «builder/resources-compiler.js»`);
     assertion(typeof definition.id === "string", `Compilable source at «${id}» must return property «id» as string on «builder/resources-compiler.js»`);
-    assertion(Array.isArray(definition.apis), `Compilable source at «${id}» must return property «apis» as array on «builder/resources-compiler.js»`);
+    if(definition.apis) assertion(Array.isArray(definition.apis), `Compilable source at «${id}» must return property «apis» as array on «builder/resources-compiler.js»`);
     definition.$id = id;
     const relativePath = item.replace(projectRoot, "");
-    if (typeof definition.view?.name !== "undefined") {
+    const hasName = typeof definition.view?.name !== "undefined";
+    const hasCompileFlag = definition.compile === true;
+    if (hasName || hasCompileFlag) {
       const outputPath = path.resolve(compiledsDir, id, "compiled.js");
+      Turn_on_compiled_flag: {
+        delete definition.compile;
+        definition.compiled = true;
+      }
       const outputSource = ResourcesCompiler.compile(definition, projectRoot, { id, relativePath });
       fs.ensureFileSync(outputPath, outputSource, "utf8");
       fs.writeFileSync(outputPath, outputSource, "utf8");

@@ -1,5 +1,6 @@
 module.exports = {
   id: "control/for/structure",
+  compile: true,
   apis: [
     "control",
     "view",

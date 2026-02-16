@@ -33,6 +33,7 @@ NwtResource.define({
       "default": null
     }
   },
+  compiled: true,
   view: {
     name: "NwtControlForStructure",
     props: {

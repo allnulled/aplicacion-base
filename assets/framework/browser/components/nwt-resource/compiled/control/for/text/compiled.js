@@ -37,6 +37,7 @@ NwtResource.define({
       null
     ]
   },
+  compiled: true,
   view: {
     name: "NwtControlForText",
     props: {

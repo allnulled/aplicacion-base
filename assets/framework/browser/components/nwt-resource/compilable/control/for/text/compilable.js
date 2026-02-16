@@ -1,5 +1,6 @@
 module.exports = {
   id: "control/for/text",
+  compile: true,
   apis: [
     "control",
     "view",
