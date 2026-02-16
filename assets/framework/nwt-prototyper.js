@@ -37,24 +37,55 @@
       }
     };
 
-    static initializePropertiesOf(target, moreArgs, extraErrorMessage = false) {
+    static fromTypeToString(t) {
+      if(t === undefined) {
+        return "Undefined";
+      }
+      if(t === null) {
+        return "Null";
+      }
+      if(t.name) {
+        return t.name;
+      }
+    }
+
+    static initializePropertiesOf(target, moreArgs, extraErrorMessage = false, onlySpecifiedProps = true) {
       const [schema] = Array.isArray(moreArgs) ? moreArgs : [moreArgs];
       assertion(typeof target === "object", "Parameter «target» must be object on «NwtPrototyper.initializePropertiesOf»");
       assertion(typeof schema === "object", "Parameter «schema» must be object on «NwtPrototyper.initializePropertiesOf»");
+      const schemaKeys = Object.keys(schema);
+      const targetKeys = Object.keys(target);
+      if(onlySpecifiedProps) {
+        for(let index=0; index<targetKeys.length; index++) {
+          const key = targetKeys[index];
+          assertion(schemaKeys.includes(key), `Parameter «schema» does not specify a key named «${key}» but target does on «NwtPrototyper.initializePropertiesOf»`);
+        }
+      }
       Iterating_schema:
       for (const key in schema) {
-        const rule = schema[key];
+        const ruleBrute = schema[key];
+        const rule = (() => {
+          // Para permitir sintaxis como en vue2:
+          if(Array.isArray(ruleBrute)) return ruleBrute;
+          const possibleTypes = ruleBrute.type;
+          const defaultValue = ruleBrute.default;
+          const validator = ruleBrute.validator;
+          return [possibleTypes, defaultValue, validator || false];
+        })();
         const allowedTypes = Array.isArray(rule[0]) ? rule[0] : [rule[0]];
+        const allowedIds = allowedTypes.map(t => this.fromTypeToString(t));
         const defaultValue = rule[1];
+        const validator = rule[2] || NwtUtils.noop;
         const isMissingProperty = (!(key in target)) || typeof target[key] === "undefined";
         const hasNotDefaultValue = rule.length === 1;
         if (isMissingProperty) {
           if(hasNotDefaultValue) {
-            throw new TypeError(`Invalid empty value for property «${key}» required ${allowedTypes.map(t => (t?.name) || ((t === null) ? "null" : t === undefined ? "undefined" : typeof t)).join("|")}` + (extraErrorMessage ? extraErrorMessage : ""));
+            throw new TypeError(`Invalid empty value for property «${key}» required ${allowedIds.join("|")}` + (extraErrorMessage ? (" " + extraErrorMessage) : ""));
           }
           target[key] = defaultValue;
         }
         const value = target[key];
+        validator(target[key], target, key, rule);
         let valid = false;
         for (const Type of allowedTypes) {
           if ((Type === null) && (value === null)) valid = true;
@@ -69,9 +100,7 @@
           if (valid) break;
         }
         if (!valid) {
-          throw new TypeError(
-            `Invalid type for property «${key}» expected «${allowedTypes.map(t => (t?.name) || ((t === null) ? "null" : t === undefined ? "undefined" : typeof t)).join("|")}» but «${typeof value}» was found instead` + (extraErrorMessage ? extraErrorMessage : "")
-          );
+          throw new TypeError(`Invalid type for property «${key}» expected «${allowedIds.join("|")}» but «${typeof value}» was found instead` + (extraErrorMessage ? (" "+extraErrorMessage) : ""));
         }
       }
       return target;

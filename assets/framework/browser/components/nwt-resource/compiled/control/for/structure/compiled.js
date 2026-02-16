@@ -1,34 +1,27 @@
 NwtResource.define({
   id: "control/for/structure",
-  apis: [
-    "control",
-    "view",
-    "validation"
-  ],
-  inherits: [
-    "control/trait/for/getValue",
-    "control/trait/for/settings",
+  apis: ["control", "view", "validation"],
+  inherits: ["control/trait/for/getValue", "control/trait/for/settings",
     "control/trait/for/validate/sub1/sub1",
-    "control/trait/for/validate/sub1",
-    "control/trait/for/validate"
+    "control/trait/for/validate/sub1", "control/trait/for/validate"
   ],
   traits: {
     "control/trait/for/getValue": {
-      "applyOnGetValue": function () { },
-      "applyOnFormatValue": function () { },
-      "applyOnValidateValue": function () { }
+      "applyOnGetValue": function() {},
+      "applyOnFormatValue": function() {},
+      "applyOnValidateValue": function() {}
     },
     "control/trait/for/settings": {
-      "validateSettings": function () { }
+      "validateSettings": function() {}
     },
     "control/trait/for/validate/sub1/sub1": {
-      "getSub1Sub1": function () { }
+      "getSub1Sub1": function() {}
     },
     "control/trait/for/validate/sub1": {
-      "getSub1": function () { }
+      "getSub1": function() {}
     },
     "control/trait/for/validate": {
-      "validateValue": function () { }
+      "validateValue": function() {}
     }
   },
   settingsProps: {
@@ -48,31 +41,31 @@ NwtResource.define({
           String,
           Object
         ],
-        "default": function () {
+        "default": function() {
           return ""
         }
       }
     },
-    data: async function () {
+    data: async function() {
       const finalData = {};
       // @COMPILED-BY: control/trait/for/getValue
-      Object.assign(finalData, await (async function () {
+      Object.assign(finalData, await (async function() {
         return {
           value: this.settings.initialValue,
         }
       }).call(this));
       // @COMPILED-BY: control/trait/for/settings
-      Object.assign(finalData, await (async function () {
+      Object.assign(finalData, await (async function() {
         return {}
       }).call(this));
       // @COMPILED-BY: control/trait/for/validate
-      Object.assign(finalData, (function () {
+      Object.assign(finalData, (function() {
         return {
           validationErrors: [],
         };
       }).call(this));
       // @COMPILED-BY: control/for/structure
-      Object.assign(finalData, await (async function () {
+      Object.assign(finalData, await (async function() {
         return {
           isType: "structure",
         };
@@ -80,66 +73,66 @@ NwtResource.define({
       return finalData;
     },
     methods: {
-      "getValue": function () {
+      "getValue": function() {
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
-      "getSettings": function () {
+      "getSettings": function() {
         trace(
           "@compilable/control/trait/for/settings.methods.getSettings");
       },
-      "validateValue": function () {
+      "validateValue": function() {
         trace(
           "@compilable/control/trait/for/validate.methods.validateValue"
-        );
+          );
       },
-      "validateStructure": function () {
+      "validateStructure": function() {
         trace(
           "@compilable/control/for/structure.methods.validateStructure");
       }
     },
     computed: {
-      "overriden1": function (newVal, oldVal) {
+      "overriden1": function(newVal, oldVal) {
         trace("@compilable/control/for/structure.computed.overriden1");
       }
     },
     watch: {
       "value": [
-        function () {
+        function() {
           trace("@compilable/control/trait/for/getValue.watch.value");
         },
-        function () {
+        function() {
           trace("@compilable/control/trait/for/settings.watch.value");
         },
-        function () {
+        function() {
           trace("@compilable/control/trait/for/validate.watch.value");
         }
       ],
       "valueOption": [
-        function () {
+        function() {
           trace(
             "@compilable/control/trait/for/getValue.watch.valueOption");
         },
-        function () {
+        function() {
           trace(
             "@compilable/control/trait/for/settings.watch.valueOption");
         }
       ]
     },
-    mounted: async function () {
+    mounted: async function() {
       // @COMPILED-BY: control/trait/for/getValue
-      (function () {
+      (function() {
         trace("@compilable/control/trait/for/getValue.mounted");
       }).call(this);
       // @COMPILED-BY: control/trait/for/settings
-      (function () {
+      (function() {
         trace("@compilable/control/trait/for/settings.mounted");
       }).call(this);
       // @COMPILED-BY: control/trait/for/validate
-      (function () {
+      (function() {
         trace("@compilable/control/trait/for/validate.mounted");
       }).call(this);
       // @COMPILED-BY: control/for/structure
-      await (async function () {
+      await (async function() {
         trace("@compilable/control/for/structure.mounted");
       }).call(this);
     },

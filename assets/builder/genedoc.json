@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-16T03:49:38.737Z",
+  "generatedAt": "2026-02-16T11:48:45.270Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -2091,7 +2091,8 @@
       "formalName": "NwtPrototyperJs",
       "apiName": "NwtPrototyper",
       "dependencies": [
-        "NwtPrototyper"
+        "NwtPrototyper",
+        "NwtUtils"
       ]
     },
     {

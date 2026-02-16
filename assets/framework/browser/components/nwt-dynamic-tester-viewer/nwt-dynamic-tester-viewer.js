@@ -31,6 +31,8 @@ Vue.component("NwtDynamicTesterViewer", {
           id: file.replace(NwtPaths.global.projectRoot + "/assets/static/tests/", "").replace(/\/TEST\.md$/g, ""),
           js: file.replace(/TEST\.md$/g, "test.js"),
         };
+      }).filter(t => ("/"+t.id).indexOf("/--") === -1).sort((t1,t2) => {
+        return t1.id > t2.id ? 1 : -1;
       });
     },
     runAllTests() {

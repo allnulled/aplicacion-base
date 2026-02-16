@@ -427,6 +427,7 @@ Documentación de las APIs de Nwt.
    - **@uses** `require("fast-glob")`
    - **@uses** `require("fs-extra")`
 - `105. The NwtPrototyper API`
+   - **@uses** `NwtUtils`
 - `106. The NwtProxyChain API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtProxyChainFactory`
@@ -733,6 +734,19 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtStrings
    - NwtVue2
    - NwtProcedureDocumentationViewer
+- NwtUtils ✖️ 12
+   - NwtDebug
+   - NwtErrorsManager
+   - NwtFiletreeSelectorInterpreter
+   - NwtFormulatorFeatureMixerPrevious
+   - NwtInterruption
+   - NwtModuleManager
+   - NwtPack
+   - NwtPrototyper
+   - NwtStrings
+   - NwtCodeHighlighter
+   - NwtFileExplorer
+   - NwtSettingsViewer
 - NwtImporter ✖️ 12
    - NwtCommandFormInterface
    - NwtCommand
@@ -746,18 +760,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPack
    - NwtProcedureDefinition
    - NwtDynamicTesterViewer
-- NwtUtils ✖️ 11
-   - NwtDebug
-   - NwtErrorsManager
-   - NwtFiletreeSelectorInterpreter
-   - NwtFormulatorFeatureMixerPrevious
-   - NwtInterruption
-   - NwtModuleManager
-   - NwtPack
-   - NwtStrings
-   - NwtCodeHighlighter
-   - NwtFileExplorer
-   - NwtSettingsViewer
 - NwtDialogs ✖️ 8
    - NwtCommand
    - NwtDialogDefinition
@@ -1135,7 +1137,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-16T03:49:38.737Z",
+  "generatedAt": "2026-02-16T11:48:45.270Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -2715,7 +2717,8 @@ El JSON original es:
       "formalName": "NwtPrototyperJs",
       "apiName": "NwtPrototyper",
       "dependencies": [
-        "NwtPrototyper"
+        "NwtPrototyper",
+        "NwtUtils"
       ]
     },
     {
