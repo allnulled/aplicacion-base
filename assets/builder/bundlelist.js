@@ -35,6 +35,15 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer`,
   `${projectRoot}/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer`,
   // Nwt Forms API | Utilidades genéricas:
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form.js`,
   /*
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-utils.js`,
   // Nwt Forms API | Prototipos primitivos de form, control y handler:

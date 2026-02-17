@@ -43,14 +43,6 @@
       selectedTest.nextElementSibling.children[0].click();
     }
 
-    static async abrirUltimosTests() {
-      trace("NwtDomAutomator.abrirUltimosTests");
-      await this.abrirTestsDeLaAplicacion();
-      await NwtTimer.timeout(100);
-      const selectedTest = NwtDomAutomator.find(document.body, "*", "nwt » api » 02000. ")[0];
-      selectedTest.parentElement.previousElementSibling.children[0].click();
-    }
-
   };
 
   return NwtDomAutomator;

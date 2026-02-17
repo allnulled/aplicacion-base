@@ -15,6 +15,7 @@
 
     static compileGlob(glob) {
       trace("NwtGlobEngine.compileGlob");
+      assertion(typeof glob === "string", "Parameter «glob» must be string on «NwtGlobEngine.compileGlob»");
       let regexSource = "";
       let index = 0;
       const escapeRegex = text => {
@@ -53,6 +54,21 @@
           const content = glob.slice(index + 1, subindex - 1);
           const parts = content.split(",").map(part => escapeRegex(part));
           regexSource += "(?:" + parts.join("|") + ")";
+          index = subindex;
+          continue Iterating_glob_expression_characters;
+        }
+        // !{a,b,c}
+        if (ch === "!" && (glob[index + 1] === "{")) {
+          let subindex = index + 2;
+          let depth = 1;
+          while (subindex < glob.length && depth) {
+            if (glob[subindex] === "{") depth++;
+            else if (glob[subindex] === "}") depth--;
+            subindex++;
+          }
+          const content = glob.slice(index + 2, subindex - 1);
+          const parts = content.split(",").map(part => escapeRegex(part));
+          regexSource += "((?!(" + parts.join("|") + ")).)+";
           index = subindex;
           continue Iterating_glob_expression_characters;
         }
@@ -110,20 +126,26 @@
           const globRegexp = globCompilation[indexExpr];
           const match = this.testByString(globRegexp, textItem);
           if (match) {
-            return textItem;
+            return true;
           }
         }
       }
       return false;
     }
 
-    static match(globExpression, textInput) {
-      trace("NwtGlobEngine.matchByAny");
+    static getMatchablesBy(globExpression, textInput) {
+      trace("NwtGlobEngine.getMatchablesBy");
       const globList = typeof globExpression === "string" ? [globExpression] : globExpression;
       const textList = typeof textInput === "string" ? [textInput] : textInput;
-      assertion(Array.isArray(globList), "Parameter «globExpression» must be string or array on «NwtGlobEngine.matchByAny»");
-      assertion(Array.isArray(textList), "Parameter «text» must be string or array on «NwtGlobEngine.matchByAny»");
-      const globCompilation = globList.map(globExpression => this.compileGlob(globExpression));
+      assertion(Array.isArray(globList), "Parameter «globExpression» must be string or array on «NwtGlobEngine.getMatchablesBy»");
+      assertion(Array.isArray(textList), "Parameter «text» must be string or array on «NwtGlobEngine.getMatchablesBy»");
+      const globCompilation = [];
+      Compiling_glob_to_regexp:
+      for(let index=0; index<globList.length; index++) {
+        const globExpression = globList[index];
+        const globRegex = this.compileGlob(globExpression);
+        globCompilation.push(globRegex);
+      }
       const matches = [];
       Iterating_texts:
       for (let index = 0; index < textList.length; index++) {
@@ -134,6 +156,7 @@
           const match = this.testByString(globRegexp, textItem);
           if (match) {
             matches.push(textItem);
+            continue Iterating_texts;
           }
         }
       }
