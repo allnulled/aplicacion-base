@@ -100,6 +100,24 @@ const expressions = [{
     "node_modules/x5/p1/package.json",
   ],
   assertionMessage: "Encuentra por doble wildcard ** para N niveles de directorios",
+}, {
+  glob: ["^!{node_modules}$"],
+  text: [
+    "some/where/node_modules/x1/package.json",
+    "node_modules/x1/package.json",
+    "/node_modules/x2/package.json",
+    "node_modules",
+    "/node_modules",
+    "/node_modules/",
+    "some/where/node_modules/",
+    "some/where/node_modules/some/where",
+    "node_modules/some/where",
+    "node_modules/",
+    "node_modules/x5/package.json",
+    "node_modules/x5/p1/package.json",
+  ],
+  answer: [],
+  assertionMessage: "Puede negar node_modules en todos los casos con la expresión correcta",
 }];
 tester.progressBar.total = expressions.length + 1;
 assertion(true, "Iniciando test de expresiones glob aceptadas por el motor de NwtGlobEngine");
