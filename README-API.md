@@ -282,72 +282,73 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtImporter`
 - `74. The NwtFormulatorUtils API`
-- `75. The NwtGlobalizer API`
+- `75. The NwtGlobEngine API`
+- `76. The NwtGlobalizer API`
    - **@uses** `NwtFramework`
-- `76. The NwtImporter API`
+- `77. The NwtImporter API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtEnvironment`
    - **@uses** `require("path")`
    - **@uses** `require(fullpath)`
    - **@uses** `require("fs")`
-- `77. The NwtInjection API`
+- `78. The NwtInjection API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtTracer`
    - **@uses** `NwtLazyControl`
    - **@uses** `window.addEventListener`
-- `78. The NwtInterruptible API`
+- `79. The NwtInterruptible API`
    - **@uses** `NwtInterruptionHandler`
-- `79. The NwtInterruptionHandler API`
+- `80. The NwtInterruptionHandler API`
    - **@uses** `NwtInterruption`
-- `80. The NwtInterruption API`
+- `81. The NwtInterruption API`
    - **@uses** `NwtUtils`
-- `81. The NwtIterableClass API`
+- `82. The NwtIterableClass API`
    - **@uses** `NwtFramework`
-- `82. The NwtIterableCommandClass API`
+- `83. The NwtIterableCommandClass API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtIterableClass`
-- `83. The NwtIterableFunction API`
+- `84. The NwtIterableFunction API`
    - **@uses** `NwtTemplates`
    - **@uses** `NwtFramework`
    - **@uses** `NwtCodeComposer`
    - **@uses** `Nwt_iterable_function_loop`
    - **@uses** `NwtToasts`
-- `84. The NwtJsController API`
-- `85. The NwtJsReturnController API`
+- `85. The NwtJsController API`
+- `86. The NwtJsReturnController API`
    - **@uses** `NwtJsController`
    - **@uses** `NwtCodeComposer`
-- `86. The NwtJsThrowController API`
+- `87. The NwtJsThrowController API`
    - **@uses** `NwtJsController`
    - **@uses** `NwtCodeComposer`
-- `87. The NwtJsonPersister API`
+- `88. The NwtJsonPersister API`
    - **@uses** `require("fs")`
-- `88. The NwtJsonStorer API`
+- `89. The NwtJsonStorer API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtEnvironment`
    - **@uses** `require("fs")`
-- `89. The NwtJsonlPersister API`
+- `90. The NwtJsonlPersister API`
    - **@uses** `NwtFilePersister`
    - **@uses** `require("fs")`
    - **@uses** `require("readline")`
    - **@uses** `require("path")`
-- `90. The NwtLazyLoader API`
+- `91. The NwtLazyLoader API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtImporter`
    - **@uses** `window.beautifier`
-- `91. The NwtLiveInjector API`
+- `92. The NwtLiveInjector API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtPaths`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtCodeComposer`
    - **@uses** `require("fs")`
-- `92. The NwtModuleManager API`
+- `93. The NwtModuleManager API`
    - **@uses** `NwtUtils`
    - **@uses** `NwtImporter`
    - **@uses** `NwtPaths`
    - **@uses** `require("path")`
-- `93. The NwtObjectUtils API`
+- `94. The NwtObjectUtils API`
    - **@uses** `NwtFramework`
-- `94. The NwtPack API`
+- `95. The NwtPack API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtAsserter`
    - **@uses** `NwtGlobalizer`
@@ -378,46 +379,46 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtEnvironment`
    - **@uses** `NwtPaths`
    - **@uses** `NwtCodeComposer`
-- `95. The NwtPaths API`
+- `96. The NwtPaths API`
    - **@uses** `NwtEnvironment`
    - **@uses** `NwtFramework`
    - **@uses** `require("path")`
    - **@uses** `require("os")`
-- `96. The NwtPersister API`
+- `97. The NwtPersister API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtJsonPersister`
    - **@uses** `NwtJsonlPersister`
    - **@uses** `NwtFilePersister`
    - **@uses** `NwtDirectoryPersister`
-- `97. The NwtProcedureDefinition API`
+- `98. The NwtProcedureDefinition API`
    - **@uses** `NwtEnvironment`
    - **@uses** `NwtImporter`
    - **@uses** `NwtDialogs`
    - **@uses** `require("path")`
-- `98. The NwtProcedureInjections API`
+- `99. The NwtProcedureInjections API`
    - **@uses** `NwtProceduresManager`
    - **@uses** `window.NwtProceduresManager`
-- `99. The NwtProcedureSeed API`
+- `100. The NwtProcedureSeed API`
    - **@uses** `NwtEnvironment`
    - **@uses** `NwtProcedureDefinition`
    - **@uses** `require("path")`
-- `100. The NwtProceduresManager API`
+- `101. The NwtProceduresManager API`
    - **@uses** `NwtEnvironment`
    - **@uses** `NwtPaths`
    - **@uses** `NwtProcedureSeed`
    - **@uses** `require("fs")`
    - **@uses** `require("path")`
    - **@uses** `require("fast-glob")`
-- `101. The NwtProcess API`
+- `102. The NwtProcess API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtProcessManager`
    - **@uses** `NwtRandomizer`
-- `102. The NwtProcessManager API`
+- `103. The NwtProcessManager API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtProcess`
-- `103. The NwtProgressBar API`
+- `104. The NwtProgressBar API`
    - **@uses** `NwtFramework`
-- `104. The NwtPromptsManager API`
+- `105. The NwtPromptsManager API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtPaths`
    - **@uses** `NwtFilesystem`
@@ -426,33 +427,33 @@ Documentación de las APIs de Nwt.
    - **@uses** `require("fs")`
    - **@uses** `require("fast-glob")`
    - **@uses** `require("fs-extra")`
-- `105. The NwtPrototyper API`
+- `106. The NwtPrototyper API`
    - **@uses** `NwtUtils`
-- `106. The NwtProxyChain API`
+- `107. The NwtProxyChain API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtProxyChainFactory`
-- `107. The NwtRandomizer API`
+- `108. The NwtRandomizer API`
    - **@uses** `NwtFramework`
-- `108. The NwtResourceApi API`
+- `109. The NwtResourceApi API`
    - **@uses** `NwtResourceApiNexer`
-- `109. The NwtResourceApiNexer API`
-- `110. The NwtResource API`
-   - **@uses** `NwtResourceApi`
+- `110. The NwtResourceApiNexer API`
 - `111. The NwtResource API`
+   - **@uses** `NwtResourceApi`
+- `112. The NwtResource API`
    - **@uses** `NwtComponentsCache`
    - **@uses** `NwtVue2`
    - **@uses** `NwtLazyFeature`
    - **@uses** `NwtLazyControl`
    - **@uses** `NwtLazyComponent`
    - **@uses** `NwtFeatureMixer`
-- `112. The NwtSettings API`
+- `113. The NwtSettings API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtJsonStorer`
    - **@uses** `NwtEnvironment`
    - **@uses** `require("path")`
    - **@uses** `require("os")`
    - **@uses** `require("fs-extra")`
-- `113. The NwtShell API`
+- `114. The NwtShell API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtToasts`
    - **@uses** `NwtEnvironment`
@@ -460,13 +461,13 @@ Documentación de las APIs de Nwt.
    - **@uses** `require("child_process")`
    - **@uses** `require("util")`
    - **@uses** `require("fs")`
-- `114. The NwtStringShortener API`
+- `115. The NwtStringShortener API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtRandomizer`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
    - **@uses** `global.json`
-- `115. The NwtStrings API`
+- `116. The NwtStrings API`
    - **@uses** `NwtStringUtils`
    - **@uses** `NwtFramework`
    - **@uses** `NwtEnvironment`
@@ -475,105 +476,105 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtUtils`
    - **@uses** `require("os")`
    - **@uses** `require("fs")`
-- `116. The NwtTemplates API`
+- `117. The NwtTemplates API`
    - **@uses** `NwtPaths`
    - **@uses** `NwtCodeComposer`
    - **@uses** `NwtFilesystem`
    - **@uses** `require("path")`
-- `117. The NwtTester API`
+- `118. The NwtTester API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtTimer`
    - **@uses** `NwtAsserter`
    - **@uses** `NwtTesterAssertion`
    - **@uses** `NwtToasts`
    - **@uses** `NwtProgressBar`
-- `118. The NwtTimer API`
+- `119. The NwtTimer API`
    - **@uses** `NwtFramework`
-- `119. The NwtTracer API`
+- `120. The NwtTracer API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtTimer`
    - **@uses** `window.trace`
    - **@uses** `global.trace`
-- `120. The NwtUtils API`
+- `121. The NwtUtils API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtPersister`
    - **@uses** `window.navigator`
-- `121. The NwtValidableSchema API`
-- `122. The NwtValidationContext API`
+- `122. The NwtValidableSchema API`
+- `123. The NwtValidationContext API`
    - **@uses** `NwtPrototyper`
    - **@uses** `NwtValidationContextPointer`
    - **@uses** `NwtConstrainer`
    - **@uses** `NwtLazyComponent`
-- `123. The NwtValidationContextPointer API`
-- `124. The NwtValidator API`
+- `124. The NwtValidationContextPointer API`
+- `125. The NwtValidator API`
    - **@uses** `NwtFeatureStatics`
-- `125. The NwtVue2 API`
+- `126. The NwtVue2 API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtEnvironment`
    - **@uses** `NwtCommand`
-- `126. [vue2] The NwtAnonymousCommandForm API`
+- `127. [vue2] The NwtAnonymousCommandForm API`
    - **@uses** `NwtCommandFormInterface`
-- `127. [vue2] The NwtAnonymousCommandView API`
+- `128. [vue2] The NwtAnonymousCommandView API`
    - **@uses** `NwtCommandViewInterface`
-- `128. [vue2] The NwtBoxViewer API`
-- `129. [vue2] The NwtChatgptFilesManagerViewer API`
+- `129. [vue2] The NwtBoxViewer API`
+- `130. [vue2] The NwtChatgptFilesManagerViewer API`
    - **@uses** `NwtChatgpt`
    - **@uses** `NwtDialogs`
-- `130. [vue2] The NwtCodeHighlighter API`
+- `131. [vue2] The NwtCodeHighlighter API`
    - **@uses** `NwtUtils`
    - **@uses** `NwtLazyLoader`
-- `131. [vue2] The NwtCommandsManagerViewer API`
+- `132. [vue2] The NwtCommandsManagerViewer API`
    - **@uses** `NwtCommandsManager`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtSettings`
    - **@uses** `NwtShell`
-- `132. [vue2] The NwtDynamicTesterViewer API`
+- `133. [vue2] The NwtDynamicTesterViewer API`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
    - **@uses** `NwtImporter`
    - **@uses** `NwtDialogs`
    - **@uses** `NwtTester`
    - **@uses** `NwtTimer`
-- `133. [vue2] The NwtFileExplorer API`
+- `134. [vue2] The NwtFileExplorer API`
    - **@uses** `NwtUtils`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
    - **@uses** `require("path")`
-- `134. [vue2] The NwtFormControlButtons API`
-- `135. [vue2] The NwtFormControlHandler API`
-- `136. [vue2] The NwtFormControlStatement API`
+- `135. [vue2] The NwtFormControlButtons API`
+- `136. [vue2] The NwtFormControlHandler API`
+- `137. [vue2] The NwtFormControlStatement API`
    - **@uses** `NwtFramework`
-- `137. [vue2] The NwtMatrixBackground API`
+- `138. [vue2] The NwtMatrixBackground API`
    - **@uses** `window.innerWidth`
    - **@uses** `window.innerHeight`
-- `138. [vue2] The NwtProcedureDocumentationViewer API`
+- `139. [vue2] The NwtProcedureDocumentationViewer API`
    - **@uses** `NwtProcedureSeed`
    - **@uses** `NwtProcedureDefinition`
    - **@uses** `NwtEnvironment`
    - **@uses** `require("fs")`
-- `139. [vue2] The NwtProceduresManagerViewer API`
+- `140. [vue2] The NwtProceduresManagerViewer API`
    - **@uses** `NwtProceduresManager`
-- `140. [vue2] The NwtProcessManagerViewer API`
+- `141. [vue2] The NwtProcessManagerViewer API`
    - **@uses** `NwtProcessManager`
    - **@uses** `NwtProgressBar`
-- `141. [vue2] The NwtProgressBarViewer API`
+- `142. [vue2] The NwtProgressBarViewer API`
    - **@uses** `NwtProgressBar`
-- `142. [vue2] The NwtPromptsManagerViewer API`
+- `143. [vue2] The NwtPromptsManagerViewer API`
    - **@uses** `NwtPromptsManager`
    - **@uses** `NwtDialogs`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtSettings`
    - **@uses** `NwtShell`
-- `143. [vue2] The NwtSettingsViewer API`
+- `144. [vue2] The NwtSettingsViewer API`
    - **@uses** `NwtSettings`
    - **@uses** `NwtDialog`
    - **@uses** `NwtUtils`
-- `144. [vue2] The NwtSourceViewer API`
+- `145. [vue2] The NwtSourceViewer API`
    - **@uses** `NwtRandomizer`
-- `145. [vue2] The NwtStarsBackground API`
-- `146. [vue2] The NwtTesterNode API`
+- `146. [vue2] The NwtStarsBackground API`
+- `147. [vue2] The NwtTesterNode API`
    - **@uses** `NwtTesterViewer`
-- `147. [vue2] The NwtTesterViewer API`
+- `148. [vue2] The NwtTesterViewer API`
    - **@uses** `NwtTester`
 
 ## Dependencias y apariciones
@@ -1137,7 +1138,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-16T12:57:01.698Z",
+  "generatedAt": "2026-02-17T09:59:43.938Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -2212,6 +2213,16 @@ El JSON original es:
       "apiName": "NwtFormulatorUtils",
       "dependencies": [
         "NwtFormulatorUtils"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-glob-engine/nwt-glob-engine.js",
+      "name": "nwt-glob-engine.js",
+      "type": "file",
+      "formalName": "NwtGlobEngineJs",
+      "apiName": "NwtGlobEngine",
+      "dependencies": [
+        "NwtGlobEngine"
       ]
     },
     {

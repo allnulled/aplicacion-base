@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-16T12:57:01.698Z",
+  "generatedAt": "2026-02-17T09:59:43.938Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -1645,6 +1645,16 @@
         "NwtFiletreeSelector",
         "NwtFiletreeSelectorParser",
         "NwtFiletreeSelectorInterpreter"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-glob-engine/nwt-glob-engine.js",
+      "name": "nwt-glob-engine.js",
+      "type": "file",
+      "formalName": "NwtGlobEngineJs",
+      "apiName": "NwtGlobEngine",
+      "dependencies": [
+        "NwtGlobEngine"
       ]
     },
     {

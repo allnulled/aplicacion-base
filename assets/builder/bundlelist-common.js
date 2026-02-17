@@ -102,6 +102,7 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js`,
   `${projectRoot}/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js`,
   `${projectRoot}/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js`,
+  `${projectRoot}/assets/framework/nwt-glob-engine/nwt-glob-engine.js`,
   `${projectRoot}/assets/framework/nwt-dom.js`,
   `${projectRoot}/assets/framework/nwt-exporter.js`,
   `${projectRoot}/assets/framework/nwt-clipboard.js`,
