@@ -129,7 +129,7 @@ for (let iExpr = 0; iExpr < expressions.length; iExpr++) {
   for (let iAnswer = 0; iAnswer < expectedAnswer.length; iAnswer++) {
     const expectedItem = expectedAnswer[iAnswer];
     const realItem = realAnswer[iAnswer];
-    console.log(realItem, expectedItem);
+    // console.log(realItem, expectedItem);
     assertion(realItem === expectedItem, `[${iExpr+1}/${expressions.length}»${iAnswer+1}/${expectedAnswer.length}] ${expr.assertionMessage}`);
   }
 }

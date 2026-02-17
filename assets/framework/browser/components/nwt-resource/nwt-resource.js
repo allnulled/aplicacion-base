@@ -50,8 +50,13 @@
       Add_definition: {
         this.definitions[definition.id] = definition;
       }
-      Pass_to_instance: {
+      Power_static_apis: {
         NwtResourceApi.install(definition);
+      }
+      Compile_view: {
+        if(definition.compileView) {
+          Vue.component(definition.view.name, definition.view);
+        }
       }
       return definition;
     }

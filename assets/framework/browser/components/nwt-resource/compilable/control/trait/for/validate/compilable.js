@@ -1,12 +1,7 @@
 module.exports = {
   id: "control/trait/for/validate",
   apis: ["trait"],
-  inherits: ["control/trait/for/validate/sub1"],
-  traits: {
-    validateValue: function() {
-
-    }
-  },
+  inherits: [],
   view: {
     data: function () {
       return {
@@ -16,19 +11,8 @@ module.exports = {
     methods: {
       validateValue: function () {
         trace("@compilable/control/trait/for/validate.methods.validateValue");
-      }
-    },
-    watch: {
-      value: function () {
-        trace("@compilable/control/trait/for/validate.watch.value");
-      }
-    },
-    mounted: function () {
-      trace("@compilable/control/trait/for/validate.mounted");
-    },
-    computed: {
-      overriden1: function(newVal, oldVal) {
-        trace("@compilable/control/trait/for/validate.computed.overriden1");
+        const val = this.getValue();
+        this.$options.statically.api.validation.validateValue(val);
       }
     },
   }

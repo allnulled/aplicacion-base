@@ -1,8 +1,29 @@
+17/02/2026
+
+- [ ] NwtForm.builder.ask con:
+   - [ ] que pueda pedir listas
+   - [ ] que pueda pedir estructuras
+- [ ] NwtForm.components.FormBuilder
+- [ ] NwtForm.components.Control
+- [ ] NwtForm.components.ControlStatement
+- [ ] NwtForm.components.ControlErrors
+
+
+
+
+
+
+
+
+
+
+
+
 16/02/2026
 
 
-- [ ] API de Settings Prop:
-   - [ ] settingsProp admite definiciones tipo vue2 pero aplicadas a settings
+- [ ] API de Settings Spec:
+   - [ ] settingsSpec admite definiciones tipo vue2 pero aplicadas a settings
 
 - [x] Mejoras en resource-compiler:
    - [x] $inheritedBy deja la huella de todos los traits aplicados por orden

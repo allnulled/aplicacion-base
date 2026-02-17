@@ -1,23 +1,19 @@
 module.exports = {
   id: "control/trait/for/getValue",
   apis: ["trait"],
-  traits: {
-    applyOnGetValue: function() {},
-    applyOnFormatValue: function() {},
-    applyOnValidateValue: function() {},
+  traits: {},
+  settingsSpec: {
+    initialValue: {
+      type: LowCode.type.Any,
+    }
   },
   view: {
-    props: function () {
-      return {
-        initialValue: {
-          type: [String, Object],
-          default: function () { return "" }
-        }
-      }
+    props: {
+      
     },
-    data: async function () {
+    data: function () {
       return {
-        value: this.settings.initialValue,
+        value: null,
       }
     },
     methods: {
@@ -37,11 +33,7 @@ module.exports = {
     },
     mounted: function () {
       trace("@compilable/control/trait/for/getValue.mounted");
-    },
-    computed: {
-      overriden1: function (newVal, oldVal) {
-        trace("@compilable/control/trait/for/getValue.computed.overriden1");
-      }
+      this.value = this.settings?.initialValue;
     },
   }
 };

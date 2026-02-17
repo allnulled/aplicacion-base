@@ -2,6 +2,9 @@ module.exports = {
   id: "test/control/trait/for/settingsSpecTraitExample",
   apis: [],
   inherits: [],
+  traits: {
+    customTrait: 500,
+  },
   settingsSpec: {
     name: {
       type: LowCode.create("String"),

@@ -1,12 +1,19 @@
 Vue.component("NwtFormControlViewer", {
   name: "NwtFormControlViewer",
   template: $template,
-  props: {},
+  props: {
+    settings: {
+      type: Object,
+      required: true,
+    }
+  },
   mixins: [],
   data() {
     return {};
   },
   methods: {},
-  created() {},
+  created() {
+    NwtFormBuilder.validateSchema(this.settings);
+  },
   mounted() {},
 });

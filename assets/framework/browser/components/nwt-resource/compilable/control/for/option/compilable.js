@@ -1,6 +1,7 @@
 module.exports = {
   id: "control/for/option",
   compile: true,
+  compileView: true,
   apis: [
     "control",
     "view",
@@ -11,16 +12,16 @@ module.exports = {
     "control/trait/for/settings",
     "control/trait/for/validate",
   ],
-  settingsProps: {
-    control: {
-      type: [LowCode.type.Array, LowCode.type.Object],
+  settingsSpec: {
+    schema: {
+      type: [LowCode.type.Object],
       default: LowCode.type.Null
     },
   },
   view: {
     name: "NwtControlForOption",
     template: $template,
-    data: async function () {
+    data: function () {
       return {
         isType: "option",
       };

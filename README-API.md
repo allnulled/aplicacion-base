@@ -194,6 +194,7 @@ Documentación de las APIs de Nwt.
 - `51. The NwtFormBuilder API`
    - **@uses** `NwtResource`
    - **@uses** `NwtAsserter`
+   - **@uses** `NwtDialogs`
 - `52. The NwtFormBuilder API`
    - **@uses** `NwtDialogs`
 - `53. The NwtFormControlErrors API`
@@ -231,6 +232,10 @@ Documentación de las APIs de Nwt.
 - `59. The NwtForm API`
    - **@uses** `NwtFormBuilder`
    - **@uses** `NwtFormControl`
+   - **@uses** `NwtFormBuilderViewer`
+   - **@uses** `NwtFormControlViewer`
+   - **@uses** `NwtFormControlErrorsViewer`
+   - **@uses** `NwtFormControlStatementViewer`
 - `60. The NwtFormSchema API`
 - `61. The NwtFormSchemaLanguagePegjs API`
 - `62. The NwtFormUtils API`
@@ -559,6 +564,7 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtFramework`
 - `145. [vue2] The NwtFormControlStatementViewer API`
 - `146. [vue2] The NwtFormControlViewer API`
+   - **@uses** `NwtFormBuilder`
 - `147. [vue2] The NwtMatrixBackground API`
    - **@uses** `window.innerWidth`
    - **@uses** `window.innerHeight`
@@ -776,9 +782,10 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPack
    - NwtProcedureDefinition
    - NwtDynamicTesterViewer
-- NwtDialogs ✖️ 8
+- NwtDialogs ✖️ 9
    - NwtCommand
    - NwtDialogDefinition
+   - NwtFormBuilder
    - NwtFormBuilder
    - NwtProcedureDefinition
    - NwtPromptsManager
@@ -852,6 +859,11 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtTester
    - NwtProcessManagerViewer
    - NwtProgressBarViewer
+- NwtFormBuilder ✖️ 4
+   - NwtForm
+   - NwtFormUtils
+   - NwtFormulator
+   - NwtFormControlViewer
 - NwtAsserter ✖️ 4
    - NwtFormBuilder
    - NwtFormElementToControl
@@ -892,10 +904,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPack
    - NwtProcedureSeed
    - NwtProcedureDocumentationViewer
-- NwtFormBuilder ✖️ 3
-   - NwtForm
-   - NwtFormUtils
-   - NwtFormulator
 - NwtFormElementToAny ✖️ 3
    - NwtFormElementToControl
    - NwtFormElementToForm
@@ -1100,6 +1108,14 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtFormulatorDialogManager
 - NwtFormulatorComponentManager ✖️ 1
    - NwtFormulatorDialogManager
+- NwtFormControlStatementViewer ✖️ 1
+   - NwtForm
+- NwtFormControlErrorsViewer ✖️ 1
+   - NwtForm
+- NwtFormControlViewer ✖️ 1
+   - NwtForm
+- NwtFormBuilderViewer ✖️ 1
+   - NwtForm
 - NwtFormControl ✖️ 1
    - NwtForm
 - NwtDom ✖️ 1
@@ -1162,7 +1178,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-17T13:08:24.523Z",
+  "generatedAt": "2026-02-17T18:26:28.536Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1903,7 +1919,8 @@ El JSON original es:
       "dependencies": [
         "NwtFormBuilder",
         "NwtResource",
-        "NwtAsserter"
+        "NwtAsserter",
+        "NwtDialogs"
       ]
     },
     {
@@ -2110,7 +2127,11 @@ El JSON original es:
       "dependencies": [
         "NwtForm",
         "NwtFormBuilder",
-        "NwtFormControl"
+        "NwtFormControl",
+        "NwtFormBuilderViewer",
+        "NwtFormControlViewer",
+        "NwtFormControlErrorsViewer",
+        "NwtFormControlStatementViewer"
       ]
     },
     {
@@ -3465,7 +3486,8 @@ El JSON original es:
       ],
       "apiName": "NwtFormControlViewer",
       "dependencies": [
-        "NwtFormControlViewer"
+        "NwtFormControlViewer",
+        "NwtFormBuilder"
       ]
     },
     {

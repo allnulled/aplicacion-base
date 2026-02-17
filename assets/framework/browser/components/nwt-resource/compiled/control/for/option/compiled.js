@@ -2,62 +2,43 @@ NwtResource.define({
   id: "control/for/option",
   apis: ["control", "view", "validation"],
   inherits: ["control/trait/for/getValue", "control/trait/for/settings",
-    "control/trait/for/validate/sub1/sub1",
-    "control/trait/for/validate/sub1", "control/trait/for/validate"
+    "control/trait/for/validate"
   ],
-  traits: {
-    "control/trait/for/getValue": {
-      "applyOnGetValue": function() {},
-      "applyOnFormatValue": function() {},
-      "applyOnValidateValue": function() {}
+  traits: {},
+  settingsSpec: {
+    "initialValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined,
+        null
+      ]
     },
-    "control/trait/for/settings": {
-      "validateSettings": function() {}
-    },
-    "control/trait/for/validate/sub1/sub1": {
-      "getSub1Sub1": function() {}
-    },
-    "control/trait/for/validate/sub1": {
-      "getSub1": function() {}
-    },
-    "control/trait/for/validate": {
-      "validateValue": function() {}
-    }
-  },
-  settingsProps: {
-    "control": {
+    "schema": {
       "type": [
-        Array,
         Object
       ],
       "default": null
     }
   },
+  compileView: true,
   compiled: true,
   view: {
     name: "NwtControlForOption",
     props: {
-      "initialValue": {
-        "type": [
-          String,
-          Object
-        ],
-        "default": function() {
-          return ""
-        }
+      "settings": {
+        "type": Object,
+        "required": true
       }
     },
-    data: async function() {
+    template: `
+      <div class="nwt_control_for_option">
+          <pre>Option = {{ $nwt.Utils.filterObjectProperties(settings, (k,v) => !["schema","type","pointer"].includes(k)) }}</pre>
+      </div>`,
+    data: function() {
       const finalData = {};
       // @COMPILED-BY: control/trait/for/getValue
-      Object.assign(finalData, await (async function() {
+      Object.assign(finalData, (function() {
         return {
-          value: this.settings.initialValue,
+          value: null,
         }
-      }).call(this));
-      // @COMPILED-BY: control/trait/for/settings
-      Object.assign(finalData, await (async function() {
-        return {}
       }).call(this));
       // @COMPILED-BY: control/trait/for/validate
       Object.assign(finalData, (function() {
@@ -66,7 +47,7 @@ NwtResource.define({
         };
       }).call(this));
       // @COMPILED-BY: control/for/option
-      Object.assign(finalData, await (async function() {
+      Object.assign(finalData, (function() {
         return {
           isType: "option",
         };
@@ -77,14 +58,12 @@ NwtResource.define({
       "getValue": function() {
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
-      "getSettings": function() {
-        trace(
-          "@compilable/control/trait/for/settings.methods.getSettings");
-      },
       "validateValue": function() {
         trace(
           "@compilable/control/trait/for/validate.methods.validateValue"
           );
+        const val = this.getValue();
+        this.$options.statically.api.validation.validateValue(val);
       },
       "validateOption": function() {
         trace("@compilable/control/for/option.methods.validateOption");
@@ -102,34 +81,26 @@ NwtResource.define({
         },
         function() {
           trace("@compilable/control/trait/for/settings.watch.value");
-        },
-        function() {
-          trace("@compilable/control/trait/for/validate.watch.value");
         }
       ],
-      "valueOption": [
-        function() {
-          trace(
-            "@compilable/control/trait/for/getValue.watch.valueOption");
-        },
-        function() {
-          trace(
-            "@compilable/control/trait/for/settings.watch.valueOption");
-        }
-      ]
+      "valueOption": function() {
+        trace("@compilable/control/trait/for/getValue.watch.valueOption");
+      }
     },
     mounted: async function() {
       // @COMPILED-BY: control/trait/for/getValue
       (function() {
         trace("@compilable/control/trait/for/getValue.mounted");
+        this.value = this.settings?.initialValue;
       }).call(this);
       // @COMPILED-BY: control/trait/for/settings
       (function() {
         trace("@compilable/control/trait/for/settings.mounted");
-      }).call(this);
-      // @COMPILED-BY: control/trait/for/validate
-      (function() {
-        trace("@compilable/control/trait/for/validate.mounted");
+        console.log(this.$options.statically.settingsSpec, this
+          .settings);
+        NwtPrototyper.initializePropertiesOf(this.settings, this
+          .$options.statically.settingsSpec || {},
+          `from component «${this.$options.name}»`, false);
       }).call(this);
       // @COMPILED-BY: control/for/option
       await (async function() {

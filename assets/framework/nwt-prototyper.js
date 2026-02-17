@@ -53,17 +53,20 @@
       const [schema] = Array.isArray(moreArgs) ? moreArgs : [moreArgs];
       assertion(typeof target === "object", "Parameter «target» must be object on «NwtPrototyper.initializePropertiesOf»");
       assertion(typeof schema === "object", "Parameter «schema» must be object on «NwtPrototyper.initializePropertiesOf»");
+      console.log("Schema:", schema);
+      console.log("Target:", target);
       const schemaKeys = Object.keys(schema);
       const targetKeys = Object.keys(target);
       if(onlySpecifiedProps) {
         for(let index=0; index<targetKeys.length; index++) {
           const key = targetKeys[index];
-          assertion(schemaKeys.includes(key), `Parameter «schema» does not specify a key named «${key}» but target does on «NwtPrototyper.initializePropertiesOf»`);
+          assertion(schemaKeys.includes(key), `Parameter «schema» does not explicitly specify a key named «${key}» but «target» does and for that reason the clause «onlySpecifiedProps» throws this error on «NwtPrototyper.initializePropertiesOf»` + (extraErrorMessage ? (" " + extraErrorMessage) : ""));
         }
       }
       Iterating_schema:
       for (const key in schema) {
         const ruleBrute = schema[key];
+        assertion(typeof ruleBrute === "object", `Parameter «schema[${key}]» must be object on «NwtPrototyper.initializePropertiesOf»`);
         const rule = (() => {
           // Para permitir sintaxis como en vue2:
           if(Array.isArray(ruleBrute)) return ruleBrute;

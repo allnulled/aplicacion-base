@@ -1,3 +1,3 @@
 <div class="nwt_control_for_option">
-    <div>Un controllll para option</div>
+    <pre>Option = {{ $nwt.Utils.filterObjectProperties(settings, (k,v) => !["schema","type","pointer"].includes(k)) }}</pre>
 </div>

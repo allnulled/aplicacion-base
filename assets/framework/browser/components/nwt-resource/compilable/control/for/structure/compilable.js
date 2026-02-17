@@ -1,6 +1,7 @@
 module.exports = {
   id: "control/for/structure",
   compile: true,
+  compileView: true,
   apis: [
     "control",
     "view",
@@ -11,16 +12,16 @@ module.exports = {
     "control/trait/for/settings",
     "control/trait/for/validate",
   ],
-  settingsProps: {
-    control: {
-      type: [LowCode.type.Array, LowCode.type.Object],
+  settingsSpec: {
+    schema: {
+      type: [LowCode.type.Object],
       default: LowCode.type.Null
     },
   },
   view: {
     name: "NwtControlForStructure",
     template: $template,
-    data: async function () {
+    data: function () {
       return {
         isType: "structure",
       };
@@ -28,14 +29,6 @@ module.exports = {
     methods: {
       validateStructure: function () {
         trace("@compilable/control/for/structure.methods.validateStructure");
-      }
-    },
-    mounted: async function () {
-      trace("@compilable/control/for/structure.mounted");
-    },
-    computed: {
-      overriden1: function(newVal, oldVal) {
-        trace("@compilable/control/for/structure.computed.overriden1");
       }
     },
   }

@@ -1,3 +1,13 @@
 <div class="nwt_form_builder_viewer">
-    Form builder viewer
+    <nwt-form-control-viewer :settings="settings" />
+    <hr />
+    <div class="flex_row centered">
+        <div class="flex_100"></div>
+        <div class="flex_1">
+            <button class="mini" v-on:click="accept">Aceptar</button>
+        </div>
+        <div class="flex_1 pad_left_1">
+            <button class="mini" v-on:click="cancel">Cancelar</button>
+        </div>
+    </div>
 </div>

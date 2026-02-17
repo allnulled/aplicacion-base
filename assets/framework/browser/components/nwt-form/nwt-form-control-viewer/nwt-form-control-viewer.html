@@ -1,3 +1,14 @@
 <div class="nwt_form_control_viewer">
-    Form control viewer
+    <div>· {{ settings.type }} [{{ (settings.pointer || []).join("/") }}]</div>
+    <component :is="'nwt-control-for-' + settings.type.split('/').join('-')" :settings="settings" />
+    <template v-if="settings.schema">
+        <template v-if="(settings.type === 'structure') || (settings.asStructure === true)">
+            <div v-for="val, prop in settings.schema" v-bind:key="'control_prop_' + prop">
+                <nwt-form-control-viewer :settings="{ ...val, pointer: (settings.pointer || []).concat([ 'schema', prop ]) }" />
+            </div>
+        </template>
+        <template v-if="(settings.type === 'list') || (settings.asList === true)">
+            <nwt-form-control-viewer :settings="{ ...settings.schema, pointer: (settings.pointer || []).concat([ 'schema' ]) }" />
+        </template>
+    </template>
 </div>

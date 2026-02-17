@@ -1,3 +1,3 @@
 <div class="nwt_control_for_structure">
-    <div>Un controllll para estructura</div>
+    <pre>Structure = {{ $nwt.Utils.filterObjectProperties(settings, (k,v) => !["schema","type","pointer"].includes(k)) }}</pre>
 </div>

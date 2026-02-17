@@ -4,7 +4,11 @@ NwtResource.define({
   inherits: ["test/control/trait/for/settings",
     "test/control/trait/for/settingsSpecTraitExample"
   ],
-  traits: {},
+  traits: {
+    "test/control/trait/for/settingsSpecTraitExample": {
+      "customTrait": 500
+    }
+  },
   settingsSpec: {
     "name": {
       "type": String,

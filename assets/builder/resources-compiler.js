@@ -147,9 +147,8 @@ const ResourcesCompiler = class {
       const otherInterface = others[indexInterface];
       const dataCallback = otherInterface.view?.data;
       const isAsync = dataCallback instanceof AsyncFunction;
-      if (isAsync) {
-        hasAsync = true;
-      }
+      assertion(!isAsync, `Vue2 components do not accept «data» as asynchronous function, only synchronous, at «${metadata.id}» on interface «${otherInterface.id}.data», on «ResourcesCompiler.renderViewData»`);
+      // if (isAsync) hasAsync = true;
       const hookCode = this.renderValue(dataCallback);
       hookOutput.push({
         path: otherInterface.$id,
@@ -159,9 +158,8 @@ const ResourcesCompiler = class {
     }
     const dataCallback = base.view?.data;
     const isAsync = dataCallback instanceof AsyncFunction;
-    if (isAsync) {
-      hasAsync = true;
-    }
+    assertion(!isAsync, `Vue2 components do not accept «data» as asynchronous function, only synchronous, at «${metadata.id}.data», on «ResourcesCompiler.renderViewData»`);
+    // if (isAsync) hasAsync = true;
     const hookCode = this.renderValue(dataCallback);
     hookOutput.push({
       path: base.$id,
@@ -279,7 +277,7 @@ const ResourcesCompiler = class {
   }
 
   static renderViewTemplate(definition, metadata) {
-    if (definition.view) return "";
+    if (!definition.view) return "";
     if (definition.view.template) return `template: ${this.renderText(definition.view.template)},`;
     if (!definition.$inheritedBy) return "";
     const inheritedBy = definition.$inheritedBy.reverse();

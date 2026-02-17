@@ -1,3 +1,3 @@
 <div class="nwt_control_for_text">
-    <div>Un controllll para texto</div>
+    <pre>Text = {{ $nwt.Utils.filterObjectProperties(settings, (k,v) => !["schema","type","pointer"].includes(k)) }}</pre>
 </div>
