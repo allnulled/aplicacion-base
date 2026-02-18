@@ -1,3 +1,5 @@
+const { lutimesSync } = require("fs-extra");
+
 /**
  * 
  * # NwtObjectUtils
@@ -59,6 +61,38 @@
         }
       }
       return output;
+    }
+
+    static overrideOnce(data = {}, payload = {}, base = false) {
+      if(!base) base = data;
+      const keys = Object.keys(payload);
+      for(let index=0; index<keys.length; index++) {
+        const key = keys[index];
+        const val = payload[key];
+        const hasKey = key in base;
+        assertion(!hasKey, `Parameter «payload[${key}]» cannot override a previous property on «NwtObjectUtils.overrideOnce»`);
+      }
+      return Object.assign(base, payload);
+    }
+
+    static overrideSoft(data = {}, payload = {}, base = false) {
+      if(!base) base = data;
+      const keys = Object.keys(payload);
+      const overrider = {};
+      for(let index=0; index<keys.length; index++) {
+        const key = keys[index];
+        const val = payload[key];
+        const hasKey = key in data;
+        if(!hasKey) {
+          overrider[key] = val;
+        }
+      }
+      return Object.assign(base, overrider);
+    }
+
+    static overrideHard(data = {}, payload = {}, base = false) {
+      if(!base) base = data;
+      return Object.assign(base, payload);
     }
 
   };

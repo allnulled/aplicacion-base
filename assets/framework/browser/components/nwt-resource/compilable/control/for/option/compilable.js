@@ -31,13 +31,8 @@ module.exports = {
         trace("@compilable/control/for/option.methods.validateOption");
       }
     },
-    mounted: async function () {
-      trace("@compilable/control/for/option.mounted");
-    },
     computed: {
-      overriden1: function(newVal, oldVal) {
-        trace("@compilable/control/for/option.computed.overriden1");
-      }
+      
     },
   }
 };

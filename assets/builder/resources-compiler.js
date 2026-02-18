@@ -415,10 +415,10 @@ const ResourcesCompiler = class {
       const beautified = this.beautify.js(sourceBrute, {
         indent_size: 2,
         indent_char: " ",
-        max_preserve_newlines: 1,
+        max_preserve_newlines: 1000,
         preserve_newlines: false,
         brace_style: "collapse",
-        wrap_line_length: 80,
+        wrap_line_length: 1000,
       });
       return beautified;
     } catch (error) {

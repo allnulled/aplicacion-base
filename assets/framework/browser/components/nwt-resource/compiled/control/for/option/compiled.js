@@ -1,15 +1,11 @@
 NwtResource.define({
   id: "control/for/option",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/getValue", "control/trait/for/settings",
-    "control/trait/for/validate"
-  ],
+  inherits: ["control/trait/for/getValue", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "initialValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined,
-        null
-      ]
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "schema": {
       "type": [
@@ -59,9 +55,7 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
       "validateValue": function() {
-        trace(
-          "@compilable/control/trait/for/validate.methods.validateValue"
-          );
+        trace("@compilable/control/trait/for/validate.methods.validateValue");
         const val = this.getValue();
         this.$options.statically.api.validation.validateValue(val);
       },
@@ -69,11 +63,7 @@ NwtResource.define({
         trace("@compilable/control/for/option.methods.validateOption");
       }
     },
-    computed: {
-      "overriden1": function(newVal, oldVal) {
-        trace("@compilable/control/for/option.computed.overriden1");
-      }
-    },
+    computed: {},
     watch: {
       "value": [
         function() {
@@ -87,7 +77,7 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.watch.valueOption");
       }
     },
-    mounted: async function() {
+    mounted: function() {
       // @COMPILED-BY: control/trait/for/getValue
       (function() {
         trace("@compilable/control/trait/for/getValue.mounted");
@@ -96,15 +86,7 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       (function() {
         trace("@compilable/control/trait/for/settings.mounted");
-        console.log(this.$options.statically.settingsSpec, this
-          .settings);
-        NwtPrototyper.initializePropertiesOf(this.settings, this
-          .$options.statically.settingsSpec || {},
-          `from component «${this.$options.name}»`, false);
-      }).call(this);
-      // @COMPILED-BY: control/for/option
-      await (async function() {
-        trace("@compilable/control/for/option.mounted");
+        NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       }).call(this);
     },
   }

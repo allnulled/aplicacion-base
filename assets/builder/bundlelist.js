@@ -1,3 +1,4 @@
+const fastGlob = require("fast-glob");
 const projectRoot = require("path").resolve(__dirname, "..", "..");
 const bundlelistExternal = require(__dirname + "/bundlelist-external.js");
 const bundlelistResources = JSON.parse(require("fs").readFileSync(__dirname + "/bundlelist-resources.json").toString());
@@ -88,8 +89,14 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource-api.js`,
   ...(function() {
     const apisDir = `${projectRoot}/assets/framework/browser/components/nwt-resource/api`;
-    const apiFiles = require("fs").readdirSync(apisDir).map(f => `${apisDir}/${f}`);
+    const apiFiles = require("fs").readdirSync(apisDir,{withFileTypes:true}).filter(d => d.isFile()).map(d => require("path").resolve(apisDir,d.name));
     return apiFiles;
+  })(),
+  ...(function() {
+    const apisHelpersDir = `${projectRoot}/assets/framework/browser/components/nwt-resource/api/helpers`;
+    const apisHelpersSelector = `${projectRoot}/assets/framework/browser/components/nwt-resource/api/helpers/**/*.js`;
+    const apiHelpers = fastGlob.sync(apisHelpersSelector).map(d => require("path").resolve(apisHelpersDir,d)).sort();
+    return apiHelpers;
   })(),
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource.js`,
   // Fondos exóticos:

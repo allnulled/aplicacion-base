@@ -19,7 +19,6 @@ module.exports = {
     },
     mounted: function () {
       trace("@compilable/control/trait/for/settings.mounted");
-      console.log(this.$options.statically.settingsSpec, this.settings);
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
     },
   }

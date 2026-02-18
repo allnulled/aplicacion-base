@@ -1,15 +1,11 @@
 NwtResource.define({
   id: "control/for/text",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/getValue", "control/trait/for/settings",
-    "control/trait/for/validate"
-  ],
+  inherits: ["control/trait/for/getValue", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "initialValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined,
-        null
-      ]
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     }
   },
   compileView: true,
@@ -53,9 +49,7 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
       "validateValue": function() {
-        trace(
-          "@compilable/control/trait/for/validate.methods.validateValue"
-          );
+        trace("@compilable/control/trait/for/validate.methods.validateValue");
         const val = this.getValue();
         this.$options.statically.api.validation.validateValue(val);
       },
@@ -86,11 +80,7 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       (function() {
         trace("@compilable/control/trait/for/settings.mounted");
-        console.log(this.$options.statically.settingsSpec, this
-          .settings);
-        NwtPrototyper.initializePropertiesOf(this.settings, this
-          .$options.statically.settingsSpec || {},
-          `from component «${this.$options.name}»`, false);
+        NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       }).call(this);
     },
   }

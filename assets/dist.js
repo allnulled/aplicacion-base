@@ -20914,6 +20914,8 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 });
 
 // @vuebundler[Proyecto_base_001][25]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-object-utils.js
+const { lutimesSync } = require("fs-extra");
+
 /**
  * 
  * # NwtObjectUtils
@@ -20975,6 +20977,38 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         }
       }
       return output;
+    }
+
+    static overrideOnce(data = {}, payload = {}, base = false) {
+      if(!base) base = data;
+      const keys = Object.keys(payload);
+      for(let index=0; index<keys.length; index++) {
+        const key = keys[index];
+        const val = payload[key];
+        const hasKey = key in base;
+        assertion(!hasKey, `Parameter «payload[${key}]» cannot override a previous property on «NwtObjectUtils.overrideOnce»`);
+      }
+      return Object.assign(base, payload);
+    }
+
+    static overrideSoft(data = {}, payload = {}, base = false) {
+      if(!base) base = data;
+      const keys = Object.keys(payload);
+      const overrider = {};
+      for(let index=0; index<keys.length; index++) {
+        const key = keys[index];
+        const val = payload[key];
+        const hasKey = key in data;
+        if(!hasKey) {
+          overrider[key] = val;
+        }
+      }
+      return Object.assign(base, overrider);
+    }
+
+    static overrideHard(data = {}, payload = {}, base = false) {
+      if(!base) base = data;
+      return Object.assign(base, payload);
     }
 
   };
@@ -34998,6 +35032,15 @@ Vue.component("NwtFormBuilderViewer", {
   }
 })(function () {
 
+  const NwtResourceApiNexer = class {
+    static create(...args) {
+      return new this(...args);
+    }
+    constructor(...args) {
+      Object.assign(this, ...args);
+    }
+  };
+
   const NwtResourceApi = class {
 
     static apis = {};
@@ -35005,14 +35048,76 @@ Vue.component("NwtFormBuilderViewer", {
     static Nexer = NwtResourceApiNexer;
 
     static register(api) {
+      trace("NwtResourceApi.register");
       assertion(typeof api === "object", `Static API must be object on «NwtResourceApi.register»`);
       assertion(typeof api.namespace === "string", `Static API must provide an «id» on «NwtResourceApi.register»`);
       assertion(!(api.namespace in this.apis), `Static API «${api.namespace}» is already registered on «NwtResourceApi.register»`);
       this.apis[api.namespace] = api;
     }
 
+    static fromStringToSelector(txt, splitter = ".") {
+      if(typeof txt !== "string") return txt;
+      return txt.split(splitter);
+    }
+
     static unregister(apiId) {
+      trace("NwtResourceApi.unregister");
       delete this.apis[apiId];
+    }
+
+    static expand(selector, value) {
+      selector = this.fromStringToSelector(selector);
+      assertion(Array.isArray(selector), "Parameter «selector» must be array on «NwtResourceApi.expand»");
+      assertion(selector.length > 1, "Parameter «selector.length» must be greater than 1 on «NwtResourceApi.expand»");
+      assertion(typeof value === "object", "Parameter «value» must be object on «NwtResourceApi.expand»");
+      const apiId = selector.shift();
+      assertion(apiId in this.apis, `Parameter «selector[0]» must match a known api but «${apiId}» does not on «NwtResourceApi.expand»`);
+      let target = this.apis[apiId];
+      for(let index=0; index<selector.length; index++) {
+        const prop = selector[index];
+        const isLast = (selector.length - 1) === index;
+        if(isLast) {
+          const child = target[prop];
+          if(child instanceof this.Nexer) {
+            NwtObjectUtils.overrideOnce(child, value);
+          } else if(typeof child === "undefined") {
+            target[prop] = this.Nexer.create(value);
+          } else {
+            throw new Error(`Parameter «selector» which is «${selector.join(".")}» is trying to override a previous property on «NwtResourceApi.expand»`);
+          }
+        } else {
+          const hasProp = prop in target;
+          if(!hasProp) {
+            target[prop] = NwtResourceApi.Nexer.create({});
+          }
+          target = target[prop];
+        }
+      }
+    }
+
+    static set(selector, value, force = false) {
+      selector = this.fromStringToSelector(selector);
+      assertion(Array.isArray(selector), "Parameter «selector» must be array on «NwtResourceApi.set»");
+      assertion(selector.length > 1, "Parameter «selector.length» must be greater than 1 on «NwtResourceApi.set»");
+      const apiId = selector.shift();
+      assertion(apiId in this.apis, `Parameter «selector[0]» must match a known api but «${apiId}» does not on «NwtResourceApi.set»`);
+      let target = this.apis[apiId];
+      for(let index=0; index<selector.length; index++) {
+        const prop = selector[index];
+        const isLast = (selector.length - 1) === index;
+        if(isLast) {
+          if(!force) {
+            assertion(!(prop in target), `Parameter «selector» which is «${selector.join(".")}» is trying to override property «${selector.join(".")}» on «NwtResourceApi.set»`);
+          }
+          target[prop] = value;
+        } else {
+          const hasProp = prop in target;
+          if(!hasProp) {
+            target[prop] = NwtResourceApi.Nexer.create({});
+          }
+          target = target[prop];
+        }
+      }
     }
 
     static proxify(definition, obj) {
@@ -35106,7 +35211,19 @@ NwtResourceApi.register({
   },
 });
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js
+// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/api/helpers/validation/utils/basicToolkit.js
+NwtResourceApi.expand("validation.utils.basicToolkit", {
+  getId() {
+    console.log("ID from validationToolkit:", this.id);
+  },
+});
+
+// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/api/helpers/validation/utils/validateSettings.js
+NwtResourceApi.set(["validation","utils","validateSettings"], function() {
+  console.log("ID from validateSetting:", this.id);
+});
+
+// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35197,9 +35314,9 @@ NwtResourceApi.register({
 
 });
 
-// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
 
-// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
 /**
  * 
  * # NwtStarsBackground
@@ -35287,11 +35404,11 @@ Vue.component("NwtStarsBackground", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
+// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
 
-// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
+// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
 
-// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
 /**
  * 
  * # NwtMatrixBackground
@@ -35363,9 +35480,9 @@ Vue.component("NwtMatrixBackground", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
+// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
 
-// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
+// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35396,7 +35513,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
+// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35438,7 +35555,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
+// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35504,9 +35621,9 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
+// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
 
-// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
+// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
 Vue.component("NwtAnonymousCommandForm", {
   name: "NwtAnonymousCommandForm",
   template: `<div class="nwt_anonymous_command_form">
@@ -35529,11 +35646,11 @@ Vue.component("NwtAnonymousCommandForm", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
+// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
 
-// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
+// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
 
-// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
+// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
 Vue.component("NwtAnonymousCommandView", {
   name: "NwtAnonymousCommandView",
   template: `<div class="nwt_anonymous_command_view">
@@ -35550,11 +35667,11 @@ Vue.component("NwtAnonymousCommandView", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
+// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
 
-// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
+// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
+// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
 Vue.component("NwtCommandsManagerViewer", {
   name: "NwtCommandsManagerViewer",
   template: `<div class="nwt_commands_manager_viewer">
@@ -35744,11 +35861,11 @@ Vue.component("NwtCommandsManagerViewer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
+// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
+// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
 
-// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
+// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
 /**
  * 
  * # App Root API
@@ -35796,9 +35913,9 @@ Vue.component("NwtCommandsManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
+// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
 
-// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
+// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
 /**
  * 
  * 
@@ -36166,9 +36283,9 @@ Vue.component("MainWindow", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
+// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
 
-// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
+// @vuebundler[Proyecto_base_001][151]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
 /**
  * 
  * # App Payload API
@@ -36229,19 +36346,15 @@ Vue.component("MainWindow", {
 
 });
 
-// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/control/for/list/compiled.js
+// @vuebundler[Proyecto_base_001][152]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/control/for/list/compiled.js
 NwtResource.define({
   id: "control/for/list",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/getValue", "control/trait/for/settings",
-    "control/trait/for/validate"
-  ],
+  inherits: ["control/trait/for/getValue", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "initialValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined,
-        null
-      ]
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "schema": {
       "type": [
@@ -36291,9 +36404,7 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
       "validateValue": function() {
-        trace(
-          "@compilable/control/trait/for/validate.methods.validateValue"
-          );
+        trace("@compilable/control/trait/for/validate.methods.validateValue");
         const val = this.getValue();
         this.$options.statically.api.validation.validateValue(val);
       },
@@ -36324,29 +36435,21 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       (function() {
         trace("@compilable/control/trait/for/settings.mounted");
-        console.log(this.$options.statically.settingsSpec, this
-          .settings);
-        NwtPrototyper.initializePropertiesOf(this.settings, this
-          .$options.statically.settingsSpec || {},
-          `from component «${this.$options.name}»`, false);
+        NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       }).call(this);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][151]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/control/for/option/compiled.js
+// @vuebundler[Proyecto_base_001][153]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/control/for/option/compiled.js
 NwtResource.define({
   id: "control/for/option",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/getValue", "control/trait/for/settings",
-    "control/trait/for/validate"
-  ],
+  inherits: ["control/trait/for/getValue", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "initialValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined,
-        null
-      ]
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "schema": {
       "type": [
@@ -36396,9 +36499,7 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
       "validateValue": function() {
-        trace(
-          "@compilable/control/trait/for/validate.methods.validateValue"
-          );
+        trace("@compilable/control/trait/for/validate.methods.validateValue");
         const val = this.getValue();
         this.$options.statically.api.validation.validateValue(val);
       },
@@ -36406,11 +36507,7 @@ NwtResource.define({
         trace("@compilable/control/for/option.methods.validateOption");
       }
     },
-    computed: {
-      "overriden1": function(newVal, oldVal) {
-        trace("@compilable/control/for/option.computed.overriden1");
-      }
-    },
+    computed: {},
     watch: {
       "value": [
         function() {
@@ -36424,7 +36521,7 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.watch.valueOption");
       }
     },
-    mounted: async function() {
+    mounted: function() {
       // @COMPILED-BY: control/trait/for/getValue
       (function() {
         trace("@compilable/control/trait/for/getValue.mounted");
@@ -36433,33 +36530,21 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       (function() {
         trace("@compilable/control/trait/for/settings.mounted");
-        console.log(this.$options.statically.settingsSpec, this
-          .settings);
-        NwtPrototyper.initializePropertiesOf(this.settings, this
-          .$options.statically.settingsSpec || {},
-          `from component «${this.$options.name}»`, false);
-      }).call(this);
-      // @COMPILED-BY: control/for/option
-      await (async function() {
-        trace("@compilable/control/for/option.mounted");
+        NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       }).call(this);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][152]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/control/for/structure/compiled.js
+// @vuebundler[Proyecto_base_001][154]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/control/for/structure/compiled.js
 NwtResource.define({
   id: "control/for/structure",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/getValue", "control/trait/for/settings",
-    "control/trait/for/validate"
-  ],
+  inherits: ["control/trait/for/getValue", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "initialValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined,
-        null
-      ]
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "schema": {
       "type": [
@@ -36509,15 +36594,12 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
       "validateValue": function() {
-        trace(
-          "@compilable/control/trait/for/validate.methods.validateValue"
-          );
+        trace("@compilable/control/trait/for/validate.methods.validateValue");
         const val = this.getValue();
         this.$options.statically.api.validation.validateValue(val);
       },
       "validateStructure": function() {
-        trace(
-          "@compilable/control/for/structure.methods.validateStructure");
+        trace("@compilable/control/for/structure.methods.validateStructure");
       }
     },
     computed: {},
@@ -36543,29 +36625,21 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       (function() {
         trace("@compilable/control/trait/for/settings.mounted");
-        console.log(this.$options.statically.settingsSpec, this
-          .settings);
-        NwtPrototyper.initializePropertiesOf(this.settings, this
-          .$options.statically.settingsSpec || {},
-          `from component «${this.$options.name}»`, false);
+        NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       }).call(this);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][153]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/control/for/text/compiled.js
+// @vuebundler[Proyecto_base_001][155]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/control/for/text/compiled.js
 NwtResource.define({
   id: "control/for/text",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/getValue", "control/trait/for/settings",
-    "control/trait/for/validate"
-  ],
+  inherits: ["control/trait/for/getValue", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "initialValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined,
-        null
-      ]
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     }
   },
   compileView: true,
@@ -36609,9 +36683,7 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
       "validateValue": function() {
-        trace(
-          "@compilable/control/trait/for/validate.methods.validateValue"
-          );
+        trace("@compilable/control/trait/for/validate.methods.validateValue");
         const val = this.getValue();
         this.$options.statically.api.validation.validateValue(val);
       },
@@ -36642,23 +36714,17 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       (function() {
         trace("@compilable/control/trait/for/settings.mounted");
-        console.log(this.$options.statically.settingsSpec, this
-          .settings);
-        NwtPrototyper.initializePropertiesOf(this.settings, this
-          .$options.statically.settingsSpec || {},
-          `from component «${this.$options.name}»`, false);
+        NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       }).call(this);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][154]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/test/control/for/settingsSpecExample/compiled.js
+// @vuebundler[Proyecto_base_001][156]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/compiled/test/control/for/settingsSpecExample/compiled.js
 NwtResource.define({
   id: "test/control/for/settingsSpecExample",
   apis: ["settings"],
-  inherits: ["test/control/trait/for/settings",
-    "test/control/trait/for/settingsSpecTraitExample"
-  ],
+  inherits: ["test/control/trait/for/settings", "test/control/trait/for/settingsSpecTraitExample"],
   traits: {
     "test/control/trait/for/settingsSpecTraitExample": {
       "customTrait": 500
@@ -36669,20 +36735,16 @@ NwtResource.define({
       "type": String,
       "default": "",
       "validator": function(val) {
-        if (val.length === 0) throw new Error(
-          `Text cannot be empty at property «name» due to «settingsSpec» in «${this.id}» on «@Resource.settingsSpec.name.validator»`
-          );
-        if (!val.substr(0, 1).match(/[A-Z]/g)) throw new Error(
-          `Propiedad name debe empezar por mayúsculas on «name» due to «settingsSpec» in «${this.id}» on «@Resource.settingsSpec.name.validator»`
-          );
+        if (val.length === 0) throw new Error(`Text cannot be empty at property «name» due to «settingsSpec» in «${this.id}» on «@Resource.settingsSpec.name.validator»`);
+        if (!val.substr(0, 1).match(/[A-Z]/g)) throw new Error(`Propiedad name debe empezar por mayúsculas on «name» due to «settingsSpec» in «${this.id}» on «@Resource.settingsSpec.name.validator»`);
       }
     }
   },
   compiled: true,
 });
 
-// @vuebundler[Proyecto_base_001][155]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][156]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+// @vuebundler[Proyecto_base_001][158]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
 
-// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][159]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
