@@ -84,15 +84,25 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-lazy-form/component`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-builder/nwt-form-builder.js`,
   //*/
+  // Static API:
+  ...(function() {
+    // LOS STATIC-API HELPERS:
+    const staticHelpersDir = `${projectRoot}/assets/framework/nwt-static/api/helpers`;
+    const staticHelpersSelector = `${projectRoot}/assets/framework/nwt-static/api/helpers/**/*.js`;
+    const staticHelpers = fastGlob.sync(staticHelpersSelector).map(d => require("path").resolve(staticHelpersDir,d)).sort();
+    return staticHelpers;
+  })(),
   // Resource API:
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource-api-nexer.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource-api.js`,
   ...(function() {
+    // LAS RESOURCE-APIS:
     const apisDir = `${projectRoot}/assets/framework/browser/components/nwt-resource/api`;
     const apiFiles = require("fs").readdirSync(apisDir,{withFileTypes:true}).filter(d => d.isFile()).map(d => require("path").resolve(apisDir,d.name));
     return apiFiles;
   })(),
   ...(function() {
+    // LOS RESOURCE-API HELPERS:
     const apisHelpersDir = `${projectRoot}/assets/framework/browser/components/nwt-resource/api/helpers`;
     const apisHelpersSelector = `${projectRoot}/assets/framework/browser/components/nwt-resource/api/helpers/**/*.js`;
     const apiHelpers = fastGlob.sync(apisHelpersSelector).map(d => require("path").resolve(apisHelpersDir,d)).sort();

@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-18T00:41:36.406Z",
+  "generatedAt": "2026-02-18T11:18:17.678Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -1114,6 +1114,16 @@
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-decorable-tree/nwt-decorable-tree.js",
+      "name": "nwt-decorable-tree.js",
+      "type": "file",
+      "formalName": "NwtDecorableTreeJs",
+      "apiName": "NwtDecorableTree",
+      "dependencies": [
+        "NwtDecorableTree"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dialog-definition.js",
       "name": "nwt-dialog-definition.js",
       "type": "file",
@@ -1880,15 +1890,24 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain/nwt-proxy-chain-nexer.js",
+      "name": "nwt-proxy-chain-nexer.js",
+      "type": "file",
+      "formalName": "NwtProxyChainNexerJs",
+      "apiName": "NwtProxyChainNexer",
+      "dependencies": [
+        "NwtProxyChainNexer"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain/nwt-proxy-chain.js",
       "name": "nwt-proxy-chain.js",
       "type": "file",
       "formalName": "NwtProxyChainJs",
       "apiName": "NwtProxyChain",
       "dependencies": [
         "NwtProxyChain",
-        "NwtFramework",
-        "NwtProxyChainFactory"
+        "NwtProxyChainNexer"
       ]
     },
     {
@@ -1933,6 +1952,17 @@
         "require(\"child_process\")",
         "require(\"util\")",
         "require(\"fs\")"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-static/nwt-static.js",
+      "name": "nwt-static.js",
+      "type": "file",
+      "formalName": "NwtStaticJs",
+      "apiName": "NwtStatic",
+      "dependencies": [
+        "NwtStatic",
+        "NwtDecorableTree"
       ]
     },
     {

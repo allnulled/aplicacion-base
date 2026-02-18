@@ -119,9 +119,6 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
 - [Nwt Prompt Manager API](#nwt-prompt-manager-api)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
-- [NwtProxyChain](#nwtproxychain)
-  - [Exposición](#exposicin)
-  - [Ventajas](#ventajas)
 - [Nwt Randomizer API](#nwt-randomizer-api)
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
@@ -1330,30 +1327,6 @@ NwtPromptsManager.global.resolve(...subpaths=[String,...])
 await NwtPromptsManager.global.list(); // Busca todos los "** /PROMPT.MD"
 await NwtPromptsManager.global.save(path:String,prompt:String); // guarda un "/PROMPT.md" en la ruta especificada
 await NwtPromptsManager.global.pickPrompt(); // abre un <nwt-prompts-manager-viewer> en un diálogo que permite escoger un prompt ya existente
-```
-
-# NwtProxyChain
-
-API para encadenar llamadas a métodos personalizados pasándole strings construídos con acceso a propiedades.
-
-API experimental, no se usa en el framework.
-
-## Exposición
-
-La API se expone a través de:
-
-```js
-NwtProxyChain
-NwtFramework.ProxyChain
-Vue.prototype.$nwt.ProxyChain
-```
-
-## Ventajas
-
-```js
-proxyChain = NwtProxyChain.fromFactory(text => customActionWith(text));
-proxyChain.com.utils.Array.whatever.$; // Aquí, está haciendo: customActionWith("com.utils.Array.whatever");
-proxyChain.find("com.utils.Array.whatever") // Lo mismo pero con llamada explícita
 ```
 
 # Nwt Randomizer API

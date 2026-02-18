@@ -42,6 +42,10 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-events/nwt-events.js`,
   `${projectRoot}/assets/framework/nwt-paths.js`,
   `${projectRoot}/assets/framework/nwt-abort.js`,
+  `${projectRoot}/assets/framework/nwt-decorable-tree/nwt-decorable-tree.js`,
+  `${projectRoot}/assets/framework/nwt-proxy-chain/nwt-proxy-chain-nexer.js`,
+  `${projectRoot}/assets/framework/nwt-proxy-chain/nwt-proxy-chain.js`,
+  `${projectRoot}/assets/framework/nwt-static/nwt-static.js`,
   `${projectRoot}/assets/framework/nwt-strings.js`,
   `${projectRoot}/assets/framework/nwt-object-utils.js`,
   `${projectRoot}/assets/framework/nwt-array-utils.js`,
@@ -108,7 +112,6 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-clipboard.js`,
   `${projectRoot}/assets/framework/nwt-filetree/nwt-filetree.js`,
   `${projectRoot}/assets/framework/nwt-cache-directory.js`,
-  `${projectRoot}/assets/framework/nwt-proxy-chain.js`,
   // Command API:
   `${projectRoot}/assets/framework/nwt-command/nwt-command-synchronizer.js`,
   `${projectRoot}/assets/framework/nwt-command/nwt-command.js`,
