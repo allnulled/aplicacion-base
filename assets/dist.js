@@ -35032,15 +35032,6 @@ Vue.component("NwtFormBuilderViewer", {
   }
 })(function () {
 
-  const NwtResourceApiNexer = class {
-    static create(...args) {
-      return new this(...args);
-    }
-    constructor(...args) {
-      Object.assign(this, ...args);
-    }
-  };
-
   const NwtResourceApi = class {
 
     static apis = {};
