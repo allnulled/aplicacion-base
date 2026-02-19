@@ -1,0 +1,1 @@
+NwtResourceApi.set(["test","hello"], NwtStatic.api.test.control.trait.for.staticExample.hello);

@@ -988,7 +988,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-18T11:18:17.678Z",
+  "generatedAt": "2026-02-19T16:29:52.351Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1361,7 +1361,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-decorable-tree/nwt-decorable-tree.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-decorable-tree.js",
       "name": "nwt-decorable-tree.js",
       "type": "file",
       "formalName": "NwtDecorableTreeJs",
@@ -2506,7 +2506,7 @@ El JSON original es:
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-static/nwt-static.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-static.js",
       "name": "nwt-static.js",
       "type": "file",
       "formalName": "NwtStaticJs",

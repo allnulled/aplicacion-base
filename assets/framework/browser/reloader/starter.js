@@ -16,7 +16,7 @@ reloader({
     console.log(filepath);
     console.log(filepath);
     console.log(filepath);
-    if(filepath.includes("assets/framework/browser/components/nwt-compilable-components/compiled")) return false;
+    if(filepath.includes("assets/app/resources/compiled")) return false;
     return true;
   }
 });

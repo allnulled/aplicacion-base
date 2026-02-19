@@ -1,20 +1,84 @@
+const ResourcesCompilerLowCode = class {
+
+  static create(...args) {
+    return new this(...args);
+  }
+
+  constructor(source) {
+    assertion(typeof source === "string", "Parameter «source» must be string on «LowCode.constructor»");
+    this.$$$type = "LowCode";
+    this.source = source;
+  }
+
+  static type = {
+    String: this.create("String"),
+    Boolean: this.create("Boolean"),
+    Number: this.create("Number"),
+    Object: this.create("Object"),
+    Array: this.create("Array"),
+    Function: this.create("Function"),
+    Undefined: this.create("undefined"),
+    Null: this.create("null"),
+    Vue: this.create("Vue"),
+    Any: this.create([
+      "[",
+      "String,",
+      "Boolean,",
+      "Number,",
+      "Object,",
+      "Array,",
+      "Function,",
+      "undefined,",
+      "null",
+      "]",
+    ].join("")),
+    AnyExcept: (...exceptions) => {
+      return this.create("[" + Object.keys(this.type).filter(it => (!it.startsWith("Any")) && (exceptions.indexOf(it) === -1)).join(",") + "]");
+    },
+  }
+  
+};
+
 const ResourcesCompiler = class {
 
   static beautify = undefined;
 
-  static allHooks = [
-    "beforeCreate",
-    "created",
-    "beforeMount",
-    "mounted",
-    "beforeUpdate",
-    "updated",
-    "activated",
-    "deactivated",
-    "beforeDestroy",
-    "destroyed",
-    "errorCaptured"
-  ];
+  static RESOURCE_CLASS_RESERVED_PROPERTIES = {
+    ALL: [
+      "id",
+      "apis",
+      "inherits",
+      "traits",
+      "view",
+      "settingsSpec",
+      "compile",
+    ]
+  };
+
+  static VUE2_CLASS_RESERVED_PROPERTIES = {
+    NO_HOOKS: [
+      "name",
+      "props",
+      "data",
+      "methods",
+      "computed",
+      "watch",
+      "template",
+    ],
+    HOOKS: [
+      "beforeCreate",
+      "created",
+      "beforeMount",
+      "mounted",
+      "beforeUpdate",
+      "updated",
+      "activated",
+      "deactivated",
+      "beforeDestroy",
+      "destroyed",
+      "errorCaptured"
+    ]
+  };
 
   static renderJson(data, space = 2) {
     const fns = [];
@@ -98,8 +162,8 @@ const ResourcesCompiler = class {
     let code = [];
     const AsyncFunction = (async () => { }).constructor;
     Iterating_all_hooks:
-    for (let indexHook = 0; indexHook < this.allHooks.length; indexHook++) {
-      const hookId = this.allHooks[indexHook];
+    for (let indexHook = 0; indexHook < this.VUE2_CLASS_RESERVED_PROPERTIES.HOOKS.length; indexHook++) {
+      const hookId = this.VUE2_CLASS_RESERVED_PROPERTIES.HOOKS[indexHook];
       const baseCallback = base.view ? base.view[hookId] : undefined;
       const hookCode = [];
       let hasAsyncs = false;
@@ -187,46 +251,7 @@ const ResourcesCompiler = class {
     }
   }
 
-  static LowCode = class {
-
-    static create(...args) {
-      return new this(...args);
-    }
-
-    constructor(source) {
-      assertion(typeof source === "string", "Parameter «source» must be string on «LowCode.constructor»");
-      this.$$$type = "LowCode";
-      this.source = source;
-    }
-
-    static type = {
-      String: this.create("String"),
-      Boolean: this.create("Boolean"),
-      Number: this.create("Number"),
-      Object: this.create("Object"),
-      Array: this.create("Array"),
-      Function: this.create("Function"),
-      Undefined: this.create("undefined"),
-      Null: this.create("null"),
-      Vue: this.create("Vue"),
-      Any: this.create([
-        "[",
-        "String,",
-        "Boolean,",
-        "Number,",
-        "Object,",
-        "Array,",
-        "Function,",
-        "undefined,",
-        "null",
-        "]",
-      ].join("")),
-      AnyExcept: (...exceptions) => {
-        return this.create("[" + Object.keys(this.type).filter(it => (!it.startsWith("Any")) && (exceptions.indexOf(it) === -1)).join(",") + "]");
-      },
-    }
-
-  }
+  static LowCode = ResourcesCompilerLowCode;
 
   static requireLive(file, injectionsUser = {}, scope = this) {
     const fs = require("fs");
@@ -240,7 +265,7 @@ const ResourcesCompiler = class {
         exports: undefined
       }
     });
-    if(hasTemplate) {
+    if (hasTemplate) {
       Object.assign(injections, {
         $template: "\n" + fs.readFileSync(templateFile, "utf8")
       });
@@ -258,15 +283,15 @@ const ResourcesCompiler = class {
     assertion(typeof definition.id === "string", `Configuration «id» must be string on «${metadata.id}» on «ResourcesCompiler.resolveInheritedBy»`);
     definition.$inheritedBy = [];
     definition.$id = definition.id;
-    definition.$path = `assets/framework/browser/components/nwt-resource/compilable/${definition.$id}/compilable.js`;
-    const compilablesDir = require("path").resolve(projectRoot, "assets/framework/browser/components/nwt-resource/compilable");
+    definition.$path = `assets/app/resource/compilable/${definition.$id}/compilable.js`;
+    const compilablesDir = require("path").resolve(projectRoot, "assets/app/resource/compilable");
     originalDefinition ||= definition;
     for (let index = 0; index < definition.inherits.length; index++) {
       const inheritedId = definition.inherits[index];
       const inheritedInterface = this.requireLive(`${compilablesDir}/${inheritedId}/compilable.js`);
       assertion(typeof inheritedInterface === "object", `Inherited resource «${inheritedId}» while defining resource «${metadata.id}» must return object on «ResourcesCompiler.resolveInheritedBy»`);
       inheritedInterface.$id = inheritedId;
-      inheritedInterface.$path = `assets/framework/browser/components/nwt-resource/compilable/${definition.$id}/compilable.js`;
+      inheritedInterface.$path = `assets/app/resource/compilable/${definition.$id}/compilable.js`;
       this.resolveInheritedBy(inheritedInterface, projectRoot, metadata, originalDefinition);
       originalDefinition.$inheritedBy.push(inheritedInterface);
     }
@@ -308,21 +333,21 @@ const ResourcesCompiler = class {
   static renderTraits(definition, metadata) {
     const finalTraits = {};
     Inherited_traits: {
-      if(!definition.$inheritedBy) break Inherited_traits;
-      if(!definition.$inheritedBy.length) break Inherited_traits;
+      if (!definition.$inheritedBy) break Inherited_traits;
+      if (!definition.$inheritedBy.length) break Inherited_traits;
       Iterating_inheritance:
-      for(let index=0; index<definition.$inheritedBy.length; index++) {
+      for (let index = 0; index < definition.$inheritedBy.length; index++) {
         const inheritedDefinition = definition.$inheritedBy[index];
-        if(!inheritedDefinition.traits) continue Iterating_inheritance;
-        if(!Object.keys(inheritedDefinition.traits).length) continue Iterating_inheritance;
+        if (!inheritedDefinition.traits) continue Iterating_inheritance;
+        if (!Object.keys(inheritedDefinition.traits).length) continue Iterating_inheritance;
         Object.assign(finalTraits, {
           [inheritedDefinition.id]: inheritedDefinition.traits,
         });
       }
     }
     Self_traits: {
-      if(!definition.traits) break Self_traits;
-      if(!Object.keys(definition.traits).length) break Self_traits;
+      if (!definition.traits) break Self_traits;
+      if (!Object.keys(definition.traits).length) break Self_traits;
       Object.assign(finalTraits, {
         [definition.id]: definition.traits,
       });
@@ -335,46 +360,38 @@ const ResourcesCompiler = class {
   static renderSettingsSpec(definition, metadata) {
     const allTraits = definition.$inheritedBy;
     const settingsSpec = {};
-    for(let index=0; index<allTraits.length; index++) {
+    for (let index = 0; index < allTraits.length; index++) {
       const oneTrait = allTraits[index];
       Object.assign(settingsSpec, oneTrait.settingsSpec || {});
     }
     Object.assign(settingsSpec, definition.settingsSpec);
-    if(!Object.keys(settingsSpec).length) return "";
+    if (!Object.keys(settingsSpec).length) return "";
     definition.settingsSpec = settingsSpec;
     const settingsSpecSource = this.renderValue(definition.settingsSpec);
     return `settingsSpec: ${settingsSpecSource},`;
   }
 
   static renderOtherProperties(definition, metadata) {
-    const excludedProps = [
-      "id",
-      "apis",
-      "inherits",
-      "traits",
-      "view",
-      "settingsSpec",
-    ];
+    const excludedProps = this.RESOURCE_CLASS_RESERVED_PROPERTIES.ALL;
     const output = [];
+    const allInterfaces = definition.$inheritedBy.concat(definition);
+    const finalDefinition = NwtObjectUtils.cleanMapByPairs(Object.assign({}, ...allInterfaces), (k, v) => {
+      if (k.startsWith("$") || excludedProps.includes(k)) return undefined;
+      return [k, v];
+    });
     Iterating_props:
-    for (let prop in definition) {
+    for (let prop in finalDefinition) {
       if (excludedProps.includes(prop)) continue Iterating_props;
       if (prop.startsWith("$")) continue Iterating_props;
-      output.push(`${prop}: ${this.renderValue(definition[prop])},`);
+      output.push(`${prop}: ${this.renderValue(finalDefinition[prop])},`);
     }
     return output.join("\n");
   }
 
   static renderOtherViewProperties(definition, metadata) {
     const excludedProps = [
-      "name",
-      "props",
-      "data",
-      "methods",
-      "computed",
-      "watch",
-      "template",
-      ...this.allHooks,
+      ...this.VUE2_CLASS_RESERVED_PROPERTIES.NO_HOOKS,
+      ...this.VUE2_CLASS_RESERVED_PROPERTIES.HOOKS,
     ];
     const output = [];
     Iterating_props:
@@ -432,8 +449,8 @@ module.exports = function (projectRoot) {
   const fs = require("fs-extra");
   const path = require("path");
   const fastGlob = require("fast-glob");
-  const compilablesDir = path.resolve(projectRoot, "assets/framework/browser/components/nwt-resource/compilable");
-  const compiledsDir = path.resolve(projectRoot, "assets/framework/browser/components/nwt-resource/compiled");
+  const compilablesDir = path.resolve(projectRoot, "assets/app/resource/compilable");
+  const compiledsDir = path.resolve(projectRoot, "assets/app/resource/compiled");
   const compilablesGlob = path.resolve(compilablesDir, "**/compilable.js");
   const found = fastGlob.sync(compilablesGlob);
   let compileds = [];
@@ -445,7 +462,7 @@ module.exports = function (projectRoot) {
     const definition = ResourcesCompiler.requireLive(item);
     assertion(typeof definition === "object", `Compilable source at «${id}» must return object from export function on «builder/resources-compiler.js»`);
     assertion(typeof definition.id === "string", `Compilable source at «${id}» must return property «id» as string on «builder/resources-compiler.js»`);
-    if(definition.apis) assertion(Array.isArray(definition.apis), `Compilable source at «${id}» must return property «apis» as array on «builder/resources-compiler.js»`);
+    if (definition.apis) assertion(Array.isArray(definition.apis), `Compilable source at «${id}» must return property «apis» as array on «builder/resources-compiler.js»`);
     definition.$id = id;
     const relativePath = item.replace(projectRoot, "");
     const hasName = typeof definition.view?.name !== "undefined";
@@ -454,7 +471,7 @@ module.exports = function (projectRoot) {
       const outputPath = path.resolve(compiledsDir, id, "compiled.js");
       Turn_on_compiled_flag: {
         delete definition.compile;
-        definition.compiled = true;
+        definition.$compiled = true;
       }
       const outputSource = ResourcesCompiler.compile(definition, projectRoot, { id, relativePath });
       fs.ensureFileSync(outputPath, outputSource, "utf8");

@@ -1,9 +1,14 @@
 tester.progressBar.total = 1;
 
 const checkers = [
-  [NwtUtils.trify(() => typeof NwtResourceApi.apis.validation.utils.basicToolkit.getId === "function"), "Method «NwtResourceApi.apis.validation.utils.basicToolkit.getId» should be a function"],
-  [NwtUtils.trify(() => typeof NwtResourceApi.apis.validation.utils.basicToolkit.getModernId === "function"), "Method «NwtResourceApi.apis.validation.utils.basicToolkit.getModernId» should be a function"],
-  [NwtUtils.trify(() => typeof NwtResourceApi.apis.validation.utils.basicToolkit.getVersion === "function"), "Method «NwtResourceApi.apis.validation.utils.basicToolkit.getVersion» should be a function"],
+  // Testing superfluous tree:
+  [NwtUtils.trify(() => typeof NwtResourceApi.apis.test.utils.basicToolkit.getId === "function"), "Method «NwtResourceApi.apis.test.utils.basicToolkit.getId» should be a function"],
+  [NwtUtils.trify(() => typeof NwtResourceApi.apis.test.utils.basicToolkit.getModernId === "function"), "Method «NwtResourceApi.apis.test.utils.basicToolkit.getModernId» should be a function"],
+  [NwtUtils.trify(() => typeof NwtResourceApi.apis.test.utils.basicToolkit.getVersion === "function"), "Method «NwtResourceApi.apis.test.utils.basicToolkit.getVersion» should be a function"],
+  // Testing scope:
+  [NwtUtils.trify(() => NwtResource.for("test/control/for/settingsSpecExample").api.test.utils.basicToolkit.getVersion() === "test/control/for/settingsSpecExample"), `Method «NwtResource.for("test/control/for/settingsSpecExample").api.test.utils.basicToolkit.getVersion()» should return 'test/control/for/settingsSpecExample'`],
+  [NwtUtils.trify(() => NwtResource.for("test/control/for/settingsSpecExample").api.test.utils.basicToolkit.getId() === "test/control/for/settingsSpecExample"), `Method «NwtResource.for("test/control/for/settingsSpecExample").api.test.utils.basicToolkit.getId()» should return 'test/control/for/settingsSpecExample'`],
+  [NwtUtils.trify(() => NwtResource.for("test/control/for/settingsSpecExample").api.test.utils.basicToolkit.getModernId() === "test/control/for/settingsSpecExample"), `Method «NwtResource.for("test/control/for/settingsSpecExample").api.test.utils.basicToolkit.getModernId()» should return 'test/control/for/settingsSpecExample'`],
 ];
 
 for(let index=0; index<checkers.length; index++) {
@@ -12,3 +17,5 @@ for(let index=0; index<checkers.length; index++) {
 }
 
 tester.progressBar.advance(1);
+
+await NwtTimer.timeout(1000);
