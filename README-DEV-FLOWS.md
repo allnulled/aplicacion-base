@@ -38,7 +38,7 @@ La idea es hacer un buen uso de los recursos que JavaScript nos brinda. No es C+
 
 ## Compendio de casos reales
 
-Para consultar casos reales explicados puedes ir a [`documentation/dev-flows/*.md`](https://github.com/allnulled/aplicacion-base/blob/main/documentation/dev-flows).
+Para consultar casos reales explicados puedes ir a [`documentation/dev-flows/*.md`](https://github.com/allnulled/aplicacion-base/tree/main/documentation/dev-flows).
 
 Casos actualmente documentados:
 
