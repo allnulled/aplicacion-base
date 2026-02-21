@@ -77,6 +77,11 @@
       return this.definitions[id];
     }
 
+    static isDefined(id) {
+      trace("NwtResource.isDefined");
+      return id in this.definitions;
+    }
+
     static remove(id) {
       trace("NwtResource.remove");
       delete this.definitions[id];

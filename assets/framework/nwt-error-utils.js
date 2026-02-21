@@ -31,17 +31,28 @@
   const NwtErrorUtils = class {
 
     static unifyMessages(errors) {
-      trace("NwtErrorUtils.unify");
+      trace("NwtErrorUtils.unifyMessages");
       if(errors instanceof Error) {
         return errors;
       }
-      assertion(Array.isArray(errors), "Parameter «errors» must be instance of Error or array on «NwtErrorUtils.unify»");
-      assertion(errors.length !== 0, "Parameter «errors» cannot be an empty array on «NwtErrorUtils.unify»");
+      assertion(Array.isArray(errors), "Parameter «errors» must be instance of Error or array on «NwtErrorUtils.unifyMessages»");
+      assertion(errors.length !== 0, "Parameter «errors» cannot be an empty array on «NwtErrorUtils.unifyMessages»");
       if(errors.length === 1) {
         return errors[0];
       }
       return errors.map((error, index) => `Error ${index}: [${error.name}] ${error.message}`).join(" + ");
     }
+
+    static unifyErrors(errors) {
+      trace("NwtErrorUtils.unifyErrors");
+      assertion(Array.isArray(errors), "Parameter «errors» must be array on «NwtErrorUtils.unifyErrors»");
+      assertion(errors.length !== 0, "Parameter «errors» cannot be empty array on «NwtErrorUtils.unifyErrors»");
+      if(errors.length === 1) {
+        return errors[0];
+      }
+      return NwtUnificatedError.from(errors);
+    }
+
 
   };
 

@@ -118,6 +118,7 @@ Documentación de las APIs de Nwt.
    - **@uses** `window.showOpenFilePicker`
 - `30. The NwtErrorUtils API`
    - **@uses** `NwtFramework`
+   - **@uses** `NwtUnificatedError`
 - `31. The NwtErrorsManager API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtEnvironment`
@@ -418,87 +419,89 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtTimer`
    - **@uses** `window.trace`
    - **@uses** `global.trace`
-- `104. The NwtUtils API`
+- `104. The NwtUnificatedError API`
+   - **@uses** `NwtFramework`
+- `105. The NwtUtils API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtPersister`
    - **@uses** `window.navigator`
-- `105. The NwtValidableSchema API`
-- `106. The NwtValidationContext API`
+- `106. The NwtValidableSchema API`
+- `107. The NwtValidationContext API`
    - **@uses** `NwtPrototyper`
    - **@uses** `NwtValidationContextPointer`
    - **@uses** `NwtConstrainer`
    - **@uses** `NwtLazyComponent`
-- `107. The NwtValidationContextPointer API`
-- `108. The NwtValidator API`
+- `108. The NwtValidationContextPointer API`
+- `109. The NwtValidator API`
    - **@uses** `NwtFeatureStatics`
-- `109. The NwtVue2 API`
+- `110. The NwtVue2 API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtEnvironment`
    - **@uses** `NwtCommand`
-- `110. [vue2] The NwtAnonymousCommandForm API`
+- `111. [vue2] The NwtAnonymousCommandForm API`
    - **@uses** `NwtCommandFormInterface`
-- `111. [vue2] The NwtAnonymousCommandView API`
+- `112. [vue2] The NwtAnonymousCommandView API`
    - **@uses** `NwtCommandViewInterface`
-- `112. [vue2] The NwtBoxViewer API`
-- `113. [vue2] The NwtChatgptFilesManagerViewer API`
+- `113. [vue2] The NwtBoxViewer API`
+- `114. [vue2] The NwtChatgptFilesManagerViewer API`
    - **@uses** `NwtChatgpt`
    - **@uses** `NwtDialogs`
-- `114. [vue2] The NwtCodeHighlighter API`
+- `115. [vue2] The NwtCodeHighlighter API`
    - **@uses** `NwtUtils`
    - **@uses** `NwtLazyLoader`
-- `115. [vue2] The NwtCommandsManagerViewer API`
+- `116. [vue2] The NwtCommandsManagerViewer API`
    - **@uses** `NwtCommandsManager`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtSettings`
    - **@uses** `NwtShell`
-- `116. [vue2] The NwtDynamicTesterViewer API`
+- `117. [vue2] The NwtDynamicTesterViewer API`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
    - **@uses** `NwtImporter`
    - **@uses** `NwtDialogs`
    - **@uses** `NwtTester`
    - **@uses** `NwtTimer`
-- `117. [vue2] The NwtFileExplorer API`
+- `118. [vue2] The NwtFileExplorer API`
    - **@uses** `NwtUtils`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
    - **@uses** `require("path")`
-- `118. [vue2] The NwtFormBuilderViewer API`
-- `119. [vue2] The NwtFormControlErrorsViewer API`
-- `120. [vue2] The NwtFormControlStatementViewer API`
-- `121. [vue2] The NwtFormControlViewer API`
+- `119. [vue2] The NwtFormBuilderViewer API`
+- `120. [vue2] The NwtFormControlErrorsViewer API`
+- `121. [vue2] The NwtFormControlStatementViewer API`
+- `122. [vue2] The NwtFormControlViewer API`
    - **@uses** `NwtFormBuilder`
-- `122. [vue2] The NwtMatrixBackground API`
+- `123. [vue2] The NwtMatrixBackground API`
    - **@uses** `window.innerWidth`
    - **@uses** `window.innerHeight`
-- `123. [vue2] The NwtProcedureDocumentationViewer API`
+- `124. [vue2] The NwtProcedureDocumentationViewer API`
    - **@uses** `NwtProcedureSeed`
    - **@uses** `NwtProcedureDefinition`
    - **@uses** `NwtEnvironment`
    - **@uses** `require("fs")`
-- `124. [vue2] The NwtProceduresManagerViewer API`
+- `125. [vue2] The NwtProceduresManagerViewer API`
    - **@uses** `NwtProceduresManager`
-- `125. [vue2] The NwtProcessManagerViewer API`
+- `126. [vue2] The NwtProcessManagerViewer API`
    - **@uses** `NwtProcessManager`
    - **@uses** `NwtProgressBar`
-- `126. [vue2] The NwtProgressBarViewer API`
+- `127. [vue2] The NwtProgressBarViewer API`
    - **@uses** `NwtProgressBar`
-- `127. [vue2] The NwtPromptsManagerViewer API`
+- `128. [vue2] The NwtPromptsManagerViewer API`
    - **@uses** `NwtPromptsManager`
    - **@uses** `NwtDialogs`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtSettings`
    - **@uses** `NwtShell`
-- `128. [vue2] The NwtSettingsViewer API`
+- `129. [vue2] The NwtSettingsViewer API`
    - **@uses** `NwtSettings`
    - **@uses** `NwtDialog`
    - **@uses** `NwtUtils`
-- `129. [vue2] The NwtSourceViewer API`
+- `130. [vue2] The NwtSourceViewer API`
    - **@uses** `NwtRandomizer`
-- `130. [vue2] The NwtStarsBackground API`
-- `131. [vue2] The NwtTesterNode API`
+- `131. [vue2] The NwtStarsBackground API`
+- `132. [vue2] The NwtTesterNode API`
    - **@uses** `NwtTesterViewer`
-- `132. [vue2] The NwtTesterViewer API`
+- `133. [vue2] The NwtTesterViewer API`
    - **@uses** `NwtTester`
 
 ## Dependencias y apariciones
@@ -506,7 +509,7 @@ Documentación de las APIs de Nwt.
 Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
 
 
-- NwtFramework ✖️ 47
+- NwtFramework ✖️ 48
    - NwtArgumenter
    - NwtArrayUtils
    - NwtBoot
@@ -552,6 +555,7 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtTester
    - NwtTimer
    - NwtTracer
+   - NwtUnificatedError
    - NwtUtils
    - NwtVue2
 - require("path") ✖️ 19
@@ -948,6 +952,8 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtEvents
 - NwtErrors ✖️ 1
    - NwtErrorsManager
+- NwtUnificatedError ✖️ 1
+   - NwtErrorUtils
 - window.showOpenFilePicker ✖️ 1
    - NwtEnvironment
 - window.Capacitor ✖️ 1
@@ -988,7 +994,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-21T10:36:15.536Z",
+  "generatedAt": "2026-02-21T15:21:48.795Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1459,7 +1465,8 @@ El JSON original es:
       "apiName": "NwtErrorUtils",
       "dependencies": [
         "NwtErrorUtils",
-        "NwtFramework"
+        "NwtFramework",
+        "NwtUnificatedError"
       ]
     },
     {
@@ -2630,6 +2637,17 @@ El JSON original es:
         "NwtTimer",
         "window.trace",
         "global.trace"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-unificated-error.js",
+      "name": "nwt-unificated-error.js",
+      "type": "file",
+      "formalName": "NwtUnificatedErrorJs",
+      "apiName": "NwtUnificatedError",
+      "dependencies": [
+        "NwtUnificatedError",
+        "NwtFramework"
       ]
     },
     {

@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-21T10:36:15.536Z",
+  "generatedAt": "2026-02-21T15:21:48.795Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -1185,7 +1185,8 @@
       "apiName": "NwtErrorUtils",
       "dependencies": [
         "NwtErrorUtils",
-        "NwtFramework"
+        "NwtFramework",
+        "NwtUnificatedError"
       ]
     },
     {
@@ -2051,6 +2052,17 @@
         "NwtTimer",
         "window.trace",
         "global.trace"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-unificated-error.js",
+      "name": "nwt-unificated-error.js",
+      "type": "file",
+      "formalName": "NwtUnificatedErrorJs",
+      "apiName": "NwtUnificatedError",
+      "dependencies": [
+        "NwtUnificatedError",
+        "NwtFramework"
       ]
     },
     {

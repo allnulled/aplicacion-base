@@ -34,6 +34,7 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-asserter.js`,
   `${projectRoot}/assets/framework/nwt-debug.js`,
   `${projectRoot}/assets/framework/nwt-constrainer.js`,
+  `${projectRoot}/assets/framework/nwt-unificated-error.js`,
   `${projectRoot}/assets/framework/nwt-errors-manager.js`,
   `${projectRoot}/assets/framework/nwt-error-utils.js`,
   `${projectRoot}/assets/framework/nwt-dialog-definition.js`,

@@ -59,6 +59,12 @@ Vue.component("NwtDynamicTesterViewer", {
         title: testUniqueId,
         template: `
           <div class="pad_1">
+            <div class="flex_row centered pad_bottom_1">
+              <div class="flex_100"></div>
+              <div class="flex_1">
+                <button class="mini nowrap" v-on:click="rerunTest">♻️ Repetir</button>
+              </div>
+            </div>
             <nwt-tester-viewer :tester="tester" />
           </div>
         `,
@@ -80,6 +86,13 @@ Vue.component("NwtDynamicTesterViewer", {
                 }
               }),
             };
+          },
+          methods: {
+            rerunTest() {
+              trace("NwtDynamicTesterViewer.methods.runTest/dialog.methods.rerunTest");
+              this.cancel();
+              testerViewer.runTest(test);
+            }
           },
           mounted() {
             this.tester.start();
