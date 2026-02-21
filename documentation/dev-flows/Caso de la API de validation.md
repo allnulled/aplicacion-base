@@ -32,11 +32,18 @@ Porque es uno de los principales casos que motivó toda esta ingeniería de API.
 
 Cronológicamente, puede ser irrelevante si se comprende la función de cada pieza.
 
-El desarrollo básico requiere de las APIs de:
+El desarrollo básico requiere de la implicación de las APIs de:
 
 - `NwtResource`, carpetas `compilable` y `compiled`, registrando los **controles básicos**
    - `assets/app/resource/compilable/control/trait/for/validate/compilable.js` como `trait` para que todo pueda reusarse con `inherits`
-      - la aportación 
+      - la aportación de este fichero es clave
+      - se trata de la API común que se imprime en el `Resource` al compilar cuando se hereda de `"control/trait/for/validation"`
+      - sobre todo, pensando en `vue2` porque lo demás debería ir siempre a `Static API`
+      - esto es la clave, que las funciones son solamente:
+         - o específicas del `Resource` concreto
+            - en caso de requerir persistir pese a herencia se usa `traits` porque todo lo demás, será sobreescribible
+         - o adapters a `Static`
+            - que es donde siempre interesa trasladar la lógica, al final
    - `assets/app/resource/compilable/control/for/text/compilable.js` para el control de texto
    - `assets/app/resource/compilable/control/for/structure/compilable.js` para el control de estructura
    - `assets/app/resource/compilable/control/for/list/compilable.js` para el control de lista
