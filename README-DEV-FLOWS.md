@@ -29,3 +29,17 @@ La API de Resource contempla 3 flujos de desarrollo principales, que se resumen 
       - se centraliza y organiza lo máximo posible la lógica
 
 La idea es hacer un buen uso de los recursos que JavaScript nos brinda. No es C++ (bueno sí, pero por debajo solamente), pero JavaScript es muy poderoso igualmente. Y bonito.
+
+## Flujos de desarrollo entorno a...
+
+## Flujos de desarrollo entorno a...
+
+## Flujos de desarrollo entorno a...
+
+## Compendio de casos reales
+
+Para consultar casos reales explicados puedes ir a [`documentation/dev-flows/*.md`](https://github.com/allnulled/aplicacion-base/blob/main/documentation/dev-flows).
+
+Casos actualmente documentados:
+
+- Caso de la Validation API: [aquí](https://github.com/allnulled/aplicacion-base/blob/main/documentation/dev-flows/Caso de la API de validation.md)

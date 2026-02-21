@@ -110,6 +110,12 @@
 
   NwtAsserter.global = NwtAsserter.createAssertionFunction();
 
+  NwtAsserter.silently = NwtAsserter.createAssertionFunction(() => {
+    return true;
+  }, error => {
+    throw error;
+  });
+
   NwtAsserter.globalizeAssertion(NwtAsserter.global);
 
   return NwtAsserter;

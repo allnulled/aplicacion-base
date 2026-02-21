@@ -7,6 +7,12 @@ NwtResource.define({
     "initialValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
+    "onValidate": {
+      "type": [
+        Function
+      ],
+      "default": NwtUtils.noop
+    },
     "schema": {
       "type": [
         Object
@@ -15,6 +21,12 @@ NwtResource.define({
     }
   },
   compileView: true,
+  control: {
+    "primitiveType": "structure",
+    "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
+      assertion(typeof value === "object", `Parameter «value»${NwtStatic.api.control.validation.interface.utils.getIndexesErrorMessage(indexes)} must be object on «NwtResource.for('control/for/structure').control.onValidate»`);
+    }
+  },
   view: {
     name: "NwtControlForStructure",
     props: {
@@ -41,12 +53,6 @@ NwtResource.define({
           validationErrors: [],
         };
       }).call(this));
-      // @COMPILED-BY: control/for/structure
-      Object.assign(finalData, (function() {
-        return {
-          isType: "structure",
-        };
-      }).call(this));
       return finalData;
     },
     methods: {
@@ -54,12 +60,13 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
       "validateValue": function() {
-        trace("@compilable/control/trait/for/validate.methods.validateValue");
-        const val = this.getValue();
-        this.$options.statically.api.validation.validateValue(val);
-      },
-      "validateStructure": function() {
-        trace("@compilable/control/for/structure.methods.validateStructure");
+        const value = this.getValue();
+        return NwtStatic.api.control.validation.interface.statically.validateValue(this.$options.statically, value, this.settings, this, [], NwtAsserter.createAssertionFunction(() => {
+          return true;
+        }, error => {
+          this.validationErrors.push(error);
+          throw error;
+        }));
       }
     },
     computed: {},

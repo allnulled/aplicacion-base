@@ -7,6 +7,12 @@ NwtResource.define({
     "initialValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
+    "onValidate": {
+      "type": [
+        Function
+      ],
+      "default": NwtUtils.noop
+    },
     "schema": {
       "type": [
         Object
@@ -54,9 +60,13 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
       "validateValue": function() {
-        trace("@compilable/control/trait/for/validate.methods.validateValue");
-        const val = this.getValue();
-        this.$options.statically.api.validation.validateValue(val);
+        const value = this.getValue();
+        return NwtStatic.api.control.validation.interface.statically.validateValue(this.$options.statically, value, this.settings, this, [], NwtAsserter.createAssertionFunction(() => {
+          return true;
+        }, error => {
+          this.validationErrors.push(error);
+          throw error;
+        }));
       },
       "validateOption": function() {
         trace("@compilable/control/for/option.methods.validateOption");

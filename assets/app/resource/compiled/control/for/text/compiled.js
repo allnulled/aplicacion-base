@@ -2,17 +2,25 @@ NwtResource.define({
   id: "control/for/text",
   apis: ["control", "view", "validation"],
   inherits: ["control/trait/for/getValue", "control/trait/for/settings", "control/trait/for/validate"],
-  traits: {
-    "control/for/text": {
-      "validateValueByControlForText": NwtStatic.api.control.validation.interface.validateValueByControlForText
-    }
-  },
+  traits: {},
   settingsSpec: {
     "initialValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
+    },
+    "onValidate": {
+      "type": [
+        Function
+      ],
+      "default": NwtUtils.noop
     }
   },
   compileView: true,
+  control: {
+    "primitiveType": "text",
+    "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
+      assertion(typeof value === "string", `Parameter «value»${NwtStatic.api.control.validation.interface.utils.getIndexesErrorMessage(indexes)} must be string on «NwtResource.for('control/for/text').control.onValidate»`);
+    }
+  },
   view: {
     name: "NwtControlForText",
     props: {
@@ -39,12 +47,6 @@ NwtResource.define({
           validationErrors: [],
         };
       }).call(this));
-      // @COMPILED-BY: control/for/text
-      Object.assign(finalData, (function() {
-        return {
-          isType: "text",
-        };
-      }).call(this));
       return finalData;
     },
     methods: {
@@ -52,9 +54,13 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.methods.getValue");
       },
       "validateValue": function() {
-        trace("@compilable/control/trait/for/validate.methods.validateValue");
-        const val = this.getValue();
-        this.$options.statically.api.validation.validateValue(val);
+        const value = this.getValue();
+        return NwtStatic.api.control.validation.interface.statically.validateValue(this.$options.statically, value, this.settings, this, [], NwtAsserter.createAssertionFunction(() => {
+          return true;
+        }, error => {
+          this.validationErrors.push(error);
+          throw error;
+        }));
       }
     },
     computed: {},

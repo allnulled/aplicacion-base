@@ -21,15 +21,12 @@ module.exports = {
   view: {
     name: "NwtControlForStructure",
     template: $template,
-    data: function () {
-      return {
-        isType: "structure",
-      };
-    },
-    methods: {
-      validateStructure: function () {
-        trace("@compilable/control/for/structure.methods.validateStructure");
-      }
-    },
-  }
+  },
+  control: {
+    primitiveType: "structure",
+    // Validate by statically (1st):
+    onValidate: function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
+      assertion(typeof value === "object", `Parameter «value»${NwtStatic.api.control.validation.interface.utils.getIndexesErrorMessage(indexes)} must be object on «NwtResource.for('control/for/structure').control.onValidate»`);
+    }
+  },
 };
