@@ -44,9 +44,9 @@ NwtResource.define({
         const propValidation = NwtResource.for(propSchema.type).api.control.validation.validateValue(propValue, propSchema, component, indexes.concat([propId]), assertion);
         if (propValidation.error) {
           errors.push(propValidation.data);
-        } else if (isRoot && typeof propValidation.discriminator === "number") {
+        } else if (isRoot && typeof propValidation.data === "number") {
           // Si (es válido y) es root y tiene discriminador adjunto:
-          discriminators[propId] = propValidation.discriminator;
+          discriminators[propId] = propValidation.data;
         }
       }
       if (errors.length) {

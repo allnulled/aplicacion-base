@@ -32,25 +32,28 @@ NwtResource.define({
         const optionSchema = settings.schema[index];
         assertion(typeof optionSchema === "object", `Parameter «settings.schema[${index}]»${NwtStatic.api.control.validation.interface.utils.getIndexesErrorMessage(indexes)} must be object but «${typeof optionSchema}» found on «NwtResource.for('control/for/option').control.onValidate»`);
         assertion(typeof optionSchema.type === "string", `Parameter «settings.schema[${index}].type»${NwtStatic.api.control.validation.interface.utils.getIndexesErrorMessage(indexes)} must be string but «${typeof optionSchema.type}» found on «NwtResource.for('control/for/option').control.onValidate»`);
-        assertion(NwtResource.isDefined(settings.schema.type), `Parameter «settings.schema.type» which is «${settings.schema.type}»${NwtStatic.api.control.validation.interface.utils.getIndexesErrorMessage(indexes)} must be a defined resource on «NwtResource.for('control/for/option').control.onValidate»`);
+        assertion(NwtResource.isDefined(optionSchema.type), `Parameter «settings.schema[${index}].type» which is «${settings.schema.type}»${NwtStatic.api.control.validation.interface.utils.getIndexesErrorMessage(indexes)} must be a defined resource on «NwtResource.for('control/for/option').control.onValidate»`);
       }
-      const resource = NwtResource.for(settings.schema.type);
       const errors = [];
-      const isRoot = indexes.length === 0;
-      const discriminators = true;
+      let discriminators = false;
       Checking_value_type: for (let index = 0; index < settings.schema.length; index++) {
+        const resource = NwtResource.for(settings.schema[index].type);
         const subschema = settings.schema[index];
-        const validation = resource.api.control.validation.validateValue(subvalue, subschema, component, indexes, assertion);
+        console.log("Pasandole schema de validacion a sub de option:", resource.id, value, subschema);
+        const validation = resource.api.control.validation.validateValue(value, subschema, component, indexes, assertion);
         if (validation.error === true) {
           errors.push(validation.data);
-        } else if (isRoot && validation.discriminator) {
-          discriminators = validation.discriminator;
+        } else if (validation.success) {
+          discriminators = index + 1;
+          break Checking_value_type;
         }
       }
-      if (errors.length) {
+      if (errors.length && (discriminators === false)) {
         throw NwtErrorUtils.unifyErrors(errors);
+      } else if (discriminators === false) {
+        throw new Error(`Parameter «value»${NwtStatic.api.control.validation.interface.utils.getIndexesErrorMessage(indexes)} does not match any schema option on «NwtResource.for('control/for/option').control.onValidate»`);
       }
-      return isRoot ? discriminators : true;
+      return discriminators;
     }
   },
   view: {
