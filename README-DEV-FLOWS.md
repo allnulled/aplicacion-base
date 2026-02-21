@@ -2,6 +2,10 @@
 
 Un flujo de desarrollo es un proceso dentro del proceso de desarrollo.
 
+## Compendio de casos reales
+
+Para consultar casos reales explicados puedes ir a [`documentation/dev-flows/*.md`](https://github.com/allnulled/aplicacion-base/tree/main/documentation/dev-flows).
+
 ## Flujos de desarrollo entorno a `Resource`
 
 La API de `Resource` sirve para representar definiciones y adjuntarles una forma de acceso a APIs que escale bien y sea cómoda.
@@ -35,11 +39,3 @@ La idea es hacer un buen uso de los recursos que JavaScript nos brinda. No es C+
 ## Flujos de desarrollo entorno a...
 
 ## Flujos de desarrollo entorno a...
-
-## Compendio de casos reales
-
-Para consultar casos reales explicados puedes ir a [`documentation/dev-flows/*.md`](https://github.com/allnulled/aplicacion-base/tree/main/documentation/dev-flows).
-
-Casos actualmente documentados:
-
-- Caso de la Validation API: [aquí](https://github.com/allnulled/aplicacion-base/blob/main/documentation/dev-flows/Caso%20de%20la%20API%20de%20validation.md)

@@ -1,12 +1,28 @@
 # Caso de la API de Validation
 
-La Validation API requiere:
+La Validation API está vinculada a la `Resource API` en tanto que un objeto validable siempre debe ser una `Resource`, que se define como entidad abstracta global.
+
+Quiere decir que:
+
+- Validation necesita Types obligatoriamente
+- Types es Resources, básicamente:
+   - Un *tipo abstracto* es la definición exacta de `Resource`.
+
+Por esto, `Validation API` es una:
+
+- API estática global, una `Static API`
+- API estática de `Resource`, una `Resource Helper API`
+
+## Requisitos para inyectar la API
+
+Esta API, para implicarse en `Resource`, requiere:
 
 - Obligatoriamente:
    - 1 `inherits` con `"control/trait/for/validation"`
    - 1 `apis` con `"validation"` (esto debería heredarse, pero ahora no se hace)
 - Opcionalmente:
    - 1 `control.onValidate:Function` con la función de validación
+   - Otros parámetros intermedios propios de la implementación
 
 ## ¿Por qué es un buen caso?
 
