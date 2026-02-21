@@ -42,4 +42,4 @@ Para consultar casos reales explicados puedes ir a [`documentation/dev-flows/*.m
 
 Casos actualmente documentados:
 
-- Caso de la Validation API: [aquí](https://github.com/allnulled/aplicacion-base/blob/main/documentation/dev-flows/Caso de la API de validation.md)
+- Caso de la Validation API: [aquí](https://github.com/allnulled/aplicacion-base/blob/main/documentation/dev-flows/Caso%20de%20la%20API%20de%20validation.md)

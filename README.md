@@ -28,10 +28,10 @@ npm run ui
 
 Está el framework y la aplicación (sobre él):
 
-- [README-NWT.md](https://github.com/allnulled/aplicacion-base/tree/main/README-NWT.md) contiene la documentación del `NwtFramework`.
-- [README-APP.md](https://github.com/allnulled/aplicacion-base/tree/main/README-APP.md) contiene la documentación de la aplicación.
-- [README-API.md](https://github.com/allnulled/aplicacion-base/tree/main/README-API.md) contiene la documentación de la API en cuanto a dependencias mutuas.
-- [README-DEV-FLOWS.md](https://github.com/allnulled/aplicacion-base/tree/main/README-DEV-FLOWS.md) contiene la documentación de los flujos de desarrollo más comunes.
+- [README-NWT.md](https://github.com/allnulled/aplicacion-base/blob/main/README-NWT.md) contiene la documentación del `NwtFramework`.
+- [README-APP.md](https://github.com/allnulled/aplicacion-base/blob/main/README-APP.md) contiene la documentación de la aplicación.
+- [README-API.md](https://github.com/allnulled/aplicacion-base/blob/main/README-API.md) contiene la documentación de la API en cuanto a dependencias mutuas.
+- [README-DEV-FLOWS.md](https://github.com/allnulled/aplicacion-base/blob/main/README-DEV-FLOWS.md) contiene la documentación de los flujos de desarrollo más comunes.
 
 ## Pendientes
 
