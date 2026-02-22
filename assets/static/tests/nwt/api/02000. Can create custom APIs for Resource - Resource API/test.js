@@ -1,5 +1,4 @@
 tester.progressBar.total = 2;
-await NwtTimer.timeout(1000);
 tester.progressBar.advance(1);
 Test_per_se: {
   const Nexer = NwtResourceApi.Nexer;
@@ -27,5 +26,4 @@ Test_per_se: {
   assertion('okkk' === r2, "El r2 debería ser 'okkk'");
   assertion(r1 === r2, "El r1 y el r2 deberían ser iguales");
 }
-await NwtTimer.timeout(1000);
 tester.progressBar.advance(1);

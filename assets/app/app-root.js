@@ -29,14 +29,36 @@
 
     static component = null;
 
+    static isMounted = false;
+
+    static onMountedCallbacks = [];
+
     static initialize(component) {
       this.component = component;
-      window.dispatchEvent(new CustomEvent("app-mounted", {
+      this.frozenEvent = new CustomEvent("app-mounted", {
         detail: {
           datetime: new Date(),
           component: component,
         }
-      }));
+      });
+      window.dispatchEvent(this.frozenEvent);
+      this.isMounted = true;
+      this.dispatchCallbacks();
+    }
+
+    static dispatchCallbacks() {
+      for(let index=0; index<this.onMountedCallbacks.length; index++) {
+        const callback = this.onMountedCallbacks[index];
+        callback(this.component);
+      }
+    }
+
+    static onMounted(callback) {
+      if(this.isMounted) {
+        callback(this.component);
+      } else {
+        this.onMountedCallbacks.push(callback);
+      }
     }
 
   };

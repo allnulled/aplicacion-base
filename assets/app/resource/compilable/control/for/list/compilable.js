@@ -11,6 +11,7 @@ module.exports = {
     "control/trait/for/getValue",
     "control/trait/for/settings",
     "control/trait/for/validate",
+    "control/trait/for/showable",
   ],
   settingsSpec: {
     schema: {
@@ -21,6 +22,29 @@ module.exports = {
   view: {
     name: "NwtControlForList",
     template: $template,
+    data: function() {
+      return {
+        isWellFormed: undefined,
+      };
+    },
+    mounted: function() {
+      trace("NwtControlForList.mounted");
+      this.$options.statically.api.control.validation.validateControlSchema(this.settings);
+      this.$options.statically.api.control.validation.validateValue(this.getValue(), this.settings, this);
+      this.isWellFormed = true;
+      window.ll = this;
+    },
+    methods: {
+      createItem: function() {
+        trace("NwtControlForList.methods.createItem");
+        const item = this.settings.onCreateItem ? this.settings.onCreateItem(this) : {uuid: NwtRandomizer.fromAlphabet(20)};
+        this.value.push(item);
+      },
+      removeItem: function(pos) {
+        trace("NwtControlForList.methods.removeIndex");
+        this.value.splice(pos, 1);
+      }
+    }
   },
   control: {
     primitiveType: "list",

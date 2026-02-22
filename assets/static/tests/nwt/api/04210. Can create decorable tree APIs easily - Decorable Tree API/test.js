@@ -1,7 +1,5 @@
 tester.progressBar.total = 3;
-
 tester.progressBar.advance(1);
-
 const o = {
   prop1: {
     prop1_1: 1,
@@ -17,11 +15,8 @@ const o = {
     },
   }
 };
-
 NwtDecorableTree.install(o);
-
 tester.progressBar.advance(1);
-
 Basic_test: {
   // Primero, que la sintaxis puede ser con 1 string y puntos o con 1 array de strings directamente:
   assertion(o.has("prop1.prop1_1") === o.has(["prop1", "prop1_1"]), "about selectors: this should be true (1)");
@@ -57,5 +52,3 @@ Basic_test: {
 }
 
 tester.progressBar.advance(1);
-
-await NwtTimer.timeout(1000);

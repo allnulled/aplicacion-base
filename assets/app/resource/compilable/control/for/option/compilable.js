@@ -11,6 +11,7 @@ module.exports = {
     "control/trait/for/getValue",
     "control/trait/for/settings",
     "control/trait/for/validate",
+    "control/trait/for/showable",
   ],
   settingsSpec: {
     schema: {
@@ -21,6 +22,19 @@ module.exports = {
   view: {
     name: "NwtControlForOption",
     template: $template,
+    data: function() {
+      return {
+        isWellFormed: undefined,
+      };
+    },
+    mounted: function() {
+      trace("NwtControlForList.mounted");
+      this.$options.statically.api.control.validation.validateControlSchema(this.settings);
+      // @DIFFERENTLY: set value option
+      const validation = this.$options.statically.api.control.validation.validateValue(this.getValue(), this.settings, this);
+      this.settings.valueOption = validation.data;
+      this.isWellFormed = true;
+    }
   },
   control: {
     primitiveType: "option",

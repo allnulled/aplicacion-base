@@ -11,11 +11,23 @@ module.exports = {
     "control/trait/for/getValue",
     "control/trait/for/settings",
     "control/trait/for/validate",
+    "control/trait/for/showable",
   ],
   settingsSpec: {},
   view: {
     name: "NwtControlForText",
     template: $template,
+    data: function() {
+      return {
+        isWellFormed: undefined,
+      };
+    },
+    mounted: function() {
+      trace("NwtControlForText.mounted");
+      this.$options.statically.api.control.validation.validateControlSchema(this.settings);
+      this.$options.statically.api.control.validation.validateValue(this.getValue());
+      this.isWellFormed = true;
+    }
   },
   control: {
     primitiveType: "text",

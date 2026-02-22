@@ -8,30 +8,35 @@ Vue.component("NwtFormBuilderViewer", {
     }
   },
   mixins: [],
-  data() {
-    return {
-      value: this.settings.initialValue || null,
-    };
-  },
   methods: {
     getValue() {
-      return this.value;
+      trace("NwtFormBuilderViewer.methods.getValue");
+      return this.$refs.control.getValue();
     },
     accept() {
+      trace("NwtFormBuilderViewer.methods.accept");
       if(typeof this.settings.onAccept === "function") {
-        return this.settings.onAccept(this.value);
+        return this.settings.onAccept(this.getValue());
       }
       if(typeof this.settings.getDialog === "function") {
-        return this.settings.getDialog().accept(this.value);
+        return this.settings.getDialog().accept(this.getValue());
       }
     },
     cancel() {
+      trace("NwtFormBuilderViewer.methods.cancel");
       if(typeof this.settings.onCancel === "function") {
         return this.settings.onCancel();
       }
       if(typeof this.settings.getDialog === "function") {
         return this.settings.getDialog().cancel();
       }
+    },
+    validate() {
+      trace("NwtFormBuilderViewer.methods.validate");
+      const value = this.getValue();
+      const control = this.$refs.control;
+      const validation = control.$options.statically.api.control.validation.validateValue();
+      // En principio, no hace falta hacer nada más porque la Resource Helper API de Resource (mediante «statically») ya puede acceder a los componentes y propagarse
     }
   },
   created() {},

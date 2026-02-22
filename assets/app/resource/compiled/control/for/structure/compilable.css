@@ -1,0 +1,23 @@
+.nwt_control_for_structure {
+    border-top: 1px solid var(--w7-el-bd);
+    border-bottom: 1px solid var(--w7-el-bd);
+    border-right: none;
+    padding: 2px;
+    padding-bottom: 2px;
+    border-top-right-radius: 0pt;
+    border-bottom-right-radius: 0pt;
+}
+
+.nwt_control_for_structure .structure_box {
+    padding-left: 0px;
+    padding-top: 2px;
+    border-top: 1px dashed #CCC;
+}
+
+.nwt_control_for_structure > .nwt_control_partial_for_statement {
+    border-bottom: none;
+}
+
+.nwt_control_for_structure > .nwt_control_partial_for_statement .statement_text {
+    font-weight: bold;
+}

@@ -1,6 +1,5 @@
 tester.progressBar.total = 2;
 tester.progressBar.advance(1);
-await NwtTimer.timeout(500);
 Test_in_situ: {
   NwtResource.for("test/control/for/settingsSpecExample").api.settings.validateSettings({
     name: "Carlos",
@@ -17,4 +16,3 @@ Test_in_situ: {
   assertion(hasPassed, "El checkeo anterior debería haber hecho saltar un error y no, no está validando bien settingsSpec");
 }
 tester.progressBar.advance(1);
-await NwtTimer.timeout(500);

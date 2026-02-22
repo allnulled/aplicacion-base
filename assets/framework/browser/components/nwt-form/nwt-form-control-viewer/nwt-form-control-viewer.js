@@ -11,9 +11,16 @@ Vue.component("NwtFormControlViewer", {
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    getValue() {
+      return this.$refs.specificControl.getValue();
+    },
+    getSpecificControl() {
+      return this.$refs.specificControl;
+    }
+  },
   created() {
-    NwtFormBuilder.validateSchema(this.settings);
+    NwtStatic.api.control.validation.interface.statically.validateControlSchema(this.settings);
   },
   mounted() {},
 });

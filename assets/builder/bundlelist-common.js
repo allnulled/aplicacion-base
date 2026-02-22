@@ -27,6 +27,7 @@ Compilations: {
 
 module.exports = [
   `${projectRoot}/assets/framework/nwt-boot.js`,
+  `${projectRoot}/assets/app/app-root.js`,
   `${projectRoot}/assets/framework/nwt-tracer.js`,
   `${projectRoot}/assets/framework/nwt-environment.js`,
   `${projectRoot}/assets/framework/nwt-browser-polyfill.js`,

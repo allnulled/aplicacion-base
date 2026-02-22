@@ -26,6 +26,7 @@
     }
 
     static fromStringToSelector(txt, splitter = ".") {
+      trace("NwtResourceApi.fromStringToSelector");
       if(typeof txt !== "string") return txt;
       return txt.split(splitter);
     }
@@ -36,6 +37,7 @@
     }
 
     static expand(selector, value) {
+      trace("NwtResourceApi.expand");
       selector = this.fromStringToSelector(selector);
       assertion(Array.isArray(selector), "Parameter «selector» must be array on «NwtResourceApi.expand»");
       assertion(selector.length > 1, "Parameter «selector.length» must be greater than 1 on «NwtResourceApi.expand»");
@@ -66,6 +68,7 @@
     }
 
     static set(selector, value, force = false) {
+      trace("NwtResourceApi.set");
       selector = this.fromStringToSelector(selector);
       assertion(Array.isArray(selector), "Parameter «selector» must be array on «NwtResourceApi.set»");
       assertion(selector.length > 1, "Parameter «selector.length» must be greater than 1 on «NwtResourceApi.set»");
@@ -91,6 +94,7 @@
     }
 
     static proxify(definition, obj) {
+      trace("NwtResourceApi.proxify");
       return new Proxy(obj, {
         get: (apiTarget, prop) => {
           const value = apiTarget[prop];
@@ -106,6 +110,7 @@
     }
 
     static install(definition) {
+      trace("NwtResourceApi.install");
       if (!definition.apis) return {};
       if (!definition.apis.length) return {};
       definition.api = new Proxy(this.apis, {

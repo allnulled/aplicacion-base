@@ -270,13 +270,15 @@ Vue.component("MainWindow", {
     }
 
   },
-  mounted() {
-    trace("MainWindow.mounted");
+  created() {
     Inyeccion_a_modulo_externo: {
       if (window.AppRoot && window.AppRoot.initialize) {
         window.AppRoot.initialize(this);
       }
     }
+  },
+  mounted() {
+    trace("MainWindow.mounted");
     this.reload();
   }
 });

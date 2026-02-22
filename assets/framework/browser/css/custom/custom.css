@@ -58,6 +58,27 @@ div.subcard {
     border: 1px solid #888;
 }
 
+.hpill_start {
+    border-top-left-radius: 3pt;
+    border-bottom-left-radius: 3pt;
+    border-top-right-radius: 0pt;
+    border-bottom-right-radius: 0pt;
+}
+.hpill_end {
+    border-top-left-radius: 0pt;
+    border-bottom-left-radius: 0pt;
+    border-top-right-radius: 3pt;
+    border-bottom-right-radius: 3pt;
+}
+.hpill_center {
+    border-top-left-radius: 0pt;
+    border-bottom-left-radius: 0pt;
+    border-top-right-radius: 0pt;
+    border-bottom-right-radius: 0pt;
+}
+
+.hlist > .hitem
+
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;

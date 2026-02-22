@@ -80,7 +80,7 @@
             </div>
         </template>
         <div class="children" ref="childrenBox">
-            <nwt-tester-node v-for="(child,i) in node.children"
+            <nwt-tester-node v-for="(child,i) in reverseChildren(node.children)"
                 v-bind:key="'node_' + node.name + '_child_' + i"
                 :node="child"
                 :has-parent="true"

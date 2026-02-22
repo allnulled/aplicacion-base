@@ -232,6 +232,26 @@
       };
     }
 
+    static shouldThrow(callback) {
+      assertion("NwtUtils.shouldThrow");
+      try {
+        callback();
+        return false;
+      } catch (error) {
+        return true;
+      }
+    }
+
+    static shouldNotThrow(callback) {
+      assertion("NwtUtils.shouldNotThrow");
+      try {
+        callback();
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
   };
 
   return NwtUtils;

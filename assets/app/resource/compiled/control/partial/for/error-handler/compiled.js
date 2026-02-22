@@ -1,0 +1,48 @@
+NwtResource.define({
+  id: "control/partial/for/error-handler",
+  apis: ["control", "view", "validation"],
+  inherits: [],
+  traits: {},
+  compileView: true,
+  view: {
+    name: "NwtControlPartialForErrorHandler",
+    props: {
+      "control": {
+        "type": Vue,
+        "required": true
+      }
+    },
+    template: `
+      <div class="nwt_control_partial_for_error_handler">
+        <div class="error_handler"
+          v-if="control.validationErrors.length">
+          <div class="flex_row">
+            <div class="flex_100">
+              <div class="error_viewer_container">
+                <div class="error_viewer">
+                  <div class="error_box">
+                    <div class=""
+                      v-for="error, errorIndex in control.validationErrors"
+                      v-bind:key="'validation_error_' + errorIndex">
+                      <span>💡 {{ error.name }}: {{ error.message }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex_1 pad_left_1">
+              <button class="mini height_100 nowrap"
+                v-on:click="() => { control.validationErrors = []; }">❎</button>
+            </div>
+          </div>
+        </div>
+      </div>`,
+    data: function() {
+      const finalData = {};
+      return finalData;
+    },
+    methods: {},
+    computed: {},
+    watch: {},
+  }
+});

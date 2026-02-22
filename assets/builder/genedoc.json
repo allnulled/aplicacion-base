@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-21T16:06:11.182Z",
+  "generatedAt": "2026-02-22T20:47:12.716Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -127,9 +127,9 @@
         "NwtFilesystem",
         "NwtPaths",
         "NwtImporter",
+        "NwtTimer",
         "NwtDialogs",
-        "NwtTester",
-        "NwtTimer"
+        "NwtTester"
       ]
     },
     {
@@ -317,7 +317,7 @@
       "apiName": "NwtFormControlViewer",
       "dependencies": [
         "NwtFormControlViewer",
-        "NwtFormBuilder"
+        "NwtStatic"
       ]
     },
     {
@@ -572,7 +572,8 @@
       "apiName": "NwtResource",
       "dependencies": [
         "NwtResource",
-        "NwtResourceApi"
+        "NwtResourceApi",
+        "NwtResiyrce"
       ]
     },
     {
@@ -1679,16 +1680,84 @@
         "NwtCsv",
         "NwtShell",
         "NwtFilesystem",
+        "NwtAbort",
+        "NwtAccessor",
+        "NwtArgumenter",
+        "NwtArrayUtils",
+        "NwtAstTreeClass",
+        "NwtAstTreeTemplateSource",
+        "NwtBrowserPolyfill",
+        "NwtCacheDirectory",
+        "NwtChatgpt",
+        "NwtClipboard",
+        "NwtCodeComposer",
+        "NwtCollectionUtils",
+        "NwtCommand",
+        "NwtCommandContextInterface",
+        "NwtCommandFormInterface",
+        "NwtCommandsManager",
+        "NwtCommandSynchronizer",
+        "NwtCommandViewInterface",
+        "NwtConstrainer",
+        "NwtDebug",
+        "NwtDialogDefinition",
+        "NwtDialogs",
+        "NwtDirectoryPersister",
+        "NwtDom",
+        "NwtDomAutomator",
+        "NwtEnvironment",
+        "NwtErrors",
+        "NwtErrorsManager",
+        "NwtErrorUtils",
+        "NwtEvents",
+        "NwtEventsManager",
+        "NwtExporter",
+        "NwtFileChooser",
+        "NwtFilePersister",
+        "NwtFiletree",
+        "NwtFiletreeDirectory",
+        "NwtFiletreeFile",
+        "NwtFiletreeGlob",
+        "NwtFiletreeJson",
+        "NwtFiletreeNode",
+        "NwtFiletreeProperty",
+        "NwtFiletreeSelector",
+        "NwtFiletreeSelectorInterpreter",
+        "NwtFiletreeSelectorParser",
+        "NwtInterruptible",
+        "NwtInterruption",
+        "NwtInterruptionHandler",
+        "NwtIterableClass",
+        "NwtIterableCommandClass",
+        "NwtIterableFunction",
+        "NwtJsController",
+        "NwtJsonlPersister",
+        "NwtJsonPersister",
         "NwtJsonStorer",
+        "NwtJsReturnController",
+        "NwtJsThrowController",
+        "NwtLiveInjector",
+        "NwtModuleManager",
+        "NwtObjectUtils",
+        "NwtPaths",
+        "NwtPersister",
         "NwtProceduresManager",
         "NwtPromptsManager",
-        "NwtChatgpt",
-        "NwtDialogDefinition",
+        "NwtPrototyper",
+        "NwtProxyChain",
+        "NwtResource",
+        "NwtResourceApi",
+        "NwtResourceApiNexer",
         "NwtStrings",
-        "NwtFileChooser",
-        "NwtEnvironment",
-        "NwtPaths",
-        "NwtCodeComposer"
+        "NwtStringShortener",
+        "NwtTemplates",
+        "NwtToasts",
+        "NwtValidableSchema",
+        "NwtValidationContext",
+        "NwtValidationContextPointer",
+        "NwtValidator",
+        "NwtVue2",
+        "window.app"
       ]
     },
     {

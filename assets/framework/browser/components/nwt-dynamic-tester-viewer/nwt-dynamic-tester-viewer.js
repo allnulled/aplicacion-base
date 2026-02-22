@@ -46,6 +46,16 @@ Vue.component("NwtDynamicTesterViewer", {
             await NwtImporter.asyncSource(test.js, { tester: subtest, assertion });
           });
         }
+        // @WAIT 3 secs antes de cerrar todo:
+        const reportingTime = 1000 * 3;
+        tester.define(`Tiempo de reporte: ${reportingTime} milisegundos`, async function(tester, assertion, dialog) {
+          tester.progressBar.total = 100;
+          const steps = reportingTime/100;
+          for(let index=0; index<100; index++) {
+            await NwtTimer.timeout(steps);
+            tester.progressBar.advance(1);
+          }
+        });
       });
     },
     async runTestCallback(tester, assertion, dialog, test) {

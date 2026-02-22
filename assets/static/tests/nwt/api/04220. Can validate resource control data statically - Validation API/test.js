@@ -13,7 +13,7 @@ const option1 = [{
     }
   }
 }];
-window.schemas = {
+const schemas = {
   first: {
     schema: {
       name: {

@@ -1,6 +1,5 @@
 tester.progressBar.total = 2;
 tester.progressBar.advance(1);
-await NwtTimer.timeout(500);
 Test_in_situ: {
   const spec = {
     name: {
@@ -44,4 +43,3 @@ Test_in_situ: {
   assertion(hasPassed, "Debería haber fallado el try-catch antes con spec2 aqui");
 }
 tester.progressBar.advance(1);
-await NwtTimer.timeout(500);

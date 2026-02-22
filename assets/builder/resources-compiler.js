@@ -41,6 +41,24 @@ const ResourcesCompilerLowCode = class {
 
 const ResourcesCompiler = class {
 
+  static projectRoot = "";
+
+  static get compilablesDir() {
+    return require("path").resolve(this.projectRoot, "assets/app/resource/compilable");
+  }
+
+  static get compiledsDir() {
+    return require("path").resolve(this.projectRoot, "assets/app/resource/compiled");
+  }
+
+  static getRelativePathFor(nodepath) {
+    return nodepath.replace(this.projectRoot, "");
+  }
+
+  static getCompiledPathFor(nodepath) {
+    return nodepath.replace(this.compilablesDir, this.compiledsDir);
+  }
+
   static beautify = undefined;
 
   static RESOURCE_CLASS_RESERVED_PROPERTIES = {
@@ -256,7 +274,9 @@ const ResourcesCompiler = class {
   static requireLive(file, injectionsUser = {}, scope = this) {
     const fs = require("fs");
     const templateFile = file.replace(/\.js$/g, ".html");
+    const styleFile = file.replace(/\.js$/g, ".css");
     const hasTemplate = this.existsAsFile(templateFile);
+    const hasStyle = this.existsAsFile(styleFile);
     const injections = Object.assign({}, injectionsUser, {
       LowCode: this.LowCode,
       __dirname: require("path").dirname(file),
@@ -273,7 +293,18 @@ const ResourcesCompiler = class {
     const code = fs.readFileSync(file).toString();
     const callback = new Function(...Object.keys(injections), code);
     const result = callback.call(scope, ...Object.values(injections));
-    return typeof result !== "undefined" ? result : injections.module.exports;
+    const isResultDefined = typeof result !== "undefined";
+    if(hasStyle) {
+      if(typeof isResultDefined === "object") {
+        result.$hasAttachedStyles = styleFile;
+      } else if(typeof injections.module.exports === "object") {
+        injections.module.exports.$hasAttachedStyles = styleFile;
+      } else {
+        console.log(result);
+        throw new Error(`Cannot attach styles on «${file}» because it is not returning or exporting object on «ResourcesCompiler.requireLive»`);
+      }
+    }
+    return isResultDefined ? result : injections.module.exports;
   }
 
   static resolveInheritedBy(definition, projectRoot, metadata, originalDefinition = false) {
@@ -284,11 +315,10 @@ const ResourcesCompiler = class {
     definition.$inheritedBy = [];
     definition.$id = definition.id;
     definition.$path = `assets/app/resource/compilable/${definition.$id}/compilable.js`;
-    const compilablesDir = require("path").resolve(projectRoot, "assets/app/resource/compilable");
     originalDefinition ||= definition;
     for (let index = 0; index < definition.inherits.length; index++) {
       const inheritedId = definition.inherits[index];
-      const inheritedInterface = this.requireLive(`${compilablesDir}/${inheritedId}/compilable.js`);
+      const inheritedInterface = this.requireLive(`${ResourcesCompiler.compilablesDir}/${inheritedId}/compilable.js`);
       assertion(typeof inheritedInterface === "object", `Inherited resource «${inheritedId}» while defining resource «${metadata.id}» must return object on «ResourcesCompiler.resolveInheritedBy»`);
       inheritedInterface.$id = inheritedId;
       inheritedInterface.$path = `assets/app/resource/compilable/${definition.$id}/compilable.js`;
@@ -446,19 +476,18 @@ const ResourcesCompiler = class {
 };
 
 module.exports = function (projectRoot) {
+  ResourcesCompiler.projectRoot = projectRoot;
   const fs = require("fs-extra");
   const path = require("path");
   const fastGlob = require("fast-glob");
-  const compilablesDir = path.resolve(projectRoot, "assets/app/resource/compilable");
-  const compiledsDir = path.resolve(projectRoot, "assets/app/resource/compiled");
-  const compilablesGlob = path.resolve(compilablesDir, "**/compilable.js");
+  const compilablesGlob = path.resolve(ResourcesCompiler.compilablesDir, "**/compilable.js");
   const found = fastGlob.sync(compilablesGlob);
   let compileds = [];
   ResourcesCompiler.beautify = require(`${projectRoot}/assets/external/js-beautify/js-beautify.js`);
   assertion(typeof ResourcesCompiler.beautify === "object", "Required library «beautify.js» on «builder/resources-compiler.js»");
   for (let index = 0; index < found.length; index++) {
     const item = found[index];
-    const id = item.replace(compilablesDir + "/", "").replace(/\/compilable\.js$/g, "");
+    const id = item.replace(ResourcesCompiler.compilablesDir + "/", "").replace(/\/compilable\.js$/g, "");
     const definition = ResourcesCompiler.requireLive(item);
     assertion(typeof definition === "object", `Compilable source at «${id}» must return object from export function on «builder/resources-compiler.js»`);
     assertion(typeof definition.id === "string", `Compilable source at «${id}» must return property «id» as string on «builder/resources-compiler.js»`);
@@ -468,7 +497,7 @@ module.exports = function (projectRoot) {
     const hasName = typeof definition.view?.name !== "undefined";
     const hasCompileFlag = definition.compile === true;
     if (hasName || hasCompileFlag) {
-      const outputPath = path.resolve(compiledsDir, id, "compiled.js");
+      const outputPath = path.resolve(ResourcesCompiler.compiledsDir, id, "compiled.js");
       Turn_on_compiled_flag: {
         delete definition.compile;
         definition.$compiled = true;
@@ -477,6 +506,14 @@ module.exports = function (projectRoot) {
       fs.ensureFileSync(outputPath, outputSource, "utf8");
       fs.writeFileSync(outputPath, outputSource, "utf8");
       compileds.push(outputPath);
+      if(definition.$hasAttachedStyles) {
+        const stylePath = ResourcesCompiler.getRelativePathFor(definition.$hasAttachedStyles);
+        const styleContent = fs.readFileSync(definition.$hasAttachedStyles).toString();
+        const styleFile = ResourcesCompiler.getCompiledPathFor(definition.$hasAttachedStyles);
+        fs.writeFileSync(styleFile, styleContent, "utf8");
+        definition.$hasAttachedStyles = stylePath;
+        compileds.push(styleFile);
+      }
     }
   }
   fs.writeFileSync(__dirname + "/bundlelist-resources.json", JSON.stringify(compileds, null, 2), "utf8");

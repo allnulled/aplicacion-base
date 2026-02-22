@@ -76,7 +76,7 @@
           return [possibleTypes, defaultValue, validator || false];
         })();
         const allowedTypes = Array.isArray(rule[0]) ? rule[0] : [rule[0]];
-        const allowedIds = allowedTypes.map(t => this.fromTypeToString(t));
+        const allowedIds = allowedTypes.map(t => this.fromTypeToString(t).toLowerCase());
         const defaultValue = rule[1];
         const validator = rule[2] || NwtUtils.noop;
         const isMissingProperty = (!(key in target)) || typeof target[key] === "undefined";
@@ -103,7 +103,7 @@
           if (valid) break;
         }
         if (!valid) {
-          throw new TypeError(`Invalid type for property «${key}» expected «${allowedIds.join("|")}» but «${typeof value}» was found instead` + (extraErrorMessage ? (" "+extraErrorMessage) : ""));
+          throw new TypeError(`Invalid type for property «${key}» expected «${allowedIds.join("|")}» but «${value === null ? null : typeof value}» was found instead` + (extraErrorMessage ? (" "+extraErrorMessage) : ""));
         }
       }
       return target;

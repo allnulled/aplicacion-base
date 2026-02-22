@@ -87,6 +87,12 @@
       delete this.definitions[id];
     }
 
+    static fromResourceIdToVueComponentId(id) {
+      trace("NwtResiyrce.fromResourceIdToVueComponentId");
+      if(typeof id !== "string") return id;
+      return "nwt-" + id.replaceAll("/","-");
+    }
+
   };
 
   return NwtResource;

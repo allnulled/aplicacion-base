@@ -1,13 +1,31 @@
 <div class="nwt_form_builder_viewer">
-    <nwt-form-control-viewer :settings="settings" />
-    <hr />
-    <div class="flex_row centered">
+    <div class="flex_row pad_1">
+        <div class="flex_1 pad_right_1">
+            <button class="mini nowrap" v-on:click="validate">💡</button>
+        </div>
         <div class="flex_100"></div>
-        <div class="flex_1">
-            <button class="mini" v-on:click="accept">Aceptar</button>
+        <div class="flex_1 pad_left_1">
+            <button class="mini nowrap" v-on:click="cancel">❌</button>
         </div>
         <div class="flex_1 pad_left_1">
-            <button class="mini" v-on:click="cancel">Cancelar</button>
+            <button class="nowrap" v-on:click="accept">⚡️</button>
+        </div>
+    </div>
+    <hr style="margin-bottom:-1px;"/>
+    <div class="pad_vertical_1">
+        <component :is="'nwt-' + settings.type.replaceAll('/','-')" ref="control" :settings="settings" />
+    </div>
+    <hr style="margin-bottom:1px;"/>
+    <div class="flex_row pad_horizontal_1">
+        <div class="flex_1 pad_right_1">
+            <button class="mini nowrap" v-on:click="validate">💡</button>
+        </div>
+        <div class="flex_100"></div>
+        <div class="flex_1 pad_left_1">
+            <button class="mini nowrap" v-on:click="cancel">❌</button>
+        </div>
+        <div class="flex_1 pad_left_1">
+            <button class="nowrap" v-on:click="accept">⚡️</button>
         </div>
     </div>
 </div>

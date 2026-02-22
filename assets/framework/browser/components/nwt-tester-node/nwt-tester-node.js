@@ -25,6 +25,11 @@ Vue.component("NwtTesterNode", {
     trace("NwtTesterNode.data");
     return {};
   },
+  methods: {
+    reverseChildren(children) {
+      return children.concat().reverse();
+    }
+  },
   mounted() {
     trace("NwtTesterNode.mounted");
     if(this.$refs.childrenBox) {

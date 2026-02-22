@@ -8,27 +8,30 @@ module.exports = {
     }
   },
   view: {
-    props: {
-      
-    },
-    data: function () {
+    data: function() {
+      trace("@compilable/control/trait/for/getValue.data");
       return {
-        value: null,
-      }
+        value: undefined,
+      };
     },
     methods: {
       getValue: function () {
         trace("@compilable/control/trait/for/getValue.methods.getValue");
+        const formatterBySettings = this.settings?.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(this.value);
+        return formattedValue;
       }
     },
     watch: {
-      value: function () {
+      value: function (newValue, oldValue) {
         trace("@compilable/control/trait/for/getValue.watch.value");
-
+        const propagator = this.settings?.onChange || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
       },
-      valueOption: function () {
+      valueOption: function (newValue, oldValue) {
         trace("@compilable/control/trait/for/getValue.watch.valueOption");
-
+        const propagator = this.settings?.onChangeOption || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
       }
     },
     mounted: function () {

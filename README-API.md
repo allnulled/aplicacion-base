@@ -297,16 +297,84 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtCsv`
    - **@uses** `NwtShell`
    - **@uses** `NwtFilesystem`
+   - **@uses** `NwtAbort`
+   - **@uses** `NwtAccessor`
+   - **@uses** `NwtArgumenter`
+   - **@uses** `NwtArrayUtils`
+   - **@uses** `NwtAstTreeClass`
+   - **@uses** `NwtAstTreeTemplateSource`
+   - **@uses** `NwtBrowserPolyfill`
+   - **@uses** `NwtCacheDirectory`
+   - **@uses** `NwtChatgpt`
+   - **@uses** `NwtClipboard`
+   - **@uses** `NwtCodeComposer`
+   - **@uses** `NwtCollectionUtils`
+   - **@uses** `NwtCommand`
+   - **@uses** `NwtCommandContextInterface`
+   - **@uses** `NwtCommandFormInterface`
+   - **@uses** `NwtCommandsManager`
+   - **@uses** `NwtCommandSynchronizer`
+   - **@uses** `NwtCommandViewInterface`
+   - **@uses** `NwtConstrainer`
+   - **@uses** `NwtDebug`
+   - **@uses** `NwtDialogDefinition`
+   - **@uses** `NwtDialogs`
+   - **@uses** `NwtDirectoryPersister`
+   - **@uses** `NwtDom`
+   - **@uses** `NwtDomAutomator`
+   - **@uses** `NwtEnvironment`
+   - **@uses** `NwtErrors`
+   - **@uses** `NwtErrorsManager`
+   - **@uses** `NwtErrorUtils`
+   - **@uses** `NwtEvents`
+   - **@uses** `NwtEventsManager`
+   - **@uses** `NwtExporter`
+   - **@uses** `NwtFileChooser`
+   - **@uses** `NwtFilePersister`
+   - **@uses** `NwtFiletree`
+   - **@uses** `NwtFiletreeDirectory`
+   - **@uses** `NwtFiletreeFile`
+   - **@uses** `NwtFiletreeGlob`
+   - **@uses** `NwtFiletreeJson`
+   - **@uses** `NwtFiletreeNode`
+   - **@uses** `NwtFiletreeProperty`
+   - **@uses** `NwtFiletreeSelector`
+   - **@uses** `NwtFiletreeSelectorInterpreter`
+   - **@uses** `NwtFiletreeSelectorParser`
+   - **@uses** `NwtInterruptible`
+   - **@uses** `NwtInterruption`
+   - **@uses** `NwtInterruptionHandler`
+   - **@uses** `NwtIterableClass`
+   - **@uses** `NwtIterableCommandClass`
+   - **@uses** `NwtIterableFunction`
+   - **@uses** `NwtJsController`
+   - **@uses** `NwtJsonlPersister`
+   - **@uses** `NwtJsonPersister`
    - **@uses** `NwtJsonStorer`
+   - **@uses** `NwtJsReturnController`
+   - **@uses** `NwtJsThrowController`
+   - **@uses** `NwtLiveInjector`
+   - **@uses** `NwtModuleManager`
+   - **@uses** `NwtObjectUtils`
+   - **@uses** `NwtPaths`
+   - **@uses** `NwtPersister`
    - **@uses** `NwtProceduresManager`
    - **@uses** `NwtPromptsManager`
-   - **@uses** `NwtChatgpt`
-   - **@uses** `NwtDialogDefinition`
+   - **@uses** `NwtPrototyper`
+   - **@uses** `NwtProxyChain`
+   - **@uses** `NwtResource`
+   - **@uses** `NwtResourceApi`
+   - **@uses** `NwtResourceApiNexer`
    - **@uses** `NwtStrings`
-   - **@uses** `NwtFileChooser`
-   - **@uses** `NwtEnvironment`
-   - **@uses** `NwtPaths`
-   - **@uses** `NwtCodeComposer`
+   - **@uses** `NwtStringShortener`
+   - **@uses** `NwtTemplates`
+   - **@uses** `NwtToasts`
+   - **@uses** `NwtValidableSchema`
+   - **@uses** `NwtValidationContext`
+   - **@uses** `NwtValidationContextPointer`
+   - **@uses** `NwtValidator`
+   - **@uses** `NwtVue2`
+   - **@uses** `window.app`
 - `78. The NwtPaths API`
    - **@uses** `NwtEnvironment`
    - **@uses** `NwtFramework`
@@ -368,6 +436,7 @@ Documentación de las APIs de Nwt.
 - `93. The NwtResourceApiNexer API`
 - `94. The NwtResource API`
    - **@uses** `NwtResourceApi`
+   - **@uses** `NwtResiyrce`
 - `95. The NwtSettings API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtJsonStorer`
@@ -458,9 +527,9 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
    - **@uses** `NwtImporter`
+   - **@uses** `NwtTimer`
    - **@uses** `NwtDialogs`
    - **@uses** `NwtTester`
-   - **@uses** `NwtTimer`
 - `118. [vue2] The NwtFileExplorer API`
    - **@uses** `NwtUtils`
    - **@uses** `NwtFilesystem`
@@ -470,7 +539,7 @@ Documentación de las APIs de Nwt.
 - `120. [vue2] The NwtFormControlErrorsViewer API`
 - `121. [vue2] The NwtFormControlStatementViewer API`
 - `122. [vue2] The NwtFormControlViewer API`
-   - **@uses** `NwtFormBuilder`
+   - **@uses** `NwtStatic`
 - `123. [vue2] The NwtMatrixBackground API`
    - **@uses** `window.innerWidth`
    - **@uses** `window.innerHeight`
@@ -658,6 +727,16 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtCodeHighlighter
    - NwtFileExplorer
    - NwtSettingsViewer
+- NwtDialogs ✖️ 9
+   - NwtCommand
+   - NwtDialogDefinition
+   - NwtFormBuilder
+   - NwtPack
+   - NwtProcedureDefinition
+   - NwtPromptsManager
+   - NwtChatgptFilesManagerViewer
+   - NwtDynamicTesterViewer
+   - NwtPromptsManagerViewer
 - NwtImporter ✖️ 9
    - NwtCommandFormInterface
    - NwtCommand
@@ -668,15 +747,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPack
    - NwtProcedureDefinition
    - NwtDynamicTesterViewer
-- NwtDialogs ✖️ 8
-   - NwtCommand
-   - NwtDialogDefinition
-   - NwtFormBuilder
-   - NwtProcedureDefinition
-   - NwtPromptsManager
-   - NwtChatgptFilesManagerViewer
-   - NwtDynamicTesterViewer
-   - NwtPromptsManagerViewer
 - NwtTimer ✖️ 8
    - NwtArgumenter
    - NwtChatgpt
@@ -693,6 +763,13 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtLiveInjector
    - NwtPack
    - NwtTemplates
+- NwtFiletreeNode ✖️ 6
+   - NwtFiletreeDirectory
+   - NwtFiletreeFile
+   - NwtFiletreeGlob
+   - NwtFiletreeJson
+   - NwtFiletreeProperty
+   - NwtPack
 - NwtRandomizer ✖️ 6
    - NwtDialogDefinition
    - NwtFilesystem
@@ -700,24 +777,25 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtProcess
    - NwtStringShortener
    - NwtSourceViewer
-- NwtFiletreeNode ✖️ 5
+- NwtToasts ✖️ 6
+   - NwtClipboard
+   - NwtCommandSynchronizer
+   - NwtIterableFunction
+   - NwtPack
+   - NwtShell
+   - NwtTester
+- NwtFiletreeSelectorInterpreter ✖️ 5
    - NwtFiletreeDirectory
-   - NwtFiletreeFile
-   - NwtFiletreeGlob
-   - NwtFiletreeJson
-   - NwtFiletreeProperty
+   - NwtFiletree
+   - NwtFiletreeNode
+   - NwtFiletreeSelector
+   - NwtPack
 - require("fast-glob") ✖️ 5
    - NwtFilesystem
    - NwtFiletree
    - NwtFiletreeSelectorInterpreter
    - NwtProceduresManager
    - NwtPromptsManager
-- NwtToasts ✖️ 5
-   - NwtClipboard
-   - NwtCommandSynchronizer
-   - NwtIterableFunction
-   - NwtShell
-   - NwtTester
 - NwtSettings ✖️ 5
    - NwtChatgpt
    - NwtPack
@@ -729,11 +807,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtTester
    - NwtProcessManagerViewer
    - NwtProgressBarViewer
-- NwtFiletreeSelectorInterpreter ✖️ 4
-   - NwtFiletreeDirectory
-   - NwtFiletree
-   - NwtFiletreeNode
-   - NwtFiletreeSelector
 - require("fs-extra") ✖️ 4
    - NwtFilesystem
    - NwtObjectUtils
@@ -749,6 +822,21 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPack
    - NwtDynamicTesterViewer
    - NwtTesterViewer
+- NwtJsController ✖️ 4
+   - NwtCodeComposer
+   - NwtJsReturnController
+   - NwtJsThrowController
+   - NwtPack
+- NwtStringShortener ✖️ 4
+   - NwtCacheDirectory
+   - NwtFiletree
+   - NwtFiletreeSelectorInterpreter
+   - NwtPack
+- NwtTemplates ✖️ 4
+   - NwtAstTreeClass
+   - NwtErrorsManager
+   - NwtIterableFunction
+   - NwtPack
 - require("os") ✖️ 3
    - NwtPaths
    - NwtSettings
@@ -769,10 +857,26 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPack
    - NwtProcedureSeed
    - NwtProcedureDocumentationViewer
+- NwtFilePersister ✖️ 3
+   - NwtJsonlPersister
+   - NwtPack
+   - NwtPersister
 - NwtAsserter ✖️ 3
    - NwtFormBuilder
    - NwtPack
    - NwtTester
+- NwtFiletreeSelectorParser ✖️ 3
+   - NwtFiletreeSelector
+   - NwtFiletreeSelectorParserBuildSh
+   - NwtPack
+- NwtFiletreeSelector ✖️ 3
+   - NwtFiletree
+   - NwtFiletreeSelectorInterpreter
+   - NwtPack
+- NwtBrowserPolyfill ✖️ 3
+   - NwtFilesystem
+   - NwtFiletree
+   - NwtPack
 - NwtStrings ✖️ 3
    - NwtDom
    - NwtErrorsManager
@@ -781,67 +885,126 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtDialogDefinition
    - NwtPack
    - NwtProcessManager
+- NwtCommand ✖️ 3
+   - NwtCommandsManager
+   - NwtPack
+   - NwtVue2
+- NwtCommandContextInterface ✖️ 3
+   - NwtCommandFormInterface
+   - NwtCommandViewInterface
+   - NwtPack
 - NwtLazyLoader ✖️ 3
    - NwtCodeComposer
    - NwtPack
    - NwtCodeHighlighter
-- NwtJsController ✖️ 3
-   - NwtCodeComposer
-   - NwtJsReturnController
-   - NwtJsThrowController
-- NwtStringShortener ✖️ 3
-   - NwtCacheDirectory
-   - NwtFiletree
-   - NwtFiletreeSelectorInterpreter
-- NwtTemplates ✖️ 3
-   - NwtAstTreeClass
-   - NwtErrorsManager
-   - NwtIterableFunction
-- NwtChatgpt ✖️ 2
+- NwtValidationContextPointer ✖️ 2
    - NwtPack
-   - NwtChatgptFilesManagerViewer
+   - NwtValidationContext
+- NwtResourceApiNexer ✖️ 2
+   - NwtPack
+   - NwtResourceApi
+- NwtResourceApi ✖️ 2
+   - NwtPack
+   - NwtResource
+- NwtPrototyper ✖️ 2
+   - NwtPack
+   - NwtValidationContext
 - NwtPromptsManager ✖️ 2
    - NwtPack
    - NwtPromptsManagerViewer
+- NwtPersister ✖️ 2
+   - NwtPack
+   - NwtUtils
+- NwtObjectUtils ✖️ 2
+   - NwtPack
+   - NwtResourceApi
 - NwtJsonStorer ✖️ 2
    - NwtPack
    - NwtSettings
-- NwtFilePersister ✖️ 2
-   - NwtJsonlPersister
+- NwtJsonPersister ✖️ 2
+   - NwtPack
    - NwtPersister
+- NwtJsonlPersister ✖️ 2
+   - NwtPack
+   - NwtPersister
+- NwtDirectoryPersister ✖️ 2
+   - NwtPack
+   - NwtPersister
+- NwtConstrainer ✖️ 2
+   - NwtPack
+   - NwtValidationContext
+- NwtCommandViewInterface ✖️ 2
+   - NwtPack
+   - NwtAnonymousCommandView
+- NwtCommandsManager ✖️ 2
+   - NwtPack
+   - NwtCommandsManagerViewer
+- NwtCommandFormInterface ✖️ 2
+   - NwtPack
+   - NwtAnonymousCommandForm
+- NwtChatgpt ✖️ 2
+   - NwtPack
+   - NwtChatgptFilesManagerViewer
+- NwtIterableClass ✖️ 2
+   - NwtIterableCommandClass
+   - NwtPack
+- NwtInterruption ✖️ 2
+   - NwtInterruptionHandler
+   - NwtPack
+- NwtInterruptionHandler ✖️ 2
+   - NwtInterruptible
+   - NwtPack
 - NwtTracer ✖️ 2
    - NwtInjection
    - NwtPack
-- NwtFormBuilder ✖️ 2
-   - NwtForm
-   - NwtFormControlViewer
-- NwtFiletreeSelectorParser ✖️ 2
-   - NwtFiletreeSelector
-   - NwtFiletreeSelectorParserBuildSh
-- NwtFiletreeSelector ✖️ 2
+- NwtResource ✖️ 2
+   - NwtFormBuilder
+   - NwtPack
+- NwtFiletreeGlob ✖️ 2
    - NwtFiletree
-   - NwtFiletreeSelectorInterpreter
-- NwtBrowserPolyfill ✖️ 2
-   - NwtFilesystem
+   - NwtPack
+- NwtFiletreeProperty ✖️ 2
    - NwtFiletree
+   - NwtPack
+- NwtFiletreeJson ✖️ 2
+   - NwtFiletree
+   - NwtPack
+- NwtFiletreeFile ✖️ 2
+   - NwtFiletree
+   - NwtPack
+- NwtFiletreeDirectory ✖️ 2
+   - NwtFiletree
+   - NwtPack
+- NwtEventsManager ✖️ 2
+   - NwtEvents
+   - NwtPack
 - window.addEventListener ✖️ 2
    - NwtErrorsManager
    - NwtInjection
+- NwtErrors ✖️ 2
+   - NwtErrorsManager
+   - NwtPack
 - NwtGlobalizer ✖️ 2
    - NwtErrorsManager
    - NwtPack
-- NwtCommand ✖️ 2
-   - NwtCommandsManager
-   - NwtVue2
-- NwtCommandContextInterface ✖️ 2
-   - NwtCommandFormInterface
+- NwtCacheDirectory ✖️ 2
    - NwtCommandViewInterface
+   - NwtPack
+- NwtAbort ✖️ 2
+   - NwtCommandSynchronizer
+   - NwtPack
 - window.beautifier ✖️ 2
    - NwtCodeComposer
    - NwtLazyLoader
+- NwtJsReturnController ✖️ 2
+   - NwtCodeComposer
+   - NwtPack
 - window.navigator ✖️ 2
    - NwtClipboard
    - NwtUtils
+- NwtAstTreeTemplateSource ✖️ 2
+   - NwtAstTreeClass
+   - NwtPack
 - NwtTesterViewer ✖️ 1
    - NwtTesterNode
 - NwtDialog ✖️ 1
@@ -850,24 +1013,12 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtMatrixBackground
 - window.innerWidth ✖️ 1
    - NwtMatrixBackground
-- NwtCommandsManager ✖️ 1
-   - NwtCommandsManagerViewer
-- NwtCommandViewInterface ✖️ 1
-   - NwtAnonymousCommandView
-- NwtCommandFormInterface ✖️ 1
-   - NwtAnonymousCommandForm
+- NwtStatic ✖️ 1
+   - NwtFormControlViewer
 - NwtFeatureStatics ✖️ 1
    - NwtValidator
 - NwtLazyComponent ✖️ 1
    - NwtValidationContext
-- NwtConstrainer ✖️ 1
-   - NwtValidationContext
-- NwtValidationContextPointer ✖️ 1
-   - NwtValidationContext
-- NwtPrototyper ✖️ 1
-   - NwtValidationContext
-- NwtPersister ✖️ 1
-   - NwtUtils
 - global.trace ✖️ 1
    - NwtTracer
 - window.trace ✖️ 1
@@ -884,25 +1035,69 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtShell
 - require("child_process") ✖️ 1
    - NwtShell
-- NwtResourceApi ✖️ 1
+- NwtResiyrce ✖️ 1
    - NwtResource
-- NwtObjectUtils ✖️ 1
-   - NwtResourceApi
-- NwtResourceApiNexer ✖️ 1
-   - NwtResourceApi
 - NwtProxyChainNexer ✖️ 1
    - NwtProxyChain
 - window.NwtProceduresManager ✖️ 1
    - NwtProcedureInjections
-- NwtDirectoryPersister ✖️ 1
-   - NwtPersister
-- NwtJsonlPersister ✖️ 1
-   - NwtPersister
-- NwtJsonPersister ✖️ 1
-   - NwtPersister
+- window.app ✖️ 1
+   - NwtPack
+- NwtVue2 ✖️ 1
+   - NwtPack
+- NwtValidator ✖️ 1
+   - NwtPack
+- NwtValidationContext ✖️ 1
+   - NwtPack
+- NwtValidableSchema ✖️ 1
+   - NwtPack
+- NwtProxyChain ✖️ 1
+   - NwtPack
+- NwtModuleManager ✖️ 1
+   - NwtPack
+- NwtLiveInjector ✖️ 1
+   - NwtPack
+- NwtJsThrowController ✖️ 1
+   - NwtPack
+- NwtIterableFunction ✖️ 1
+   - NwtPack
+- NwtIterableCommandClass ✖️ 1
+   - NwtPack
+- NwtInterruptible ✖️ 1
+   - NwtPack
+- NwtFiletree ✖️ 1
+   - NwtPack
 - NwtFileChooser ✖️ 1
    - NwtPack
+- NwtExporter ✖️ 1
+   - NwtPack
+- NwtEvents ✖️ 1
+   - NwtPack
+- NwtErrorUtils ✖️ 1
+   - NwtPack
+- NwtErrorsManager ✖️ 1
+   - NwtPack
+- NwtDomAutomator ✖️ 1
+   - NwtPack
+- NwtDom ✖️ 1
+   - NwtPack
 - NwtDialogDefinition ✖️ 1
+   - NwtPack
+- NwtDebug ✖️ 1
+   - NwtPack
+- NwtCommandSynchronizer ✖️ 1
+   - NwtPack
+- NwtCollectionUtils ✖️ 1
+   - NwtPack
+- NwtClipboard ✖️ 1
+   - NwtPack
+- NwtAstTreeClass ✖️ 1
+   - NwtPack
+- NwtArrayUtils ✖️ 1
+   - NwtPack
+- NwtArgumenter ✖️ 1
+   - NwtPack
+- NwtAccessor ✖️ 1
    - NwtPack
 - NwtCsv ✖️ 1
    - NwtPack
@@ -912,12 +1107,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtJsonlPersister
 - Nwt_iterable_function_loop ✖️ 1
    - NwtIterableFunction
-- NwtIterableClass ✖️ 1
-   - NwtIterableCommandClass
-- NwtInterruption ✖️ 1
-   - NwtInterruptionHandler
-- NwtInterruptionHandler ✖️ 1
-   - NwtInterruptible
 - NwtLazyControl ✖️ 1
    - NwtInjection
 - require(fullpath) ✖️ 1
@@ -932,26 +1121,12 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtForm
 - NwtFormControl ✖️ 1
    - NwtForm
+- NwtFormBuilder ✖️ 1
+   - NwtForm
 - NwtFormControlStatement ✖️ 1
    - NwtFormControl
 - NwtFormControlErrors ✖️ 1
    - NwtFormControl
-- NwtResource ✖️ 1
-   - NwtFormBuilder
-- NwtFiletreeGlob ✖️ 1
-   - NwtFiletree
-- NwtFiletreeProperty ✖️ 1
-   - NwtFiletree
-- NwtFiletreeJson ✖️ 1
-   - NwtFiletree
-- NwtFiletreeFile ✖️ 1
-   - NwtFiletree
-- NwtFiletreeDirectory ✖️ 1
-   - NwtFiletree
-- NwtEventsManager ✖️ 1
-   - NwtEvents
-- NwtErrors ✖️ 1
-   - NwtErrorsManager
 - NwtUnificatedError ✖️ 1
    - NwtErrorUtils
 - window.showOpenFilePicker ✖️ 1
@@ -964,22 +1139,14 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtEnvironment
 - window.cordova ✖️ 1
    - NwtEnvironment
-- NwtCacheDirectory ✖️ 1
-   - NwtCommandViewInterface
-- NwtAbort ✖️ 1
-   - NwtCommandSynchronizer
 - NwtCommend ✖️ 1
    - NwtCommand
 - NwtCommandViewFor ✖️ 1
    - NwtCommand
 - NwtCommandFormFor ✖️ 1
    - NwtCommand
-- NwtJsReturnController ✖️ 1
-   - NwtCodeComposer
 - require("openai") ✖️ 1
    - NwtChatgpt
-- NwtAstTreeTemplateSource ✖️ 1
-   - NwtAstTreeClass
 - global.assertion ✖️ 1
    - NwtAsserter
 - window.assertion ✖️ 1
@@ -994,7 +1161,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-21T16:06:11.182Z",
+  "generatedAt": "2026-02-22T20:47:12.716Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -2141,16 +2308,84 @@ El JSON original es:
         "NwtCsv",
         "NwtShell",
         "NwtFilesystem",
+        "NwtAbort",
+        "NwtAccessor",
+        "NwtArgumenter",
+        "NwtArrayUtils",
+        "NwtAstTreeClass",
+        "NwtAstTreeTemplateSource",
+        "NwtBrowserPolyfill",
+        "NwtCacheDirectory",
+        "NwtChatgpt",
+        "NwtClipboard",
+        "NwtCodeComposer",
+        "NwtCollectionUtils",
+        "NwtCommand",
+        "NwtCommandContextInterface",
+        "NwtCommandFormInterface",
+        "NwtCommandsManager",
+        "NwtCommandSynchronizer",
+        "NwtCommandViewInterface",
+        "NwtConstrainer",
+        "NwtDebug",
+        "NwtDialogDefinition",
+        "NwtDialogs",
+        "NwtDirectoryPersister",
+        "NwtDom",
+        "NwtDomAutomator",
+        "NwtEnvironment",
+        "NwtErrors",
+        "NwtErrorsManager",
+        "NwtErrorUtils",
+        "NwtEvents",
+        "NwtEventsManager",
+        "NwtExporter",
+        "NwtFileChooser",
+        "NwtFilePersister",
+        "NwtFiletree",
+        "NwtFiletreeDirectory",
+        "NwtFiletreeFile",
+        "NwtFiletreeGlob",
+        "NwtFiletreeJson",
+        "NwtFiletreeNode",
+        "NwtFiletreeProperty",
+        "NwtFiletreeSelector",
+        "NwtFiletreeSelectorInterpreter",
+        "NwtFiletreeSelectorParser",
+        "NwtInterruptible",
+        "NwtInterruption",
+        "NwtInterruptionHandler",
+        "NwtIterableClass",
+        "NwtIterableCommandClass",
+        "NwtIterableFunction",
+        "NwtJsController",
+        "NwtJsonlPersister",
+        "NwtJsonPersister",
         "NwtJsonStorer",
+        "NwtJsReturnController",
+        "NwtJsThrowController",
+        "NwtLiveInjector",
+        "NwtModuleManager",
+        "NwtObjectUtils",
+        "NwtPaths",
+        "NwtPersister",
         "NwtProceduresManager",
         "NwtPromptsManager",
-        "NwtChatgpt",
-        "NwtDialogDefinition",
+        "NwtPrototyper",
+        "NwtProxyChain",
+        "NwtResource",
+        "NwtResourceApi",
+        "NwtResourceApiNexer",
         "NwtStrings",
-        "NwtFileChooser",
-        "NwtEnvironment",
-        "NwtPaths",
-        "NwtCodeComposer"
+        "NwtStringShortener",
+        "NwtTemplates",
+        "NwtToasts",
+        "NwtValidableSchema",
+        "NwtValidationContext",
+        "NwtValidationContextPointer",
+        "NwtValidator",
+        "NwtVue2",
+        "window.app"
       ]
     },
     {
@@ -2434,7 +2669,8 @@ El JSON original es:
       "apiName": "NwtResource",
       "dependencies": [
         "NwtResource",
-        "NwtResourceApi"
+        "NwtResourceApi",
+        "NwtResiyrce"
       ]
     },
     {
@@ -2844,9 +3080,9 @@ El JSON original es:
         "NwtFilesystem",
         "NwtPaths",
         "NwtImporter",
+        "NwtTimer",
         "NwtDialogs",
-        "NwtTester",
-        "NwtTimer"
+        "NwtTester"
       ]
     },
     {
@@ -2931,7 +3167,7 @@ El JSON original es:
       "apiName": "NwtFormControlViewer",
       "dependencies": [
         "NwtFormControlViewer",
-        "NwtFormBuilder"
+        "NwtStatic"
       ]
     },
     {

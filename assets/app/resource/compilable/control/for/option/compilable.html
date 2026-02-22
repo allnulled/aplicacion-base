@@ -1,3 +1,14 @@
 <div class="nwt_control_for_option">
-    <pre>Option = {{ $nwt.Utils.filterObjectProperties(settings, (k,v) => !["schema","type","pointer"].includes(k)) }}</pre>
+    <nwt-control-partial-for-statement :control="this" />
+    <div v-show="isShowingControl">
+        <template v-if="isWellFormed">
+            <component v-if="settings.valueOption in settings.schema"
+                :is="$nwt.Resource.fromResourceIdToVueComponentId(settings.schema[settings.valueOption].type)"
+                :settings="{
+                ...settings.schema[settings.valueOption],
+                initialValue: value,
+            }" />
+        </template>
+        <nwt-control-partial-for-error-handler :control="this" />
+    </div>
 </div>

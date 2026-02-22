@@ -42,6 +42,18 @@
       const selectedTest = NwtDomAutomator.find(document.body, "*", "Tests dinámicos")[0];
       selectedTest.nextElementSibling.children[0].click();
     }
+    
+    static async followTheRabbit(base = document.body, start = 1) {
+      let current = start;
+      for (;;) {
+        await NwtTimer.timeout(500);
+        const selector = [`[data-rabbit="${current}"]`];
+        const el = base.querySelector(selector);
+        if (!el) break;
+        el.click();
+        current++;
+      }
+    }
 
   };
 

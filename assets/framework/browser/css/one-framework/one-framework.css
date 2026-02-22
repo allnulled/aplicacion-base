@@ -197,6 +197,101 @@ hr {
     padding-right: 4px;
 }
 
+
+/* VERSIÓN DE PADDERS ADYACENTES: */
+
+.padj_0 + .padj_0 {
+    padding: 0px;
+}
+
+.padj_horizontal_0 + .padj_horizontal_0 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.padj_vertical_0 + .padj_vertical_0 {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.padj_top_0 + .padj_top_0 {
+    padding-top: 0px;
+}
+
+.padj_bottom_0 + .padj_bottom_0 {
+    padding-bottom: 0px;
+}
+
+.padj_left_0 + .padj_left_0 {
+    padding-left: 0px;
+}
+
+.padj_right_0 + .padj_right_0 {
+    padding-right: 0px;
+}
+
+.padj_1 + .padj_1 {
+    padding: 2px;
+}
+
+.padj_horizontal_1 + .padj_horizontal_1 {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.padj_vertical_1 + .padj_vertical_1 {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.padj_top_1 + .padj_top_1 {
+    padding-top: 2px;
+}
+
+.padj_bottom_1 + .padj_bottom_1 {
+    padding-bottom: 2px;
+}
+
+.padj_left_1 + .padj_left_1 {
+    padding-left: 2px;
+}
+
+.padj_right_1 + .padj_right_1 {
+    padding-right: 2px;
+}
+
+.padj_2 + .padj_2 {
+    padding: 4px;
+}
+
+.padj_horizontal_2 + .padj_horizontal_2 {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.padj_vertical_2 + .padj_vertical_2 {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.padj_top_2 + .padj_top_2 {
+    padding-top: 4px;
+}
+
+.padj_bottom_2 + .padj_bottom_2 {
+    padding-bottom: 4px;
+}
+
+.padj_left_2 + .padj_left_2 {
+    padding-left: 4px;
+}
+
+.padj_right_2 + .padj_right_2 {
+    padding-right: 4px;
+}
+
+
+
 .float_right {
     float: right;
 }
