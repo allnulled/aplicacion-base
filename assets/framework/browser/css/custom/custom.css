@@ -100,3 +100,22 @@ div.subcard {
 ::-webkit-scrollbar-thumb:hover {
     background: #777;
 }
+
+
+.window-body::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+.window-body::-webkit-scrollbar-track {
+    background: #a9c3de;
+    border-left: 1px solid #a9c3de;
+}
+.window-body::-webkit-scrollbar-thumb {
+    background: #4e5691;
+    background: var(--w7-w-bg);
+    border: 1px solid #ffffff;
+}
+.window-body::-webkit-scrollbar-corner {
+    background: #a9c3de;
+}
+.window-body::-webkit-scrollbar-thumb:hover {}

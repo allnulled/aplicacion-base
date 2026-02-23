@@ -38,20 +38,23 @@ const answer1 = await NwtForm.builder.ask({
       },
       country: {
         type: "control/for/text",
-        defaultValue: "x",
+        initialValue: "x",
         hasStatement: "País:",
         hasDescription: "Aquí va el país",
       },
       sex: {
         hasStatement: "Sexo:",
         hasDescription: "Aquí va el sexo",
+        onValidate: function(value, settings, component, indexes, assertion) {
+          assertion(value.startsWith("male"), `Parameter «sexo»${NwtStatic.api.control.validation.interface.utils.getIndexesErrorMessage(indexes)} must start be «male» on «NwtResource.for('control/for/text').control.onValidate»`);
+        },
         type: "control/for/option",
         schema: [{
           type: "control/for/text",
-          hasFixedValue: "male"
+          hasFixedValue: "female",
         }, {
           type: "control/for/text",
-          hasFixedValue: "female"
+          hasFixedValue: "male",
         }]
       }
     },

@@ -28,6 +28,7 @@ module.exports = {
           return true;
         }, error => {
           this.validationErrors.push(error);
+          this.showControl();
           throw error;
         }));
       }

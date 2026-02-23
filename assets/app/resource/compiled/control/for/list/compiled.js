@@ -7,6 +7,10 @@ NwtResource.define({
     "initialValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
+    "hasFixedValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "default": "default"
+    },
     "onValidate": {
       "type": [
         Function
@@ -152,7 +156,7 @@ NwtResource.define({
     methods: {
       "getValue": function() {
         trace("@compilable/control/trait/for/getValue.methods.getValue");
-        const formatterBySettings = this.settings?.onFormat || NwtUtils.noopSelf;
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(this.value);
         return formattedValue;
       },
@@ -168,6 +172,7 @@ NwtResource.define({
           return true;
         }, error => {
           this.validationErrors.push(error);
+          this.showControl();
           throw error;
         }));
       },
@@ -200,7 +205,7 @@ NwtResource.define({
       "value": [
         function(newValue, oldValue) {
           trace("@compilable/control/trait/for/getValue.watch.value");
-          const propagator = this.settings?.onChange || NwtUtils.noop;
+          const propagator = this.settings.onChange || NwtUtils.noop;
           propagator(newValue, oldValue, this);
         },
         function() {
@@ -209,7 +214,7 @@ NwtResource.define({
       ],
       "valueOption": function(newValue, oldValue) {
         trace("@compilable/control/trait/for/getValue.watch.valueOption");
-        const propagator = this.settings?.onChangeOption || NwtUtils.noop;
+        const propagator = this.settings.onChangeOption || NwtUtils.noop;
         propagator(newValue, oldValue, this);
       }
     },
@@ -217,7 +222,7 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/getValue
       (function() {
         trace("@compilable/control/trait/for/getValue.mounted");
-        this.value = this.settings?.initialValue;
+        this.value = this.settings.hasFixedValue || this.settings.initialValue;
       }).call(this);
       // @COMPILED-BY: control/trait/for/settings
       (function() {

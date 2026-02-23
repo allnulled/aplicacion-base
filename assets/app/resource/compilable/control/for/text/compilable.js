@@ -18,6 +18,7 @@ module.exports = {
     name: "NwtControlForText",
     template: $template,
     data: function() {
+      trace("NwtControlForText.data");
       return {
         isWellFormed: undefined,
       };

@@ -2667,10 +2667,6 @@ hr {
     overflow: scroll;
 }
 
-.common_dialogs_window.window.no_scroll > .window-body {
-    overflow: hidden;
-}
-
 .window.common_dialogs_window {
 
 }
@@ -2711,6 +2707,10 @@ hr {
 }
 .window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_footer {
     flex: 1;
+}
+
+.common_dialogs_window.window.no_scroll > .window-body {
+    overflow: hidden;
 }
 
 /* @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html*/
@@ -3649,6 +3649,11 @@ pre.error_code_box {
     border: 1px solid rgb(15, 15, 71);
 }
 
+/* esquina */
+.error_code_box::-webkit-scrollbar-corner {
+    background: rgba(10, 35, 80, 0.898);
+}
+
 /* thumb */
 .error_code_box::-webkit-scrollbar-thumb {
     background: rgba(10, 35, 80, 0.898);
@@ -3818,7 +3823,6 @@ table>tbody>tr>* {
     background: var(--w7-surface);
     background: #E0E0E0;
     background-color: transparent;
-    border: 1px solid rgb(220, 175, 175);
     border: none;
     padding: 1px;
 }
@@ -3826,8 +3830,13 @@ table>tbody>tr>* {
 .error_viewer_container::-webkit-scrollbar-thumb {
     background: #a1a1a1;
     background-color: rgb(204, 100, 100);
-    border-radius: 1pt;
+    border-radius: 0pt;
     padding: 1px;
+}
+
+.error_viewer_container::-webkit-scrollbar-corner {
+    background-color: transparent;
+    border: none;
 }
 
 .error_viewer_container::-webkit-scrollbar-thumb:hover {
@@ -4402,3 +4411,22 @@ div.subcard {
 ::-webkit-scrollbar-thumb:hover {
     background: #777;
 }
+
+
+.window-body::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+.window-body::-webkit-scrollbar-track {
+    background: #a9c3de;
+    border-left: 1px solid #a9c3de;
+}
+.window-body::-webkit-scrollbar-thumb {
+    background: #4e5691;
+    background: var(--w7-w-bg);
+    border: 1px solid #ffffff;
+}
+.window-body::-webkit-scrollbar-corner {
+    background: #a9c3de;
+}
+.window-body::-webkit-scrollbar-thumb:hover {}

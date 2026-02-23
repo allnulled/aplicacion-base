@@ -48,6 +48,11 @@ pre.error_code_box {
     border: 1px solid rgb(15, 15, 71);
 }
 
+/* esquina */
+.error_code_box::-webkit-scrollbar-corner {
+    background: rgba(10, 35, 80, 0.898);
+}
+
 /* thumb */
 .error_code_box::-webkit-scrollbar-thumb {
     background: rgba(10, 35, 80, 0.898);

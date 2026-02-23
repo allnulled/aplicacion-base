@@ -23,10 +23,6 @@
     overflow: scroll;
 }
 
-.common_dialogs_window.window.no_scroll > .window-body {
-    overflow: hidden;
-}
-
 .window.common_dialogs_window {
 
 }
@@ -67,4 +63,8 @@
 }
 .window.common_dialogs_window .dialog_container > .dialog_structure > .dialog_footer {
     flex: 1;
+}
+
+.common_dialogs_window.window.no_scroll > .window-body {
+    overflow: hidden;
 }

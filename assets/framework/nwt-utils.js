@@ -233,7 +233,7 @@
     }
 
     static shouldThrow(callback) {
-      assertion("NwtUtils.shouldThrow");
+      trace("NwtUtils.shouldThrow");
       try {
         callback();
         return false;
@@ -243,13 +243,45 @@
     }
 
     static shouldNotThrow(callback) {
-      assertion("NwtUtils.shouldNotThrow");
+      trace("NwtUtils.shouldNotThrow");
       try {
         callback();
         return true;
       } catch (error) {
         return false;
       }
+    }
+
+    static multitry(...args) {
+      trace("NwtUtils.multitry");
+      return this.multitryWithDecision(...args)[0];
+    }
+
+    static multitryWithDecision(onTryCallbacks, onFailCallback) {
+      trace("NwtUtils.multitryWithDecision");
+      const initialSymbol = {};
+      let output = initialSymbol;
+      let decision = -1;
+      Iterating_on_try_callbacks:
+      for(let index=0; index<onTryCallbacks.length; index++) {
+        const onTry = onTryCallbacks[index];
+        try {
+          const result = onTry();
+          if(typeof result === "undefined") {
+            continue Iterating_on_try_callbacks;
+          }
+          decision = index;
+          output = result;
+          break Iterating_on_try_callbacks;
+        } catch (error) {
+          continue Iterating_on_try_callbacks;
+        }
+      }
+      if(output === initialSymbol) {
+        decision = -1;
+        output = onFailCallback();
+      }
+      return [output, decision];
     }
 
   };

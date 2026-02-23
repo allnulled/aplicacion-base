@@ -10,7 +10,9 @@
                 <input type="text"
                     class="width_100"
                     v-model="value"
-                    :placeholder="settings.hasPlaceholder || settings.hasStructurekey || ''" />
+                    :placeholder="settings.hasPlaceholder || settings.hasStructurekey || ''"
+                    :disabled="!!settings.hasFixedValue"
+                />
             </div>
             <div class="flex_1 pad_left_1">
                 <button class="mini"

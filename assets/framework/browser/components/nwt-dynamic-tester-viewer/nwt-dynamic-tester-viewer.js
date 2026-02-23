@@ -24,11 +24,11 @@ Vue.component("NwtDynamicTesterViewer", {
   methods: {
     async loadTests() {
       trace("NwtDynamicTesterViewer.methods.loadTests");
-      const found = await NwtFilesystem.selectByGlob(`${NwtPaths.global.projectRoot}/assets/static/tests/**/TEST.md`);
+      const found = await NwtFilesystem.selectByGlob(`${NwtPaths.global.projectRoot}/assets/ap0test/static/tests/**/TEST.md`);
       this.testsFound = found.map(file => {
         return {
           fullpath: file,
-          id: file.replace(NwtPaths.global.projectRoot + "/assets/static/tests/", "").replace(/\/TEST\.md$/g, ""),
+          id: file.replace(NwtPaths.global.projectRoot + "/assets/ap0test/static/tests/", "").replace(/\/TEST\.md$/g, ""),
           js: file.replace(/TEST\.md$/g, "test.js"),
         };
       }).filter(t => ("/"+t.id).indexOf("/--") === -1).sort((t1,t2) => {

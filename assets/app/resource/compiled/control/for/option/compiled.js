@@ -7,6 +7,10 @@ NwtResource.define({
     "initialValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
+    "hasFixedValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "default": "default"
+    },
     "onValidate": {
       "type": [
         Function
@@ -43,7 +47,7 @@ NwtResource.define({
       Checking_value_type: for (let index = 0; index < settings.schema.length; index++) {
         const resource = NwtResource.for(settings.schema[index].type);
         const subschema = settings.schema[index];
-        console.log("Pasandole schema de validacion a sub de option:", resource.id, value, subschema);
+        // console.log("Pasandole schema de validacion a sub de option:", resource.id, value, subschema);
         const validation = resource.api.control.validation.validateValue(value, subschema, component, indexes, assertion);
         if (validation.error === true) {
           errors.push(validation.data);
@@ -70,17 +74,42 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_option">
-          <nwt-control-partial-for-statement :control="this" />
+          <nwt-control-partial-for-statement :control="this">
+              <div class="flex_row">
+                  <div class="flex_100"></div>
+                  <div class="flex_1 pad_left_1">
+                      <select v-model="valueOption">
+                          <option v-for="optionSchema, optionIndex in settings.schema"
+                              v-bind:key="'option_' + optionIndex"
+                              :value="optionIndex">
+                              Opción {{ optionIndex+1 }}. {{ optionSchema.hasFixedValue || optionSchema.type }}
+                          </option>
+                      </select>
+                  </div>
+                  <div class="flex_1 pad_left_1">
+                      <button class="mini" :class="{active:validationErrors.length}" v-on:click="validateValue">
+                          💡
+                      </button>
+                  </div>
+                  <div class="flex_1 pad_left_1">
+                      <button class="mini" :class="{active:isShowingControl}" v-on:click="toggleControl">
+                          🔶
+                      </button>
+                  </div>
+              </div>
+          </nwt-control-partial-for-statement>
           <div v-show="isShowingControl">
-              <template v-if="isWellFormed">
-                  <component v-if="settings.valueOption in settings.schema"
-                      :is="$nwt.Resource.fromResourceIdToVueComponentId(settings.schema[settings.valueOption].type)"
-                      :settings="{
-                      ...settings.schema[settings.valueOption],
-                      initialValue: value,
-                  }" />
-              </template>
               <nwt-control-partial-for-error-handler :control="this" />
+              <div v-if="isWellFormed">
+                  <component v-if="(valueOption in settings.schema) && (schemaOption)"
+                      ref="control"
+                      v-bind:key="'value_option_' + valueOption"
+                      :is="$nwt.Resource.fromResourceIdToVueComponentId(schemaOption.type)"
+                      :settings="{
+                          ...schemaOption,
+                          initialValue: value,
+                      }" />
+              </div>
           </div>
       </div>`,
     data: function() {
@@ -110,16 +139,16 @@ NwtResource.define({
       Object.assign(finalData, (function() {
         return {
           isWellFormed: undefined,
+          valueOption: 0,
+          schemaOption: false,
         };
       }).call(this));
       return finalData;
     },
     methods: {
       "getValue": function() {
-        trace("@compilable/control/trait/for/getValue.methods.getValue");
-        const formatterBySettings = this.settings?.onFormat || NwtUtils.noopSelf;
-        let formattedValue = formatterBySettings(this.value);
-        return formattedValue;
+        trace("NwtControlForOption.methods.getValue");
+        return NwtUtils.trify(() => this.$refs.control.getValue(), null);
       },
       "validateControlSchema": function() {
         trace("@compilable/control/trait/for/validate.methods.validateControlSchema");
@@ -133,6 +162,7 @@ NwtResource.define({
           return true;
         }, error => {
           this.validationErrors.push(error);
+          this.showControl();
           throw error;
         }));
       },
@@ -147,6 +177,17 @@ NwtResource.define({
       "toggleControl": function() {
         trace("@compilable/control/trait/for/showable.methods.toggleControl");
         this.isShowingControl = !this.isShowingControl;
+      },
+      "uploadValidation": function() {
+        trace("NwtControlForOption.methods.uploadValidation");
+        this.isWellFormed = false;
+        const validation = this.$options.statically.api.control.validation.validateValue(this.getValue(), this.settings, this);
+        this.valueOption = typeof validation.data === "number" ? validation.data - 1 : 0;
+        this.uploadSchemaOption();
+        this.isWellFormed = true;
+      },
+      "uploadSchemaOption": function(option = this.valueOption) {
+        this.schemaOption = this.settings.schema[option];
       }
     },
     computed: {},
@@ -154,24 +195,30 @@ NwtResource.define({
       "value": [
         function(newValue, oldValue) {
           trace("@compilable/control/trait/for/getValue.watch.value");
-          const propagator = this.settings?.onChange || NwtUtils.noop;
+          const propagator = this.settings.onChange || NwtUtils.noop;
           propagator(newValue, oldValue, this);
         },
         function() {
           trace("@compilable/control/trait/for/settings.watch.value");
         }
       ],
-      "valueOption": function(newValue, oldValue) {
-        trace("@compilable/control/trait/for/getValue.watch.valueOption");
-        const propagator = this.settings?.onChangeOption || NwtUtils.noop;
-        propagator(newValue, oldValue, this);
-      }
+      "valueOption": [
+        function(newValue, oldValue) {
+          trace("@compilable/control/trait/for/getValue.watch.valueOption");
+          const propagator = this.settings.onChangeOption || NwtUtils.noop;
+          propagator(newValue, oldValue, this);
+        },
+        function(newValue, oldValue) {
+          trace("NwtControlForOption.watch.valueOption");
+          this.uploadSchemaOption(newValue);
+        }
+      ]
     },
     mounted: function() {
       // @COMPILED-BY: control/trait/for/getValue
       (function() {
         trace("@compilable/control/trait/for/getValue.mounted");
-        this.value = this.settings?.initialValue;
+        this.value = this.settings.hasFixedValue || this.settings.initialValue;
       }).call(this);
       // @COMPILED-BY: control/trait/for/settings
       (function() {
@@ -180,12 +227,8 @@ NwtResource.define({
       }).call(this);
       // @COMPILED-BY: control/for/option
       (function() {
-        trace("NwtControlForList.mounted");
-        this.$options.statically.api.control.validation.validateControlSchema(this.settings);
-        // @DIFFERENTLY: set value option
-        const validation = this.$options.statically.api.control.validation.validateValue(this.getValue(), this.settings, this);
-        this.settings.valueOption = validation.data;
-        this.isWellFormed = true;
+        trace("NwtControlForOption.mounted");
+        this.uploadValidation();
       }).call(this);
     },
   }

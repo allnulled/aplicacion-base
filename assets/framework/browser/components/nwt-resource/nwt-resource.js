@@ -88,7 +88,7 @@
     }
 
     static fromResourceIdToVueComponentId(id) {
-      trace("NwtResiyrce.fromResourceIdToVueComponentId");
+      trace("NwtResource.fromResourceIdToVueComponentId");
       if(typeof id !== "string") return id;
       return "nwt-" + id.replaceAll("/","-");
     }

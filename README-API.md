@@ -436,7 +436,6 @@ Documentación de las APIs de Nwt.
 - `93. The NwtResourceApiNexer API`
 - `94. The NwtResource API`
    - **@uses** `NwtResourceApi`
-   - **@uses** `NwtResiyrce`
 - `95. The NwtSettings API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtJsonStorer`
@@ -1035,8 +1034,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtShell
 - require("child_process") ✖️ 1
    - NwtShell
-- NwtResiyrce ✖️ 1
-   - NwtResource
 - NwtProxyChainNexer ✖️ 1
    - NwtProxyChain
 - window.NwtProceduresManager ✖️ 1
@@ -1161,7 +1158,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-22T20:47:12.716Z",
+  "generatedAt": "2026-02-23T17:30:37.775Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -2669,8 +2666,7 @@ El JSON original es:
       "apiName": "NwtResource",
       "dependencies": [
         "NwtResource",
-        "NwtResourceApi",
-        "NwtResiyrce"
+        "NwtResourceApi"
       ]
     },
     {
