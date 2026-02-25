@@ -94,7 +94,7 @@
       trace("NwtEventsManager.prototype.dispatch");
       assertion(typeof eventType === "string", "Parameter «eventType» must be string on «NwtEventsManager.prototype.dispatch»");
       assertion(typeof detail  === "object", "Parameter «detail» must be object on «NwtEventsManager.prototype.dispatch»");
-      if (!this.listeners[eventType]) return;
+      this.configurations[eventType].wasTriggered = true;
       const output = [];
       for (const callback of [...this.listeners[eventType]]) {
         const result = callback({
@@ -105,7 +105,6 @@
         if(!(eventType in this.configurations)) {
           this.configurations[eventType] = {};
         }
-        this.configurations[eventType].wasTriggered = true;
         output.push(result);
       }
       return output;

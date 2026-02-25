@@ -1,5 +1,5 @@
 <div class="nwt_tester_node pad_right_1">
-    <template v-if="node instanceof $nwt.Tester.Assertion">
+    <template v-if="$nwt.Tester && node instanceof $nwt.Tester.Assertion">
         <div :class="'test ' + node.status"
             class="flex_row centered">
             <div class="flex_1"

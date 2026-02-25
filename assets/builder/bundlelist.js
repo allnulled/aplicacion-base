@@ -45,6 +45,7 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-form-maker/nwt-form-maker.js`,
   /*
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-utils.js`,
   // Nwt Forms API | Prototipos primitivos de form, control y handler:

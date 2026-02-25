@@ -130,6 +130,8 @@
         }
       }
     }
+    
+    static Toolkit = NwtVue2Toolkit;
 
   };
 

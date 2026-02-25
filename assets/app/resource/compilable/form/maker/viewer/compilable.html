@@ -1,0 +1,11 @@
+<div class="nwt_form_maker_viewer">
+    <component
+        v-if="settings.type"
+        :is="$toolkit.getComponentNameBySettings(settings)"
+        :settings="{
+            ...settings,
+            rootValue: settings.initialValue || {},
+            rootValueIndex: [],
+        }"
+    />
+</div>

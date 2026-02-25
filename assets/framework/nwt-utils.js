@@ -47,7 +47,7 @@
   const NwtUtils = class {
 
     static noop() { }
-    
+
     static noopSelf(s) {
       return s;
     }
@@ -70,7 +70,7 @@
       trace("NwtUtils.opinionify");
       try {
         const output = callback();
-        if(typeof output === "undefined") {
+        if (typeof output === "undefined") {
           return defaultValue;
         }
         return output;
@@ -87,16 +87,108 @@
       // trace("NwtUtils.jsonify");
       const seen = new WeakSet();
       return JSON.stringify(obj, function (key, value) {
+        if (key.startsWith("__") && key.endsWith("__")) {
+          return undefined;
+        }
         if (typeof value === "object" && value !== null) {
           if (seen.has(value)) {
             return undefined; // "[Circular]";
           }
           seen.add(value);
         } else if (typeof value === "function") {
-          return { $type: "function", source: value.toString() };
+          let callbackSource = '"it was impossible to get the code of this function"';
+          callbackSource = value.toString();
+          return { $type: "function", source: callbackSource };
         }
         return value;
       }, space);
+    }
+
+    static jsonifySafe(obj, space = 2) {
+      const seen = new WeakSet();
+      function walk(value, localKey) {
+        if (typeof localKey === "string") {
+          if (localKey.startsWith("__") && localKey.endsWith("__")) {
+            return `metakey::${localKey}::${typeof value}`;
+          }
+        }
+        // Primitivos
+        if (
+          value === null ||
+          typeof value === "string" ||
+          typeof value === "number" ||
+          typeof value === "boolean"
+        ) {
+          return value;
+        }
+        // Objetos
+        if (typeof value === "object") {
+          if (seen.has(value)) {
+            return undefined;
+          }
+          seen.add(value);
+          // Detectar objetos host peligrosos
+          const tag = Object.prototype.toString.call(value);
+          if (
+            tag === "[object Window]" ||
+            tag === "[object global]" ||
+            tag === "[object Chrome]" ||
+            value === globalThis ||
+            value === nw
+          ) {
+            return { $type: "host-object", tag };
+          }
+          const output = Array.isArray(value) ? [] : {};
+          let descriptors;
+          try {
+            descriptors = Object.getOwnPropertyDescriptors(value);
+          } catch (e) {
+            return { $type: "uninspectable" };
+          }
+          for (const key of Object.keys(descriptors)) {
+            const desc = descriptors[key];
+            // Ignorar getters/setters
+            if (desc.get || desc.set) {
+              continue;
+            }
+            try {
+              output[key] = walk(desc.value, key);
+            } catch (e) {
+              output[key] = { $error: "access denied" };
+            }
+          }
+          // Funciones
+          if (typeof value === "function") {
+            let src = '"unavailable"';
+            try {
+              src = value.toString();
+            } catch (e) { }
+            return {
+              $type: "function",
+              source: src,
+              keys: Object.keys(value).join(",")
+            };
+          }
+          return output;
+        }
+        return undefined;
+      }
+      const clean = walk(obj);
+      return JSON.stringify(clean, null, space);
+    }
+
+    static fromListToGroupsOf(n, list) {
+      assertion(Array.isArray(list), "Parameter «list» must be array on «NwtUtils.fromListToGroupOf»");
+      const output = [[]];
+      let counter = 0;
+      for (let index = 0; index < list.length; index++) {
+        output[counter].push(list[index]);
+        if ((index % n === 0) && (index !== 0)) {
+          output.push([]);
+          counter++;
+        }
+      }
+      return output;
     }
 
     static getSignatureOfArray(array) {
@@ -263,11 +355,11 @@
       let output = initialSymbol;
       let decision = -1;
       Iterating_on_try_callbacks:
-      for(let index=0; index<onTryCallbacks.length; index++) {
+      for (let index = 0; index < onTryCallbacks.length; index++) {
         const onTry = onTryCallbacks[index];
         try {
           const result = onTry();
-          if(typeof result === "undefined") {
+          if (typeof result === "undefined") {
             continue Iterating_on_try_callbacks;
           }
           decision = index;
@@ -277,7 +369,7 @@
           continue Iterating_on_try_callbacks;
         }
       }
-      if(output === initialSymbol) {
+      if (output === initialSymbol) {
         decision = -1;
         output = onFailCallback();
       }

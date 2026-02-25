@@ -8,21 +8,22 @@ module.exports = {
     },
     hasFixedValue: {
       type: LowCode.type.Any,
-      default: 'default',
+      default: undefined,
     }
   },
   view: {
     data: function() {
       trace("@compilable/control/trait/for/getValue.data");
       return {
-        value: undefined,
+        
       };
     },
     methods: {
       getValue: function () {
         trace("@compilable/control/trait/for/getValue.methods.getValue");
+        const value = NwtStatic.api.control.getValueByIndex(this.settings.value, this.settings.valueIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
-        let formattedValue = formatterBySettings(this.value);
+        let formattedValue = formatterBySettings(value);
         return formattedValue;
       }
     },

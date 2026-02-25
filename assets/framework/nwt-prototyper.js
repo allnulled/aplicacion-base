@@ -10,7 +10,7 @@
     module.exports = mod;
   }
 })(function () {
-  
+
   const NwtPrototyper = class {
 
     static type = {
@@ -26,10 +26,10 @@
       Any: [Boolean, Number, String, Array, Object, Function, undefined, null],
       AnyExcept: (...omitted) => {
         const result = this.type.Any.concat([]);
-        for(let index=0; index<omitted.length; index++) {
+        for (let index = 0; index < omitted.length; index++) {
           const item = omitted[index];
           const pos = result.indexOf(item);
-          if(pos !== -1) {
+          if (pos !== -1) {
             result.splice(pos, 1);
           }
         }
@@ -38,13 +38,13 @@
     };
 
     static fromTypeToString(t) {
-      if(t === undefined) {
+      if (t === undefined) {
         return "Undefined";
       }
-      if(t === null) {
+      if (t === null) {
         return "Null";
       }
-      if(t.name) {
+      if (t.name) {
         return t.name;
       }
     }
@@ -57,8 +57,8 @@
       console.log("Target:", target);
       const schemaKeys = Object.keys(schema);
       const targetKeys = Object.keys(target);
-      if(onlySpecifiedProps) {
-        for(let index=0; index<targetKeys.length; index++) {
+      if (onlySpecifiedProps) {
+        for (let index = 0; index < targetKeys.length; index++) {
           const key = targetKeys[index];
           assertion(schemaKeys.includes(key), `Parameter «schema» does not explicitly specify a key named «${key}» but «target» does and for that reason the clause «onlySpecifiedProps» throws this error on «NwtPrototyper.initializePropertiesOf»` + (extraErrorMessage ? (" " + extraErrorMessage) : ""));
         }
@@ -69,7 +69,7 @@
         assertion(typeof ruleBrute === "object", `Parameter «schema[${key}]» must be object on «NwtPrototyper.initializePropertiesOf»`);
         const rule = (() => {
           // Para permitir sintaxis como en vue2:
-          if(Array.isArray(ruleBrute)) return ruleBrute;
+          if (Array.isArray(ruleBrute)) return ruleBrute;
           const possibleTypes = ruleBrute.type;
           const defaultValue = ruleBrute.default;
           const validator = ruleBrute.validator;
@@ -82,7 +82,7 @@
         const isMissingProperty = (!(key in target)) || typeof target[key] === "undefined";
         const hasNotDefaultValue = rule.length === 1;
         if (isMissingProperty) {
-          if(hasNotDefaultValue) {
+          if (hasNotDefaultValue) {
             throw new TypeError(`Invalid empty value for property «${key}» required ${allowedIds.join("|")}` + (extraErrorMessage ? (" " + extraErrorMessage) : ""));
           }
           target[key] = defaultValue;
@@ -103,10 +103,40 @@
           if (valid) break;
         }
         if (!valid) {
-          throw new TypeError(`Invalid type for property «${key}» expected «${allowedIds.join("|")}» but «${value === null ? null : typeof value}» was found instead` + (extraErrorMessage ? (" "+extraErrorMessage) : ""));
+          throw new TypeError(`Invalid type for property «${key}» expected «${allowedIds.join("|")}» but «${value === null ? null : typeof value}» was found instead` + (extraErrorMessage ? (" " + extraErrorMessage) : ""));
         }
       }
       return target;
+    }
+
+    static combine(clazz = {}) {
+      const { $constructors = [], $statics = [], $dynamics = [] } = clazz;
+      Validation: {
+        if ($constructors) {
+          assertion(Array.isArray($constructors), "Parameter «$constructors» must be array on «NwtPrototyper.combine»");
+          for (let index = 0; index < $constructors.length; index++) {
+            const $constructor = $constructors[index];
+            assertion(typeof $constructor === "function", `Parameter «$constructors» at index «${index}» must be function on «NetPrototyper.combine»`);
+          }
+        }
+        if ($statics) {
+          assertion(Array.isArray($statics), "Parameter «$statics» must be array on «NwtPrototyper.combine»");
+        }
+        if ($dynamics) {
+          assertion(Array.isArray($dynamics), "Parameter «$dynamics» must be array on «NwtPrototyper.combine»");
+        }
+      }
+      let source = ``;
+      for (let index = 0; index < $constructors.length; index++) {
+        const $constructor = $constructors[index];
+        source += `(${$constructor.toString()}).call(this, ...arguments);\n`;
+      }
+      source += `return this;\n`;
+      const callback = new Function(source);
+      Object.assign(callback, Object.assign({}, ...$statics));
+      callback.prototype = {};
+      Object.assign(callback.prototype, Object.assign({}, ...$dynamics));
+      return callback;
     }
 
   };

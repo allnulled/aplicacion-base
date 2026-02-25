@@ -84,6 +84,29 @@
       return out;
     }
 
+    static fromBoolean() {
+      return Math.random() < 0.5;
+    }
+
+    static fromStructure(structure) {
+      const output = {};
+      for(let prop in structure) {
+        let randomValue = undefined;
+        const randomType = structure[prop];
+        if(randomType === Boolean) {
+          randomValue = this.fromBoolean();
+        } else if(randomType === Number) {
+          randomValue = this.fromNumbers(0,100);
+        } else if(randomType === String) {
+          randomValue = this.fromAlphabet();
+        } else {
+          throw new Error(`Unrandomizable type «${typeof randomType}» on index «${prop}» on «NwtRandomizer.fromStructure»`);
+        }
+        output[prop] = randomValue;
+      }
+      return output;
+    }
+
   };
 
   return NwtRandomizer;

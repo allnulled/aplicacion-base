@@ -34,9 +34,6 @@ Vue.component("NwtFormBuilderViewer", {
     validate() {
       trace("NwtFormBuilderViewer.methods.validate");
       const value = this.getValue();
-      const control = this.$refs.control;
-      const validation = control.$options.statically.api.control.validation.validateValue();
-      // En principio, no hace falta hacer nada más porque la Resource Helper API de Resource (mediante «statically») ya puede acceder a los componentes y propagarse
     }
   },
   created() {},

@@ -1,0 +1,39 @@
+<div class="nwt_control_for_option">
+    <nwt-control-partial-for-statement :control="this">
+        <div class="flex_row">
+            <div class="flex_100"></div>
+            <div class="flex_1 pad_left_1">
+                <select v-model="valueOption">
+                    <option v-for="optionSchema, optionIndex in settings.schema"
+                        v-bind:key="'option_' + optionIndex"
+                        :value="optionIndex">
+                        Opción {{ optionIndex+1 }}. {{ optionSchema.hasFixedValue || optionSchema.type }}
+                    </option>
+                </select>
+            </div>
+            <div class="flex_1 pad_left_1">
+                <button class="mini" :class="{active:validationErrors.length}" v-on:click="validateValue">
+                    💡
+                </button>
+            </div>
+            <div class="flex_1 pad_left_1">
+                <button class="mini" :class="{active:isShowingControl}" v-on:click="toggleControl">
+                    🔶
+                </button>
+            </div>
+        </div>
+    </nwt-control-partial-for-statement>
+    <div v-show="isShowingControl">
+        <nwt-control-partial-for-error-handler :control="this" />
+        <div>
+            <component v-if="(valueOption in settings.schema) && (schemaOption)"
+                ref="control"
+                v-bind:key="'value_option_' + valueOption"
+                :is="$nwt.Resource.fromResourceIdToVueComponentId(schemaOption.type)"
+                :settings="{
+                    ...schemaOption,
+                    initialValue: value,
+                }" />
+        </div>
+    </div>
+</div>

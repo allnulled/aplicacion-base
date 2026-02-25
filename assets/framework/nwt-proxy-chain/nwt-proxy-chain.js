@@ -41,6 +41,10 @@
       return this.$proxify(root, options.input, options.binder);
     }
 
+    static installTeleporter(origin, destination) {
+      return this.$proxify(origin, destination);
+    }
+
   };
 
   return NwtProxyChain;

@@ -1,39 +1,17 @@
 <div class="nwt_control_for_option">
-    <nwt-control-partial-for-statement :control="this">
-        <div class="flex_row">
-            <div class="flex_100"></div>
-            <div class="flex_1 pad_left_1">
-                <select v-model="valueOption">
-                    <option v-for="optionSchema, optionIndex in settings.schema"
-                        v-bind:key="'option_' + optionIndex"
-                        :value="optionIndex">
-                        Opción {{ optionIndex+1 }}. {{ optionSchema.hasFixedValue || optionSchema.type }}
-                    </option>
-                </select>
-            </div>
-            <div class="flex_1 pad_left_1">
-                <button class="mini" :class="{active:validationErrors.length}" v-on:click="validateValue">
-                    💡
-                </button>
-            </div>
-            <div class="flex_1 pad_left_1">
-                <button class="mini" :class="{active:isShowingControl}" v-on:click="toggleControl">
-                    🔶
-                </button>
-            </div>
-        </div>
-    </nwt-control-partial-for-statement>
-    <div v-show="isShowingControl">
-        <nwt-control-partial-for-error-handler :control="this" />
-        <div v-if="isWellFormed">
-            <component v-if="(valueOption in settings.schema) && (schemaOption)"
-                ref="control"
-                v-bind:key="'value_option_' + valueOption"
-                :is="$nwt.Resource.fromResourceIdToVueComponentId(schemaOption.type)"
+    Nwt control for option {{ $nwt.Reflection.keys(settings) }}
+    <div>
+        <select v-model="selectedOption">
+            <template v-for="option, optionIndex in settings.schema">
+                <option v-bind:key="'option-' + optionIndex" :value="optionIndex">Tipo {{ optionIndex + 1 }}: {{ option.type }}</option>
+            </template>
+        </select>
+        <template v-if="selectedOption in settings.schema">
+            <component :is="$toolkit.getComponentNameBySettings(settings.schema[selectedOption])"
                 :settings="{
-                    ...schemaOption,
-                    initialValue: value,
+                    ...settings.schema[selectedOption],
+                    rootValueIndex: $toolkit.getRootValueIndex().concat([]),
                 }" />
-        </div>
+        </template>
     </div>
 </div>

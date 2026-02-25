@@ -1,32 +1,11 @@
 <div class="nwt_control_for_structure">
-    <div>
-        <nwt-control-partial-for-statement :control="this">
-            <div class="flex_1 pad_left_1">
-                <button class="mini"
-                    :class="{active:isShowingControl}"
-                    v-on:click="toggleControl"
-                    data-rabbit="2">🔶</button>
-            </div>
-        </nwt-control-partial-for-statement>
+    Nwt control for structure {{ $nwt.Reflection.keys(settings) }}
+    <div v-for="column, columnName in settings.schema"
+        v-bind:key="'column-' + columnName"
+        style="border-top: 1px solid black;">
+        <component :is="$toolkit.getComponentNameBySettings(column)" :settings="{
+            ...column,
+            rootValueIndex: $toolkit.getRootValueIndex().concat([columnName]),
+        }" />
     </div>
-    <div class="pad_top_1"
-        v-show="isShowingControl">
-        <div class="structure_box"
-            v-if="isWellFormed">
-            <div class=""
-                v-for="subschema, subschemaId, subschemaCounter in settings.schema"
-                v-bind:key="'property_' + subschemaId">
-                <div class="items_separator"
-                    v-if="subschemaCounter !== 0"
-                    style="padding-top:2px;"></div>
-                <component :is="$nwt.Resource.fromResourceIdToVueComponentId(subschema.type)"
-                    :settings="{
-                        ...settings.schema[subschemaId],
-                        initialValue: value[subschemaId],
-                        hasStructurekey: subschemaId
-                    }" />
-            </div>
-        </div>
-    </div>
-    <nwt-control-partial-for-error-handler :control="this" />
 </div>

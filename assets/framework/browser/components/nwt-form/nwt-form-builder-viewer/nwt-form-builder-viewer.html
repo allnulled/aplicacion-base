@@ -13,7 +13,7 @@
     </div>
     <hr style="margin-bottom:-1px;"/>
     <div class="pad_vertical_1">
-        <component :is="'nwt-' + settings.type.replaceAll('/','-')" ref="control" :settings="settings" />
+        <component :is="settings.type.replaceAll('/','-')" ref="control" :settings="settings" />
     </div>
     <hr style="margin-bottom:1px;"/>
     <div class="flex_row pad_horizontal_1">

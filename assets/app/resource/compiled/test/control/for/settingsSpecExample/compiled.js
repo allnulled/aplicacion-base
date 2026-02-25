@@ -1,7 +1,7 @@
 NwtResource.define({
   id: "test/control/for/settingsSpecExample",
   apis: ["settings", "test"],
-  inherits: ["test/control/trait/for/settings", "test/control/trait/for/settingsSpecTraitExample", "test/control/trait/for/staticExample"],
+  inherits: ["test/control/trait/for/settings", "test/control/trait/for/settingsSpecTraitExample"],
   traits: {
     "test/control/trait/for/settingsSpecTraitExample": {
       "customTrait": 500
@@ -17,5 +17,4 @@ NwtResource.define({
       }
     }
   },
-  hello: NwtStatic.api.test.control.trait.for.staticExample.hello,
 });

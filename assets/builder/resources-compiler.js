@@ -175,6 +175,13 @@ const ResourcesCompiler = class {
     return rendered ? `${id}: ${rendered},` : "";
   }
 
+  static extractBlankFunctionOr(callback, fallbackValue = "") {
+    if(typeof callback !== "function") {
+      return fallbackValue;
+    }
+    return NwtCodeComposer.getBlankFunctionBody(callback);
+  }
+
   static renderViewHooks(base) {
     const others = base.$inheritedBy;
     let code = [];
@@ -192,21 +199,21 @@ const ResourcesCompiler = class {
         if (isAsync) {
           hasAsyncs = true;
         }
-        const callbackSource = this.renderValue(otherCallback);
+        const callbackSource = this.extractBlankFunctionOr(otherCallback);
         if (callbackSource) {
           hookCode.push(
-            `// @COMPILED-BY: ${others[indexInterface].$id}\n${isAsync ? "await " : ""}(${callbackSource}).call(this);`
+            `// @COMPILED-BY: ${others[indexInterface].$id}\n${callbackSource}`
           );
         }
       }
-      const callbackSource = this.renderValue(baseCallback);
+      const callbackSource = this.extractBlankFunctionOr(baseCallback);
       const isAsync = baseCallback instanceof AsyncFunction;
       if (isAsync) {
         hasAsyncs = true;
       }
       if (baseCallback) {
         hookCode.push(
-          `// @COMPILED-BY: ${base.$id}\n${isAsync ? "await " : ""}(${callbackSource}).call(this);`
+          `// @COMPILED-BY: ${base.$id}\n${callbackSource}`
         );
       }
       if (hookCode.length) {
@@ -310,9 +317,9 @@ const ResourcesCompiler = class {
   static resolveInheritedBy(definition, projectRoot, metadata, originalDefinition = false) {
     assertion(typeof definition === "object", `Configuration «definition» must be object on «${metadata.id}» on «ResourcesCompiler.resolveInheritedBy»`);
     assertion(definition !== null, `Configuration «definition» cannot be null on «${metadata.id}» on «ResourcesCompiler.resolveInheritedBy»`);
+    definition.$inheritedBy = [];
     if (!(definition.inherits)) return;
     assertion(typeof definition.id === "string", `Configuration «id» must be string on «${metadata.id}» on «ResourcesCompiler.resolveInheritedBy»`);
-    definition.$inheritedBy = [];
     definition.$id = definition.id;
     definition.$path = `assets/app/resource/compilable/${definition.$id}/compilable.js`;
     originalDefinition ||= definition;
