@@ -429,3 +429,17 @@ button.bg_danger.active {}
 .hidden {
     display: none !important;
 }
+
+select.fluid,
+button.fluid {
+    padding: 0px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    font-size: 11px !important;
+    min-height: auto;
+    height: auto;
+    cursor: pointer;
+}
+select.fluid {
+    padding-right: 16px !important;
+}

@@ -63,6 +63,10 @@ const { lutimesSync } = require("fs-extra");
       return output;
     }
 
+    static onlyKeys(obj, keys) {
+      return this.cleanMapByPairs(obj, (k,v) => keys.includes(k) ? [k,v] : undefined);
+    }
+
     static overrideOnce(data = {}, payload = {}, base = false) {
       if(!base) base = data;
       const keys = Object.keys(payload);

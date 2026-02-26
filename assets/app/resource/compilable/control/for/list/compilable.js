@@ -8,7 +8,9 @@ module.exports = {
     "validation",
   ],
   inherits: [
-    "control/trait/for/valueBySelector",
+    "control/trait/for/showable",
+    "control/trait/for/remoteValue",
+    "control/trait/for/remoteSchema",
     "control/trait/for/settings",
   ],
   settingsSpec: {
@@ -31,14 +33,28 @@ module.exports = {
         return this.$local?.list?.length || 0;
       }
     },
-    mounted: function() {
-      trace("NwtControlForList.mounted");
+    created: function() {
+      trace("NwtControlForList.created");
       NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+    },
+    mounted: function() {
       this.digestSearch();
     },
     methods: {
-      digestSearch: function() {
+      getValueByState: function() {
+        trace("NwtControlForList.methods.getValueByState");
+        return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
+      },
+      addItem: function() {
         
+      },
+      digestSearch: function() {
+        const list = [];
+        Extract_list_from_get_value_by_index_and_pagination: {
+
+        }
+        this.$local.list = list;
       }
     }
   },

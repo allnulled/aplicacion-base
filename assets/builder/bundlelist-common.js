@@ -55,6 +55,7 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-collection-utils.js`,
   `${projectRoot}/assets/framework/nwt-module-manager/nwt-module-manager.js`,
   `${projectRoot}/assets/framework/nwt-timer.js`,
+  `${projectRoot}/assets/framework/nwt-vue2/interfaces/nwt-vue2-toolkit.form-control-interface.js`,
   `${projectRoot}/assets/framework/nwt-vue2/nwt-vue2-toolkit.js`,
   `${projectRoot}/assets/framework/nwt-vue2/nwt-vue2.js`,
   `${projectRoot}/assets/framework/nwt-prototyper.js`,

@@ -12,7 +12,7 @@ module.exports = {
     data: function() {
       trace("@compilable/control/trait/for/showable.data");
       return {
-        isShowingControl: (typeof(this.settings?.isShowingControl) === "boolean" ) ? this.settings.isShowingControl : true,
+        isShowingControl: this.settings.isShowingControl || true,
       };
     },
     methods: {

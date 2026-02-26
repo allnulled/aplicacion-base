@@ -1,21 +1,43 @@
 <div class="nwt_control_partial_for_statement">
-    <div class="pad_bottom_1" v-if="control.settings.hasHeader">
-        <nwt-source-viewer :source="control.settings.hasHeader" />
-    </div>
-    <div class="statement_box" v-if="control.settings.hasStatement || control.settings.hasDescription">
+    <div class="statement_box pad_top_1 pad_bottom_1"
+        v-if="$local && $local.statement">
         <div class="flex_row">
             <div class="flex_100 align_self_center">
-                <span class="statement_text"> 🔸 {{ control.settings.hasStatement }}</span>
-                <span class="description_text" v-if="isShowingDescription">
+                <span class="statement_text"> 🔸 {{ $local.statement }}</span>
+                <span class="type_text">
+                    <span class="control_type_badge">{{ control.$toolkit.adaptTypeNameToUser() }}</span>
+                </span>
+                <span class="description_text"
+                    v-if="control.isShowingControl && isShowingDescription">
                     <span class="description_icon"> ℹ️ </span>
-                    <span>{{ control.settings.hasDescription }}</span>
+                    <span>{{ $local.description }}</span>
                 </span>
             </div>
             <slot></slot>
-            <div class="flex_1 pad_left_1" v-if="control.settings.hasDescription">
-                <button class="mini description_icon"
-                    :class="{ active: isShowingDescription }"
-                    v-on:click="toggleDescription">ℹ️</button>
+            <template v-if="control.isShowingControl">
+                <div class="flex_1 pad_left_1"
+                    v-if="$local.description">
+                    <button class="mini fluid description_icon"
+                        :class="{ active: isShowingDescription }"
+                        v-on:click="toggleDescription">ℹ️</button>
+                </div>
+                <div class="flex_1 pad_left_1">
+                    <button class="mini fluid"
+                        v-on:click="loadValue">♻️</button>
+                </div>
+                <div class="flex_1 pad_left_1">
+                    <button class="mini fluid"
+                        v-on:click="saveValue">💾</button>
+                </div>
+                <div class="flex_1 pad_left_1">
+                    <button class="mini fluid"
+                        v-on:click="validateValue">💡</button>
+                </div>
+            </template>
+            <div class="flex_1 pad_left_1">
+                <button class="mini fluid"
+                    :class="{active:!control.isShowingControl}"
+                    v-on:click="toggleControl">🔶</button>
             </div>
         </div>
     </div>

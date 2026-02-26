@@ -8,18 +8,26 @@ module.exports = {
     "validation",
   ],
   inherits: [
-    "control/trait/for/valueBySelector",
+    "control/trait/for/showable",
+    "control/trait/for/remoteValue",
+    "control/trait/for/remoteSchema",
     "control/trait/for/settings",
   ],
   settingsSpec: {},
   view: {
     name: "NwtControlForText",
     template: $template,
-    data: function() {
-      trace("NwtControlForText.data");
-      return {
-      
-      };
+    methods: {
+      getValueByState: function() {
+        return this.$refs.textbox.value;
+      },
+      setValueByState: function(value) {
+        this.$refs.textbox.value = value;
+        this.$forceUpdate(true);
+      },
+      reloadValue: function() {
+        this.$refs.textbox.value = this.$toolkit.getValueByIndex();
+      }
     },
     mounted: function() {
       trace("NwtControlForText.mounted");

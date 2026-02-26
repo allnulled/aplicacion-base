@@ -8,7 +8,9 @@ module.exports = {
     "validation",
   ],
   inherits: [
-    "control/trait/for/valueBySelector",
+    "control/trait/for/showable",
+    "control/trait/for/remoteValue",
+    "control/trait/for/remoteSchema",
     "control/trait/for/settings",
   ],
   settingsSpec: {
@@ -20,10 +22,11 @@ module.exports = {
   view: {
     name: "NwtControlForStructure",
     template: $template,
-    data: function() {
-      return {
-      
-      };
+    methods: {
+      getValueByState: function() {
+        trace("NwtControlForStructure.methods.getValueByState");
+        return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
+      }
     },
     mounted: function() {
       trace("NwtControlForStructure.mounted");

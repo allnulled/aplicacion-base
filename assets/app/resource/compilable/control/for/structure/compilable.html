@@ -1,11 +1,16 @@
 <div class="nwt_control_for_structure">
-    Nwt control for structure {{ $nwt.Reflection.keys(settings) }}
-    <div v-for="column, columnName in settings.schema"
-        v-bind:key="'column-' + columnName"
-        style="border-top: 1px solid black;">
-        <component :is="$toolkit.getComponentNameBySettings(column)" :settings="{
-            ...column,
-            rootValueIndex: $toolkit.getRootValueIndex().concat([columnName]),
-        }" />
-    </div>
+    <!--Nwt control for structure {{ $nwt.Reflection.keys(settings) }}-->
+    <nwt-control-partial-for-statement :control="this" />
+    <template v-show="isShowingControl">
+        <div v-for="column, columnName in settings.schema"
+            v-bind:key="'column-' + columnName"
+            class="">
+            <component :is="$toolkit.getComponentNameBySettings(column)"
+                :settings="{
+                    ...column,
+                    rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
+                    rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
+                }" />
+        </div>
+    </template>
 </div>

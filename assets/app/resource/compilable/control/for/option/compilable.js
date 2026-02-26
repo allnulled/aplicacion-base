@@ -8,7 +8,9 @@ module.exports = {
     "validation",
   ],
   inherits: [
-    "control/trait/for/valueBySelector",
+    "control/trait/for/showable",
+    "control/trait/for/remoteValue",
+    "control/trait/for/remoteSchema",
     "control/trait/for/settings",
   ],
   settingsSpec: {
@@ -22,8 +24,13 @@ module.exports = {
     template: $template,
     data: function () {
       return {
+        isLoading: false,
         selectedOption: 0,
       };
+    },
+    created: function() {
+      trace("NwtControlForOption.created");
+      this.$local = { selectedOptionTimer: 0 };
     },
     mounted: function () {
       trace("NwtControlForOption.mounted");
@@ -33,7 +40,13 @@ module.exports = {
       
     },
     methods: {
-      
+      getValueByState: function() {
+        trace("NwtControlForOption.methods.getValueByState");
+        return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
+      },
+      adaptTypeNameToUser: function(txt) {
+        return txt.replace("control/for/", "");
+      }
     }
   },
   control: {

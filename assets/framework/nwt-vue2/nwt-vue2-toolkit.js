@@ -16,55 +16,33 @@
     installToolkit: function(component) {
       if(component.$toolkit) return false;
       component.$toolkit = NwtProxyChain.installTeleporter(component, NwtVue2Toolkit);
-      component.$toolkit.installStore();
-      component.$toolkit.installLocal();
+      component.$toolkit.installLocal(component);
       return true;
     },
 
-    getSettings: function() {
-      assertion(typeof this.settings === "object", "Component property «settings» must be object on «NwtVue2Toolkit.getSettings»");
-      return this.settings;
+    installLocal: function(component) {
+      if(component.$local) return false;
+      component.$local = {};
+      return true;
     },
 
-    getRoot: function() {
-      assertion(typeof this.settings === "object", "Component property «settings» must be object on «NwtVue2Toolkit.getRoot»");
-      assertion(typeof this.settings.root === "object", "Component property «settings.root» must be object on «NwtVue2Toolkit.getRoot»");
-      return this.settings.root;
-    },
-
-    getRootValueByIndex: function() {
-
-    },
-
-    getRootValueIndex: function() {
-      return this.settings.rootValueIndex ? this.settings.rootValueIndex : [];
-    },
-
-    installStore: function() {
-      if(this.$store) return false;
-      this.$store = NwtPropagableStore.create();
-    },
-
-    installLocal: function() {
-      if(this.$local) return false;
-      this.$local = {};
+    installStore: function(component) {
+      if(component.$store) return false;
+      component.$store = NwtPropagableStore.create();
+      return true;
     },
 
     // Ejemplo de API indexada:
     install: NwtProxyChain.Nexer.create({
       store: function() {
-        return this.$toolkit.installStore();
+        return this.$toolkit.installStore(this);
       },
       local: function() {
-        return this.$toolkit.installLocal();
+        return this.$toolkit.installLocal(this);
       }
     }),
 
-    getComponentNameBySettings(settings = this.settings) {
-      assertion(typeof settings === "object", "Parameter «settings» must be object on «NwtVue2Toolkit.getComponentNameBySettings»");
-      assertion(typeof settings.type === "string", "Parameter «settings.type» must be object on «NwtVue2Toolkit.getComponentNameBySettings»");
-      return "nwt-" + NwtVue2.fromIdToTagNotation(settings.type);
-    },
+    ...NwtVue2ToolkitFormControlInterface
 
   };
 

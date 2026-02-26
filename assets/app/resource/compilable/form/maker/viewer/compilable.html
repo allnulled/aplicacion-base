@@ -4,8 +4,9 @@
         :is="$toolkit.getComponentNameBySettings(settings)"
         :settings="{
             ...settings,
-            rootValue: settings.initialValue || {},
+            isRoot: true,
             rootValueIndex: [],
+            rootSchemaIndex: [],
         }"
     />
 </div>

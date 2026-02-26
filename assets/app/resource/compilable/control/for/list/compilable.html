@@ -1,3 +1,7 @@
 <div class="nwt_control_for_list">
-    Nwt control for list {{ $nwt.Reflection.keys(settings) }}
+    <!--Nwt control for list {{ $nwt.Reflection.keys(settings) }}-->
+    <nwt-control-partial-for-statement :control="this">
+        <nwt-control-partial-for-list-panel :control="this" />
+    </nwt-control-partial-for-statement>
+    <div class="pagination_box"></div>
 </div>

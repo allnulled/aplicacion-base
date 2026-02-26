@@ -455,79 +455,83 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtEnvironment`
    - **@uses** `NwtCommand`
    - **@uses** `NwtVue2Toolkit`
-- `120. The NwtVue2Toolkit API`
+- `120. The NwtVue2ToolkitFormControlInterface API`
+   - **@uses** `NwtVue2Toolkit`
+   - **@uses** `NwtFormMakerViewer`
+   - **@uses** `NwtVue2`
+- `121. The NwtVue2Toolkit API`
    - **@uses** `NwtProxyChain`
    - **@uses** `NwtPropagableStore`
-   - **@uses** `NwtVue2`
-- `121. [vue2] The NwtAnonymousCommandForm API`
+   - **@uses** `NwtVue2ToolkitFormControlInterface`
+- `122. [vue2] The NwtAnonymousCommandForm API`
    - **@uses** `NwtCommandFormInterface`
-- `122. [vue2] The NwtAnonymousCommandView API`
+- `123. [vue2] The NwtAnonymousCommandView API`
    - **@uses** `NwtCommandViewInterface`
-- `123. [vue2] The NwtBoxViewer API`
-- `124. [vue2] The NwtChatgptFilesManagerViewer API`
+- `124. [vue2] The NwtBoxViewer API`
+- `125. [vue2] The NwtChatgptFilesManagerViewer API`
    - **@uses** `NwtChatgpt`
    - **@uses** `NwtDialogs`
-- `125. [vue2] The NwtCodeHighlighter API`
+- `126. [vue2] The NwtCodeHighlighter API`
    - **@uses** `NwtUtils`
    - **@uses** `NwtLazyLoader`
-- `126. [vue2] The NwtCommandsManagerViewer API`
+- `127. [vue2] The NwtCommandsManagerViewer API`
    - **@uses** `NwtCommandsManager`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtSettings`
    - **@uses** `NwtShell`
-- `127. [vue2] The NwtDynamicTesterViewer API`
+- `128. [vue2] The NwtDynamicTesterViewer API`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
    - **@uses** `NwtImporter`
    - **@uses** `NwtTimer`
    - **@uses** `NwtDialogs`
    - **@uses** `NwtTester`
-- `128. [vue2] The NwtFileExplorer API`
+- `129. [vue2] The NwtFileExplorer API`
    - **@uses** `NwtUtils`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
    - **@uses** `require("path")`
-- `129. [vue2] The NwtFormBuilderViewer API`
 - `130. [vue2] The NwtFormBuilderViewer API`
-- `131. [vue2] The NwtFormControlErrorsViewer API`
+- `131. [vue2] The NwtFormBuilderViewer API`
 - `132. [vue2] The NwtFormControlErrorsViewer API`
-- `133. [vue2] The NwtFormControlStatementViewer API`
+- `133. [vue2] The NwtFormControlErrorsViewer API`
 - `134. [vue2] The NwtFormControlStatementViewer API`
-- `135. [vue2] The NwtFormControlViewer API`
-   - **@uses** `NwtStatic`
+- `135. [vue2] The NwtFormControlStatementViewer API`
 - `136. [vue2] The NwtFormControlViewer API`
    - **@uses** `NwtStatic`
-- `137. [vue2] The NwtMatrixBackground API`
+- `137. [vue2] The NwtFormControlViewer API`
+   - **@uses** `NwtStatic`
+- `138. [vue2] The NwtMatrixBackground API`
    - **@uses** `window.innerWidth`
    - **@uses** `window.innerHeight`
-- `138. [vue2] The NwtProcedureDocumentationViewer API`
+- `139. [vue2] The NwtProcedureDocumentationViewer API`
    - **@uses** `NwtProcedureSeed`
    - **@uses** `NwtProcedureDefinition`
    - **@uses** `NwtEnvironment`
    - **@uses** `require("fs")`
-- `139. [vue2] The NwtProceduresManagerViewer API`
+- `140. [vue2] The NwtProceduresManagerViewer API`
    - **@uses** `NwtProceduresManager`
-- `140. [vue2] The NwtProcessManagerViewer API`
+- `141. [vue2] The NwtProcessManagerViewer API`
    - **@uses** `NwtProcessManager`
    - **@uses** `NwtProgressBar`
-- `141. [vue2] The NwtProgressBarViewer API`
+- `142. [vue2] The NwtProgressBarViewer API`
    - **@uses** `NwtProgressBar`
-- `142. [vue2] The NwtPromptsManagerViewer API`
+- `143. [vue2] The NwtPromptsManagerViewer API`
    - **@uses** `NwtPromptsManager`
    - **@uses** `NwtDialogs`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtSettings`
    - **@uses** `NwtShell`
-- `143. [vue2] The NwtSettingsViewer API`
+- `144. [vue2] The NwtSettingsViewer API`
    - **@uses** `NwtSettings`
    - **@uses** `NwtDialog`
    - **@uses** `NwtUtils`
-- `144. [vue2] The NwtSourceViewer API`
+- `145. [vue2] The NwtSourceViewer API`
    - **@uses** `NwtRandomizer`
-- `145. [vue2] The NwtStarsBackground API`
-- `146. [vue2] The NwtTesterNode API`
+- `146. [vue2] The NwtStarsBackground API`
+- `147. [vue2] The NwtTesterNode API`
    - **@uses** `NwtTesterViewer`
-- `147. [vue2] The NwtTesterViewer API`
+- `148. [vue2] The NwtTesterViewer API`
    - **@uses** `NwtTester`
 
 ## Dependencias y apariciones
@@ -818,6 +822,9 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
 - NwtStatic ✖️ 2
    - NwtFormControlViewer
    - NwtFormControlViewer
+- NwtVue2Toolkit ✖️ 2
+   - NwtVue2
+   - NwtVue2ToolkitFormControlInterface
 - NwtObjectUtils ✖️ 2
    - NwtReflection
    - NwtResourceApi
@@ -911,14 +918,16 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtAnonymousCommandView
 - NwtCommandFormInterface ✖️ 1
    - NwtAnonymousCommandForm
-- NwtVue2 ✖️ 1
+- NwtVue2ToolkitFormControlInterface ✖️ 1
    - NwtVue2Toolkit
 - NwtPropagableStore ✖️ 1
    - NwtVue2Toolkit
 - NwtProxyChain ✖️ 1
    - NwtVue2Toolkit
-- NwtVue2Toolkit ✖️ 1
-   - NwtVue2
+- NwtVue2 ✖️ 1
+   - NwtVue2ToolkitFormControlInterface
+- NwtFormMakerViewer ✖️ 1
+   - NwtVue2ToolkitFormControlInterface
 - NwtFeatureStatics ✖️ 1
    - NwtValidator
 - NwtLazyComponent ✖️ 1
@@ -1037,7 +1046,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-25T19:36:59.565Z",
+  "generatedAt": "2026-02-26T12:16:52.945Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -2919,6 +2928,19 @@ El JSON original es:
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/interfaces/nwt-vue2-toolkit.form-control-interface.js",
+      "name": "nwt-vue2-toolkit.form-control-interface.js",
+      "type": "file",
+      "formalName": "NwtVue2ToolkitFormControlInterfaceJs",
+      "apiName": "NwtVue2ToolkitFormControlInterface",
+      "dependencies": [
+        "NwtVue2ToolkitFormControlInterface",
+        "NwtVue2Toolkit",
+        "NwtFormMakerViewer",
+        "NwtVue2"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2-toolkit.js",
       "name": "nwt-vue2-toolkit.js",
       "type": "file",
@@ -2928,7 +2950,7 @@ El JSON original es:
         "NwtVue2Toolkit",
         "NwtProxyChain",
         "NwtPropagableStore",
-        "NwtVue2"
+        "NwtVue2ToolkitFormControlInterface"
       ]
     },
     {

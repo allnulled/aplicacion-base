@@ -91,6 +91,7 @@
       assertion(typeof detail === "object", "«detail» must be object");
       const output = [];
       this.configure(eventType, { wasTriggered: true });
+      if (!(eventType in this.listeners)) return this;
       for (const entry of [...this.listeners[eventType]]) {
         if (NwtKeyedEventsManager.isPrefix(triggerKeys, entry.keys)) {
           const result = entry.callback({

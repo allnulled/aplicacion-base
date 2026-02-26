@@ -20911,6 +20911,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       assertion(typeof detail === "object", "«detail» must be object");
       const output = [];
       this.configure(eventType, { wasTriggered: true });
+      if (!(eventType in this.listeners)) return this;
       for (const entry of [...this.listeners[eventType]]) {
         if (NwtKeyedEventsManager.isPrefix(triggerKeys, entry.keys)) {
           const result = entry.callback({
@@ -21429,6 +21430,10 @@ const { lutimesSync } = require("fs-extra");
       return output;
     }
 
+    static onlyKeys(obj, keys) {
+      return this.cleanMapByPairs(obj, (k,v) => keys.includes(k) ? [k,v] : undefined);
+    }
+
     static overrideOnce(data = {}, payload = {}, base = false) {
       if(!base) base = data;
       const keys = Object.keys(payload);
@@ -21928,7 +21933,69 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2-toolkit.js
+// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/interfaces/nwt-vue2-toolkit.form-control-interface.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtVue2ToolkitFormControlInterface'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtVue2ToolkitFormControlInterface'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtVue2ToolkitFormControlInterface = {
+
+    getSettings: function() {
+      assertion(typeof this.settings === "object", "Component property «settings» must be object on «NwtVue2Toolkit.getSettings»");
+      return this.settings;
+    },
+
+    getRoot: function() {
+      if(this.$options.name === "NwtFormMakerViewer") return this;
+      return NwtVue2.getFirstParentWhere(this, it => it.$options.name === "NwtFormMakerViewer");
+    },
+
+    getValueByIndex: function() {
+      if(this.settings.hasFixedValue) return this.settings.hasFixedValue;
+      const selector = this.$toolkit.getIndexForValue();
+      const value = this.$toolkit.getRoot().getValue();
+      let output = value;
+      for(let index=0; index<selector.length; index++) {
+        const prop = selector[index];
+        output = output[prop];
+      }
+      return output;
+    },
+
+    getIndexForValue: function() {
+      return this.settings.rootValueIndex ? this.settings.rootValueIndex : [];
+    },
+
+    getIndexForSchema: function() {
+      return this.settings.rootSchemaIndex ? this.settings.rootSchemaIndex : [];
+    },
+
+    getComponentNameBySettings: function(settings = this.settings) {
+      assertion(typeof settings === "object", "Parameter «settings» must be object on «NwtVue2Toolkit.getComponentNameBySettings»");
+      assertion(typeof settings.type === "string", "Parameter «settings.type» must be object on «NwtVue2Toolkit.getComponentNameBySettings»");
+      return "nwt-" + NwtVue2.fromIdToTagNotation(settings.type);
+    },
+
+    adaptTypeNameToUser: function(txt = this.settings.type) {
+      return txt.replace("control/for/", "");
+    }
+
+  };
+
+  return NwtVue2ToolkitFormControlInterface;
+
+});
+
+// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2-toolkit.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21947,55 +22014,33 @@ const { lutimesSync } = require("fs-extra");
     installToolkit: function(component) {
       if(component.$toolkit) return false;
       component.$toolkit = NwtProxyChain.installTeleporter(component, NwtVue2Toolkit);
-      component.$toolkit.installStore();
-      component.$toolkit.installLocal();
+      component.$toolkit.installLocal(component);
       return true;
     },
 
-    getSettings: function() {
-      assertion(typeof this.settings === "object", "Component property «settings» must be object on «NwtVue2Toolkit.getSettings»");
-      return this.settings;
+    installLocal: function(component) {
+      if(component.$local) return false;
+      component.$local = {};
+      return true;
     },
 
-    getRoot: function() {
-      assertion(typeof this.settings === "object", "Component property «settings» must be object on «NwtVue2Toolkit.getRoot»");
-      assertion(typeof this.settings.root === "object", "Component property «settings.root» must be object on «NwtVue2Toolkit.getRoot»");
-      return this.settings.root;
-    },
-
-    getRootValueByIndex: function() {
-
-    },
-
-    getRootValueIndex: function() {
-      return this.settings.rootValueIndex ? this.settings.rootValueIndex : [];
-    },
-
-    installStore: function() {
-      if(this.$store) return false;
-      this.$store = NwtPropagableStore.create();
-    },
-
-    installLocal: function() {
-      if(this.$local) return false;
-      this.$local = {};
+    installStore: function(component) {
+      if(component.$store) return false;
+      component.$store = NwtPropagableStore.create();
+      return true;
     },
 
     // Ejemplo de API indexada:
     install: NwtProxyChain.Nexer.create({
       store: function() {
-        return this.$toolkit.installStore();
+        return this.$toolkit.installStore(this);
       },
       local: function() {
-        return this.$toolkit.installLocal();
+        return this.$toolkit.installLocal(this);
       }
     }),
 
-    getComponentNameBySettings(settings = this.settings) {
-      assertion(typeof settings === "object", "Parameter «settings» must be object on «NwtVue2Toolkit.getComponentNameBySettings»");
-      assertion(typeof settings.type === "string", "Parameter «settings.type» must be object on «NwtVue2Toolkit.getComponentNameBySettings»");
-      return "nwt-" + NwtVue2.fromIdToTagNotation(settings.type);
-    },
+    ...NwtVue2ToolkitFormControlInterface
 
   };
 
@@ -22003,7 +22048,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2.js
+// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2.js
 /**
  * 
  * # Nwt Vue2 API
@@ -22123,7 +22168,7 @@ const { lutimesSync } = require("fs-extra");
         });
       }
       if (toDataset) {
-        const adaptedAttribute = NwtCommand.fromCommandIdToComponentId(name, {asTag:true});
+        const adaptedAttribute = NwtCommand.fromCommandIdToComponentId(name, { asTag: true });
         element.setAttribute("data-" + adaptedAttribute, properties);
       }
       if (toComponent) {
@@ -22136,7 +22181,19 @@ const { lutimesSync } = require("fs-extra");
         }
       }
     }
-    
+
+    static getFirstParentWhere(component, filter) {
+      assertion(component instanceof Vue, "Parameter «component» must be vue2 component on «NwtVue2.getFirstParentWhere»");
+      let pivot = component;
+      while (pivot && pivot.$parent) {
+        const parentComponent = pivot.$parent;
+        const result = filter(parentComponent);
+        if (result) return pivot.$parent;
+        pivot = pivot.$parent;
+      }
+      return null;
+    }
+
     static Toolkit = NwtVue2Toolkit;
 
   };
@@ -22145,7 +22202,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prototyper.js
+// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prototyper.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22293,7 +22350,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom-automator.js
+// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom-automator.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22357,7 +22414,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
+// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
 /**
  * 
  * # Nwt Lazy Loader API
@@ -22469,7 +22526,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
+// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
 /**
  * 
  * # Nwt Json Storer API
@@ -22636,7 +22693,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
+// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
 /**
  * 
  * # Nwt Settings API
@@ -22766,7 +22823,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-accessor.js
+// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-accessor.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22807,7 +22864,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
+// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22846,7 +22903,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
+// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22894,7 +22951,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
+// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22942,7 +22999,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
+// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -23884,7 +23941,7 @@ const { lutimesSync } = require("fs-extra");
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
+// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
 /**
  * 
  * # NwtTemplates
@@ -24119,7 +24176,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
+// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
 /**
  * 
  * # Nwt Utils API
@@ -24504,7 +24561,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
+// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24620,7 +24677,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
+// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24679,7 +24736,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
+// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24730,7 +24787,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
+// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
 /**
  * 
  * # Nwt Code Composer
@@ -24920,7 +24977,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
+// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
 /**
  * 
  * # Nwt Randomizer API
@@ -25036,7 +25093,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
+// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
 /**
  * 
  * # Nwt Progress Bar API
@@ -25163,7 +25220,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
+// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
 /**
  * 
  * # Nwt Globalizer API
@@ -25223,7 +25280,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
+// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
 /**
  * 
  * # Nwt Tester API
@@ -25587,7 +25644,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
+// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
 /**
  * 
  * # Nwt Process API
@@ -25734,7 +25791,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
+// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
 /**
  * 
  * # NwtProcessManager
@@ -25805,7 +25862,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
+// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25863,7 +25920,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
+// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26027,7 +26084,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
+// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26088,7 +26145,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
+// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26131,7 +26188,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
+// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
 /**
  * 
  * # NwtCsv
@@ -26220,7 +26277,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
+// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
 /**
  * 
  * # NwtIterableFunction
@@ -26454,7 +26511,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
+// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
 /**
  * 
  * # NwtIterableClass
@@ -26630,7 +26687,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
+// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
 /**
  * 
  * # NwtIterableCommandClass
@@ -26731,7 +26788,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
+// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
 /**
  * 
  * # NwtFilesystem
@@ -27168,7 +27225,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
+// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
 /**
  * 
  * # NwtFileChooser
@@ -27274,7 +27331,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
+// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
 /**
  * 
  * # Nwt Shell API
@@ -27487,7 +27544,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
+// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
 /**
  * 
  * # NwtLiveInjector
@@ -27567,7 +27624,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
+// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
 /**
  * 
  * # Nwt Prompt Manager API
@@ -27666,7 +27723,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
+// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
 /**
  * 
  * # NwtChatgpt
@@ -27842,7 +27899,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
+// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
 /**
  * 
  * # NwtStringShortener
@@ -27984,7 +28041,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
+// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
 /**
  * 
  * # NwtJsonPersister
@@ -28316,7 +28373,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
+// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
 /**
  * 
  * # NwtJsonlPersister
@@ -28478,7 +28535,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
+// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
 /**
  * 
  * # NwtFilePersister
@@ -28639,7 +28696,7 @@ const { lutimesSync } = require("fs-extra");
 });
 
 
-// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
+// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
 /**
  * 
  * # NwtDirectoryPersister
@@ -28832,7 +28889,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
+// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
 /**
  * 
  * # NwtPersister
@@ -28888,7 +28945,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
+// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
 (function (factory) {
       const mod = factory();
       if (typeof window !== 'undefined') {
@@ -28904,7 +28961,7 @@ const { lutimesSync } = require("fs-extra");
       return "{\n  const /**<?=localMemoryName?>**/localMemory = {};\n  /**<?#onFunctionStart?>**/\n  /**<?#onInitializeCollection?>**/\n  /**<?#onInitializeDimensions?>**/\n  try {\n    /**<?#onNextIteration?>**/\n    /**<?=localMemoryName?>**/localMemory.conditionalCallback = async () => {\n      /**<?#onCondition?>**/\n    };\n    /**<?=localMemoryName?>**/localMemory.output = undefined;\n    /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n    /**<?=onIdentifier + \":\"?>**/\n    while (/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n      /**<?#onIterationStart?>**/\n      try {\n        /**<?#onIteration?>**/\n        /**<?#onIterationSuccess?>**/\n      } catch (error) {\n        /**<?#onIterationError?>**/\n      } finally {\n        /**<?#onIterationFinally?>**/\n      }\n      /**<?#onIterationEnd?>**/\n      /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n      if (!/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n        break /**<?=onIdentifier?>**/;\n      }\n      /**<?#onInterlapse?>**/\n      /**<?#onNextIteration?>**/\n      /**<?#onProgression?>**/\n    }\n    /**<?#onFunctionSuccess?>**/\n  } catch (error) {\n    /**<?#onFunctionError?>**/\n  } finally {\n    /**<?#onFunctionFinally?>**/\n  }\n  /**<?#onFunctionEnd?>**/\n  return /**<?=localMemoryName?>**/localMemory.output;\n}"
     });
 
-// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
+// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29013,7 +29070,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
+// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -30465,7 +30522,7 @@ const { lutimesSync } = require("fs-extra");
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
+// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30493,7 +30550,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
+// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30580,7 +30637,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
+// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30676,7 +30733,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
+// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30714,7 +30771,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30751,7 +30808,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30778,7 +30835,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30805,7 +30862,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30832,7 +30889,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-glob-engine/nwt-glob-engine.js
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-glob-engine/nwt-glob-engine.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31004,7 +31061,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
 /**
  * 
  * # NwtDom
@@ -31195,7 +31252,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
 /**
  * 
  * # NwtExporter
@@ -31290,7 +31347,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
 /**
  * 
  * # NwtClipboard
@@ -31343,7 +31400,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31427,7 +31484,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-reflection.js
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-reflection.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31500,7 +31557,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-propagable-store.js
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-propagable-store.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31549,7 +31606,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
 /**
  * 
  * # NwtCacheDirectory
@@ -31665,7 +31722,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31874,7 +31931,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32077,7 +32134,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32128,7 +32185,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context-pointer.js
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context-pointer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32173,7 +32230,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context.js
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32288,7 +32345,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validable-schema.js
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validable-schema.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32332,7 +32389,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validator.js
+// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validator.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32359,7 +32416,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
+// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
 /**
  * 
  * # Nwt Framework API
@@ -32437,7 +32494,7 @@ const { lutimesSync } = require("fs-extra");
 
 })();
 
-// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
+// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
 /**
  * 
  * # Nwt Injection API
@@ -32472,7 +32529,7 @@ if (typeof window !== "undefined") {
     });
 }
 
-// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
 /**
  * 
  * # Nwt V-Resizable Directive - Vue directive
@@ -32579,7 +32636,7 @@ Vue.directive("resizable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
 /**
  * 
  * 
@@ -32649,7 +32706,7 @@ Vue.directive("draggable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
 /**
  * 
  * # Nwt V-Focus Directive - Vue directive
@@ -32674,7 +32731,7 @@ Vue.directive("focus", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
 Vue.directive("forms", {
   bind(el, binding, vnode) {
     const value = binding.value || {};
@@ -32692,9 +32749,9 @@ Vue.directive("forms", {
 });
 
 
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
 
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
 /**
  * 
  * # Common Dialogs
@@ -32923,11 +32980,11 @@ Vue.component("CommonDialogs", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
 /**
  * 
  * # Nwt Toasts API
@@ -33041,11 +33098,11 @@ Vue.component("CommonToasts", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
 /**
  * 
  * # Nwt Common Injections API
@@ -33137,11 +33194,11 @@ Vue.component("CommonInjections", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
 /**
  * 
  * # Nwt Tester Viewer API / Componente Vue2
@@ -33226,11 +33283,11 @@ Vue.component("NwtTesterViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
 /**
  * 
  * # NwtTesterNode
@@ -33361,11 +33418,11 @@ Vue.component("NwtTesterNode", {
 });
 
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.js
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.js
 /**
  * 
  * # Nwt Dynamic Tester Viewer API / Componente Vue2
@@ -33512,11 +33569,11 @@ Vue.component("NwtDynamicTesterViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
 /**
  * 
  * # Nwt Progress Bar Viewer API / Componente Vue2
@@ -33578,11 +33635,11 @@ Vue.component("NwtProgressBarViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js
 /**
  * 
  * # Nwt Box Viewer API / Componente Vue2
@@ -33660,11 +33717,11 @@ Vue.component("NwtBoxViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
 /**
  * 
  * # NwtSourceViewer
@@ -33747,11 +33804,11 @@ Vue.component("NwtSourceViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
 /**
  * 
  * # Nwt Process Manager Viewer API / Componente Vue2
@@ -33915,11 +33972,11 @@ Vue.component("NwtProcessManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js
 /**
  * 
  * # Nwt Settings Viewer API / Componente Vue2
@@ -34228,11 +34285,11 @@ Vue.component("NwtSettingsViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
 Vue.component("NwtProceduresManagerViewer", {
   template: `<div class="app_procedures_manager_viewer">
     <div class="title">
@@ -34391,11 +34448,11 @@ Vue.component("NwtProceduresManagerViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
 Vue.component("AppProcedureDocumentationViewer", {
   template: `<div class="app_procedure_documentation_viewer">
     <template v-if="markdownContentToHtml">
@@ -34437,11 +34494,11 @@ Vue.component("AppProcedureDocumentationViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
 /**
  * 
  * # NwtFileExplorer
@@ -34819,11 +34876,11 @@ Vue.component("NwtFileExplorer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js
 /**
  * 
  * # Nwt Code Highlighter API / Componente Vue2
@@ -34904,11 +34961,11 @@ Vue.component("NwtCodeHighlighter", {
 });
 
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
 /**
  * 
  * # NwtPromptsManagerViewer
@@ -35226,11 +35283,11 @@ Vue.component("NwtPromptsManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
 /**
  * 
  * # Nwt Chatgpt Files Manager Viewer API / Componente Vue2
@@ -35463,9 +35520,9 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement.js
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35487,9 +35544,9 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.html
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.html
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.js
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.js
 Vue.component("NwtFormControlStatementViewer", {
   name: "NwtFormControlStatementViewer",
   template: `<div class="nwt_form_control_statement_viewer">
@@ -35505,9 +35562,9 @@ Vue.component("NwtFormControlStatementViewer", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.css
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.css
 
-// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors.js
+// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35529,9 +35586,9 @@ Vue.component("NwtFormControlStatementViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.html
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.html
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.js
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.js
 Vue.component("NwtFormControlErrorsViewer", {
   name: "NwtFormControlErrorsViewer",
   template: `<div class="nwt_form_control_errors_viewer">
@@ -35547,9 +35604,9 @@ Vue.component("NwtFormControlErrorsViewer", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.css
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.css
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control.js
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35575,9 +35632,9 @@ Vue.component("NwtFormControlErrorsViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer.html
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer.html
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer.js
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer.js
 Vue.component("NwtFormControlViewer", {
   name: "NwtFormControlViewer",
   template: `<div class="nwt_form_control_viewer">
@@ -35623,9 +35680,9 @@ Vue.component("NwtFormControlViewer", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer.css
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer.css
 
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder.js
+// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35688,9 +35745,9 @@ Vue.component("NwtFormControlViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer.html
+// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer.html
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer.js
+// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer.js
 Vue.component("NwtFormBuilderViewer", {
   name: "NwtFormBuilderViewer",
   template: `<div class="nwt_form_builder_viewer">
@@ -35763,9 +35820,9 @@ Vue.component("NwtFormBuilderViewer", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer.css
+// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer.css
 
-// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form.js
+// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35794,7 +35851,7 @@ Vue.component("NwtFormBuilderViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-maker/nwt-form-maker.js
+// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-maker/nwt-form-maker.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35855,7 +35912,7 @@ Vue.component("NwtFormBuilderViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/trait/valueBySelector/getValueByIndex.js
+// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/trait/valueBySelector/getValueByIndex.js
 NwtStatic.api.set("control.trait.valueBySelector.getValueByIndex", function(value, indexes) {
   assertion(Array.isArray(indexes), "Parameter «indexes» must be array on «NwtStatic.api.control.trait.valueBySelector.getValueByIndex»");
   let output = value;
@@ -35868,7 +35925,7 @@ NwtStatic.api.set("control.trait.valueBySelector.getValueByIndex", function(valu
   return output;
 });
 
-// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/trait/valueBySelector/setValueByIndex.js
+// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/trait/valueBySelector/setValueByIndex.js
 NwtStatic.api.set("control.trait.valueBySelector.setValueByIndex", function(settings, indexes) {
   assertion(typeof settings === "object", "Parameter «settings» must be object on «NwtStatic.api.control.trait.valueBySelector.setValueByIndex»");
   assertion(settings.rootComponent instanceof Vue, "Parameter «settings.rootComponent» must be instance of Vue on «NwtStatic.api.control.trait.valueBySelector.setValueByIndex»");
@@ -35890,7 +35947,7 @@ NwtStatic.api.set("control.trait.valueBySelector.setValueByIndex", function(sett
   return output;
 });
 
-// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api-nexer.js
+// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api-nexer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35917,7 +35974,7 @@ NwtStatic.api.set("control.trait.valueBySelector.setValueByIndex", function(sett
 
 });
 
-// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api.js
+// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36050,7 +36107,7 @@ NwtStatic.api.set("control.trait.valueBySelector.setValueByIndex", function(sett
 
 });
 
-// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/control.js
+// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/control.js
 Resource_api_control: {
   const Nexer = NwtResourceApi.Nexer;
   NwtResourceApi.register({
@@ -36071,7 +36128,7 @@ Resource_api_control: {
   });
 }
 
-// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/settings.js
+// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/settings.js
 NwtResourceApi.register({
   namespace: "settings",
   getSettingsSpec: function() {
@@ -36082,7 +36139,7 @@ NwtResourceApi.register({
   }
 });
 
-// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/test.js
+// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/test.js
 NwtResourceApi.register({
   namespace: "test",
   getVersion() {
@@ -36090,7 +36147,7 @@ NwtResourceApi.register({
   }
 });
 
-// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/trait.js
+// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/trait.js
 NwtResourceApi.register({
   namespace: "trait",
   getId() {
@@ -36098,12 +36155,12 @@ NwtResourceApi.register({
   },
 });
 
-// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/validation.js
+// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/validation.js
 NwtResourceApi.register({
   namespace: "validation",
 });
 
-// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/control/validation.js
+// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/control/validation.js
 NwtResourceApi.expand("control.validation", {
   validateValue: function (...args) {
     return NwtStatic.api.control.validation.interface.statically.validateValue(this, ...args);
@@ -36116,34 +36173,34 @@ NwtResourceApi.expand("control.validation", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/hello.js
+// @vuebundler[Proyecto_base_001][151]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/hello.js
 NwtResourceApi.set(["test","hello"], false);
 
-// @vuebundler[Proyecto_base_001][151]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit.getVersion.js
+// @vuebundler[Proyecto_base_001][152]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit.getVersion.js
 NwtResourceApi.set("test.utils.basicToolkit.getVersion", function() {
   return this.id;
 });
 
-// @vuebundler[Proyecto_base_001][152]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit.js
+// @vuebundler[Proyecto_base_001][153]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit.js
 NwtResourceApi.expand("test.utils.basicToolkit", {
   getId() {
     return this.id;
   },
 });
 
-// @vuebundler[Proyecto_base_001][153]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit2.js
+// @vuebundler[Proyecto_base_001][154]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit2.js
 NwtResourceApi.expand("test.utils.basicToolkit", {
   getModernId() {
     return this.id;
   },
 });
 
-// @vuebundler[Proyecto_base_001][154]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/validateSettings.js
+// @vuebundler[Proyecto_base_001][155]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/validateSettings.js
 NwtResourceApi.set(["test","utils","validateSettings"], function() {
   return this.id;
 });
 
-// @vuebundler[Proyecto_base_001][155]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js
+// @vuebundler[Proyecto_base_001][156]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36245,9 +36302,9 @@ NwtResourceApi.set(["test","utils","validateSettings"], function() {
 
 });
 
-// @vuebundler[Proyecto_base_001][156]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
 
-// @vuebundler[Proyecto_base_001][156]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
 /**
  * 
  * # NwtStarsBackground
@@ -36335,11 +36392,11 @@ Vue.component("NwtStarsBackground", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][156]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
+// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
 
-// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
+// @vuebundler[Proyecto_base_001][158]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
 
-// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+// @vuebundler[Proyecto_base_001][158]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
 /**
  * 
  * # NwtMatrixBackground
@@ -36411,9 +36468,9 @@ Vue.component("NwtMatrixBackground", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
+// @vuebundler[Proyecto_base_001][158]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
 
-// @vuebundler[Proyecto_base_001][158]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
+// @vuebundler[Proyecto_base_001][159]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36444,7 +36501,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][159]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
+// @vuebundler[Proyecto_base_001][160]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36486,7 +36543,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][160]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
+// @vuebundler[Proyecto_base_001][161]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36552,9 +36609,9 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][161]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
+// @vuebundler[Proyecto_base_001][162]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html
 
-// @vuebundler[Proyecto_base_001][161]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
+// @vuebundler[Proyecto_base_001][162]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js
 Vue.component("NwtAnonymousCommandForm", {
   name: "NwtAnonymousCommandForm",
   template: `<div class="nwt_anonymous_command_form">
@@ -36577,11 +36634,11 @@ Vue.component("NwtAnonymousCommandForm", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][161]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
+// @vuebundler[Proyecto_base_001][162]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css
 
-// @vuebundler[Proyecto_base_001][162]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
+// @vuebundler[Proyecto_base_001][163]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html
 
-// @vuebundler[Proyecto_base_001][162]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
+// @vuebundler[Proyecto_base_001][163]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js
 Vue.component("NwtAnonymousCommandView", {
   name: "NwtAnonymousCommandView",
   template: `<div class="nwt_anonymous_command_view">
@@ -36598,11 +36655,11 @@ Vue.component("NwtAnonymousCommandView", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][162]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
+// @vuebundler[Proyecto_base_001][163]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css
 
-// @vuebundler[Proyecto_base_001][163]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
+// @vuebundler[Proyecto_base_001][164]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][163]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
+// @vuebundler[Proyecto_base_001][164]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
 Vue.component("NwtCommandsManagerViewer", {
   name: "NwtCommandsManagerViewer",
   template: `<div class="nwt_commands_manager_viewer">
@@ -36792,13 +36849,13 @@ Vue.component("NwtCommandsManagerViewer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][163]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
+// @vuebundler[Proyecto_base_001][164]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][164]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
+// @vuebundler[Proyecto_base_001][165]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
 
-// @vuebundler[Proyecto_base_001][165]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
+// @vuebundler[Proyecto_base_001][166]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
 
-// @vuebundler[Proyecto_base_001][165]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
+// @vuebundler[Proyecto_base_001][166]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
 /**
  * 
  * 
@@ -37168,9 +37225,9 @@ Vue.component("MainWindow", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][165]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
+// @vuebundler[Proyecto_base_001][166]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
 
-// @vuebundler[Proyecto_base_001][166]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
+// @vuebundler[Proyecto_base_001][167]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
 /**
  * 
  * # App Payload API
@@ -37231,18 +37288,22 @@ Vue.component("MainWindow", {
 
 });
 
-// @vuebundler[Proyecto_base_001][167]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compiled.js
+// @vuebundler[Proyecto_base_001][168]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compiled.js
 NwtResource.define({
   id: "control/for/list",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/valueBySelector", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/toolkit", "control/trait/for/remoteSchema", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
-    "rootValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
-      "required": true
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
     },
     "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
       "type": Array,
       "required": true
     },
@@ -37265,10 +37326,21 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_list">
-          Nwt control for list {{ $nwt.Reflection.keys(settings) }}
+          <!--Nwt control for list {{ $nwt.Reflection.keys(settings) }}-->
+          <nwt-control-partial-for-statement :control="this">
+              <nwt-control-partial-for-list-panel :control="this" />
+          </nwt-control-partial-for-statement>
+          <div class="pagination_box"></div>
       </div>`,
     data: function() {
       const finalData = {};
+      // @COMPILED-BY: control/trait/for/showable
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl || true,
+        };
+      }).call(this));
       // @COMPILED-BY: control/for/list
       Object.assign(finalData, (function() {
         return {
@@ -37279,22 +37351,69 @@ NwtResource.define({
       return finalData;
     },
     methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
       "getValueByIndex": function() {
-        trace("@compilable/control/trait/for/valueBySelector.methods.getValueByIndex");
-        const originalValue = this.$toolkit.getRootComponent().$toolkit.store.get(this.settings.rootValueIndex);
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const originalValue = this.$toolkit.getRoot().$store.get(this.settings.rootValueIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
       "setValueByIndex": function(value) {
-        trace("@compilable/control/trait/for/valueBySelector.methods.setValueByIndex");
-        this.$toolkit.getRootComponent().$toolkit.store.set(this.settings.rootValueIndex, value);
-        this.$toolkit.getRootComponent().$toolkit.store.dispatch("set-value", {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,
           value: value,
         });
       },
-      "digestSearch": function() {}
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$store.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getValueByState": function() {
+        trace("NwtControlForList.methods.getValueByState");
+        return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
+      },
+      "addItem": function() {},
+      "digestSearch": function() {
+        const list = [];
+        Extract_list_from_get_value_by_index_and_pagination: {}
+        this.$local.list = list;
+      }
     },
     computed: {
       "totalItems": function() {
@@ -37303,36 +37422,45 @@ NwtResource.define({
     },
     watch: {},
     created: function() {
-      // @COMPILED-BY: control/trait/for/valueBySelector
-      trace("@compilable/control/trait/for/valueBySelector.created");
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/for/list
+      trace("NwtControlForList.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
     },
     mounted: function() {
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       // @COMPILED-BY: control/for/list
-      trace("NwtControlForList.mounted");
-      NwtVue2.Toolkit.installToolkit(this);
       this.digestSearch();
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][168]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compilable.css
+// @vuebundler[Proyecto_base_001][169]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compilable.css
 
-// @vuebundler[Proyecto_base_001][169]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/option/compiled.js
+// @vuebundler[Proyecto_base_001][170]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/option/compiled.js
 NwtResource.define({
   id: "control/for/option",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/valueBySelector", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/toolkit", "control/trait/for/remoteSchema", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
-    "rootValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
-      "required": true
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
     },
     "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
       "type": Array,
       "required": true
     },
@@ -37357,55 +37485,123 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_option">
-          Nwt control for option {{ $nwt.Reflection.keys(settings) }}
-          <div>
-              <select v-model="selectedOption">
-                  <template v-for="option, optionIndex in settings.schema">
-                      <option v-bind:key="'option-' + optionIndex" :value="optionIndex">Tipo {{ optionIndex + 1 }}: {{ option.type }}</option>
-                  </template>
-              </select>
-              <template v-if="selectedOption in settings.schema">
-                  <component :is="$toolkit.getComponentNameBySettings(settings.schema[selectedOption])"
-                      :settings="{
-                          ...settings.schema[selectedOption],
-                          rootValueIndex: $toolkit.getRootValueIndex().concat([]),
-                      }" />
-              </template>
-          </div>
+          <!--Nwt control for option {{ $nwt.Reflection.keys(settings) }}-->
+          <template v-if="(!isLoading) && (selectedOption in settings.schema)">
+              <component :is="$toolkit.getComponentNameBySettings(settings.schema[selectedOption])"
+                  v-bind:key="'component_for_option_' + selectedOption"
+                  :settings="{
+                      ...$nwt.ObjectUtils.onlyKeys(settings, ['hasStatement', 'hasDescription']),
+                      ...settings.schema[selectedOption],
+                      isShowingControl: true,
+                      rootValueIndex: $toolkit.getIndexForValue().concat([]),
+                      rootSchemaIndex: $toolkit.getIndexForSchema().concat([selectedOption]),
+                  }">
+                  <div class="">
+                      <select class="fluid"
+                          v-model="selectedOption">
+                          <template v-for="option, optionIndex in settings.schema">
+                              <option v-bind:key="'option-' + optionIndex"
+                                  :value="optionIndex">Tipo {{ optionIndex + 1 }}: {{ $toolkit.adaptTypeNameToUser(option.type) }}</option>
+                          </template>
+                      </select>
+                  </div>
+              </component>
+          </template>
       </div>`,
     data: function() {
       const finalData = {};
+      // @COMPILED-BY: control/trait/for/showable
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl || true,
+        };
+      }).call(this));
       // @COMPILED-BY: control/for/option
       Object.assign(finalData, (function() {
         return {
+          isLoading: false,
           selectedOption: 0,
         };
       }).call(this));
       return finalData;
     },
     methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
       "getValueByIndex": function() {
-        trace("@compilable/control/trait/for/valueBySelector.methods.getValueByIndex");
-        const originalValue = this.$toolkit.getRootComponent().$toolkit.store.get(this.settings.rootValueIndex);
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const originalValue = this.$toolkit.getRoot().$store.get(this.settings.rootValueIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
       "setValueByIndex": function(value) {
-        trace("@compilable/control/trait/for/valueBySelector.methods.setValueByIndex");
-        this.$toolkit.getRootComponent().$toolkit.store.set(this.settings.rootValueIndex, value);
-        this.$toolkit.getRootComponent().$toolkit.store.dispatch("set-value", {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,
           value: value,
         });
+      },
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$store.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getValueByState": function() {
+        trace("NwtControlForOption.methods.getValueByState");
+        return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
+      },
+      "adaptTypeNameToUser": function(txt) {
+        return txt.replace("control/for/", "");
       }
     },
     computed: {},
     watch: {},
     created: function() {
-      // @COMPILED-BY: control/trait/for/valueBySelector
-      trace("@compilable/control/trait/for/valueBySelector.created");
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/for/option
+      trace("NwtControlForOption.created");
+      this.$local = {
+        selectedOptionTimer: 0
+      };
     },
     mounted: function() {
       // @COMPILED-BY: control/trait/for/settings
@@ -37418,18 +37614,22 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][170]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compiled.js
+// @vuebundler[Proyecto_base_001][171]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compiled.js
 NwtResource.define({
   id: "control/for/structure",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/valueBySelector", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/toolkit", "control/trait/for/remoteSchema", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
-    "rootValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
-      "required": true
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
     },
     "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
       "type": Array,
       "required": true
     },
@@ -37452,46 +37652,99 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_structure">
-          Nwt control for structure {{ $nwt.Reflection.keys(settings) }}
-          <div v-for="column, columnName in settings.schema"
-              v-bind:key="'column-' + columnName"
-              style="border-top: 1px solid black;">
-              <component :is="$toolkit.getComponentNameBySettings(column)" :settings="{
-                  ...column,
-                  rootValueIndex: $toolkit.getRootValueIndex().concat([columnName]),
-              }" />
-          </div>
+          <!--Nwt control for structure {{ $nwt.Reflection.keys(settings) }}-->
+          <nwt-control-partial-for-statement :control="this" />
+          <template v-show="isShowingControl">
+              <div v-for="column, columnName in settings.schema"
+                  v-bind:key="'column-' + columnName"
+                  class="">
+                  <component :is="$toolkit.getComponentNameBySettings(column)"
+                      :settings="{
+                          ...column,
+                          rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
+                          rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
+                      }" />
+              </div>
+          </template>
       </div>`,
     data: function() {
       const finalData = {};
-      // @COMPILED-BY: control/for/structure
+      // @COMPILED-BY: control/trait/for/showable
       Object.assign(finalData, (function() {
-        return {};
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl || true,
+        };
       }).call(this));
       return finalData;
     },
     methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
       "getValueByIndex": function() {
-        trace("@compilable/control/trait/for/valueBySelector.methods.getValueByIndex");
-        const originalValue = this.$toolkit.getRootComponent().$toolkit.store.get(this.settings.rootValueIndex);
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const originalValue = this.$toolkit.getRoot().$store.get(this.settings.rootValueIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
       "setValueByIndex": function(value) {
-        trace("@compilable/control/trait/for/valueBySelector.methods.setValueByIndex");
-        this.$toolkit.getRootComponent().$toolkit.store.set(this.settings.rootValueIndex, value);
-        this.$toolkit.getRootComponent().$toolkit.store.dispatch("set-value", {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,
           value: value,
         });
+      },
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$store.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getValueByState": function() {
+        trace("NwtControlForStructure.methods.getValueByState");
+        return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
       }
     },
     computed: {},
     watch: {},
     created: function() {
-      // @COMPILED-BY: control/trait/for/valueBySelector
-      trace("@compilable/control/trait/for/valueBySelector.created");
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
     },
     mounted: function() {
@@ -37505,20 +37758,24 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][171]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compilable.css
+// @vuebundler[Proyecto_base_001][172]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compilable.css
 
-// @vuebundler[Proyecto_base_001][172]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compiled.js
+// @vuebundler[Proyecto_base_001][173]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compiled.js
 NwtResource.define({
   id: "control/for/text",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/valueBySelector", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/toolkit", "control/trait/for/remoteSchema", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
-    "rootValue": {
-      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
-      "required": true
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
     },
     "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
       "type": Array,
       "required": true
     }
@@ -37537,39 +37794,104 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_text">
-          Nwt control for text {{ $nwt.Reflection.keys(settings) }}
+          <!--Nwt control for text {{ $nwt.Reflection.keys(settings) }}-->
+          <nwt-control-partial-for-statement :control="this">
+              <slot></slot>
+          </nwt-control-partial-for-statement>
+          <div v-if="isShowingControl">
+              <input
+                  class="width_100"
+                  type="text"
+                  ref="textbox"
+                  :disabled="settings.hasFixedValue"
+                  :value="$toolkit.getValueByIndex()"
+              />
+          </div>
       </div>`,
     data: function() {
       const finalData = {};
-      // @COMPILED-BY: control/for/text
+      // @COMPILED-BY: control/trait/for/showable
       Object.assign(finalData, (function() {
-        trace("NwtControlForText.data");
-        return {};
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl || true,
+        };
       }).call(this));
       return finalData;
     },
     methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
       "getValueByIndex": function() {
-        trace("@compilable/control/trait/for/valueBySelector.methods.getValueByIndex");
-        const originalValue = this.$toolkit.getRootComponent().$toolkit.store.get(this.settings.rootValueIndex);
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const originalValue = this.$toolkit.getRoot().$store.get(this.settings.rootValueIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
       "setValueByIndex": function(value) {
-        trace("@compilable/control/trait/for/valueBySelector.methods.setValueByIndex");
-        this.$toolkit.getRootComponent().$toolkit.store.set(this.settings.rootValueIndex, value);
-        this.$toolkit.getRootComponent().$toolkit.store.dispatch("set-value", {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,
           value: value,
         });
+      },
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$store.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getValueByState": function() {
+        return this.$refs.textbox.value;
+      },
+      "setValueByState": function(value) {
+        this.$refs.textbox.value = value;
+        this.$forceUpdate(true);
+      },
+      "reloadValue": function() {
+        this.$refs.textbox.value = this.$toolkit.getValueByIndex();
       }
     },
     computed: {},
     watch: {},
     created: function() {
-      // @COMPILED-BY: control/trait/for/valueBySelector
-      trace("@compilable/control/trait/for/valueBySelector.created");
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
     },
     mounted: function() {
@@ -37584,11 +37906,17 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][173]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compiled.js
+// @vuebundler[Proyecto_base_001][174]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compiled.js
 NwtResource.define({
   id: "form/maker/viewer",
   apis: ["trait", "control", "validation"],
   traits: {},
+  settingsSpec: {
+    "initialValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "required": true
+    }
+  },
   compileView: true,
   view: {
     name: "NwtFormMakerViewer",
@@ -37605,22 +37933,37 @@ NwtResource.define({
               :is="$toolkit.getComponentNameBySettings(settings)"
               :settings="{
                   ...settings,
-                  rootValue: settings.initialValue || {},
+                  isRoot: true,
                   rootValueIndex: [],
+                  rootSchemaIndex: [],
               }"
           />
       </div>`,
     data: function() {
       const finalData = {};
+      // @COMPILED-BY: form/maker/viewer
+      Object.assign(finalData, (function() {
+        return {};
+      }).call(this));
       return finalData;
     },
-    methods: {},
+    methods: {
+      "getValue": function(key = []) {
+        return this.$store.get(key);
+      },
+      "setValue": function(key, value) {
+        return this.$store.set(key, value);
+      }
+    },
     computed: {},
     watch: {},
     created: function() {
       // @COMPILED-BY: form/maker/viewer
       trace("NwtFormMakerViewer.created");
       NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      NwtVue2.Toolkit.installStore(this);
+      this.$store.set([], this.settings.initialValue);
     },
     mounted: function() {
       // @COMPILED-BY: form/maker/viewer
@@ -37630,9 +37973,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][174]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css
+// @vuebundler[Proyecto_base_001][175]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css
 
-// @vuebundler[Proyecto_base_001][175]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
+// @vuebundler[Proyecto_base_001][176]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
 NwtResource.define({
   id: "control/partial/for/error-handler",
   apis: ["control", "view", "validation"],
@@ -37682,9 +38025,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][176]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
+// @vuebundler[Proyecto_base_001][177]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
 
-// @vuebundler[Proyecto_base_001][177]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
+// @vuebundler[Proyecto_base_001][178]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
 NwtResource.define({
   id: "control/partial/for/list-panel",
   apis: ["control", "view", "validation"],
@@ -37706,10 +38049,7 @@ NwtResource.define({
     template: `
       <div class="nwt_control_partial_for_list_panel flex_row height_100">
           <div class="flex_100">
-              <button class="mini width_100 height_100" v-on:click="() => control.showControl() || control.createItem()">➕</button>
-          </div>
-          <div class="flex_1 pad_left_1">
-              <button class="mini width_100 height_100":class="{active:control.validationErrors.length}"  v-on:click="control.validateValue">💡</button>
+              <button class="mini fluid" v-on:click="() => control.addItem()">➕</button>
           </div>
       </div>`,
     data: function() {
@@ -37722,7 +38062,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][178]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
+// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
 NwtResource.define({
   id: "control/partial/for/statement",
   apis: ["control", "view", "validation"],
@@ -37739,23 +38079,45 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_partial_for_statement">
-          <div class="pad_bottom_1" v-if="control.settings.hasHeader">
-              <nwt-source-viewer :source="control.settings.hasHeader" />
-          </div>
-          <div class="statement_box" v-if="control.settings.hasStatement || control.settings.hasDescription">
+          <div class="statement_box pad_top_1 pad_bottom_1"
+              v-if="$local && $local.statement">
               <div class="flex_row">
                   <div class="flex_100 align_self_center">
-                      <span class="statement_text"> 🔸 {{ control.settings.hasStatement }}</span>
-                      <span class="description_text" v-if="isShowingDescription">
+                      <span class="statement_text"> 🔸 {{ $local.statement }}</span>
+                      <span class="type_text">
+                          <span class="control_type_badge">{{ control.$toolkit.adaptTypeNameToUser() }}</span>
+                      </span>
+                      <span class="description_text"
+                          v-if="control.isShowingControl && isShowingDescription">
                           <span class="description_icon"> ℹ️ </span>
-                          <span>{{ control.settings.hasDescription }}</span>
+                          <span>{{ $local.description }}</span>
                       </span>
                   </div>
                   <slot></slot>
-                  <div class="flex_1 pad_left_1" v-if="control.settings.hasDescription">
-                      <button class="mini description_icon"
-                          :class="{ active: isShowingDescription }"
-                          v-on:click="toggleDescription">ℹ️</button>
+                  <template v-if="control.isShowingControl">
+                      <div class="flex_1 pad_left_1"
+                          v-if="$local.description">
+                          <button class="mini fluid description_icon"
+                              :class="{ active: isShowingDescription }"
+                              v-on:click="toggleDescription">ℹ️</button>
+                      </div>
+                      <div class="flex_1 pad_left_1">
+                          <button class="mini fluid"
+                              v-on:click="loadValue">♻️</button>
+                      </div>
+                      <div class="flex_1 pad_left_1">
+                          <button class="mini fluid"
+                              v-on:click="saveValue">💾</button>
+                      </div>
+                      <div class="flex_1 pad_left_1">
+                          <button class="mini fluid"
+                              v-on:click="validateValue">💡</button>
+                      </div>
+                  </template>
+                  <div class="flex_1 pad_left_1">
+                      <button class="mini fluid"
+                          :class="{active:!control.isShowingControl}"
+                          v-on:click="toggleControl">🔶</button>
                   </div>
               </div>
           </div>
@@ -37774,16 +38136,48 @@ NwtResource.define({
       "toggleDescription": function() {
         trace("NwtControlPartialForStatement.methods.toggleDescription");
         this.isShowingDescription = !this.isShowingDescription;
+      },
+      "saveValue": function() {
+        trace("NwtControlPartialForStatement.methods.saveValue");
+        const control = this.control;
+        const value = control.getValueByState();
+        const indexes = control.getIndexForValue();
+        control.$toolkit.getRoot().$store.set(indexes, value);
+      },
+      "loadValue": function() {
+        trace("NwtControlPartialForStatement.methods.saveValue");
+        const control = this.control;
+        const value = control.getValueByIndex();
+        control.setValueByState(value);
+      },
+      "validateValue": function() {
+        trace("NwtControlPartialForStatement.methods.validateValue");
+        // @TODO: validar el valor sin saber de qué tipo es
+      },
+      "toggleControl": function() {
+        trace("NwtControlPartialForStatement.methods.toggleControl");
+        this.control.toggleControl();
+        this.control.$forceUpdate(true);
       }
     },
     computed: {},
     watch: {},
+    created: function() {
+      // @COMPILED-BY: control/partial/for/statement
+      this.$local = {};
+    },
+    mounted: function() {
+      // @COMPILED-BY: control/partial/for/statement
+      this.$local.statement = this.control.settings.hasStatement || this.control.settings.rootValueIndex?.concat([]).pop()
+      this.$local.description = this.control.settings.hasDescription;
+      this.$forceUpdate(true);
+    },
   }
 });
 
-// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
+// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
 
-// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
+// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
 NwtResource.define({
   id: "test/control/for/settingsSpecExample",
   apis: ["settings", "test"],
@@ -37805,8 +38199,8 @@ NwtResource.define({
   },
 });
 
-// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+// @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
 
-// @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

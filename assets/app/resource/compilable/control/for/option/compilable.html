@@ -1,17 +1,24 @@
 <div class="nwt_control_for_option">
-    Nwt control for option {{ $nwt.Reflection.keys(settings) }}
-    <div>
-        <select v-model="selectedOption">
-            <template v-for="option, optionIndex in settings.schema">
-                <option v-bind:key="'option-' + optionIndex" :value="optionIndex">Tipo {{ optionIndex + 1 }}: {{ option.type }}</option>
-            </template>
-        </select>
-        <template v-if="selectedOption in settings.schema">
-            <component :is="$toolkit.getComponentNameBySettings(settings.schema[selectedOption])"
-                :settings="{
-                    ...settings.schema[selectedOption],
-                    rootValueIndex: $toolkit.getRootValueIndex().concat([]),
-                }" />
-        </template>
-    </div>
+    <!--Nwt control for option {{ $nwt.Reflection.keys(settings) }}-->
+    <template v-if="(!isLoading) && (selectedOption in settings.schema)">
+        <component :is="$toolkit.getComponentNameBySettings(settings.schema[selectedOption])"
+            v-bind:key="'component_for_option_' + selectedOption"
+            :settings="{
+                ...$nwt.ObjectUtils.onlyKeys(settings, ['hasStatement', 'hasDescription']),
+                ...settings.schema[selectedOption],
+                isShowingControl: true,
+                rootValueIndex: $toolkit.getIndexForValue().concat([]),
+                rootSchemaIndex: $toolkit.getIndexForSchema().concat([selectedOption]),
+            }">
+            <div class="">
+                <select class="fluid"
+                    v-model="selectedOption">
+                    <template v-for="option, optionIndex in settings.schema">
+                        <option v-bind:key="'option-' + optionIndex"
+                            :value="optionIndex">Tipo {{ optionIndex + 1 }}: {{ $toolkit.adaptTypeNameToUser(option.type) }}</option>
+                    </template>
+                </select>
+            </div>
+        </component>
+    </template>
 </div>

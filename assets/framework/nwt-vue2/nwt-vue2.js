@@ -117,7 +117,7 @@
         });
       }
       if (toDataset) {
-        const adaptedAttribute = NwtCommand.fromCommandIdToComponentId(name, {asTag:true});
+        const adaptedAttribute = NwtCommand.fromCommandIdToComponentId(name, { asTag: true });
         element.setAttribute("data-" + adaptedAttribute, properties);
       }
       if (toComponent) {
@@ -130,7 +130,19 @@
         }
       }
     }
-    
+
+    static getFirstParentWhere(component, filter) {
+      assertion(component instanceof Vue, "Parameter «component» must be vue2 component on «NwtVue2.getFirstParentWhere»");
+      let pivot = component;
+      while (pivot && pivot.$parent) {
+        const parentComponent = pivot.$parent;
+        const result = filter(parentComponent);
+        if (result) return pivot.$parent;
+        pivot = pivot.$parent;
+      }
+      return null;
+    }
+
     static Toolkit = NwtVue2Toolkit;
 
   };

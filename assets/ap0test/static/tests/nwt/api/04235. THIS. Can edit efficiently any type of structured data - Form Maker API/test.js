@@ -4,16 +4,21 @@ const schema1 = {
   type: "control/for/structure",
   schema: {
     name: {
-      type: "control/for/text"
+      type: "control/for/text",
+      hasStatement: "Nombre de la persona:",
+      hasDescription: "Aquí va el nombre de la persona"
     },
     city: {
-      type: "control/for/text"
+      type: "control/for/text",
+      hasStatement: "Ciudad de residencia:"
     },
     country: {
-      type: "control/for/text"
+      type: "control/for/text",
+      hasStatement: "País de origen:"
     },
     gender: {
       type: "control/for/option",
+      hasStatement: "Género de la persona:",
       schema: [{
         type: "control/for/text",
         hasFixedValue: "female",
@@ -24,6 +29,7 @@ const schema1 = {
     },
     films: {
       type: "control/for/list",
+      hasStatement: "Películas donde ha participado:",
       schema: {
         type: "control/for/structure",
         schema: {

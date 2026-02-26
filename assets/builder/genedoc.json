@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-25T19:36:59.565Z",
+  "generatedAt": "2026-02-26T12:16:52.945Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -2342,6 +2342,19 @@
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/interfaces/nwt-vue2-toolkit.form-control-interface.js",
+      "name": "nwt-vue2-toolkit.form-control-interface.js",
+      "type": "file",
+      "formalName": "NwtVue2ToolkitFormControlInterfaceJs",
+      "apiName": "NwtVue2ToolkitFormControlInterface",
+      "dependencies": [
+        "NwtVue2ToolkitFormControlInterface",
+        "NwtVue2Toolkit",
+        "NwtFormMakerViewer",
+        "NwtVue2"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2-toolkit.js",
       "name": "nwt-vue2-toolkit.js",
       "type": "file",
@@ -2351,7 +2364,7 @@
         "NwtVue2Toolkit",
         "NwtProxyChain",
         "NwtPropagableStore",
-        "NwtVue2"
+        "NwtVue2ToolkitFormControlInterface"
       ]
     },
     {
