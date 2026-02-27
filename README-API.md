@@ -94,6 +94,7 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtFramework`
    - **@uses** `NwtUtils`
 - `24. The NwtDecorableTree API`
+   - **@uses** `NwtAsserter`
 - `25. The NwtDialogDefinition API`
    - **@uses** `NwtProcess`
    - **@uses** `NwtFramework`
@@ -277,6 +278,7 @@ Documentación de las APIs de Nwt.
    - **@uses** `require("readline")`
    - **@uses** `require("path")`
 - `79. The NwtKeyedEventsManager API`
+   - **@uses** `NwtArrayUtils`
 - `80. The NwtLazyLoader API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtImporter`
@@ -741,6 +743,12 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtFiletreeSelectorInterpreter
    - NwtProceduresManager
    - NwtPromptsManager
+- NwtAsserter ✖️ 5
+   - NwtDecorableTree
+   - NwtFormBuilder
+   - NwtFormBuilder
+   - NwtPack
+   - NwtTester
 - NwtToasts ✖️ 5
    - NwtClipboard
    - NwtCommandSynchronizer
@@ -758,11 +766,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtTester
    - NwtProcessManagerViewer
    - NwtProgressBarViewer
-- NwtAsserter ✖️ 4
-   - NwtFormBuilder
-   - NwtFormBuilder
-   - NwtPack
-   - NwtTester
 - NwtFiletreeSelectorInterpreter ✖️ 4
    - NwtFiletreeDirectory
    - NwtFiletree
@@ -976,6 +979,8 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPack
 - NwtProcedureInjections ✖️ 1
    - NwtPack
+- NwtArrayUtils ✖️ 1
+   - NwtKeyedEventsManager
 - require("readline") ✖️ 1
    - NwtJsonlPersister
 - Nwt_iterable_function_loop ✖️ 1
@@ -1046,7 +1051,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-26T12:18:18.411Z",
+  "generatedAt": "2026-02-27T17:04:33.961Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1425,7 +1430,8 @@ El JSON original es:
       "formalName": "NwtDecorableTreeJs",
       "apiName": "NwtDecorableTree",
       "dependencies": [
-        "NwtDecorableTree"
+        "NwtDecorableTree",
+        "NwtAsserter"
       ]
     },
     {
@@ -2233,7 +2239,8 @@ El JSON original es:
       "formalName": "NwtKeyedEventsManagerJs",
       "apiName": "NwtKeyedEventsManager",
       "dependencies": [
-        "NwtKeyedEventsManager"
+        "NwtKeyedEventsManager",
+        "NwtArrayUtils"
       ]
     },
     {

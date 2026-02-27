@@ -16,10 +16,6 @@ module.exports = {
       control: {
         type: LowCode.create("Vue"),
         required: true,
-      },
-      valueFactory: {
-        type: LowCode.type.Function,
-        default: () => ({})
       }
     },
   },

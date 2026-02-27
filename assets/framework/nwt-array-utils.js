@@ -84,6 +84,13 @@
       return output;
     }
 
+    static areEqual(list1, list2) {
+      for(let index=0; index<list1.length; index++) {
+        if(list1[index] !== list2[index]) return false;
+      }
+      return true;
+    }
+
   };
 
   return NwtArrayUtils;

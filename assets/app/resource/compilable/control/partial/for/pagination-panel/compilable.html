@@ -1,0 +1,21 @@
+<div class="nwt_control_partial_for_pagination_panel flex_row">
+    <div class="flex_1">
+        <button class="mini fluid pagination_button" v-on:click="control.goToFirst" :disabled="(!control.totalPages) || control.currentPage === 0"> ⏪</button>
+    </div>
+    <div class="flex_1">
+        <button class="mini fluid pagination_button" v-on:click="control.goToPrevious" :disabled="(!control.totalPages) || control.currentPage === 0"> ◀️</button>
+    </div>
+    <div class="flex_100 text_align_center font_size_small">
+        <template v-if="control.totalPages">
+            <span>Página {{ control.currentPage + 1 }}/{{ control.totalPages }}</span>
+            <button v-if="!isSelectingPage" class="mini fluid" v-on:click="activateSelectingPage">📍</button>
+            <input v-else type="text" class="mini fluid page_selector_box" v-on:keypress.enter="selectPage" ref="manuallySelectedPageBox" :value="control.currentPage+1" v-on:blur="deactivateSelectingPage" v-focus="selectAllTextFromBox" />
+        </template>
+    </div>
+    <div class="flex_1">
+        <button class="mini fluid pagination_button" v-on:click="control.goToNext" :disabled="(!control.totalPages) || control.currentPage === (control.totalPages-1)"> ▶️ </button>
+    </div>
+    <div class="flex_1">
+        <button class="mini fluid pagination_button" v-on:click="control.goToLast" :disabled="(!control.totalPages) || control.currentPage === (control.totalPages-1)"> ⏩ </button>
+    </div>
+</div>

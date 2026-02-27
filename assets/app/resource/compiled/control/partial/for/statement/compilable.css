@@ -30,3 +30,19 @@
     border-radius: 3pt;
     font-weight: bold;
 }
+
+.nwt_control_partial_for_statement .selectable_row {
+    
+}
+
+.nwt_control_partial_for_statement .selectable_row:hover {
+    background-color: rgba(236, 197, 197, 0.716);
+}
+
+.nwt_control_partial_for_statement .selectable_row.active {
+    /*background-color: rgba(142, 142, 142, 0.4);*/
+}
+
+.nwt_control_partial_for_statement .selectable_row_statement {
+    
+}

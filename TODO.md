@@ -1,7 +1,46 @@
-22/02/2026
+27/02/2026
 
-- [ ] 
+- [ ] La estrategia general es:
+   - [ ] El save sobreescribe el estado anterior y subsana toda la incompatibilidad del árbol
+   - [ ] El load actualiza la representación del estado de los datos
+   - [ ] El list y structure no tienen save:
+      - [ ] Al añadir un row, se añade en el árbol automáticamente
+      - [ ] Al eliminar un row, se elimina del árbol automáticamente
+      - [ ] Al guardar un campo, se guarda en el árbol
+   - [ ] El option no tiene save tampoco:
+      - [ ] Al cambiar la opción, no se cambia el valor en el árbol también
+      - [ ] No se cambia porque se espera siempre a guardar un valor guardable, donde entonces sí se hace la subsanación intermedia
+   - [ ] El text sí tiene save:
+      - [ ] Al guardar, subsana todos los nodos intermedios
 
+- [ ] Validación
+- [ ] Subtipos
+
+----
+
+- [ ] El refrescar del structure debería simplemente refrescar
+   - [ ] Pero no veo el caso, porque estructure no se altera, así que queda pendiente
+- [ ] El save del structure no debería estar
+- [x] El plus del list debería:
+   - [x] Insertar un nuevo ítem
+   - [x] Posicionar la paginación al final
+- [x] El splice del list debería:
+   - [x] Tener su propio botón inyectado en el statement
+   - [x] Splicear un ítem dada una posición
+   - [ ] Refrescar la paginación actual
+- [ ] El refrescar del option debería simplemente refrescar
+- [ ] El save del option debería sobreescribir
+- [ ] El refrescar del list debería simplemente refrescar
+- [ ] El save del list no debería estar
+- [ ] El refrescar del text no debería lanzar errores (cuando está en un objeto de una lista, por ejemplo)
+- [ ] El refrescar del text debería simplemente refrescar el textbox
+- [ ] El guardar del text debería guardar el estado (un poco a bullet-proof, me temo)
+- [ ] El caso de option recuperando su estado es el que:
+   - [ ] Empalma con validation porque
+   - [ ] Llama a validateValue para sacar la posición de la opción que primero matchee el tipo
+   - [ ] Seguramente, el selectedOption debería alterar al schema original para poner schema[...option].cachedOption
+
+- [ ] Debería soportar estructuras anidadas tipo:
 
 ----
 

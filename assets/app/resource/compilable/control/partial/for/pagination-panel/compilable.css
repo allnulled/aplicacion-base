@@ -1,0 +1,13 @@
+.nwt_control_partial_for_pagination_panel button.pagination_button {
+    padding-bottom: 2px !important;
+    cursor: pointer;
+}
+.nwt_control_partial_for_pagination_panel button.pagination_button:disabled {
+    cursor: default;
+}
+
+.nwt_control_partial_for_pagination_panel input.page_selector_box {
+    min-width: 20px;
+    width: auto;
+    max-width: 92px;
+}

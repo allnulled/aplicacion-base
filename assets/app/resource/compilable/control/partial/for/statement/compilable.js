@@ -30,20 +30,15 @@ module.exports = {
       },
       saveValue: function() {
         trace("NwtControlPartialForStatement.methods.saveValue");
-        const control = this.control;
-        const value = control.getValueByState();
-        const indexes = control.getIndexForValue();
-        control.$toolkit.getRoot().$store.set(indexes, value);
+        return this.control.saveValue();
       },
       loadValue: function() {
         trace("NwtControlPartialForStatement.methods.saveValue");
-        const control = this.control;
-        const value = control.getValueByIndex();
-        control.setValueByState(value);
+        return this.control.loadValue();
       },
       validateValue: function() {
         trace("NwtControlPartialForStatement.methods.validateValue");
-        // @TODO: validar el valor sin saber de qué tipo es
+        return this.control.validateValue();
       },
       toggleControl: function() {
         trace("NwtControlPartialForStatement.methods.toggleControl");

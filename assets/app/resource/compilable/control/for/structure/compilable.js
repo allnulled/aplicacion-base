@@ -1,5 +1,6 @@
 module.exports = {
   id: "control/for/structure",
+  subtypeOf: "structure",
   compile: true,
   compileView: true,
   apis: [
@@ -25,12 +26,28 @@ module.exports = {
     methods: {
       getValueByState: function() {
         trace("NwtControlForStructure.methods.getValueByState");
-        return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
+        const currentControls = this.$local.controls;
+        const state = {};
+        for(let prop in currentControls) {
+          const control = currentControls[prop];
+          const value = control.getValueByState()
+          state[prop] = value;
+        }
+        return state;
+      },
+      setValueByState: function() {
+        trace("NwtControlForStructure.methods.setValueByState");
+        // @NOTHING
       }
+    },
+    created: function() {
+      trace("NwtControlForStructure.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {};
     },
     mounted: function() {
       trace("NwtControlForStructure.mounted");
-      NwtVue2.Toolkit.installToolkit(this);
     }
   },
   control: {

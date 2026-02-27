@@ -329,8 +329,10 @@ const ResourcesCompiler = class {
       assertion(typeof inheritedInterface === "object", `Inherited resource «${inheritedId}» while defining resource «${metadata.id}» must return object on «ResourcesCompiler.resolveInheritedBy»`);
       inheritedInterface.$id = inheritedId;
       inheritedInterface.$path = `assets/app/resource/compilable/${definition.$id}/compilable.js`;
-      this.resolveInheritedBy(inheritedInterface, projectRoot, metadata, originalDefinition);
-      originalDefinition.$inheritedBy.push(inheritedInterface);
+      if(originalDefinition.$inheritedBy.filter(it => it.id === inheritedInterface.id).length === 0) {
+        this.resolveInheritedBy(inheritedInterface, projectRoot, metadata, originalDefinition);
+        originalDefinition.$inheritedBy.push(inheritedInterface);
+      }
     }
   }
 

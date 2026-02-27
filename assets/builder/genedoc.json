@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-26T12:18:18.411Z",
+  "generatedAt": "2026-02-27T17:04:33.961Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -1313,7 +1313,8 @@
       "formalName": "NwtDecorableTreeJs",
       "apiName": "NwtDecorableTree",
       "dependencies": [
-        "NwtDecorableTree"
+        "NwtDecorableTree",
+        "NwtAsserter"
       ]
     },
     {
@@ -1430,7 +1431,8 @@
       "formalName": "NwtKeyedEventsManagerJs",
       "apiName": "NwtKeyedEventsManager",
       "dependencies": [
-        "NwtKeyedEventsManager"
+        "NwtKeyedEventsManager",
+        "NwtArrayUtils"
       ]
     },
     {

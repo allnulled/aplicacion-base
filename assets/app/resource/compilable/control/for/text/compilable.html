@@ -1,15 +1,18 @@
 <div class="nwt_control_for_text">
     <!--Nwt control for text {{ $nwt.Reflection.keys(settings) }}-->
     <nwt-control-partial-for-statement :control="this">
+        <template v-slot:hideable>
+            <slot name="hideable"></slot>
+        </template>
         <slot></slot>
     </nwt-control-partial-for-statement>
     <div v-if="isShowingControl">
         <input
             class="width_100"
             type="text"
-            ref="textbox"
+            :ref="component => { if(component === null) { delete $local.control; } else { $local.control = component; } }"
             :disabled="settings.hasFixedValue"
-            :value="$toolkit.getValueByIndex()"
+            :value="getValueByIndex()"
         />
     </div>
 </div>

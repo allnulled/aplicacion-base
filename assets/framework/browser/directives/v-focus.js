@@ -17,7 +17,11 @@
  * 
  */
 Vue.directive("focus", {
-  inserted(el) {
-    el.focus();
+  inserted(el, binding) {
+    const callback = typeof binding.value === "function" ? binding.value : NwtUtils.noop;
+    Vue.nextTick(() => {
+      el.focus();
+      callback(el);
+    });
   }
 });

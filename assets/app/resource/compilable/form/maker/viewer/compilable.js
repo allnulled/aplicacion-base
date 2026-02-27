@@ -31,6 +31,9 @@ module.exports = {
       },
       setValue: function(key, value) {
         return this.$store.set(key, value);
+      },
+      toggleAll: function() {
+        this.$refs.mainControl.toggleControl();
       }
     },
     created() {
@@ -39,6 +42,7 @@ module.exports = {
       NwtVue2.Toolkit.installLocal(this);
       NwtVue2.Toolkit.installStore(this);
       this.$store.set([], this.settings.initialValue);
+      this.$schema = NwtPropagableStore.create(this.settings);
     },
     mounted() {
       trace("NwtFormMakerViewer.mounted");

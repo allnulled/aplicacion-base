@@ -1,7 +1,43 @@
 <div class="nwt_control_for_list">
     <!--Nwt control for list {{ $nwt.Reflection.keys(settings) }}-->
     <nwt-control-partial-for-statement :control="this">
-        <nwt-control-partial-for-list-panel :control="this" />
+        <template v-slot:hideable>
+            <slot name="hideable"></slot>
+            <nwt-control-partial-for-list-panel :control="$local.self" />
+        </template>
+        <slot></slot>
     </nwt-control-partial-for-statement>
-    <div class="pagination_box"></div>
+    <div v-if="isShowingControl">
+        <nwt-control-partial-for-pagination-panel :control="this" />
+        <div class="pagination_result_container pad_left_1">
+            <div class="pagination_result">
+                <div v-if="$local.paginatedList && $local.paginatedList.length">
+                    <div class="item"
+                        v-for="row, rowIndex in $local.paginatedList"
+                        v-bind:key="'paginated_row_' + (settings.hasStatementForItemByProperty && row.item[settings.hasStatementForItemByProperty] ? row.item[settings.hasStatementForItemByProperty] : row.index ? row.index : rowIndex)">
+                        <component :is="$toolkit.getComponentNameBySettings(settings.schema)"
+                            :ref="component => { if(component === null) { delete $local.controls[rowIndex]; } else { $local.controls[rowIndex] = component; } }"
+                            :settings="{
+                                ...settings.schema,
+                                // isShowingControl: false,
+                                hasStatement: settings.hasStatementForItemByProperty ? row.item[settings.hasStatementForItemByProperty] : 'Ítem ' + (row.index + 1),
+                                rootValueIndex: $toolkit.getIndexForValue().concat([row.index]),
+                                rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema']),
+                            }">
+                            <template v-slot:onright>
+                                <div class="flex_1">
+                                    <button class="mini fluid" v-on:click="() => removeItem(rowIndex)">❌</button>
+                                </div>
+                            </template>
+                        </component>
+                    </div>
+                </div>
+                <div v-else class="pad_1">
+                    <span>No se encontraron resultados</span><span v-if="totalPages !== 0"> para página {{ currentPage + 1 }} de {{
+                        totalPages }}</span>.
+                </div>
+            </div>
+        </div>
+        <nwt-control-partial-for-pagination-panel :control="this" />
+    </div>
 </div>

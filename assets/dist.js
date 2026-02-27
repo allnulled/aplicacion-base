@@ -20844,6 +20844,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
     }
 
     static isPrefix(prefix, full) {
+      trace("NwtKeyedEventsManager.isPrefix");
       if (prefix.length > full.length) return false;
       for (let i = 0; i < prefix.length; i++) {
         if (prefix[i] !== full[i]) return false;
@@ -20864,9 +20865,9 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     on(eventType, keys, callback) {
       trace("NwtKeyedEventsManager.prototype.on");
-      assertion(typeof eventType === "string", "«eventType» must be string");
-      assertion(Array.isArray(keys), "«keys» must be array");
-      assertion(typeof callback === "function", "«callback» must be function");
+      assertion(typeof eventType === "string", "Parameter «eventType» must be string on «NwtKeyedEventsManager.prototype.on»");
+      assertion(Array.isArray(keys), "Parameter «keys» must be array on «NwtKeyedEventsManager.prototype.on»");
+      assertion(typeof callback === "function", "Parameter «callback» must be function on «NwtKeyedEventsManager.prototype.on»");
       if (!(eventType in this.listeners)) {
         this.listeners[eventType] = new Set();
       }
@@ -20879,6 +20880,9 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     once(eventType, keys, callback) {
       trace("NwtKeyedEventsManager.prototype.once");
+      assertion(typeof eventType === "string", "Parameter «eventType» must be string on «NwtKeyedEventsManager.prototype.once»");
+      assertion(Array.isArray(keys), "Parameter «keys» must be array on «NwtKeyedEventsManager.prototype.once»");
+      assertion(typeof callback === "function", "Parameter «callback» must be function on «NwtKeyedEventsManager.prototype.once»");
       const wrap = (event) => {
         this.off(eventType, keys, wrap);
         callback(event);
@@ -20889,14 +20893,14 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     off(eventType, keys, callback) {
       trace("NwtKeyedEventsManager.prototype.off");
+      assertion(typeof eventType === "string", "Parameter «eventType» must be string on «NwtKeyedEventsManager.prototype.off»");
+      assertion(Array.isArray(keys), "Parameter «keys» must be array on «NwtKeyedEventsManager.prototype.off»");
+      assertion(typeof callback === "function", "Parameter «callback» must be function on «NwtKeyedEventsManager.prototype.off»");
       if (!(eventType in this.listeners)) return this;
       for (const entry of [...this.listeners[eventType]]) {
-        if (
-          entry.callback === callback &&
-          JSON.stringify(entry.keys) === JSON.stringify(keys)
-        ) {
-          this.listeners[eventType].delete(entry);
-        }
+        if(entry.callback !== callback) continue;
+        if(!NwtArrayUtils.areEqual(entry.keys, keys)) continue;
+        this.listeners[eventType].delete(entry);
       }
       if (this.listeners[eventType].size === 0) {
         delete this.listeners[eventType];
@@ -20906,9 +20910,9 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     dispatch(eventType, triggerKeys, detail) {
       trace("NwtKeyedEventsManager.prototype.dispatch");
-      assertion(typeof eventType === "string", "«eventType» must be string");
-      assertion(Array.isArray(triggerKeys), "«triggerKeys» must be array");
-      assertion(typeof detail === "object", "«detail» must be object");
+      assertion(typeof eventType === "string", "Parameter «eventType» must be string on «NwtKeyedEventsManager.prototype.dispatch»");
+      assertion(Array.isArray(triggerKeys), "Parameter «triggerKeys» must be array on «NwtKeyedEventsManager.prototype.dispatch»");
+      assertion(typeof detail === "object", "Parameter «detail» must be object on «NwtKeyedEventsManager.prototype.dispatch»");
       const output = [];
       this.configure(eventType, { wasTriggered: true });
       if (!(eventType in this.listeners)) return this;
@@ -21114,7 +21118,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
       let obj = root;
       for (let i = 0; i < parts.length - 1; i++) {
         const key = parts[i];
-        assertion(typeof key === "string", `Select «${selector}» at index «${i}=${key}» must be string on «NwtDecorableTree.$walk»`);
+        assertion(["string","number"].includes(typeof key), `Selector «${parts.join(".")}» at index «${i}=${key}» must be string or number on «NwtDecorableTree.$walk»`);
         if (!(key in obj)) {
           if (!create) return [undefined, undefined];
           obj[key] = {};
@@ -21136,7 +21140,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
         }
         return true;
       },
-      get: function (selector, errorValue = undefined) {
+      get: function (selector, errorValue = undefined, assertion = NwtAsserter.global) {
         const parts = NwtDecorableTree.$normalize(selector);
         let obj = this;
         for (let i = 0; i < parts.length; i++) {
@@ -21145,7 +21149,9 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
             assertion(obj !== null, `Selector «${selector}» at index «${i}=${key}» cannot access property of null on «NwtDecorableTree.get»`);
             assertion(key in obj, `Selector «${selector}» at index «${i}=${key}» cannot access unknown property on «NwtDecorableTree.get»`);
           } else {
-            return errorValue;
+            if((obj === null) || (!(key in obj))) {
+              return typeof errorValue === "function" ? errorValue() : errorValue;
+            }
           }
           obj = obj[key];
         }
@@ -21559,6 +21565,13 @@ const { lutimesSync } = require("fs-extra");
       return output;
     }
 
+    static areEqual(list1, list2) {
+      for(let index=0; index<list1.length; index++) {
+        if(list1[index] !== list2[index]) return false;
+      }
+      return true;
+    }
+
   };
 
   return NwtArrayUtils;
@@ -21959,18 +21972,6 @@ const { lutimesSync } = require("fs-extra");
       return NwtVue2.getFirstParentWhere(this, it => it.$options.name === "NwtFormMakerViewer");
     },
 
-    getValueByIndex: function() {
-      if(this.settings.hasFixedValue) return this.settings.hasFixedValue;
-      const selector = this.$toolkit.getIndexForValue();
-      const value = this.$toolkit.getRoot().getValue();
-      let output = value;
-      for(let index=0; index<selector.length; index++) {
-        const prop = selector[index];
-        output = output[prop];
-      }
-      return output;
-    },
-
     getIndexForValue: function() {
       return this.settings.rootValueIndex ? this.settings.rootValueIndex : [];
     },
@@ -22255,11 +22256,12 @@ const { lutimesSync } = require("fs-extra");
     }
 
     static initializePropertiesOf(target, moreArgs, extraErrorMessage = false, onlySpecifiedProps = true) {
+      trace("NwtPrototyper.initializePropertiesOf");
       const [schema] = Array.isArray(moreArgs) ? moreArgs : [moreArgs];
       assertion(typeof target === "object", "Parameter «target» must be object on «NwtPrototyper.initializePropertiesOf»");
       assertion(typeof schema === "object", "Parameter «schema» must be object on «NwtPrototyper.initializePropertiesOf»");
-      console.log("Schema:", schema);
-      console.log("Target:", target);
+      // console.log("Schema:", schema);
+      // console.log("Target:", target);
       const schemaKeys = Object.keys(schema);
       const targetKeys = Object.keys(target);
       if (onlySpecifiedProps) {
@@ -31572,13 +31574,15 @@ const { lutimesSync } = require("fs-extra");
 })(function () {
 
   const NwtPropagableStore = NwtPrototyper.combine({
-    $constructors: [function () {
+    $constructors: [function (value = undefined) {
+      trace("NwtPropagableStore.constructor");
       this.listeners = {};
       this.configurations = {};
-      this.storage = {};
+      this.storage = typeof value !== "undefined" ? value : {};
     }],
     $statics: [{
       create: function (...args) {
+        trace("NwtPropagableStore.create");
         return new this(...args);
       },
     }],
@@ -31589,16 +31593,45 @@ const { lutimesSync } = require("fs-extra");
       off: NwtKeyedEventsManager.prototype.off,
       dispatch: NwtKeyedEventsManager.prototype.dispatch,
       has: function(selector, ...args) {
+        trace("NwtPropagableStore.prototype.has");
         return NwtDecorableTree.staticTree.has.call(this, ["storage"].concat(selector), ...args);
       },
       get: function(selector, ...args) {
+        trace("NwtPropagableStore.prototype.get");
         return NwtDecorableTree.staticTree.get.call(this, ["storage"].concat(selector), ...args);
       },
       set: function (selector, value) {
+        trace("NwtPropagableStore.prototype.set");
         const [parent, key] = NwtDecorableTree.$walk(this, ["storage"].concat(selector), true);
         parent[key] = value;
         this.dispatch("@SetValue", selector, { selection: selector, value: value });
       },
+      push: function (selector, value) {
+        trace("NwtPropagableStore.prototype.push");
+        const [parent, key] = NwtDecorableTree.$walk(this, ["storage"].concat(selector), true);
+        const hasKey = key in parent;
+        const isArray = Array.isArray(parent[key]);
+        if(!hasKey || !isArray) {
+          parent[key] = [];
+        }
+        parent[key].push(value);
+        this.dispatch("@SetValue", selector, { selection: selector, value: value, operation: "push" });
+      },
+      splice: function (selector, pos) {
+        trace("NwtPropagableStore.prototype.splice");
+        const [parent, key] = NwtDecorableTree.$walk(this, ["storage"].concat(selector), true);
+        const hasKey = key in parent;
+        const isArray = Array.isArray(parent[key]);
+        if(!hasKey || !isArray) {
+          return false;
+        }
+        if(pos === -1) {
+          return false;
+        }
+        const value = parent[key].splice(pos, 1);
+        console.log("Removed:", pos, value);
+        this.dispatch("@SetValue", selector, { selection: selector, position: pos, value: value, operation: "splice" });
+      }
     }]
   });
 
@@ -32726,8 +32759,12 @@ Vue.directive("draggable", {
  * 
  */
 Vue.directive("focus", {
-  inserted(el) {
-    el.focus();
+  inserted(el, binding) {
+    const callback = typeof binding.value === "function" ? binding.value : NwtUtils.noop;
+    Vue.nextTick(() => {
+      el.focus();
+      callback(el);
+    });
   }
 });
 
@@ -37292,12 +37329,12 @@ Vue.component("MainWindow", {
 NwtResource.define({
   id: "control/for/list",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/toolkit", "control/trait/for/remoteSchema", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
       "type": Boolean,
-      "default": true
+      "default": false
     },
     "rootValueIndex": {
       "type": Array,
@@ -37314,6 +37351,7 @@ NwtResource.define({
       "default": null
     }
   },
+  subtypeOf: "list",
   compileView: true,
   control: {},
   view: {
@@ -37328,9 +37366,45 @@ NwtResource.define({
       <div class="nwt_control_for_list">
           <!--Nwt control for list {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
-              <nwt-control-partial-for-list-panel :control="this" />
+              <template v-slot:hideable>
+                  <slot name="hideable"></slot>
+                  <nwt-control-partial-for-list-panel :control="$local.self" />
+              </template>
+              <slot></slot>
           </nwt-control-partial-for-statement>
-          <div class="pagination_box"></div>
+          <div v-if="isShowingControl">
+              <nwt-control-partial-for-pagination-panel :control="this" />
+              <div class="pagination_result_container pad_left_1">
+                  <div class="pagination_result">
+                      <div v-if="$local.paginatedList && $local.paginatedList.length">
+                          <div class="item"
+                              v-for="row, rowIndex in $local.paginatedList"
+                              v-bind:key="'paginated_row_' + (settings.hasStatementForItemByProperty && row.item[settings.hasStatementForItemByProperty] ? row.item[settings.hasStatementForItemByProperty] : row.index ? row.index : rowIndex)">
+                              <component :is="$toolkit.getComponentNameBySettings(settings.schema)"
+                                  :ref="component => { if(component === null) { delete $local.controls[rowIndex]; } else { $local.controls[rowIndex] = component; } }"
+                                  :settings="{
+                                      ...settings.schema,
+                                      // isShowingControl: false,
+                                      hasStatement: settings.hasStatementForItemByProperty ? row.item[settings.hasStatementForItemByProperty] : 'Ítem ' + (row.index + 1),
+                                      rootValueIndex: $toolkit.getIndexForValue().concat([row.index]),
+                                      rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema']),
+                                  }">
+                                  <template v-slot:onright>
+                                      <div class="flex_1">
+                                          <button class="mini fluid" v-on:click="() => removeItem(rowIndex)">❌</button>
+                                      </div>
+                                  </template>
+                              </component>
+                          </div>
+                      </div>
+                      <div v-else class="pad_1">
+                          <span>No se encontraron resultados</span><span v-if="totalPages !== 0"> para página {{ currentPage + 1 }} de {{
+                              totalPages }}</span>.
+                      </div>
+                  </div>
+              </div>
+              <nwt-control-partial-for-pagination-panel :control="this" />
+          </div>
       </div>`,
     data: function() {
       const finalData = {};
@@ -37338,7 +37412,7 @@ NwtResource.define({
       Object.assign(finalData, (function() {
         trace("@compilable/control/trait/for/showable.data");
         return {
-          isShowingControl: this.settings.isShowingControl || true,
+          isShowingControl: this.settings.isShowingControl,
         };
       }).call(this));
       // @COMPILED-BY: control/for/list
@@ -37346,6 +37420,7 @@ NwtResource.define({
         return {
           currentPage: 0,
           maximumItems: 10,
+          totalPages: 0,
         };
       }).call(this));
       return finalData;
@@ -37369,21 +37444,55 @@ NwtResource.define({
       "getIndexForValue": function(...args) {
         return this.$toolkit.getIndexForValue(...args);
       },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
       "getValueByIndex": function() {
         trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
-        const originalValue = this.$toolkit.getRoot().$store.get(this.settings.rootValueIndex);
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
       "setValueByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.setValueByIndex»");
         this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,
           value: value,
         });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
       },
       "getIndexForSchema": function(...args) {
         return this.$toolkit.getIndexForSchema(...args);
@@ -37391,13 +37500,14 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$store.get(this.settings.rootSchemaIndex);
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
       },
       "setSchemaByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
         this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootSchemaIndex,
@@ -37406,25 +37516,94 @@ NwtResource.define({
       },
       "getValueByState": function() {
         trace("NwtControlForList.methods.getValueByState");
-        return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
+        // @TODO: tomar el valor de los controles interiores para devolver el propio
+        trace("NwtControlForList.methods.getValueByState");
+        const currentControls = this.$local.controls;
+        const state = {};
+        for (let prop in currentControls) {
+          const control = currentControls[prop];
+          const value = control.getValueByState();
+          state[prop] = value;
+        }
+        return state;
       },
-      "addItem": function() {},
+      "goToFirst": function() {
+        trace("NwtControlForList.methods.goToFirst");
+        this.currentPage = 0;
+        this.digestSearch();
+      },
+      "goToPrevious": function() {
+        trace("NwtControlForList.methods.goToPrevious");
+        if (this.currentPage <= 0) return;
+        this.currentPage--;
+        this.digestSearch();
+      },
+      "goToNext": function() {
+        trace("NwtControlForList.methods.goToNext");
+        this.updateTotalPages();
+        if (this.currentPage >= this.totalPages) return;
+        this.currentPage++;
+        this.digestSearch();
+      },
+      "goToLast": function() {
+        trace("NwtControlForList.methods.goToLast");
+        this.updateTotalPages();
+        this.currentPage = (this.totalPages || 1) - 1;
+        this.digestSearch();
+      },
+      "updateTotalPages": function() {
+        trace("NwtControlForList.methods.updateTotalPages");
+        this.totalPages = Math.ceil(this.getValueByIndex().length / this.maximumItems);
+      },
+      "generateDefaultItem": function() {
+        trace("NwtControlForList.methods.generateDefaultItem");
+        if (typeof this.settings.hasItemConstructor !== "undefined") {
+          if (typeof this.settings.hasItemConstructor === "function") {
+            return this.settings.hasItemConstructor.call(this, this);
+          } else if (typeof this.settings.hasItemConstructor === "object") {
+            return Object.assign({}, this.settings.hasItemConstructor);
+          } else {
+            return this.settings.hasItemConstructor;
+          }
+        }
+        return {};
+      },
+      "appendItem": function() {
+        trace("NwtControlForList.methods.appendItem");
+        const valueIndex = this.getIndexForValue();
+        const insertedItem = this.generateDefaultItem();
+        this.$toolkit.getRoot().$store.push(valueIndex, insertedItem);
+        this.goToLast();
+      },
+      "removeItem": function(positionInPage) {
+        trace("NwtControlForList.methods.removeItem");
+        const valueIndex = this.getIndexForValue();
+        const positionOfFirstInPage = this.maximumItems * this.currentPage;
+        this.$toolkit.getRoot().$store.splice(valueIndex, positionOfFirstInPage + positionInPage);
+        this.digestSearch();
+      },
       "digestSearch": function() {
-        const list = [];
-        Extract_list_from_get_value_by_index_and_pagination: {}
-        this.$local.list = list;
+        trace("NwtControlForList.methods.digestSearch");
+        const listBrute = this.getValueByIndex();
+        const list = Array.isArray(listBrute) ? listBrute : [];
+        this.totalPages = Math.ceil(list.length / this.maximumItems);
+        const currentItem = this.maximumItems * this.currentPage;
+        const paginatedList = [];
+        for (let index = currentItem; index < (currentItem + this.maximumItems); index++) {
+          const item = list[index];
+          if (!item) continue;
+          paginatedList.push({
+            index,
+            item
+          });
+        }
+        this.$local.paginatedList = paginatedList;
+        this.$forceUpdate(true);
       }
     },
-    computed: {
-      "totalItems": function() {
-        return this.$local?.list?.length || 0;
-      }
-    },
+    computed: {},
     watch: {},
     created: function() {
-      // @COMPILED-BY: control/trait/for/toolkit
-      trace("@compilable/control/trait/for/toolkit.created");
-      NwtVue2.Toolkit.installToolkit(this);
       // @COMPILED-BY: control/trait/for/toolkit
       trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
@@ -37432,13 +37611,43 @@ NwtResource.define({
       trace("NwtControlForList.created");
       NwtVue2.Toolkit.installToolkit(this);
       NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {};
+      this.$local.self = this;
+      this.$local.paginatedList = [];
     },
     mounted: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       // @COMPILED-BY: control/for/list
+      trace("NwtControlForList.mounted");
+      window.ll = this;
       this.digestSearch();
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
     },
   }
 });
@@ -37449,12 +37658,12 @@ NwtResource.define({
 NwtResource.define({
   id: "control/for/option",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/toolkit", "control/trait/for/remoteSchema", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
       "type": Boolean,
-      "default": true
+      "default": false
     },
     "rootValueIndex": {
       "type": Array,
@@ -37471,6 +37680,7 @@ NwtResource.define({
       "default": null
     }
   },
+  subtypeOf: "option",
   compileView: true,
   control: {
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {}
@@ -37486,25 +37696,27 @@ NwtResource.define({
     template: `
       <div class="nwt_control_for_option">
           <!--Nwt control for option {{ $nwt.Reflection.keys(settings) }}-->
-          <template v-if="(!isLoading) && (selectedOption in settings.schema)">
-              <component :is="$toolkit.getComponentNameBySettings(settings.schema[selectedOption])"
-                  v-bind:key="'component_for_option_' + selectedOption"
+          <template v-if="!isLoading">
+              <component :is="$toolkit.getComponentNameBySettings(settings.schema[$local.selectedOption])"
+                  v-bind:key="'component_for_option_' + $local.selectedOption"
+                  :ref="component => { if(component === null) { delete $local.control; } else { $local.control = component; } }"
                   :settings="{
                       ...$nwt.ObjectUtils.onlyKeys(settings, ['hasStatement', 'hasDescription']),
-                      ...settings.schema[selectedOption],
-                      isShowingControl: true,
+                      ...settings.schema[$local.selectedOption],
+                      ...Object.assign({}, $local.isNotFirstTime ? {isShowingControl: true} : {}),
                       rootValueIndex: $toolkit.getIndexForValue().concat([]),
-                      rootSchemaIndex: $toolkit.getIndexForSchema().concat([selectedOption]),
+                      rootSchemaIndex: $toolkit.getIndexForSchema().concat([$local.selectedOption]),
                   }">
-                  <div class="">
-                      <select class="fluid"
-                          v-model="selectedOption">
-                          <template v-for="option, optionIndex in settings.schema">
-                              <option v-bind:key="'option-' + optionIndex"
-                                  :value="optionIndex">Tipo {{ optionIndex + 1 }}: {{ $toolkit.adaptTypeNameToUser(option.type) }}</option>
-                          </template>
-                      </select>
-                  </div>
+                  <template v-slot:hideable>
+                      <div class="">
+                          <select class="fluid" v-on:input="selectOption" :value="$local.selectedOption">
+                              <template v-for="option, optionIndex in settings.schema">
+                                  <option v-bind:key="'option-' + optionIndex"
+                                      :value="optionIndex">Tipo {{ optionIndex + 1 }}: {{ option.hasFixedValue || $toolkit.adaptTypeNameToUser(option.type) }}</option>
+                              </template>
+                          </select>
+                      </div>
+                  </template>
               </component>
           </template>
       </div>`,
@@ -37514,14 +37726,13 @@ NwtResource.define({
       Object.assign(finalData, (function() {
         trace("@compilable/control/trait/for/showable.data");
         return {
-          isShowingControl: this.settings.isShowingControl || true,
+          isShowingControl: this.settings.isShowingControl,
         };
       }).call(this));
       // @COMPILED-BY: control/for/option
       Object.assign(finalData, (function() {
         return {
-          isLoading: false,
-          selectedOption: 0,
+          isLoading: true
         };
       }).call(this));
       return finalData;
@@ -37545,21 +37756,55 @@ NwtResource.define({
       "getIndexForValue": function(...args) {
         return this.$toolkit.getIndexForValue(...args);
       },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
       "getValueByIndex": function() {
         trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
-        const originalValue = this.$toolkit.getRoot().$store.get(this.settings.rootValueIndex);
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
       "setValueByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.setValueByIndex»");
         this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,
           value: value,
         });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
       },
       "getIndexForSchema": function(...args) {
         return this.$toolkit.getIndexForSchema(...args);
@@ -37567,24 +37812,39 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$store.get(this.settings.rootSchemaIndex);
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
       },
       "setSchemaByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
         this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootSchemaIndex,
           value: value,
         });
       },
+      "selectOption": function(event) {
+        trace("NwtControlForOption.methods.selectOption");
+        setTimeout(() => {
+          this.isLoading = true;
+          this.$nextTick(() => {
+            const index = event.target.value;
+            this.$local.selectedOption = parseInt(index);
+            this.$local.isNotFirstTime = true;
+            this.isLoading = false;
+          });
+        }, 0);
+      },
       "getValueByState": function() {
         trace("NwtControlForOption.methods.getValueByState");
+        // @TODO: tomar el valor de los controles interiores para devolver el propio
         return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
       },
       "adaptTypeNameToUser": function(txt) {
+        trace("NwtControlForOption.methods.adaptTypeNameToUser");
         return txt.replace("control/for/", "");
       }
     },
@@ -37594,22 +37854,48 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/toolkit
       trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
-      // @COMPILED-BY: control/trait/for/toolkit
-      trace("@compilable/control/trait/for/toolkit.created");
-      NwtVue2.Toolkit.installToolkit(this);
       // @COMPILED-BY: control/for/option
       trace("NwtControlForOption.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
       this.$local = {
-        selectedOptionTimer: 0
+        control: null,
+        isNotFirstTime: false,
+        selectedOption: typeof this.settings.selectedOption !== "undefined" ? this.settings.selectedOption : 0,
       };
     },
     mounted: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       // @COMPILED-BY: control/for/option
       trace("NwtControlForOption.mounted");
-      NwtVue2.Toolkit.installToolkit(this);
+      this.isLoading = false;
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
     },
   }
 });
@@ -37618,12 +37904,12 @@ NwtResource.define({
 NwtResource.define({
   id: "control/for/structure",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/toolkit", "control/trait/for/remoteSchema", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
       "type": Boolean,
-      "default": true
+      "default": false
     },
     "rootValueIndex": {
       "type": Array,
@@ -37640,6 +37926,7 @@ NwtResource.define({
       "default": null
     }
   },
+  subtypeOf: "structure",
   compileView: true,
   control: {},
   view: {
@@ -37653,14 +37940,24 @@ NwtResource.define({
     template: `
       <div class="nwt_control_for_structure">
           <!--Nwt control for structure {{ $nwt.Reflection.keys(settings) }}-->
-          <nwt-control-partial-for-statement :control="this" />
-          <template v-show="isShowingControl">
+          <nwt-control-partial-for-statement :control="this">
+              <template v-slot:hideable>
+                  <slot name="hideable"></slot>
+              </template>
+              <template v-slot:onright>
+                  <slot name="onright"></slot>
+              </template>
+              <slot></slot>
+          </nwt-control-partial-for-statement>
+          <template v-if="isShowingControl">
               <div v-for="column, columnName in settings.schema"
                   v-bind:key="'column-' + columnName"
-                  class="">
+                  class="pad_left_1">
                   <component :is="$toolkit.getComponentNameBySettings(column)"
+                      :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
                       :settings="{
                           ...column,
+                          // isShowingControl: false,
                           rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
                           rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
                       }" />
@@ -37673,7 +37970,7 @@ NwtResource.define({
       Object.assign(finalData, (function() {
         trace("@compilable/control/trait/for/showable.data");
         return {
-          isShowingControl: this.settings.isShowingControl || true,
+          isShowingControl: this.settings.isShowingControl,
         };
       }).call(this));
       return finalData;
@@ -37697,21 +37994,55 @@ NwtResource.define({
       "getIndexForValue": function(...args) {
         return this.$toolkit.getIndexForValue(...args);
       },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
       "getValueByIndex": function() {
         trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
-        const originalValue = this.$toolkit.getRoot().$store.get(this.settings.rootValueIndex);
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
       "setValueByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.setValueByIndex»");
         this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,
           value: value,
         });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
       },
       "getIndexForSchema": function(...args) {
         return this.$toolkit.getIndexForSchema(...args);
@@ -37719,13 +38050,14 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$store.get(this.settings.rootSchemaIndex);
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
       },
       "setSchemaByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
         this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootSchemaIndex,
@@ -37734,7 +38066,18 @@ NwtResource.define({
       },
       "getValueByState": function() {
         trace("NwtControlForStructure.methods.getValueByState");
-        return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
+        const currentControls = this.$local.controls;
+        const state = {};
+        for (let prop in currentControls) {
+          const control = currentControls[prop];
+          const value = control.getValueByState()
+          state[prop] = value;
+        }
+        return state;
+      },
+      "setValueByState": function() {
+        trace("NwtControlForStructure.methods.setValueByState");
+        // @NOTHING
       }
     },
     computed: {},
@@ -37743,17 +38086,43 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/toolkit
       trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
-      // @COMPILED-BY: control/trait/for/toolkit
-      trace("@compilable/control/trait/for/toolkit.created");
+      // @COMPILED-BY: control/for/structure
+      trace("NwtControlForStructure.created");
       NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {};
     },
     mounted: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       // @COMPILED-BY: control/for/structure
       trace("NwtControlForStructure.mounted");
-      NwtVue2.Toolkit.installToolkit(this);
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
     },
   }
 });
@@ -37764,7 +38133,7 @@ NwtResource.define({
 NwtResource.define({
   id: "control/for/text",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/toolkit", "control/trait/for/remoteSchema", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -37780,6 +38149,7 @@ NwtResource.define({
       "required": true
     }
   },
+  subtypeOf: "text",
   compileView: true,
   control: {
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {}
@@ -37796,15 +38166,18 @@ NwtResource.define({
       <div class="nwt_control_for_text">
           <!--Nwt control for text {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
+              <template v-slot:hideable>
+                  <slot name="hideable"></slot>
+              </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
           <div v-if="isShowingControl">
               <input
                   class="width_100"
                   type="text"
-                  ref="textbox"
+                  :ref="component => { if(component === null) { delete $local.control; } else { $local.control = component; } }"
                   :disabled="settings.hasFixedValue"
-                  :value="$toolkit.getValueByIndex()"
+                  :value="getValueByIndex()"
               />
           </div>
       </div>`,
@@ -37814,7 +38187,7 @@ NwtResource.define({
       Object.assign(finalData, (function() {
         trace("@compilable/control/trait/for/showable.data");
         return {
-          isShowingControl: this.settings.isShowingControl || true,
+          isShowingControl: this.settings.isShowingControl,
         };
       }).call(this));
       return finalData;
@@ -37838,21 +38211,55 @@ NwtResource.define({
       "getIndexForValue": function(...args) {
         return this.$toolkit.getIndexForValue(...args);
       },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
       "getValueByIndex": function() {
         trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
-        const originalValue = this.$toolkit.getRoot().$store.get(this.settings.rootValueIndex);
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
       "setValueByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.setValueByIndex»");
         this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,
           value: value,
         });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
       },
       "getIndexForSchema": function(...args) {
         return this.$toolkit.getIndexForSchema(...args);
@@ -37860,13 +38267,14 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$store.get(this.settings.rootSchemaIndex);
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
       },
       "setSchemaByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
         this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootSchemaIndex,
@@ -37874,14 +38282,35 @@ NwtResource.define({
         });
       },
       "getValueByState": function() {
-        return this.$refs.textbox.value;
+        trace("NwtControlForText.methods.getValueByState");
+        if (!this.$local.control) {
+          return this.getValueByIndex();
+        }
+        return this.$local.control.value;
       },
       "setValueByState": function(value) {
-        this.$refs.textbox.value = value;
-        this.$forceUpdate(true);
+        trace("NwtControlForText.methods.setValueByState");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = value;
       },
       "reloadValue": function() {
-        this.$refs.textbox.value = this.$toolkit.getValueByIndex();
+        return this.loadValue();
+      },
+      "saveValue": function() {
+        trace("NwtControlForText.methods.saveValue");
+        const value = this.getValueByState();
+        const indexes = this.getIndexForValue();
+        console.log("Saving:", indexes, value);
+        this.$toolkit.getRoot().$store.set(indexes, value);
+      },
+      "loadValue": function() {
+        trace("NwtControlForText.methods.loadValue");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = this.getValueByIndex();
       }
     },
     computed: {},
@@ -37890,18 +38319,51 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/toolkit
       trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
-      // @COMPILED-BY: control/trait/for/toolkit
-      trace("@compilable/control/trait/for/toolkit.created");
-      NwtVue2.Toolkit.installToolkit(this);
     },
     mounted: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
       // @COMPILED-BY: control/for/text
       trace("NwtControlForText.mounted");
       NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
       window.tx = this;
+      this.reloadValue();
+      Payload_while_development: {
+        const index = this.getIndexForValue();
+        const isOk1 = index.length === 2 && index[0] === "tipo1" && index[1] === "subtipo1";
+        const isOk2 = index.length === 1 && index[0] === "tipo1";
+        const isOk = isOk1 || isOk2;
+        if (isOk) {
+          window.txx = this;
+        }
+      }
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
     },
   }
 });
@@ -37928,12 +38390,19 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_form_maker_viewer">
+          <div class="flex_row centered">
+              <div class="flex_1">
+                  <button class="mini fluid" v-on:click="toggleAll">🔸*️⃣</button>
+              </div>
+              <div class="flex_100 pad_left_1">{{ settings.hasTitle || "Formulario" }}</div>
+          </div>
           <component
               v-if="settings.type"
+              ref="mainControl"
               :is="$toolkit.getComponentNameBySettings(settings)"
               :settings="{
                   ...settings,
-                  isRoot: true,
+                  isShowingControl: true,
                   rootValueIndex: [],
                   rootSchemaIndex: [],
               }"
@@ -37953,6 +38422,9 @@ NwtResource.define({
       },
       "setValue": function(key, value) {
         return this.$store.set(key, value);
+      },
+      "toggleAll": function() {
+        this.$refs.mainControl.toggleControl();
       }
     },
     computed: {},
@@ -37964,6 +38436,7 @@ NwtResource.define({
       NwtVue2.Toolkit.installLocal(this);
       NwtVue2.Toolkit.installStore(this);
       this.$store.set([], this.settings.initialValue);
+      this.$schema = NwtPropagableStore.create(this.settings);
     },
     mounted: function() {
       // @COMPILED-BY: form/maker/viewer
@@ -38040,16 +38513,12 @@ NwtResource.define({
       "control": {
         "type": Vue,
         "required": true
-      },
-      "valueFactory": {
-        "type": Function,
-        "default": () => ({})
       }
     },
     template: `
       <div class="nwt_control_partial_for_list_panel flex_row height_100">
           <div class="flex_100">
-              <button class="mini fluid" v-on:click="() => control.addItem()">➕</button>
+              <button class="mini fluid" v-on:click="() => control.appendItem()">➕</button>
           </div>
       </div>`,
     data: function() {
@@ -38062,7 +38531,89 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
+// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js
+NwtResource.define({
+  id: "control/partial/for/pagination-panel",
+  apis: ["control", "view", "validation"],
+  inherits: [],
+  traits: {},
+  compileView: true,
+  view: {
+    name: "NwtControlPartialForPaginationPanel",
+    props: {
+      "control": {
+        "type": Vue,
+        "required": true
+      }
+    },
+    template: `
+      <div class="nwt_control_partial_for_pagination_panel flex_row">
+          <div class="flex_1">
+              <button class="mini fluid pagination_button" v-on:click="control.goToFirst" :disabled="(!control.totalPages) || control.currentPage === 0"> ⏪</button>
+          </div>
+          <div class="flex_1">
+              <button class="mini fluid pagination_button" v-on:click="control.goToPrevious" :disabled="(!control.totalPages) || control.currentPage === 0"> ◀️</button>
+          </div>
+          <div class="flex_100 text_align_center font_size_small">
+              <template v-if="control.totalPages">
+                  <span>Página {{ control.currentPage + 1 }}/{{ control.totalPages }}</span>
+                  <button v-if="!isSelectingPage" class="mini fluid" v-on:click="activateSelectingPage">📍</button>
+                  <input v-else type="text" class="mini fluid page_selector_box" v-on:keypress.enter="selectPage" ref="manuallySelectedPageBox" :value="control.currentPage+1" v-on:blur="deactivateSelectingPage" v-focus="selectAllTextFromBox" />
+              </template>
+          </div>
+          <div class="flex_1">
+              <button class="mini fluid pagination_button" v-on:click="control.goToNext" :disabled="(!control.totalPages) || control.currentPage === (control.totalPages-1)"> ▶️ </button>
+          </div>
+          <div class="flex_1">
+              <button class="mini fluid pagination_button" v-on:click="control.goToLast" :disabled="(!control.totalPages) || control.currentPage === (control.totalPages-1)"> ⏩ </button>
+          </div>
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: control/partial/for/pagination-panel
+      Object.assign(finalData, (function() {
+        trace("NwtControlPartialForPaginationPanel.data");
+        return {
+          isSelectingPage: false,
+        };
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "selectPage": function() {
+        trace("NwtControlPartialForPaginationPanel.methods.selectPage");
+        Make_search: {
+          const selectedPage = parseInt(this.$refs.manuallySelectedPageBox.value);
+          if (Number.isNaN(selectedPage)) {
+            break Make_search;
+          }
+          this.control.currentPage = selectedPage - 1;
+          this.control.digestSearch();
+        }
+        this.isSelectingPage = false;
+      },
+      "activateSelectingPage": function() {
+        trace("NwtControlPartialForPaginationPanel.methods.activateSelectingPage");
+        this.isSelectingPage = true;
+      },
+      "deactivateSelectingPage": function() {
+        trace("NwtControlPartialForPaginationPanel.methods.deactivateSelectingPage");
+        this.isSelectingPage = false;
+      },
+      "selectAllTextFromBox": function(el) {
+        trace("NwtControlPartialForPaginationPanel.methods.selectAllTextFromBox");
+        el.selectionStart = 0;
+        el.selectionEnd = el.value.length;
+      }
+    },
+    computed: {},
+    watch: {},
+  }
+});
+
+// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css
+
+// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
 NwtResource.define({
   id: "control/partial/for/statement",
   apis: ["control", "view", "validation"],
@@ -38079,13 +38630,21 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_partial_for_statement">
-          <div class="statement_box pad_top_1 pad_bottom_1"
+          <div class="statement_box"
               v-if="$local && $local.statement">
-              <div class="flex_row">
-                  <div class="flex_100 align_self_center">
-                      <span class="statement_text"> 🔸 {{ $local.statement }}</span>
-                      <span class="type_text">
-                          <span class="control_type_badge">{{ control.$toolkit.adaptTypeNameToUser() }}</span>
+              <div class="flex_row selectable_row"
+                  :class="{active:control.isShowingControl}">
+                  <div class="selectable_row_statement mini fluid text_align_left flex_100 cursor_pointer" v-on:click="toggleControl">
+                      <span class="statement_text">
+                          <span class="mini fluid">
+                              {{ control.isShowingControl ? '🔶' : '🔸' }}
+                          </span>
+                          <span v-if="!control.isShowingControl">{{ $local.statement }}</span>
+                          <span v-else
+                              class="text_decoration_underline">{{ $local.statement }}</span>
+                          <span class="type_text">
+                              <span class="control_type_badge">{{ control.$options.statically.subtypeOf }}</span>
+                          </span>
                       </span>
                       <span class="description_text"
                           v-if="control.isShowingControl && isShowingDescription">
@@ -38093,31 +38652,38 @@ NwtResource.define({
                           <span>{{ $local.description }}</span>
                       </span>
                   </div>
-                  <slot></slot>
-                  <template v-if="control.isShowingControl">
-                      <div class="flex_1 pad_left_1"
-                          v-if="$local.description">
-                          <button class="mini fluid description_icon"
-                              :class="{ active: isShowingDescription }"
-                              v-on:click="toggleDescription">ℹ️</button>
+                  <div class="flex_1"
+                      v-on:click.stop="$nwt.Utils.noop">
+                      <div class="flex_row centered">
+                          <slot></slot>
+                          <template v-if="control.isShowingControl">
+                              <slot name="hideable"></slot>
+                              <div class="flex_1"
+                                  v-if="$local.description">
+                                  <button class="mini fluid description_icon"
+                                      :class="{ active: isShowingDescription }"
+                                      v-on:click="toggleDescription">ℹ️</button>
+                              </div>
+                              <template v-if="!['list','option','structure'].includes(control.$options.statically.subtypeOf)">
+                                  <div class="flex_1">
+                                      <button class="mini fluid cursor_pointer"
+                                          v-on:click="loadValue"
+                                          data-btn1="🟢↩️">♻️</button>
+                                  </div>
+                                  <div class="flex_1">
+                                      <button class="mini fluid cursor_pointer"
+                                          v-on:click="saveValue"
+                                          data-btn2="🔵🆗">💾</button>
+                                  </div>
+                              </template>
+                              <div class="flex_1">
+                                  <button class="mini fluid cursor_pointer"
+                                      v-on:click="validateValue"
+                                      data-btn3="🟡✅">💡</button>
+                              </div>
+                          </template>
+                          <slot name="onright"></slot>
                       </div>
-                      <div class="flex_1 pad_left_1">
-                          <button class="mini fluid"
-                              v-on:click="loadValue">♻️</button>
-                      </div>
-                      <div class="flex_1 pad_left_1">
-                          <button class="mini fluid"
-                              v-on:click="saveValue">💾</button>
-                      </div>
-                      <div class="flex_1 pad_left_1">
-                          <button class="mini fluid"
-                              v-on:click="validateValue">💡</button>
-                      </div>
-                  </template>
-                  <div class="flex_1 pad_left_1">
-                      <button class="mini fluid"
-                          :class="{active:!control.isShowingControl}"
-                          v-on:click="toggleControl">🔶</button>
                   </div>
               </div>
           </div>
@@ -38139,20 +38705,15 @@ NwtResource.define({
       },
       "saveValue": function() {
         trace("NwtControlPartialForStatement.methods.saveValue");
-        const control = this.control;
-        const value = control.getValueByState();
-        const indexes = control.getIndexForValue();
-        control.$toolkit.getRoot().$store.set(indexes, value);
+        return this.control.saveValue();
       },
       "loadValue": function() {
         trace("NwtControlPartialForStatement.methods.saveValue");
-        const control = this.control;
-        const value = control.getValueByIndex();
-        control.setValueByState(value);
+        return this.control.loadValue();
       },
       "validateValue": function() {
         trace("NwtControlPartialForStatement.methods.validateValue");
-        // @TODO: validar el valor sin saber de qué tipo es
+        return this.control.validateValue();
       },
       "toggleControl": function() {
         trace("NwtControlPartialForStatement.methods.toggleControl");
@@ -38175,9 +38736,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
+// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
 
-// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
+// @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
 NwtResource.define({
   id: "test/control/for/settingsSpecExample",
   apis: ["settings", "test"],
@@ -38199,8 +38760,8 @@ NwtResource.define({
   },
 });
 
-// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+// @vuebundler[Proyecto_base_001][185]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
 
-// @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][186]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

@@ -5,14 +5,14 @@ module.exports = {
   settingsSpec: {
     isShowingControl: {
       type: LowCode.type.Boolean,
-      default: true,
+      default: false,
     }
   },
   view: {
     data: function() {
       trace("@compilable/control/trait/for/showable.data");
       return {
-        isShowingControl: this.settings.isShowingControl || true,
+        isShowingControl: this.settings.isShowingControl,
       };
     },
     methods: {

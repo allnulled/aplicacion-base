@@ -29,7 +29,7 @@
       let obj = root;
       for (let i = 0; i < parts.length - 1; i++) {
         const key = parts[i];
-        assertion(typeof key === "string", `Select «${selector}» at index «${i}=${key}» must be string on «NwtDecorableTree.$walk»`);
+        assertion(["string","number"].includes(typeof key), `Selector «${parts.join(".")}» at index «${i}=${key}» must be string or number on «NwtDecorableTree.$walk»`);
         if (!(key in obj)) {
           if (!create) return [undefined, undefined];
           obj[key] = {};
@@ -51,7 +51,7 @@
         }
         return true;
       },
-      get: function (selector, errorValue = undefined) {
+      get: function (selector, errorValue = undefined, assertion = NwtAsserter.global) {
         const parts = NwtDecorableTree.$normalize(selector);
         let obj = this;
         for (let i = 0; i < parts.length; i++) {
@@ -60,7 +60,9 @@
             assertion(obj !== null, `Selector «${selector}» at index «${i}=${key}» cannot access property of null on «NwtDecorableTree.get»`);
             assertion(key in obj, `Selector «${selector}» at index «${i}=${key}» cannot access unknown property on «NwtDecorableTree.get»`);
           } else {
-            return errorValue;
+            if((obj === null) || (!(key in obj))) {
+              return typeof errorValue === "function" ? errorValue() : errorValue;
+            }
           }
           obj = obj[key];
         }

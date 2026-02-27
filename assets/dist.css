@@ -3752,6 +3752,9 @@ table>tbody>tr>* {
     border-right: 1px solid var(--w7-el-bd);
     text-align: center;
 }
+.nwt_control_for_list .pagination_result {
+    
+}
 
 /* @vuebundler[Proyecto_base_001][170]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/option/compiled.js*/
 
@@ -3759,18 +3762,17 @@ table>tbody>tr>* {
 
 /* @vuebundler[Proyecto_base_001][172]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compilable.css*/
 .nwt_control_for_structure {
-    border-top: 1px solid var(--w7-el-bd);
-    border-bottom: 1px solid var(--w7-el-bd);
+    border-top: none;
+    border-left: 0px solid var(--w7-el-bd);
     border-right: none;
-    padding: 2px;
-    padding-bottom: 2px;
+    padding: 0px;
     border-top-right-radius: 0pt;
     border-bottom-right-radius: 0pt;
 }
 
 .nwt_control_for_structure .structure_box {
     padding-left: 0px;
-    padding-top: 2px;
+    padding-top: 0px;
     border-top: 1px dashed #CCC;
 }
 
@@ -3859,9 +3861,26 @@ table>tbody>tr>* {
 
 /* @vuebundler[Proyecto_base_001][178]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js*/
+/* @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css*/
+/* @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css*/
+.nwt_control_partial_for_pagination_panel button.pagination_button {
+    padding-bottom: 2px !important;
+    cursor: pointer;
+}
+.nwt_control_partial_for_pagination_panel button.pagination_button:disabled {
+    cursor: default;
+}
+
+.nwt_control_partial_for_pagination_panel input.page_selector_box {
+    min-width: 20px;
+    width: auto;
+    max-width: 92px;
+}
+
+/* @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js*/
+
+/* @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css*/
 .nwt_control_partial_for_statement {
     
 }
@@ -3895,9 +3914,25 @@ table>tbody>tr>* {
     font-weight: bold;
 }
 
-/* @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js*/
+.nwt_control_partial_for_statement .selectable_row {
+    
+}
 
-/* @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css*/
+.nwt_control_partial_for_statement .selectable_row:hover {
+    background-color: rgba(236, 197, 197, 0.716);
+}
+
+.nwt_control_partial_for_statement .selectable_row.active {
+    /*background-color: rgba(142, 142, 142, 0.4);*/
+}
+
+.nwt_control_partial_for_statement .selectable_row_statement {
+    
+}
+
+/* @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js*/
+
+/* @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css*/
 html,
 body {
     margin: 0px;
@@ -4005,6 +4040,10 @@ hr {
 
 .font_weight_bold {
     font-weight: bold;
+}
+
+.font_size_small {
+    font-size: 11px;
 }
 
 .pad_0 {
@@ -4292,6 +4331,10 @@ button.bg_danger.active {}
     align-items: flex-start;
 }
 
+.text_decoration_underline {
+    text-decoration: underline;
+}
+
 .cell.empty_cell {
     padding: 0px !important;
 }
@@ -4344,10 +4387,10 @@ select.fluid {
     padding-right: 16px !important;
 }
 
-/* @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css*/
+/* @vuebundler[Proyecto_base_001][185]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css*/
 
 
-/* @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
+/* @vuebundler[Proyecto_base_001][186]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
 body {
     font: var(--w7-font);
 }

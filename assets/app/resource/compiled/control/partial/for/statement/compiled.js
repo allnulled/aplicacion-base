@@ -14,13 +14,21 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_partial_for_statement">
-          <div class="statement_box pad_top_1 pad_bottom_1"
+          <div class="statement_box"
               v-if="$local && $local.statement">
-              <div class="flex_row">
-                  <div class="flex_100 align_self_center">
-                      <span class="statement_text"> 🔸 {{ $local.statement }}</span>
-                      <span class="type_text">
-                          <span class="control_type_badge">{{ control.$toolkit.adaptTypeNameToUser() }}</span>
+              <div class="flex_row selectable_row"
+                  :class="{active:control.isShowingControl}">
+                  <div class="selectable_row_statement mini fluid text_align_left flex_100 cursor_pointer" v-on:click="toggleControl">
+                      <span class="statement_text">
+                          <span class="mini fluid">
+                              {{ control.isShowingControl ? '🔶' : '🔸' }}
+                          </span>
+                          <span v-if="!control.isShowingControl">{{ $local.statement }}</span>
+                          <span v-else
+                              class="text_decoration_underline">{{ $local.statement }}</span>
+                          <span class="type_text">
+                              <span class="control_type_badge">{{ control.$options.statically.subtypeOf }}</span>
+                          </span>
                       </span>
                       <span class="description_text"
                           v-if="control.isShowingControl && isShowingDescription">
@@ -28,31 +36,38 @@ NwtResource.define({
                           <span>{{ $local.description }}</span>
                       </span>
                   </div>
-                  <slot></slot>
-                  <template v-if="control.isShowingControl">
-                      <div class="flex_1 pad_left_1"
-                          v-if="$local.description">
-                          <button class="mini fluid description_icon"
-                              :class="{ active: isShowingDescription }"
-                              v-on:click="toggleDescription">ℹ️</button>
+                  <div class="flex_1"
+                      v-on:click.stop="$nwt.Utils.noop">
+                      <div class="flex_row centered">
+                          <slot></slot>
+                          <template v-if="control.isShowingControl">
+                              <slot name="hideable"></slot>
+                              <div class="flex_1"
+                                  v-if="$local.description">
+                                  <button class="mini fluid description_icon"
+                                      :class="{ active: isShowingDescription }"
+                                      v-on:click="toggleDescription">ℹ️</button>
+                              </div>
+                              <template v-if="!['list','option','structure'].includes(control.$options.statically.subtypeOf)">
+                                  <div class="flex_1">
+                                      <button class="mini fluid cursor_pointer"
+                                          v-on:click="loadValue"
+                                          data-btn1="🟢↩️">♻️</button>
+                                  </div>
+                                  <div class="flex_1">
+                                      <button class="mini fluid cursor_pointer"
+                                          v-on:click="saveValue"
+                                          data-btn2="🔵🆗">💾</button>
+                                  </div>
+                              </template>
+                              <div class="flex_1">
+                                  <button class="mini fluid cursor_pointer"
+                                      v-on:click="validateValue"
+                                      data-btn3="🟡✅">💡</button>
+                              </div>
+                          </template>
+                          <slot name="onright"></slot>
                       </div>
-                      <div class="flex_1 pad_left_1">
-                          <button class="mini fluid"
-                              v-on:click="loadValue">♻️</button>
-                      </div>
-                      <div class="flex_1 pad_left_1">
-                          <button class="mini fluid"
-                              v-on:click="saveValue">💾</button>
-                      </div>
-                      <div class="flex_1 pad_left_1">
-                          <button class="mini fluid"
-                              v-on:click="validateValue">💡</button>
-                      </div>
-                  </template>
-                  <div class="flex_1 pad_left_1">
-                      <button class="mini fluid"
-                          :class="{active:!control.isShowingControl}"
-                          v-on:click="toggleControl">🔶</button>
                   </div>
               </div>
           </div>
@@ -74,20 +89,15 @@ NwtResource.define({
       },
       "saveValue": function() {
         trace("NwtControlPartialForStatement.methods.saveValue");
-        const control = this.control;
-        const value = control.getValueByState();
-        const indexes = control.getIndexForValue();
-        control.$toolkit.getRoot().$store.set(indexes, value);
+        return this.control.saveValue();
       },
       "loadValue": function() {
         trace("NwtControlPartialForStatement.methods.saveValue");
-        const control = this.control;
-        const value = control.getValueByIndex();
-        control.setValueByState(value);
+        return this.control.loadValue();
       },
       "validateValue": function() {
         trace("NwtControlPartialForStatement.methods.validateValue");
-        // @TODO: validar el valor sin saber de qué tipo es
+        return this.control.validateValue();
       },
       "toggleControl": function() {
         trace("NwtControlPartialForStatement.methods.toggleControl");

@@ -24,6 +24,7 @@
     }
 
     static isPrefix(prefix, full) {
+      trace("NwtKeyedEventsManager.isPrefix");
       if (prefix.length > full.length) return false;
       for (let i = 0; i < prefix.length; i++) {
         if (prefix[i] !== full[i]) return false;
@@ -44,9 +45,9 @@
 
     on(eventType, keys, callback) {
       trace("NwtKeyedEventsManager.prototype.on");
-      assertion(typeof eventType === "string", "«eventType» must be string");
-      assertion(Array.isArray(keys), "«keys» must be array");
-      assertion(typeof callback === "function", "«callback» must be function");
+      assertion(typeof eventType === "string", "Parameter «eventType» must be string on «NwtKeyedEventsManager.prototype.on»");
+      assertion(Array.isArray(keys), "Parameter «keys» must be array on «NwtKeyedEventsManager.prototype.on»");
+      assertion(typeof callback === "function", "Parameter «callback» must be function on «NwtKeyedEventsManager.prototype.on»");
       if (!(eventType in this.listeners)) {
         this.listeners[eventType] = new Set();
       }
@@ -59,6 +60,9 @@
 
     once(eventType, keys, callback) {
       trace("NwtKeyedEventsManager.prototype.once");
+      assertion(typeof eventType === "string", "Parameter «eventType» must be string on «NwtKeyedEventsManager.prototype.once»");
+      assertion(Array.isArray(keys), "Parameter «keys» must be array on «NwtKeyedEventsManager.prototype.once»");
+      assertion(typeof callback === "function", "Parameter «callback» must be function on «NwtKeyedEventsManager.prototype.once»");
       const wrap = (event) => {
         this.off(eventType, keys, wrap);
         callback(event);
@@ -69,14 +73,14 @@
 
     off(eventType, keys, callback) {
       trace("NwtKeyedEventsManager.prototype.off");
+      assertion(typeof eventType === "string", "Parameter «eventType» must be string on «NwtKeyedEventsManager.prototype.off»");
+      assertion(Array.isArray(keys), "Parameter «keys» must be array on «NwtKeyedEventsManager.prototype.off»");
+      assertion(typeof callback === "function", "Parameter «callback» must be function on «NwtKeyedEventsManager.prototype.off»");
       if (!(eventType in this.listeners)) return this;
       for (const entry of [...this.listeners[eventType]]) {
-        if (
-          entry.callback === callback &&
-          JSON.stringify(entry.keys) === JSON.stringify(keys)
-        ) {
-          this.listeners[eventType].delete(entry);
-        }
+        if(entry.callback !== callback) continue;
+        if(!NwtArrayUtils.areEqual(entry.keys, keys)) continue;
+        this.listeners[eventType].delete(entry);
       }
       if (this.listeners[eventType].size === 0) {
         delete this.listeners[eventType];
@@ -86,9 +90,9 @@
 
     dispatch(eventType, triggerKeys, detail) {
       trace("NwtKeyedEventsManager.prototype.dispatch");
-      assertion(typeof eventType === "string", "«eventType» must be string");
-      assertion(Array.isArray(triggerKeys), "«triggerKeys» must be array");
-      assertion(typeof detail === "object", "«detail» must be object");
+      assertion(typeof eventType === "string", "Parameter «eventType» must be string on «NwtKeyedEventsManager.prototype.dispatch»");
+      assertion(Array.isArray(triggerKeys), "Parameter «triggerKeys» must be array on «NwtKeyedEventsManager.prototype.dispatch»");
+      assertion(typeof detail === "object", "Parameter «detail» must be object on «NwtKeyedEventsManager.prototype.dispatch»");
       const output = [];
       this.configure(eventType, { wasTriggered: true });
       if (!(eventType in this.listeners)) return this;

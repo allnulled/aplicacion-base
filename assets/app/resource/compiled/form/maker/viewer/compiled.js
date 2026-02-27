@@ -19,12 +19,19 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_form_maker_viewer">
+          <div class="flex_row centered">
+              <div class="flex_1">
+                  <button class="mini fluid" v-on:click="toggleAll">🔸*️⃣</button>
+              </div>
+              <div class="flex_100 pad_left_1">{{ settings.hasTitle || "Formulario" }}</div>
+          </div>
           <component
               v-if="settings.type"
+              ref="mainControl"
               :is="$toolkit.getComponentNameBySettings(settings)"
               :settings="{
                   ...settings,
-                  isRoot: true,
+                  isShowingControl: true,
                   rootValueIndex: [],
                   rootSchemaIndex: [],
               }"
@@ -44,6 +51,9 @@ NwtResource.define({
       },
       "setValue": function(key, value) {
         return this.$store.set(key, value);
+      },
+      "toggleAll": function() {
+        this.$refs.mainControl.toggleControl();
       }
     },
     computed: {},
@@ -55,6 +65,7 @@ NwtResource.define({
       NwtVue2.Toolkit.installLocal(this);
       NwtVue2.Toolkit.installStore(this);
       this.$store.set([], this.settings.initialValue);
+      this.$schema = NwtPropagableStore.create(this.settings);
     },
     mounted: function() {
       // @COMPILED-BY: form/maker/viewer

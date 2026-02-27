@@ -20,13 +20,14 @@ module.exports = {
       getSchemaByIndex: function () {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if(this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$store.get(this.settings.rootSchemaIndex);
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
       },
       setSchemaByIndex: function (value) {
         trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
         this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootSchemaIndex,

@@ -107,6 +107,10 @@ hr {
     font-weight: bold;
 }
 
+.font_size_small {
+    font-size: 11px;
+}
+
 .pad_0 {
     padding: 0px;
 }
@@ -390,6 +394,10 @@ button.bg_danger.active {}
 .text_align_top {
     display: flex;
     align-items: flex-start;
+}
+
+.text_decoration_underline {
+    text-decoration: underline;
 }
 
 .cell.empty_cell {

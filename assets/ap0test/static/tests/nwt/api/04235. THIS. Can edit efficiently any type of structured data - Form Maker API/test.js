@@ -30,33 +30,92 @@ const schema1 = {
     films: {
       type: "control/for/list",
       hasStatement: "Películas donde ha participado:",
+      hasStatementForItemByProperty: "title",
       schema: {
         type: "control/for/structure",
         schema: {
-          name: {
-            type: "control/for/text"
+          title: {
+            type: "control/for/text",
+            hasStatement: "Título de la película"
           },
           year: {
-            type: "control/for/text"
+            type: "control/for/text",
+            hasStatement: "Año de la película"
           },
-          director: {
-            type: "control/for/text"
+          stars: {
+            type: "control/for/text",
+            hasStatement: "Valoración en estrellas"
+          },
+          inEnglish: {
+            type: "control/for/text",
+            hasStatement: "¿La película está en inglés?"
           }
         }
       }
     },
+    tipo1: {
+      type: "control/for/option",
+      schema: [{
+        type: "control/for/structure",
+        schema: {
+          subtipo1: {
+            type: "control/for/text",
+          }
+        }
+      }, {
+        type: "control/for/structure",
+        schema: {
+          subtipo2: {
+            type: "control/for/text",
+          }
+        }
+      }, {
+        type: "control/for/structure",
+        schema: {
+          subtipo3: {
+            type: "control/for/text",
+          }
+        }
+      }]
+    },
+    tipo2: {
+      type: "control/for/option",
+      schema: [{
+        type: "control/for/list",
+        schema: {
+          subtipo1: {
+            type: "control/for/text",
+          }
+        }
+      }, {
+        type: "control/for/structure",
+        schema: {
+          subtipo2: {
+            type: "control/for/text",
+          }
+        }
+      }, {
+        type: "control/for/text",
+      }]
+    }
   }
 };
 
-tester.progressBar.advance(1);
-
+tester.progressBar.total = 50;
 //*
+const films = [];
+for (let index = 0; index < tester.progressBar.total; index++) {
+  await NwtTimer.timeout(0);
+  tester.progressBar.advance(1);
+  films.push(NwtRandomizer.fromStructure({ title: String, year: String, stars: Number, inEnglish: Boolean }));
+}
+
 const answer1 = await NwtFormMaker.dialog.fromSchema(schema1, {
   name: "Doctor Jones",
   city: "Indiana",
   country: "USA",
   gender: "male",
-  films: NwtArrayUtils.fromLoop([0,30],()=>NwtRandomizer.fromStructure({title:String,year:String,stars:Number,inEnglish:Boolean}))
+  films: films,
 });
 
 /*

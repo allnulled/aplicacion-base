@@ -10,16 +10,12 @@ NwtResource.define({
       "control": {
         "type": Vue,
         "required": true
-      },
-      "valueFactory": {
-        "type": Function,
-        "default": () => ({})
       }
     },
     template: `
       <div class="nwt_control_partial_for_list_panel flex_row height_100">
           <div class="flex_100">
-              <button class="mini fluid" v-on:click="() => control.addItem()">➕</button>
+              <button class="mini fluid" v-on:click="() => control.appendItem()">➕</button>
           </div>
       </div>`,
     data: function() {

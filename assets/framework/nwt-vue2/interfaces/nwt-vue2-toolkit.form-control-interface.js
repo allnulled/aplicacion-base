@@ -23,18 +23,6 @@
       return NwtVue2.getFirstParentWhere(this, it => it.$options.name === "NwtFormMakerViewer");
     },
 
-    getValueByIndex: function() {
-      if(this.settings.hasFixedValue) return this.settings.hasFixedValue;
-      const selector = this.$toolkit.getIndexForValue();
-      const value = this.$toolkit.getRoot().getValue();
-      let output = value;
-      for(let index=0; index<selector.length; index++) {
-        const prop = selector[index];
-        output = output[prop];
-      }
-      return output;
-    },
-
     getIndexForValue: function() {
       return this.settings.rootValueIndex ? this.settings.rootValueIndex : [];
     },

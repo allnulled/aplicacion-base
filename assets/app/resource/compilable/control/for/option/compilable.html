@@ -1,24 +1,26 @@
 <div class="nwt_control_for_option">
     <!--Nwt control for option {{ $nwt.Reflection.keys(settings) }}-->
-    <template v-if="(!isLoading) && (selectedOption in settings.schema)">
-        <component :is="$toolkit.getComponentNameBySettings(settings.schema[selectedOption])"
-            v-bind:key="'component_for_option_' + selectedOption"
+    <template v-if="!isLoading">
+        <component :is="$toolkit.getComponentNameBySettings(settings.schema[$local.selectedOption])"
+            v-bind:key="'component_for_option_' + $local.selectedOption"
+            :ref="component => { if(component === null) { delete $local.control; } else { $local.control = component; } }"
             :settings="{
                 ...$nwt.ObjectUtils.onlyKeys(settings, ['hasStatement', 'hasDescription']),
-                ...settings.schema[selectedOption],
-                isShowingControl: true,
+                ...settings.schema[$local.selectedOption],
+                ...Object.assign({}, $local.isNotFirstTime ? {isShowingControl: true} : {}),
                 rootValueIndex: $toolkit.getIndexForValue().concat([]),
-                rootSchemaIndex: $toolkit.getIndexForSchema().concat([selectedOption]),
+                rootSchemaIndex: $toolkit.getIndexForSchema().concat([$local.selectedOption]),
             }">
-            <div class="">
-                <select class="fluid"
-                    v-model="selectedOption">
-                    <template v-for="option, optionIndex in settings.schema">
-                        <option v-bind:key="'option-' + optionIndex"
-                            :value="optionIndex">Tipo {{ optionIndex + 1 }}: {{ $toolkit.adaptTypeNameToUser(option.type) }}</option>
-                    </template>
-                </select>
-            </div>
+            <template v-slot:hideable>
+                <div class="">
+                    <select class="fluid" v-on:input="selectOption" :value="$local.selectedOption">
+                        <template v-for="option, optionIndex in settings.schema">
+                            <option v-bind:key="'option-' + optionIndex"
+                                :value="optionIndex">Tipo {{ optionIndex + 1 }}: {{ option.hasFixedValue || $toolkit.adaptTypeNameToUser(option.type) }}</option>
+                        </template>
+                    </select>
+                </div>
+            </template>
         </component>
     </template>
 </div>

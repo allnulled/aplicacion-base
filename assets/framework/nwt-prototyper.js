@@ -50,11 +50,12 @@
     }
 
     static initializePropertiesOf(target, moreArgs, extraErrorMessage = false, onlySpecifiedProps = true) {
+      trace("NwtPrototyper.initializePropertiesOf");
       const [schema] = Array.isArray(moreArgs) ? moreArgs : [moreArgs];
       assertion(typeof target === "object", "Parameter «target» must be object on «NwtPrototyper.initializePropertiesOf»");
       assertion(typeof schema === "object", "Parameter «schema» must be object on «NwtPrototyper.initializePropertiesOf»");
-      console.log("Schema:", schema);
-      console.log("Target:", target);
+      // console.log("Schema:", schema);
+      // console.log("Target:", target);
       const schemaKeys = Object.keys(schema);
       const targetKeys = Object.keys(target);
       if (onlySpecifiedProps) {
