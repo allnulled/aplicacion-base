@@ -36,7 +36,7 @@
 
     constructor(errorsList) {
       super("Unificated error started");
-      this.name = "UnifiedError";
+      this.name = "UnificatedError";
       this.message = errorsList.map(e => `${e.name}: ${e.message}` || ` [${e.stack}]`).join("\n+\n");
     }
 

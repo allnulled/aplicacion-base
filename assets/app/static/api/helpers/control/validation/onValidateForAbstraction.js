@@ -1,5 +1,5 @@
 NwtStatic.api.set("control.validation.onValidateForAbstraction", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForAbstraction");
-  const [assertion = NwtAsserter.silently, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
+  const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   // @TODO.
 });

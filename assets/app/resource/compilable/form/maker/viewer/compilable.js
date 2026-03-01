@@ -47,7 +47,6 @@ module.exports = {
     },
     mounted() {
       trace("NwtFormMakerViewer.mounted");
-      console.log(this.settings);
       NwtStatic.api.control.validation.validateControlSchema(this.settings);
       window.fmk = this;
     },

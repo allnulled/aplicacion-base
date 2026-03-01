@@ -1,0 +1,17 @@
+.error_handler_box {
+    margin-top: 3px;
+    margin-bottom: 5px;
+    overflow: scroll;
+    border: 1px solid black;
+    border-radius: 3pt;
+    background-color: rgba(47, 1, 1, 0.783);
+}
+
+.error_handler_box > pre {
+    overflow: visible;
+    border: none;
+    background-color: transparent;
+    font-family: Arial;
+    font-size: 10px;
+    color: yellow;
+}

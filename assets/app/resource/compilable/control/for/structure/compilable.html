@@ -20,7 +20,9 @@
                     isShowingControl: true,
                     rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
                     rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
+                    rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
                 }" />
         </div>
     </template>
+    <nwt-control-error-handler :control="this" />
 </div>

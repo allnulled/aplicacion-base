@@ -48,8 +48,13 @@ hr {
     white-space: nowrap;
 }
 
+.overflow_scroll,
 .scrollable {
     overflow: scroll;
+}
+
+.overflow_visible {
+    overflow: visible;
 }
 
 .overflow_hidden {

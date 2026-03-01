@@ -12,6 +12,7 @@ module.exports = {
     "control/trait/for/showable",
     "control/trait/for/remoteValue",
     "control/trait/for/remoteSchema",
+    "control/trait/for/remoteComponent",
     "control/trait/for/settings",
     "control/trait/for/validate",
   ],
@@ -130,6 +131,10 @@ module.exports = {
         }
         this.$local.paginatedList = paginatedList;
         this.$forceUpdate(true);
+      },
+      getKeyForRow: function(row, rowIndex) {
+        trace("NwtControlForList.methods.getKeyForRow");
+        return this.settings.hasStatementForItemByProperty && row.item[this.settings.hasStatementForItemByProperty] ? row.item[this.settings.hasStatementForItemByProperty] : row.index ? row.index : rowIndex;
       },
       onValidate: function () {
         trace("NwtControlForList.methods.onValidate");

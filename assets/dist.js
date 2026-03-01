@@ -19826,7 +19826,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
     constructor(errorsList) {
       super("Unificated error started");
-      this.name = "UnifiedError";
+      this.name = "UnificatedError";
       this.message = errorsList.map(e => `${e.name}: ${e.message}` || ` [${e.stack}]`).join("\n+\n");
     }
 
@@ -21978,6 +21978,10 @@ const { lutimesSync } = require("fs-extra");
 
     getIndexForSchema: function() {
       return this.settings.rootSchemaIndex ? this.settings.rootSchemaIndex : [];
+    },
+
+    getIndexForComponent: function() {
+      return this.settings.rootComponentIndex ? this.settings.rootComponentIndex : [];
     },
 
     getComponentNameBySettings: function(settings = this.settings) {
@@ -35339,35 +35343,35 @@ NwtStatic.api.set("control.validation.ValidationResult", class {
 // @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForAbstraction.js
 NwtStatic.api.set("control.validation.onValidateForAbstraction", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForAbstraction");
-  const [assertion = NwtAsserter.silently, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
+  const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   // @TODO.
 });
 
 // @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForList.js
 NwtStatic.api.set("control.validation.onValidateForList", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForList");
-  const [assertion = NwtAsserter.silently, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
+  const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   
 });
 
 // @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForOption.js
 NwtStatic.api.set("control.validation.onValidateForOption", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForOption");
-  const [assertion = NwtAsserter.silently, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
+  const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   // @TODO.
 });
 
 // @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForStructure.js
 NwtStatic.api.set("control.validation.onValidateForStructure", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForStructure");
-  const [assertion = NwtAsserter.silently, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
+  const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   // @TODO.
 });
 
 // @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForText.js
 NwtStatic.api.set("control.validation.onValidateForText", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForText");
-  const [assertion = NwtAsserter.silently, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
+  const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   assertion(typeof subvalue === "string", `Value must be string because it is subtype of «text» but type «${typeof subvalue}» was found at index «${valueIndex.join(".") || "[]"}» at schema index «${schemaIndex.join(".")||"[]"}» on «NwtStatic.api.control.validation.onValidateForText»`);
 });
 
@@ -35434,59 +35438,89 @@ NwtStatic.api.set("control.validation.compileSchema", NwtStatic.api.control.vali
 // @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValue.js
 NwtStatic.api.set("control.validation.validateControlValue", function (...args) {
   trace("NwtStatic.api.control.validation.validateControlValue");
-  const [value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], assertion = NwtAsserter.silently] = args;
+  const [value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
   NwtStatic.api.control.validation.compileSchema(schema);
   const subvalue = valueIndex.length === 0 ? value : NwtAccessor.get(value, valueIndex);
   const subschema = schemaIndex.length === 0 ? schema : NwtAccessor.get(schema, schemaIndex);
+  const subcomponent = componentIndex.length === 0 ? controlComponent : NwtAccessor.get(controlComponent, componentIndex);
   const resource = NwtResource.for(subschema.type);
   const archtype = resource.subtypeOf;
-  NwtStatic.api.control.validation.validateControlValueByResource(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
-  NwtStatic.api.control.validation.validateControlValueBySchema(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
-  NwtStatic.api.control.validation.validateControlValueByComponent(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
-  NwtStatic.api.control.validation.validateControlValueBySettings(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
-  if (archtype === "list") {
-    assertion(Array.isArray(subvalue), `Value at index «${valueIndex.join(".")}» must be array because it is subtype of «list» at schema index «${schemaIndex.join(".")}» on «NwtStatic.api.control.validation.validateControlValue»`);
-    for (let index = 0; index < subvalue.length; index++) {
-      NwtStatic.api.control.validation.validateControlValue(value, schema, controlComponent, valueIndex.concat([index]), schemaIndex.concat(["schema"]), assertion);
-    }
-    return true;
-  } else if (archtype === "structure") {
-    assertion(typeof subvalue === "object", `Value at index «${valueIndex.join(".")}» must be object because it is subtype of «structure» at schema index «${schemaIndex.join(".")}» on «NwtStatic.api.control.validation.validateControlValue»`);
-    const errors = [];
-    for (let prop in subschema.schema) {
-      try {
-        NwtStatic.api.control.validation.validateControlValue(value, schema, controlComponent, valueIndex.concat([prop]), schemaIndex.concat(["schema", prop]), assertion);
-      } catch (error) {
-        errors.push(error);
+  try {
+    NwtStatic.api.control.validation.validateControlValueByResource(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), componentIndex.concat(["NOT YET FUNCTIONALITY"]), assertion);
+    NwtStatic.api.control.validation.validateControlValueBySchema(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), componentIndex.concat(["NOT YET FUNCTIONALITY"]), assertion);
+    NwtStatic.api.control.validation.validateControlValueByComponent(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), componentIndex.concat(["NOT YET FUNCTIONALITY"]), assertion);
+    NwtStatic.api.control.validation.validateControlValueBySettings(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), componentIndex.concat(["NOT YET FUNCTIONALITY"]), assertion);
+    if (archtype === "list") {
+      assertion(Array.isArray(subvalue), `Value at index «${valueIndex.join(".")}» must be array because it is subtype of «list» at schema index «${schemaIndex.join(".")}» on «NwtStatic.api.control.validation.validateControlValue»`);
+      for (let index = 0; index < subvalue.length; index++) {
+        NwtStatic.api.control.validation.validateControlValue(
+          value,
+          schema,
+          controlComponent,
+          valueIndex.concat([index]),
+          schemaIndex.concat(["schema"]),
+          componentIndex.concat(["NOT YET FUNCTIONALITY"]),
+          assertion
+        );
       }
-    }
-    if(errors.length) {
+      return true;
+    } else if (archtype === "structure") {
+      assertion(typeof subvalue === "object", `Value at index «${valueIndex.join(".")}» must be object because it is subtype of «structure» at schema index «${schemaIndex.join(".")}» on «NwtStatic.api.control.validation.validateControlValue»`);
+      const errors = [];
+      for (let prop in subschema.schema) {
+        try {
+          NwtStatic.api.control.validation.validateControlValue(
+            value,
+            schema,
+            controlComponent,
+            valueIndex.concat([prop]),
+            schemaIndex.concat(["schema", prop]),
+            componentIndex.concat(["NOT YET FUNCTIONALITY"]),
+            assertion
+          );
+        } catch (error) {
+          errors.push(error);
+        }
+      }
+      if (errors.length) {
+        throw NwtUnificatedError.from(errors);
+      }
+      return true;
+    } else if (archtype === "text") {
+      assertion(typeof subvalue === "string", `Value at index «${valueIndex.join(".") || "[]"}» must be string because it is subtype of «text» at schema index «${schemaIndex.join(".") || "[]"}» on «NwtStatic.api.control.validation.validateControlValue»`);
+    } else if (archtype === "option") {
+      const errors = [];
+      for (let index = 0; index < subschema.length; index++) {
+        try {
+          NwtStatic.api.control.validation.validateControlValue(
+            value,
+            schema,
+            controlComponent,
+            valueIndex.concat([]),
+            schemaIndex.concat(["schema", index]),
+            componentIndex.concat(["NOT YET FUNCTIONALITY"]),
+            assertion
+          );
+          return index;
+        } catch (error) {
+          errors.push(error);
+        }
+      }
       throw NwtUnificatedError.from(errors);
+    } else {
+      return true;
     }
-    return true;
-  } else if (archtype === "text") {
-    assertion(typeof subvalue === "string", `Value at index «${valueIndex.join(".") || "[]"}» must be string because it is subtype of «text» at schema index «${schemaIndex.join(".") || "[]"}» on «NwtStatic.api.control.validation.validateControlValue»`);
-  } else if (archtype === "option") {
-    const errors = [];
-    for (let index = 0; index < subschema.length; index++) {
-      try {
-        NwtStatic.api.control.validation.validateControlValue(value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat(["schema", index]), assertion);
-        return index;
-      } catch (error) {
-        errors.push(error);
-      }
-    }
-    throw NwtUnificatedError.from(errors);
-  } else {
-    return true;
+  } catch (error) {
+    subcomponent.setValidationError(error);
+    throw error;
   }
 });
 
 // @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueByComponent.js
 NwtStatic.api.set("control.validation.validateControlValueByComponent", function(...args) {
   trace("NwtStatic.api.control.validation.validateControlValueByComponent");
-  const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], assertion = NwtAsserter.silently] = args;
-  console.log("validating by something:", subvalue, subschema);
+  const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
+  console.log("validating by component:", subvalue, subschema);
   if(!controlComponent.onValidate) return true;
   controlComponent.onValidate(assertion, ...args);
 });
@@ -35494,9 +35528,9 @@ NwtStatic.api.set("control.validation.validateControlValueByComponent", function
 // @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueByResource.js
 NwtStatic.api.set("control.validation.validateControlValueByResource", function(...args) {
   trace("NwtStatic.api.control.validation.validateControlValueByResource");
-  const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], assertion = NwtAsserter.silently] = args;
+  const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
   const resource = NwtResource.for(subschema.type);
-  console.log("validating by something:", subvalue, subschema);
+  console.log("validating by resource:", subvalue, subschema);
   if(!resource.control?.onValidate) return true;
   resource.control.onValidate(assertion, ...args);
 });
@@ -35504,8 +35538,8 @@ NwtStatic.api.set("control.validation.validateControlValueByResource", function(
 // @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueBySchema.js
 NwtStatic.api.set("control.validation.validateControlValueBySchema", function(...args) {
   trace("NwtStatic.api.control.validation.validateControlValueBySchema");
-  const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], assertion = NwtAsserter.silently] = args;
-  console.log("validating by something:", subvalue, subschema);
+  const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
+  console.log("validating by schema:", subvalue, subschema);
   if(!subschema.onValidate) return true;
   subschema.onValidate(assertion, ...args);
 });
@@ -35513,8 +35547,8 @@ NwtStatic.api.set("control.validation.validateControlValueBySchema", function(..
 // @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueBySettings.js
 NwtStatic.api.set("control.validation.validateControlValueBySettings", function(...args) {
   trace("NwtStatic.api.control.validation.validateControlValueBySettings");
-  const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], assertion = NwtAsserter.silently] = args;
-  console.log("validating by something:", subvalue, subschema, controlComponent);
+  const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
+  console.log("validating by settings:", subvalue, subschema, controlComponent);
   if(!controlComponent) return true;
   if(!controlComponent.settings) return true;
   if(!controlComponent.settings.onValidate) return true;
@@ -37329,11 +37363,64 @@ Vue.component("MainWindow", {
 
 });
 
-// @vuebundler[Proyecto_base_001][172]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/abstraction/compiled.js
+// @vuebundler[Proyecto_base_001][172]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/error-handler/compiled.js
+NwtResource.define({
+  id: "control/error-handler",
+  apis: [],
+  inherits: [],
+  traits: {},
+  compileView: true,
+  view: {
+    name: "NwtControlErrorHandler",
+    props: {
+      "control": {
+        "type": Vue,
+        "required": true
+      }
+    },
+    template: `
+      <div class="nwt_control_error_handler">
+          <div class="error_handler_box position_relative" v-if="(!isLoading) && control.validationError">
+              <!--div class="flex_row">
+                  <div class="flex_100"></div>
+                  <div class="flex_1">
+                      <button class="mini fluid float_right" v-on:click="control.clearValidationError">❎</button>
+                  </div>
+              </div-->
+              <button class="mini fluid position_absolute_top_right" style="top:4px;right:4px;left:auto;bottom:auto;" v-on:click="control.clearValidationError">❎</button>
+              <pre class="width_100">{{ control.validationError.name }}: {{ control.validationError.message }} [{{ control.validationError.stack }}] [{{ control.validationError.expandedStack }}]</pre>
+          </div>
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: control/error-handler
+      Object.assign(finalData, (function() {
+        trace("NwtControlErrorHandler.data");
+        return {
+          isLoading: false,
+        };
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "reload": function() {
+        trace("NwtControlErrorHandler.methods.reload");
+        this.isLoading = true;
+        this.$nextTick(() => this.isLoading = false);
+      }
+    },
+    computed: {},
+    watch: {},
+  }
+});
+
+// @vuebundler[Proyecto_base_001][173]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/error-handler/compilable.css
+
+// @vuebundler[Proyecto_base_001][174]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/abstraction/compiled.js
 NwtResource.define({
   id: "control/for/abstraction",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings", "control/trait/for/validate"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -37345,6 +37432,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     },
@@ -37388,6 +37479,7 @@ NwtResource.define({
                   :disabled="settings.hasFixedValue"
                   :value="getValueBySchema()"></textarea>
           </div>
+          <nwt-control-error-handler :control="this" />
       </div>`,
     data: function() {
       const finalData = {};
@@ -37496,6 +37588,22 @@ NwtResource.define({
           value: value,
         });
       },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
       "validateSelfSchema": function() {
         trace("@compilable/control/trait/for/validate.methods.validateSelfSchema");
         return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
@@ -37504,11 +37612,19 @@ NwtResource.define({
         trace("@compilable/control/trait/for/validate.methods.validateSelfValue");
         const value = this.getValueBySchema();
         this.validationError = false;
-        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        try {
+          return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        } catch (error) {
+          this.setValidationError(error);
+        }
       },
-      "setError": function(error) {
-        trace("@compilable/control/trait/for/validate.methods.setError");
+      "setValidationError": function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setValidationError");
         this.validationError = error;
+      },
+      "clearValidationError": function() {
+        trace("@compilable/control/trait/for/validate.methods.clearValidationError");
+        this.validationError = false;
       },
       "getValueByDom": function() {
         trace("NwtControlForAbstraction.methods.getValueByDom");
@@ -37590,11 +37706,11 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][173]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compiled.js
+// @vuebundler[Proyecto_base_001][175]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compiled.js
 NwtResource.define({
   id: "control/for/list",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings", "control/trait/for/validate"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -37606,6 +37722,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     },
@@ -37648,6 +37768,7 @@ NwtResource.define({
               </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
+          <nwt-control-error-handler :control="this" />
           <div v-if="isShowingControl">
               <nwt-control-partial-for-pagination-panel :control="this" />
               <div class="pagination_result_container pad_left_1">
@@ -37655,15 +37776,16 @@ NwtResource.define({
                       <div v-if="$local.paginatedList && $local.paginatedList.length">
                           <div class="item"
                               v-for="row, rowIndex in $local.paginatedList"
-                              v-bind:key="'paginated_row_' + (settings.hasStatementForItemByProperty && row.item[settings.hasStatementForItemByProperty] ? row.item[settings.hasStatementForItemByProperty] : row.index ? row.index : rowIndex)">
+                              v-bind:key="'paginated_row_' + getKeyForRow(row, rowIndex)">
                               <component :is="$toolkit.getComponentNameBySettings(settings.schema)"
-                                  :ref="component => { if(component === null) { delete $local.controls[rowIndex]; } else { $local.controls[rowIndex] = component; } }"
+                                  :ref="component => { if(component === null) { delete $local.controls[getKeyForRow(row, rowIndex)]; } else { $local.controls[getKeyForRow(row, rowIndex)] = component; } }"
                                   :settings="{
                                       ...settings.schema,
                                       // isShowingControl: false,
                                       hasStatement: settings.hasStatementForItemByProperty ? row.item[settings.hasStatementForItemByProperty] : 'Ítem ' + (row.index + 1),
                                       rootValueIndex: $toolkit.getIndexForValue().concat([row.index]),
                                       rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema']),
+                                      rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls',getKeyForRow(row, rowIndex)]),
                                   }">
                                   <template v-slot:onright>
                                       <div class="flex_1">
@@ -37797,6 +37919,22 @@ NwtResource.define({
           value: value,
         });
       },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
       "validateSelfSchema": function() {
         trace("@compilable/control/trait/for/validate.methods.validateSelfSchema");
         return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
@@ -37805,11 +37943,19 @@ NwtResource.define({
         trace("@compilable/control/trait/for/validate.methods.validateSelfValue");
         const value = this.getValueBySchema();
         this.validationError = false;
-        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        try {
+          return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        } catch (error) {
+          this.setValidationError(error);
+        }
       },
-      "setError": function(error) {
-        trace("@compilable/control/trait/for/validate.methods.setError");
+      "setValidationError": function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setValidationError");
         this.validationError = error;
+      },
+      "clearValidationError": function() {
+        trace("@compilable/control/trait/for/validate.methods.clearValidationError");
+        this.validationError = false;
       },
       "getValueByDom": function() {
         trace("NwtControlForList.methods.getValueByDom");
@@ -37897,6 +38043,10 @@ NwtResource.define({
         this.$local.paginatedList = paginatedList;
         this.$forceUpdate(true);
       },
+      "getKeyForRow": function(row, rowIndex) {
+        trace("NwtControlForList.methods.getKeyForRow");
+        return this.settings.hasStatementForItemByProperty && row.item[this.settings.hasStatementForItemByProperty] ? row.item[this.settings.hasStatementForItemByProperty] : row.index ? row.index : rowIndex;
+      },
       "onValidate": function() {
         trace("NwtControlForList.methods.onValidate");
         console.log("Validate at component-level on control/for/list");
@@ -37953,13 +38103,13 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][174]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compilable.css
+// @vuebundler[Proyecto_base_001][176]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compilable.css
 
-// @vuebundler[Proyecto_base_001][175]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/option/compiled.js
+// @vuebundler[Proyecto_base_001][177]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/option/compiled.js
 NwtResource.define({
   id: "control/for/option",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings", "control/trait/for/validate"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -37971,6 +38121,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     },
@@ -38017,6 +38171,7 @@ NwtResource.define({
                       isShowingControl: true,
                       rootValueIndex: $toolkit.getIndexForValue().concat([]),
                       rootSchemaIndex: $toolkit.getIndexForSchema().concat([$local.selectedOption]),
+                      rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','control']),
                   }">
                   <template v-slot:hideable>
                       <div class="">
@@ -38029,6 +38184,7 @@ NwtResource.define({
                       </div>
                   </template>
               </component>
+              <nwt-control-error-handler :control="this" />
           </template>
       </div>`,
     data: function() {
@@ -38144,6 +38300,22 @@ NwtResource.define({
           value: value,
         });
       },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
       "validateSelfSchema": function() {
         trace("@compilable/control/trait/for/validate.methods.validateSelfSchema");
         return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
@@ -38152,11 +38324,19 @@ NwtResource.define({
         trace("@compilable/control/trait/for/validate.methods.validateSelfValue");
         const value = this.getValueBySchema();
         this.validationError = false;
-        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        try {
+          return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        } catch (error) {
+          this.setValidationError(error);
+        }
       },
-      "setError": function(error) {
-        trace("@compilable/control/trait/for/validate.methods.setError");
+      "setValidationError": function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setValidationError");
         this.validationError = error;
+      },
+      "clearValidationError": function() {
+        trace("@compilable/control/trait/for/validate.methods.clearValidationError");
+        this.validationError = false;
       },
       "selectOption": function(event) {
         trace("NwtControlForOption.methods.selectOption");
@@ -38236,11 +38416,11 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][176]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compiled.js
+// @vuebundler[Proyecto_base_001][178]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compiled.js
 NwtResource.define({
   id: "control/for/structure",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings", "control/trait/for/validate"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -38252,6 +38432,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     },
@@ -38307,9 +38491,11 @@ NwtResource.define({
                           isShowingControl: true,
                           rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
                           rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
+                          rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
                       }" />
               </div>
           </template>
+          <nwt-control-error-handler :control="this" />
       </div>`,
     data: function() {
       const finalData = {};
@@ -38418,6 +38604,22 @@ NwtResource.define({
           value: value,
         });
       },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
       "validateSelfSchema": function() {
         trace("@compilable/control/trait/for/validate.methods.validateSelfSchema");
         return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
@@ -38426,11 +38628,19 @@ NwtResource.define({
         trace("@compilable/control/trait/for/validate.methods.validateSelfValue");
         const value = this.getValueBySchema();
         this.validationError = false;
-        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        try {
+          return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        } catch (error) {
+          this.setValidationError(error);
+        }
       },
-      "setError": function(error) {
-        trace("@compilable/control/trait/for/validate.methods.setError");
+      "setValidationError": function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setValidationError");
         this.validationError = error;
+      },
+      "clearValidationError": function() {
+        trace("@compilable/control/trait/for/validate.methods.clearValidationError");
+        this.validationError = false;
       },
       "getValueByDom": function() {
         trace("NwtControlForStructure.methods.getValueByDom");
@@ -38499,13 +38709,13 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][177]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compilable.css
+// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compilable.css
 
-// @vuebundler[Proyecto_base_001][178]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compiled.js
+// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compiled.js
 NwtResource.define({
   id: "control/for/text",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings", "control/trait/for/validate"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -38517,6 +38727,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     },
@@ -38561,6 +38775,7 @@ NwtResource.define({
                   :value="getValueBySchema()"
               />
           </div>
+          <nwt-control-error-handler :control="this" />
       </div>`,
     data: function() {
       const finalData = {};
@@ -38669,6 +38884,22 @@ NwtResource.define({
           value: value,
         });
       },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
       "validateSelfSchema": function() {
         trace("@compilable/control/trait/for/validate.methods.validateSelfSchema");
         return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
@@ -38677,11 +38908,19 @@ NwtResource.define({
         trace("@compilable/control/trait/for/validate.methods.validateSelfValue");
         const value = this.getValueBySchema();
         this.validationError = false;
-        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        try {
+          return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        } catch (error) {
+          this.setValidationError(error);
+        }
       },
-      "setError": function(error) {
-        trace("@compilable/control/trait/for/validate.methods.setError");
+      "setValidationError": function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setValidationError");
         this.validationError = error;
+      },
+      "clearValidationError": function() {
+        trace("@compilable/control/trait/for/validate.methods.clearValidationError");
+        this.validationError = false;
       },
       "getValueByDom": function() {
         trace("NwtControlForText.methods.getValueByDom");
@@ -38774,7 +39013,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compiled.js
+// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compiled.js
 NwtResource.define({
   id: "form/maker/viewer",
   apis: ["trait", "control", "validation"],
@@ -38811,6 +39050,7 @@ NwtResource.define({
                   isShowingControl: true,
                   rootValueIndex: [],
                   rootSchemaIndex: [],
+                  rootComponentIndex: [],
               }"
           />
       </div>`,
@@ -38848,20 +39088,19 @@ NwtResource.define({
     mounted: function() {
       // @COMPILED-BY: form/maker/viewer
       trace("NwtFormMakerViewer.mounted");
-      console.log(this.settings);
       NwtStatic.api.control.validation.validateControlSchema(this.settings);
       window.fmk = this;
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css
+// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css
 
-// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date/compiled.js
+// @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date/compiled.js
 NwtResource.define({
   id: "control/for/type/date",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -38873,6 +39112,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     }
@@ -38931,6 +39174,7 @@ NwtResource.define({
                   :value="getValueBySchema()"
               />
           </div>
+          <nwt-control-error-handler :control="this" />
       </div>`,
     data: function() {
       const finalData = {};
@@ -39029,6 +39273,22 @@ NwtResource.define({
         this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
           value: value,
         });
       },
@@ -39113,11 +39373,11 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js
+// @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js
 NwtResource.define({
   id: "control/for/type/duration",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -39129,6 +39389,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     }
@@ -39167,6 +39431,7 @@ NwtResource.define({
                   :value="getValueBySchema()"
               />
           </div>
+          <nwt-control-error-handler :control="this" />
       </div>`,
     data: function() {
       const finalData = {};
@@ -39268,6 +39533,22 @@ NwtResource.define({
           value: value,
         });
       },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
       "getValueByDom": function() {
         trace("NwtControlForDuration.methods.getValueByDom");
         if (!this.$local.control) {
@@ -39349,7 +39630,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
+// @vuebundler[Proyecto_base_001][185]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
 NwtResource.define({
   id: "control/partial/for/error-handler",
   apis: ["control", "view", "validation"],
@@ -39399,9 +39680,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
+// @vuebundler[Proyecto_base_001][186]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
 
-// @vuebundler[Proyecto_base_001][185]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
+// @vuebundler[Proyecto_base_001][187]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
 NwtResource.define({
   id: "control/partial/for/list-panel",
   apis: ["control", "view", "validation"],
@@ -39432,7 +39713,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][186]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js
+// @vuebundler[Proyecto_base_001][188]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js
 NwtResource.define({
   id: "control/partial/for/pagination-panel",
   apis: ["control", "view", "validation"],
@@ -39513,9 +39794,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][187]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css
+// @vuebundler[Proyecto_base_001][189]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css
 
-// @vuebundler[Proyecto_base_001][188]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
+// @vuebundler[Proyecto_base_001][190]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
 NwtResource.define({
   id: "control/partial/for/statement",
   apis: ["control", "view", "validation"],
@@ -39638,9 +39919,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][189]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
+// @vuebundler[Proyecto_base_001][191]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
 
-// @vuebundler[Proyecto_base_001][190]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
+// @vuebundler[Proyecto_base_001][192]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
 NwtResource.define({
   id: "test/control/for/settingsSpecExample",
   apis: ["settings", "test"],
@@ -39662,8 +39943,8 @@ NwtResource.define({
   },
 });
 
-// @vuebundler[Proyecto_base_001][191]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][193]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][192]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+// @vuebundler[Proyecto_base_001][194]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
 
-// @vuebundler[Proyecto_base_001][193]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][195]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

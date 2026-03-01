@@ -7,6 +7,7 @@
         </template>
         <slot></slot>
     </nwt-control-partial-for-statement>
+    <nwt-control-error-handler :control="this" />
     <div v-if="isShowingControl">
         <nwt-control-partial-for-pagination-panel :control="this" />
         <div class="pagination_result_container pad_left_1">
@@ -14,15 +15,16 @@
                 <div v-if="$local.paginatedList && $local.paginatedList.length">
                     <div class="item"
                         v-for="row, rowIndex in $local.paginatedList"
-                        v-bind:key="'paginated_row_' + (settings.hasStatementForItemByProperty && row.item[settings.hasStatementForItemByProperty] ? row.item[settings.hasStatementForItemByProperty] : row.index ? row.index : rowIndex)">
+                        v-bind:key="'paginated_row_' + getKeyForRow(row, rowIndex)">
                         <component :is="$toolkit.getComponentNameBySettings(settings.schema)"
-                            :ref="component => { if(component === null) { delete $local.controls[rowIndex]; } else { $local.controls[rowIndex] = component; } }"
+                            :ref="component => { if(component === null) { delete $local.controls[getKeyForRow(row, rowIndex)]; } else { $local.controls[getKeyForRow(row, rowIndex)] = component; } }"
                             :settings="{
                                 ...settings.schema,
                                 // isShowingControl: false,
                                 hasStatement: settings.hasStatementForItemByProperty ? row.item[settings.hasStatementForItemByProperty] : 'Ítem ' + (row.index + 1),
                                 rootValueIndex: $toolkit.getIndexForValue().concat([row.index]),
                                 rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema']),
+                                rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls',getKeyForRow(row, rowIndex)]),
                             }">
                             <template v-slot:onright>
                                 <div class="flex_1">

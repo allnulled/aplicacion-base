@@ -1,7 +1,7 @@
 NwtResource.define({
   id: "control/for/list",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings", "control/trait/for/validate"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -13,6 +13,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     },
@@ -55,6 +59,7 @@ NwtResource.define({
               </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
+          <nwt-control-error-handler :control="this" />
           <div v-if="isShowingControl">
               <nwt-control-partial-for-pagination-panel :control="this" />
               <div class="pagination_result_container pad_left_1">
@@ -62,15 +67,16 @@ NwtResource.define({
                       <div v-if="$local.paginatedList && $local.paginatedList.length">
                           <div class="item"
                               v-for="row, rowIndex in $local.paginatedList"
-                              v-bind:key="'paginated_row_' + (settings.hasStatementForItemByProperty && row.item[settings.hasStatementForItemByProperty] ? row.item[settings.hasStatementForItemByProperty] : row.index ? row.index : rowIndex)">
+                              v-bind:key="'paginated_row_' + getKeyForRow(row, rowIndex)">
                               <component :is="$toolkit.getComponentNameBySettings(settings.schema)"
-                                  :ref="component => { if(component === null) { delete $local.controls[rowIndex]; } else { $local.controls[rowIndex] = component; } }"
+                                  :ref="component => { if(component === null) { delete $local.controls[getKeyForRow(row, rowIndex)]; } else { $local.controls[getKeyForRow(row, rowIndex)] = component; } }"
                                   :settings="{
                                       ...settings.schema,
                                       // isShowingControl: false,
                                       hasStatement: settings.hasStatementForItemByProperty ? row.item[settings.hasStatementForItemByProperty] : 'Ítem ' + (row.index + 1),
                                       rootValueIndex: $toolkit.getIndexForValue().concat([row.index]),
                                       rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema']),
+                                      rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls',getKeyForRow(row, rowIndex)]),
                                   }">
                                   <template v-slot:onright>
                                       <div class="flex_1">
@@ -204,6 +210,22 @@ NwtResource.define({
           value: value,
         });
       },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
       "validateSelfSchema": function() {
         trace("@compilable/control/trait/for/validate.methods.validateSelfSchema");
         return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
@@ -212,11 +234,19 @@ NwtResource.define({
         trace("@compilable/control/trait/for/validate.methods.validateSelfValue");
         const value = this.getValueBySchema();
         this.validationError = false;
-        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        try {
+          return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        } catch (error) {
+          this.setValidationError(error);
+        }
       },
-      "setError": function(error) {
-        trace("@compilable/control/trait/for/validate.methods.setError");
+      "setValidationError": function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setValidationError");
         this.validationError = error;
+      },
+      "clearValidationError": function() {
+        trace("@compilable/control/trait/for/validate.methods.clearValidationError");
+        this.validationError = false;
       },
       "getValueByDom": function() {
         trace("NwtControlForList.methods.getValueByDom");
@@ -303,6 +333,10 @@ NwtResource.define({
         }
         this.$local.paginatedList = paginatedList;
         this.$forceUpdate(true);
+      },
+      "getKeyForRow": function(row, rowIndex) {
+        trace("NwtControlForList.methods.getKeyForRow");
+        return this.settings.hasStatementForItemByProperty && row.item[this.settings.hasStatementForItemByProperty] ? row.item[this.settings.hasStatementForItemByProperty] : row.index ? row.index : rowIndex;
       },
       "onValidate": function() {
         trace("NwtControlForList.methods.onValidate");

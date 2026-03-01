@@ -31,6 +31,10 @@
       return this.settings.rootSchemaIndex ? this.settings.rootSchemaIndex : [];
     },
 
+    getIndexForComponent: function() {
+      return this.settings.rootComponentIndex ? this.settings.rootComponentIndex : [];
+    },
+
     getComponentNameBySettings: function(settings = this.settings) {
       assertion(typeof settings === "object", "Parameter «settings» must be object on «NwtVue2Toolkit.getComponentNameBySettings»");
       assertion(typeof settings.type === "string", "Parameter «settings.type» must be object on «NwtVue2Toolkit.getComponentNameBySettings»");

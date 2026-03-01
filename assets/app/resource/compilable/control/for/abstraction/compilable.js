@@ -12,6 +12,7 @@ module.exports = {
     "control/trait/for/showable",
     "control/trait/for/remoteValue",
     "control/trait/for/remoteSchema",
+    "control/trait/for/remoteComponent",
     "control/trait/for/settings",
     "control/trait/for/validate",
   ],

@@ -1,7 +1,7 @@
 NwtResource.define({
   id: "control/for/option",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings", "control/trait/for/validate"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -13,6 +13,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     },
@@ -59,6 +63,7 @@ NwtResource.define({
                       isShowingControl: true,
                       rootValueIndex: $toolkit.getIndexForValue().concat([]),
                       rootSchemaIndex: $toolkit.getIndexForSchema().concat([$local.selectedOption]),
+                      rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','control']),
                   }">
                   <template v-slot:hideable>
                       <div class="">
@@ -71,6 +76,7 @@ NwtResource.define({
                       </div>
                   </template>
               </component>
+              <nwt-control-error-handler :control="this" />
           </template>
       </div>`,
     data: function() {
@@ -186,6 +192,22 @@ NwtResource.define({
           value: value,
         });
       },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
       "validateSelfSchema": function() {
         trace("@compilable/control/trait/for/validate.methods.validateSelfSchema");
         return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
@@ -194,11 +216,19 @@ NwtResource.define({
         trace("@compilable/control/trait/for/validate.methods.validateSelfValue");
         const value = this.getValueBySchema();
         this.validationError = false;
-        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        try {
+          return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        } catch (error) {
+          this.setValidationError(error);
+        }
       },
-      "setError": function(error) {
-        trace("@compilable/control/trait/for/validate.methods.setError");
+      "setValidationError": function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setValidationError");
         this.validationError = error;
+      },
+      "clearValidationError": function() {
+        trace("@compilable/control/trait/for/validate.methods.clearValidationError");
+        this.validationError = false;
       },
       "selectOption": function(event) {
         trace("NwtControlForOption.methods.selectOption");

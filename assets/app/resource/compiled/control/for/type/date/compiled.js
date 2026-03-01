@@ -1,7 +1,7 @@
 NwtResource.define({
   id: "control/for/type/date",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -13,6 +13,10 @@ NwtResource.define({
       "required": true
     },
     "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
       "type": Array,
       "required": true
     }
@@ -71,6 +75,7 @@ NwtResource.define({
                   :value="getValueBySchema()"
               />
           </div>
+          <nwt-control-error-handler :control="this" />
       </div>`,
     data: function() {
       const finalData = {};
@@ -169,6 +174,22 @@ NwtResource.define({
         this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
           value: value,
         });
       },

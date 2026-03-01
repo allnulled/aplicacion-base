@@ -24,11 +24,19 @@ module.exports = {
         trace("@compilable/control/trait/for/validate.methods.validateSelfValue");
         const value = this.getValueBySchema();
         this.validationError = false;
-        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        try {
+          return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+        } catch (error) {
+          this.setValidationError(error);
+        }
       },
-      setError: function(error) {
-        trace("@compilable/control/trait/for/validate.methods.setError");
+      setValidationError: function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setValidationError");
         this.validationError = error;
+      },
+      clearValidationError: function() {
+        trace("@compilable/control/trait/for/validate.methods.clearValidationError");
+        this.validationError = false;
       }
     },
   }
