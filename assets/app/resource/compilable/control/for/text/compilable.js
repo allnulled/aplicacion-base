@@ -39,6 +39,8 @@ module.exports = {
           return false;
         }
         this.$local.control.value = value;
+        this.unmarkAsChanged();
+
       },
       reloadValue: function() {
         return this.loadValue();
@@ -49,6 +51,7 @@ module.exports = {
         const indexes = this.getIndexForValue();
         console.log("Saving:", indexes, value);
         this.$toolkit.getRoot().$store.set(indexes, value);
+        this.unmarkAsChanged();
       },
       loadValue: function() {
         trace("NwtControlForText.methods.loadValue");
@@ -56,11 +59,20 @@ module.exports = {
           return false;
         }
         this.$local.control.value = this.getValueBySchema();
+        this.unmarkAsChanged();
       },
       onValidate: function () {
         trace("NwtControlForText.methods.onValidate");
         console.log("Validation at component-level on control/for/text");
       },
+      markAsChanged: function() {
+        trace("NwtControlForText.methods.markAsChanged");
+        this.$local.control.classList.add("was_changed");
+      },
+      unmarkAsChanged: function() {
+        trace("NwtControlForText.methods.unmarkAsChanged");
+        this.$local.control.classList.remove("was_changed");
+      }
     },
     mounted: function() {
       trace("NwtControlForText.mounted");

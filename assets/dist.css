@@ -3717,21 +3717,17 @@ table>tbody>tr>* {
 
 /* @vuebundler[Proyecto_base_001][173]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/error-handler/compilable.css*/
 .error_handler_box {
-    margin-top: 3px;
-    margin-bottom: 5px;
     overflow: scroll;
-    border: 1px solid black;
-    border-radius: 3pt;
-    background-color: rgba(47, 1, 1, 0.783);
+    background-color: rgb(247 209 209 / 78%);
 }
 
 .error_handler_box > pre {
     overflow: visible;
     border: none;
     background-color: transparent;
-    font-family: Arial;
+    font-family: var(--w7-font);
     font-size: 10px;
-    color: yellow;
+    color: black;
 }
 
 /* @vuebundler[Proyecto_base_001][174]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/abstraction/compiled.js*/
@@ -3795,18 +3791,27 @@ table>tbody>tr>* {
 
 /* @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compiled.js*/
+/* @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compilable.css*/
+.input_of_control_for_text {
 
-/* @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css*/
+}
+.input_of_control_for_text.was_changed {
+  background-color: rgb(231 227 203);
+  border: 1px solid rgb(59, 0, 0) !important;
+}
+
+/* @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compiled.js*/
+
+/* @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css*/
 
 
-/* @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date/compiled.js*/
+/* @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js*/
+/* @vuebundler[Proyecto_base_001][185]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][185]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js*/
+/* @vuebundler[Proyecto_base_001][186]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][186]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css*/
+/* @vuebundler[Proyecto_base_001][187]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css*/
 .nwt_control_partial_for_error_handler {
 
 }
@@ -3872,11 +3877,11 @@ table>tbody>tr>* {
     background: #777;
 }
 
-/* @vuebundler[Proyecto_base_001][187]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js*/
+/* @vuebundler[Proyecto_base_001][188]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][188]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js*/
+/* @vuebundler[Proyecto_base_001][189]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][189]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css*/
+/* @vuebundler[Proyecto_base_001][190]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css*/
 .nwt_control_partial_for_pagination_panel button.pagination_button {
     padding-bottom: 2px !important;
     cursor: pointer;
@@ -3891,9 +3896,9 @@ table>tbody>tr>* {
     max-width: 92px;
 }
 
-/* @vuebundler[Proyecto_base_001][190]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js*/
+/* @vuebundler[Proyecto_base_001][191]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][191]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css*/
+/* @vuebundler[Proyecto_base_001][192]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css*/
 .nwt_control_partial_for_statement {
     
 }
@@ -3928,11 +3933,14 @@ table>tbody>tr>* {
 }
 
 .nwt_control_partial_for_statement .selectable_row {
-    
+    /*
+    padding-top: 2px;
+    padding-bottom: 2px;
+    //*/
 }
 
 .nwt_control_partial_for_statement .selectable_row:hover {
-    background-color: rgba(236, 197, 197, 0.716);
+    background-color: #dae8f7;
 }
 
 .nwt_control_partial_for_statement .selectable_row.active {
@@ -3943,9 +3951,9 @@ table>tbody>tr>* {
     
 }
 
-/* @vuebundler[Proyecto_base_001][192]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js*/
+/* @vuebundler[Proyecto_base_001][193]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][193]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css*/
+/* @vuebundler[Proyecto_base_001][194]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css*/
 html,
 body {
     margin: 0px;
@@ -4405,10 +4413,10 @@ select.fluid {
     padding-right: 16px !important;
 }
 
-/* @vuebundler[Proyecto_base_001][194]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css*/
+/* @vuebundler[Proyecto_base_001][195]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css*/
 
 
-/* @vuebundler[Proyecto_base_001][195]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
+/* @vuebundler[Proyecto_base_001][196]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
 body {
     font: var(--w7-font);
 }

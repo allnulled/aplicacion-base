@@ -54,7 +54,8 @@ NwtResource.define({
           </nwt-control-partial-for-statement>
           <div v-if="isShowingControl">
               <input
-                  class="width_100"
+                  class="width_100 input_of_control_for_text"
+                  v-on:input="markAsChanged"
                   type="text"
                   :ref="component => { if(component === null) { delete $local.control; } else { $local.control = component; } }"
                   :disabled="settings.hasFixedValue"
@@ -221,6 +222,7 @@ NwtResource.define({
           return false;
         }
         this.$local.control.value = value;
+        this.unmarkAsChanged();
       },
       "reloadValue": function() {
         return this.loadValue();
@@ -231,6 +233,7 @@ NwtResource.define({
         const indexes = this.getIndexForValue();
         console.log("Saving:", indexes, value);
         this.$toolkit.getRoot().$store.set(indexes, value);
+        this.unmarkAsChanged();
       },
       "loadValue": function() {
         trace("NwtControlForText.methods.loadValue");
@@ -238,10 +241,19 @@ NwtResource.define({
           return false;
         }
         this.$local.control.value = this.getValueBySchema();
+        this.unmarkAsChanged();
       },
       "onValidate": function() {
         trace("NwtControlForText.methods.onValidate");
         console.log("Validation at component-level on control/for/text");
+      },
+      "markAsChanged": function() {
+        trace("NwtControlForText.methods.markAsChanged");
+        this.$local.control.classList.add("was_changed");
+      },
+      "unmarkAsChanged": function() {
+        trace("NwtControlForText.methods.unmarkAsChanged");
+        this.$local.control.classList.remove("was_changed");
       }
     },
     computed: {},

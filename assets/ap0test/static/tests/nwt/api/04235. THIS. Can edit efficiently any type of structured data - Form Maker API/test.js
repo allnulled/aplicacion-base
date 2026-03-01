@@ -8,6 +8,7 @@ const schema1 = {
       hasStatement: "Nombre de la persona:",
       hasDescription: "Aquí va el nombre de la persona",
       onValidate: function(assertion, subvalue) {
+        trace("@temp/control/for/structure.schema.name.onValidate");
         assertion(subvalue.startsWith("C"), "Value must start with C");
       }
     },

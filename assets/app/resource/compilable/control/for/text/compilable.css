@@ -1,0 +1,7 @@
+.input_of_control_for_text {
+
+}
+.input_of_control_for_text.was_changed {
+  background-color: rgb(231 227 203);
+  border: 1px solid rgb(59, 0, 0) !important;
+}

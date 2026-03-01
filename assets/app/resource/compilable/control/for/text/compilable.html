@@ -8,7 +8,8 @@
     </nwt-control-partial-for-statement>
     <div v-if="isShowingControl">
         <input
-            class="width_100"
+            class="width_100 input_of_control_for_text"
+            v-on:input="markAsChanged"
             type="text"
             :ref="component => { if(component === null) { delete $local.control; } else { $local.control = component; } }"
             :disabled="settings.hasFixedValue"
