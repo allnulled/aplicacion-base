@@ -6,7 +6,10 @@ const schema1 = {
     name: {
       type: "control/for/text",
       hasStatement: "Nombre de la persona:",
-      hasDescription: "Aquí va el nombre de la persona"
+      hasDescription: "Aquí va el nombre de la persona",
+      onValidate: function(assertion, subvalue) {
+        assertion(subvalue.startsWith("C"), "Value must start with C");
+      }
     },
     city: {
       type: "control/for/text",

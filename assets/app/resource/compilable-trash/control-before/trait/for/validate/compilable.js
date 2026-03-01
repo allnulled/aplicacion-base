@@ -24,7 +24,7 @@ module.exports = {
         trace("@compilable/control/trait/for/validate.methods.validateValue");
         const value = this.getValue();
         this.validationErrors = [];
-        return this.$options.statically.api.control.validation.validateValue(value, this.settings, this, [], NwtAsserter.createAssertionFunction(() => {
+        return this.$options.statically.api.control.validation.validateValue(value, this.settings, this, [], [], NwtAsserter.createAssertionFunction(() => {
           return true;
         }, error => {
           this.validationErrors.push(error);

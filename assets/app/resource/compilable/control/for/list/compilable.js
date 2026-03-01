@@ -139,7 +139,7 @@ module.exports = {
   },
   control: {
     onValidate: function(...args) {
-      trace("@compilable/control/for/text.control.onValidate");
+      trace("@compilable/control/for/list.control.onValidate");
       return NwtStatic.api.control.validation.onValidateForList(...args);
     },
   },

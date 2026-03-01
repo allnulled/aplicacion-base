@@ -1,8 +1,8 @@
 NwtStatic.api.set("control.validation.validateControlValueByResource", function(...args) {
   trace("NwtStatic.api.control.validation.validateControlValueByResource");
-  const [value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], assertion = NwtAsserter.silently] = args;
-  const subvalue = valueIndex.length === 0 ? value : NwtAccessor.get(value, valueIndex);
-  const subschema = schemaIndex.length === 0 ? schema : NwtAccessor.get(schema, schemaIndex);
+  const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], assertion = NwtAsserter.silently] = args;
   const resource = NwtResource.for(subschema.type);
-  resource.control.onValidate(subvalue, subschema, ...args);
+  console.log("validating by something:", subvalue, subschema);
+  if(!resource.control?.onValidate) return true;
+  resource.control.onValidate(assertion, ...args);
 });

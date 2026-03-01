@@ -2,7 +2,10 @@ const option1 = [{
   type: "control/for/structure",
   schema: {
     one: {
-      type: "control/for/text"
+      type: "control/for/text",
+      onValidate: function(subvalue, subschema, value, schema, component, valueIndex, schemaIndex, assertion) {
+        assertion(subvalue.startsWith("C"), `Value must start with 'C' at index «${valueIndex.join(".") || "[]"}» at schema index «${schemaIndex.join(".") || "[]"}» on «option1.schema.one.onValidate»`);
+      }
     }
   }
 }, {

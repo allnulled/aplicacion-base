@@ -97,7 +97,7 @@ NwtResource.define({
       },
       "validateValue": function() {
         trace("NwtControlPartialForStatement.methods.validateValue");
-        return this.control.validateControlValue(true);
+        return this.control.validateSelfValue();
       },
       "toggleControl": function() {
         trace("NwtControlPartialForStatement.methods.toggleControl");

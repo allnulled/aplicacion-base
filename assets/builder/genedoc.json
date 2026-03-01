@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-03-01T08:12:41.932Z",
+  "generatedAt": "2026-03-01T09:22:57.186Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -97,6 +97,182 @@
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/mixins/nwt-command-context-interface.js",
+      "name": "nwt-command-context-interface.js",
+      "type": "file",
+      "formalName": "NwtCommandContextInterfaceJs",
+      "apiName": "NwtCommandContextInterface",
+      "dependencies": [
+        "NwtCommandContextInterface"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/mixins/nwt-command-form-interface.js",
+      "name": "nwt-command-form-interface.js",
+      "type": "file",
+      "formalName": "NwtCommandFormInterfaceJs",
+      "apiName": "NwtCommandFormInterface",
+      "dependencies": [
+        "NwtCommandFormInterface",
+        "NwtCommandContextInterface",
+        "NwtImporter"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/mixins/nwt-command-view-interface.js",
+      "name": "nwt-command-view-interface.js",
+      "type": "file",
+      "formalName": "NwtCommandViewInterfaceJs",
+      "apiName": "NwtCommandViewInterface",
+      "dependencies": [
+        "NwtCommandViewInterface",
+        "NwtCommandContextInterface",
+        "NwtTester",
+        "NwtImporter",
+        "NwtFilesystem",
+        "NwtCacheDirectory"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form.css",
+      "name": "nwt-anonymous-command-form.css",
+      "type": "file",
+      "formalName": "NwtAnonymousCommandFormCss",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form.html",
+      "name": "nwt-anonymous-command-form.html",
+      "type": "file",
+      "formalName": "NwtAnonymousCommandFormHtml",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form.js",
+      "name": "nwt-anonymous-command-form.js",
+      "type": "file",
+      "formalName": "NwtAnonymousCommandFormJs",
+      "isVueComponent": true,
+      "componentName": [
+        "NwtAnonymousCommandFormJs",
+        "NwtAnonymousCommandFormHtml",
+        "NwtAnonymousCommandFormCss"
+      ],
+      "apiName": "NwtAnonymousCommandForm",
+      "dependencies": [
+        "NwtAnonymousCommandForm",
+        "NwtCommandFormInterface"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view.css",
+      "name": "nwt-anonymous-command-view.css",
+      "type": "file",
+      "formalName": "NwtAnonymousCommandViewCss",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view.html",
+      "name": "nwt-anonymous-command-view.html",
+      "type": "file",
+      "formalName": "NwtAnonymousCommandViewHtml",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view.js",
+      "name": "nwt-anonymous-command-view.js",
+      "type": "file",
+      "formalName": "NwtAnonymousCommandViewJs",
+      "isVueComponent": true,
+      "componentName": [
+        "NwtAnonymousCommandViewJs",
+        "NwtAnonymousCommandViewHtml",
+        "NwtAnonymousCommandViewCss"
+      ],
+      "apiName": "NwtAnonymousCommandView",
+      "dependencies": [
+        "NwtAnonymousCommandView",
+        "NwtCommandViewInterface"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-command-synchronizer.js",
+      "name": "nwt-command-synchronizer.js",
+      "type": "file",
+      "formalName": "NwtCommandSynchronizerJs",
+      "apiName": "NwtCommandSynchronizer",
+      "dependencies": [
+        "NwtCommandSynchronizer",
+        "NwtAbort",
+        "NwtTimer",
+        "NwtToasts"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-command.js",
+      "name": "nwt-command.js",
+      "type": "file",
+      "formalName": "NwtCommandJs",
+      "apiName": "NwtCommand",
+      "dependencies": [
+        "NwtCommand",
+        "NwtCommandFormFor",
+        "NwtCommandViewFor",
+        "NwtFilesystem",
+        "NwtImporter",
+        "NwtDialogs",
+        "NwtCommend"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css",
+      "name": "nwt-commands-manager-viewer.css",
+      "type": "file",
+      "formalName": "NwtCommandsManagerViewerCss",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html",
+      "name": "nwt-commands-manager-viewer.html",
+      "type": "file",
+      "formalName": "NwtCommandsManagerViewerHtml",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js",
+      "name": "nwt-commands-manager-viewer.js",
+      "type": "file",
+      "formalName": "NwtCommandsManagerViewerJs",
+      "isVueComponent": true,
+      "componentName": [
+        "NwtCommandsManagerViewerJs",
+        "NwtCommandsManagerViewerHtml",
+        "NwtCommandsManagerViewerCss"
+      ],
+      "apiName": "NwtCommandsManagerViewer",
+      "dependencies": [
+        "NwtCommandsManagerViewer",
+        "NwtCommandsManager",
+        "NwtFilesystem",
+        "NwtSettings",
+        "NwtShell"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager.js",
+      "name": "nwt-commands-manager.js",
+      "type": "file",
+      "formalName": "NwtCommandsManagerJs",
+      "apiName": "NwtCommandsManager",
+      "dependencies": [
+        "NwtCommandsManager",
+        "NwtFilesystem",
+        "NwtCommand",
+        "NwtPaths",
+        "require(\"path\")"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css",
       "name": "nwt-dynamic-tester-viewer.css",
       "type": "file",
@@ -164,370 +340,6 @@
         "NwtFilesystem",
         "NwtPaths",
         "require(\"path\")"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer.css",
-      "name": "nwt-form-builder-viewer.css",
-      "type": "file",
-      "formalName": "NwtFormBuilderViewerCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer.html",
-      "name": "nwt-form-builder-viewer.html",
-      "type": "file",
-      "formalName": "NwtFormBuilderViewerHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer.js",
-      "name": "nwt-form-builder-viewer.js",
-      "type": "file",
-      "formalName": "NwtFormBuilderViewerJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtFormBuilderViewerJs",
-        "NwtFormBuilderViewerHtml",
-        "NwtFormBuilderViewerCss"
-      ],
-      "apiName": "NwtFormBuilderViewer",
-      "dependencies": [
-        "NwtFormBuilderViewer"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder.js",
-      "name": "nwt-form-builder.js",
-      "type": "file",
-      "formalName": "NwtFormBuilderJs",
-      "apiName": "NwtFormBuilder",
-      "dependencies": [
-        "NwtFormBuilder",
-        "NwtResource",
-        "NwtAsserter",
-        "NwtDialogs"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.css",
-      "name": "nwt-form-control-errors-viewer.css",
-      "type": "file",
-      "formalName": "NwtFormControlErrorsViewerCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.html",
-      "name": "nwt-form-control-errors-viewer.html",
-      "type": "file",
-      "formalName": "NwtFormControlErrorsViewerHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.js",
-      "name": "nwt-form-control-errors-viewer.js",
-      "type": "file",
-      "formalName": "NwtFormControlErrorsViewerJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtFormControlErrorsViewerJs",
-        "NwtFormControlErrorsViewerHtml",
-        "NwtFormControlErrorsViewerCss"
-      ],
-      "apiName": "NwtFormControlErrorsViewer",
-      "dependencies": [
-        "NwtFormControlErrorsViewer"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors.js",
-      "name": "nwt-form-control-errors.js",
-      "type": "file",
-      "formalName": "NwtFormControlErrorsJs",
-      "apiName": "NwtFormControlErrors",
-      "dependencies": [
-        "NwtFormControlErrors"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.css",
-      "name": "nwt-form-control-statement-viewer.css",
-      "type": "file",
-      "formalName": "NwtFormControlStatementViewerCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.html",
-      "name": "nwt-form-control-statement-viewer.html",
-      "type": "file",
-      "formalName": "NwtFormControlStatementViewerHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.js",
-      "name": "nwt-form-control-statement-viewer.js",
-      "type": "file",
-      "formalName": "NwtFormControlStatementViewerJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtFormControlStatementViewerJs",
-        "NwtFormControlStatementViewerHtml",
-        "NwtFormControlStatementViewerCss"
-      ],
-      "apiName": "NwtFormControlStatementViewer",
-      "dependencies": [
-        "NwtFormControlStatementViewer"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement.js",
-      "name": "nwt-form-control-statement.js",
-      "type": "file",
-      "formalName": "NwtFormControlStatementJs",
-      "apiName": "NwtFormControlStatement",
-      "dependencies": [
-        "NwtFormControlStatement"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer.css",
-      "name": "nwt-form-control-viewer.css",
-      "type": "file",
-      "formalName": "NwtFormControlViewerCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer.html",
-      "name": "nwt-form-control-viewer.html",
-      "type": "file",
-      "formalName": "NwtFormControlViewerHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control-viewer.js",
-      "name": "nwt-form-control-viewer.js",
-      "type": "file",
-      "formalName": "NwtFormControlViewerJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtFormControlViewerJs",
-        "NwtFormControlViewerHtml",
-        "NwtFormControlViewerCss"
-      ],
-      "apiName": "NwtFormControlViewer",
-      "dependencies": [
-        "NwtFormControlViewer",
-        "NwtStatic"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form-control-viewer/nwt-form-control.js",
-      "name": "nwt-form-control.js",
-      "type": "file",
-      "formalName": "NwtFormControlJs",
-      "apiName": "NwtFormControl",
-      "dependencies": [
-        "NwtFormControl",
-        "NwtFormControlErrors",
-        "NwtFormControlStatement"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form/nwt-form.js",
-      "name": "nwt-form.js",
-      "type": "file",
-      "formalName": "NwtFormJs",
-      "apiName": "NwtForm",
-      "dependencies": [
-        "NwtForm",
-        "NwtFormBuilder",
-        "NwtFormControl",
-        "NwtFormBuilderViewer",
-        "NwtFormControlViewer",
-        "NwtFormControlErrorsViewer",
-        "NwtFormControlStatementViewer"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-builder-viewer/nwt-form-builder-viewer.css",
-      "name": "nwt-form-builder-viewer.css",
-      "type": "file",
-      "formalName": "NwtFormBuilderViewerCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-builder-viewer/nwt-form-builder-viewer.html",
-      "name": "nwt-form-builder-viewer.html",
-      "type": "file",
-      "formalName": "NwtFormBuilderViewerHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-builder-viewer/nwt-form-builder-viewer.js",
-      "name": "nwt-form-builder-viewer.js",
-      "type": "file",
-      "formalName": "NwtFormBuilderViewerJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtFormBuilderViewerJs",
-        "NwtFormBuilderViewerHtml",
-        "NwtFormBuilderViewerCss"
-      ],
-      "apiName": "NwtFormBuilderViewer",
-      "dependencies": [
-        "NwtFormBuilderViewer"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-builder-viewer/nwt-form-builder.js",
-      "name": "nwt-form-builder.js",
-      "type": "file",
-      "formalName": "NwtFormBuilderJs",
-      "apiName": "NwtFormBuilder",
-      "dependencies": [
-        "NwtFormBuilder",
-        "NwtResource",
-        "NwtAsserter",
-        "NwtDialogs"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.css",
-      "name": "nwt-form-control-errors-viewer.css",
-      "type": "file",
-      "formalName": "NwtFormControlErrorsViewerCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.html",
-      "name": "nwt-form-control-errors-viewer.html",
-      "type": "file",
-      "formalName": "NwtFormControlErrorsViewerHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-errors-viewer/nwt-form-control-errors-viewer.js",
-      "name": "nwt-form-control-errors-viewer.js",
-      "type": "file",
-      "formalName": "NwtFormControlErrorsViewerJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtFormControlErrorsViewerJs",
-        "NwtFormControlErrorsViewerHtml",
-        "NwtFormControlErrorsViewerCss"
-      ],
-      "apiName": "NwtFormControlErrorsViewer",
-      "dependencies": [
-        "NwtFormControlErrorsViewer"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-errors-viewer/nwt-form-control-errors.js",
-      "name": "nwt-form-control-errors.js",
-      "type": "file",
-      "formalName": "NwtFormControlErrorsJs",
-      "apiName": "NwtFormControlErrors",
-      "dependencies": [
-        "NwtFormControlErrors"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.css",
-      "name": "nwt-form-control-statement-viewer.css",
-      "type": "file",
-      "formalName": "NwtFormControlStatementViewerCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.html",
-      "name": "nwt-form-control-statement-viewer.html",
-      "type": "file",
-      "formalName": "NwtFormControlStatementViewerHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer.js",
-      "name": "nwt-form-control-statement-viewer.js",
-      "type": "file",
-      "formalName": "NwtFormControlStatementViewerJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtFormControlStatementViewerJs",
-        "NwtFormControlStatementViewerHtml",
-        "NwtFormControlStatementViewerCss"
-      ],
-      "apiName": "NwtFormControlStatementViewer",
-      "dependencies": [
-        "NwtFormControlStatementViewer"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-statement-viewer/nwt-form-control-statement.js",
-      "name": "nwt-form-control-statement.js",
-      "type": "file",
-      "formalName": "NwtFormControlStatementJs",
-      "apiName": "NwtFormControlStatement",
-      "dependencies": [
-        "NwtFormControlStatement"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-viewer/nwt-form-control-viewer.css",
-      "name": "nwt-form-control-viewer.css",
-      "type": "file",
-      "formalName": "NwtFormControlViewerCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-viewer/nwt-form-control-viewer.html",
-      "name": "nwt-form-control-viewer.html",
-      "type": "file",
-      "formalName": "NwtFormControlViewerHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-viewer/nwt-form-control-viewer.js",
-      "name": "nwt-form-control-viewer.js",
-      "type": "file",
-      "formalName": "NwtFormControlViewerJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtFormControlViewerJs",
-        "NwtFormControlViewerHtml",
-        "NwtFormControlViewerCss"
-      ],
-      "apiName": "NwtFormControlViewer",
-      "dependencies": [
-        "NwtFormControlViewer",
-        "NwtStatic"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form-control-viewer/nwt-form-control.js",
-      "name": "nwt-form-control.js",
-      "type": "file",
-      "formalName": "NwtFormControlJs",
-      "apiName": "NwtFormControl",
-      "dependencies": [
-        "NwtFormControl",
-        "NwtFormControlErrors",
-        "NwtFormControlStatement"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form--previous/nwt-form.js",
-      "name": "nwt-form.js",
-      "type": "file",
-      "formalName": "NwtFormJs",
-      "apiName": "NwtForm",
-      "dependencies": [
-        "NwtForm",
-        "NwtFormBuilder",
-        "NwtFormControl",
-        "NwtFormBuilderViewer",
-        "NwtFormControlViewer",
-        "NwtFormControlErrorsViewer",
-        "NwtFormControlStatementViewer"
       ]
     },
     {
@@ -1095,182 +907,6 @@
       "dependencies": [
         "NwtCollectionUtils",
         "NwtFramework"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js",
-      "name": "nwt-command-context-interface.js",
-      "type": "file",
-      "formalName": "NwtCommandContextInterfaceJs",
-      "apiName": "NwtCommandContextInterface",
-      "dependencies": [
-        "NwtCommandContextInterface"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js",
-      "name": "nwt-command-form-interface.js",
-      "type": "file",
-      "formalName": "NwtCommandFormInterfaceJs",
-      "apiName": "NwtCommandFormInterface",
-      "dependencies": [
-        "NwtCommandFormInterface",
-        "NwtCommandContextInterface",
-        "NwtImporter"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js",
-      "name": "nwt-command-view-interface.js",
-      "type": "file",
-      "formalName": "NwtCommandViewInterfaceJs",
-      "apiName": "NwtCommandViewInterface",
-      "dependencies": [
-        "NwtCommandViewInterface",
-        "NwtCommandContextInterface",
-        "NwtTester",
-        "NwtImporter",
-        "NwtFilesystem",
-        "NwtCacheDirectory"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.css",
-      "name": "nwt-anonymous-command-form.css",
-      "type": "file",
-      "formalName": "NwtAnonymousCommandFormCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.html",
-      "name": "nwt-anonymous-command-form.html",
-      "type": "file",
-      "formalName": "NwtAnonymousCommandFormHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form.js",
-      "name": "nwt-anonymous-command-form.js",
-      "type": "file",
-      "formalName": "NwtAnonymousCommandFormJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtAnonymousCommandFormJs",
-        "NwtAnonymousCommandFormHtml",
-        "NwtAnonymousCommandFormCss"
-      ],
-      "apiName": "NwtAnonymousCommandForm",
-      "dependencies": [
-        "NwtAnonymousCommandForm",
-        "NwtCommandFormInterface"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.css",
-      "name": "nwt-anonymous-command-view.css",
-      "type": "file",
-      "formalName": "NwtAnonymousCommandViewCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.html",
-      "name": "nwt-anonymous-command-view.html",
-      "type": "file",
-      "formalName": "NwtAnonymousCommandViewHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view.js",
-      "name": "nwt-anonymous-command-view.js",
-      "type": "file",
-      "formalName": "NwtAnonymousCommandViewJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtAnonymousCommandViewJs",
-        "NwtAnonymousCommandViewHtml",
-        "NwtAnonymousCommandViewCss"
-      ],
-      "apiName": "NwtAnonymousCommandView",
-      "dependencies": [
-        "NwtAnonymousCommandView",
-        "NwtCommandViewInterface"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css",
-      "name": "nwt-commands-manager-viewer.css",
-      "type": "file",
-      "formalName": "NwtCommandsManagerViewerCss",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html",
-      "name": "nwt-commands-manager-viewer.html",
-      "type": "file",
-      "formalName": "NwtCommandsManagerViewerHtml",
-      "dependencies": []
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js",
-      "name": "nwt-commands-manager-viewer.js",
-      "type": "file",
-      "formalName": "NwtCommandsManagerViewerJs",
-      "isVueComponent": true,
-      "componentName": [
-        "NwtCommandsManagerViewerJs",
-        "NwtCommandsManagerViewerHtml",
-        "NwtCommandsManagerViewerCss"
-      ],
-      "apiName": "NwtCommandsManagerViewer",
-      "dependencies": [
-        "NwtCommandsManagerViewer",
-        "NwtCommandsManager",
-        "NwtFilesystem",
-        "NwtSettings",
-        "NwtShell"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command-synchronizer.js",
-      "name": "nwt-command-synchronizer.js",
-      "type": "file",
-      "formalName": "NwtCommandSynchronizerJs",
-      "apiName": "NwtCommandSynchronizer",
-      "dependencies": [
-        "NwtCommandSynchronizer",
-        "NwtAbort",
-        "NwtTimer",
-        "NwtToasts"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-command.js",
-      "name": "nwt-command.js",
-      "type": "file",
-      "formalName": "NwtCommandJs",
-      "apiName": "NwtCommand",
-      "dependencies": [
-        "NwtCommand",
-        "NwtCommandFormFor",
-        "NwtCommandViewFor",
-        "NwtFilesystem",
-        "NwtImporter",
-        "NwtDialogs",
-        "NwtCommend"
-      ]
-    },
-    {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-command/nwt-commands-manager.js",
-      "name": "nwt-commands-manager.js",
-      "type": "file",
-      "formalName": "NwtCommandsManagerJs",
-      "apiName": "NwtCommandsManager",
-      "dependencies": [
-        "NwtCommandsManager",
-        "NwtFilesystem",
-        "NwtCommand",
-        "NwtPaths",
-        "require(\"path\")"
       ]
     },
     {

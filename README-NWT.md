@@ -203,10 +203,6 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
   - [Exposición](#exposicin)
   - [Ventajas](#ventajas)
 
-
-
-
-
 # NwtPersister
 
 API de persistencia en el sistema de ficheros.
@@ -2350,40 +2346,6 @@ const tester = new NwtTester("Nombre del tester", async (subtest, assertion) => 
   });
 });
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

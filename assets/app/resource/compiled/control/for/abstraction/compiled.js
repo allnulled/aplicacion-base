@@ -164,12 +164,12 @@ NwtResource.define({
           value: value,
         });
       },
-      "validateControlSchema": function() {
-        trace("@compilable/control/trait/for/validate.methods.validateControlSchema");
+      "validateSelfSchema": function() {
+        trace("@compilable/control/trait/for/validate.methods.validateSelfSchema");
         return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
       },
-      "validateControlValue": function() {
-        trace("@compilable/control/trait/for/validate.methods.validateControlValue");
+      "validateSelfValue": function() {
+        trace("@compilable/control/trait/for/validate.methods.validateSelfValue");
         const value = this.getValueBySchema();
         this.validationError = false;
         return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
@@ -211,7 +211,6 @@ NwtResource.define({
       },
       "onValidate": function() {
         trace("NwtControlForAbstraction.methods.onValidate");
-        console.log("Validation at component-level on control/for/abstraction");
       }
     },
     computed: {},

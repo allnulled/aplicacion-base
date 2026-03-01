@@ -119,10 +119,6 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-reflection.js`,
   `${projectRoot}/assets/framework/nwt-propagable-store.js`,
   `${projectRoot}/assets/framework/nwt-cache-directory.js`,
-  // Command API:
-  `${projectRoot}/assets/framework/nwt-command/nwt-command-synchronizer.js`,
-  `${projectRoot}/assets/framework/nwt-command/nwt-command.js`,
-  `${projectRoot}/assets/framework/nwt-command/nwt-commands-manager.js`,
   // Validation API:
   `${projectRoot}/assets/framework/nwt-validation/nwt-validation-context-pointer.js`,
   `${projectRoot}/assets/framework/nwt-validation/nwt-validation-context.js`,

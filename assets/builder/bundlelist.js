@@ -36,6 +36,7 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer`,
   `${projectRoot}/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer`,
   // Nwt Forms API | Utilidades genéricas:
+  /*
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-control-statement-viewer/nwt-form-control-statement-viewer`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-control-errors-viewer/nwt-form-control-errors.js`,
@@ -45,6 +46,7 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-builder-viewer/nwt-form-builder-viewer`,
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form.js`,
+  //*/
   `${projectRoot}/assets/framework/browser/components/nwt-form-maker/nwt-form-maker.js`,
   /*
   `${projectRoot}/assets/framework/browser/components/nwt-form/nwt-form-utils.js`,
@@ -114,12 +116,16 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/components/nwt-stars-background/nwt-stars-background`,
   `${projectRoot}/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background`,
   // Commands API:
-  `${projectRoot}/assets/framework/nwt-command/components/mixins/nwt-command-context-interface.js`,
-  `${projectRoot}/assets/framework/nwt-command/components/mixins/nwt-command-form-interface.js`,
-  `${projectRoot}/assets/framework/nwt-command/components/mixins/nwt-command-view-interface.js`,
-  `${projectRoot}/assets/framework/nwt-command/components/nwt-anonymous-command-form/nwt-anonymous-command-form`,
-  `${projectRoot}/assets/framework/nwt-command/components/nwt-anonymous-command-view/nwt-anonymous-command-view`,
-  `${projectRoot}/assets/framework/nwt-command/components/nwt-commands-manager-viewer/nwt-commands-manager-viewer`,
+  `${projectRoot}/assets/framework/browser/components/nwt-command/nwt-command-synchronizer.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-command/nwt-command.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-command/nwt-commands-manager.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-command/mixins/nwt-command-context-interface.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-command/mixins/nwt-command-form-interface.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-command/mixins/nwt-command-view-interface.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form`,
+  `${projectRoot}/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view`,
+  `${projectRoot}/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer`,
+  // Error template styles apart:
   `${projectRoot}/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css`,
   // @OK
   ...bundlelistExternal,

@@ -6,9 +6,10 @@ NwtStatic.api.set("control.validation.validateControlValue", function (...args) 
   const subschema = schemaIndex.length === 0 ? schema : NwtAccessor.get(schema, schemaIndex);
   const resource = NwtResource.for(subschema.type);
   const archtype = resource.subtypeOf;
-  NwtStatic.api.control.validation.validateControlValueByResource(value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
-  NwtStatic.api.control.validation.validateControlValueByComponent(value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
-  NwtStatic.api.control.validation.validateControlValueBySettings(value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
+  NwtStatic.api.control.validation.validateControlValueByResource(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
+  NwtStatic.api.control.validation.validateControlValueBySchema(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
+  NwtStatic.api.control.validation.validateControlValueByComponent(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
+  NwtStatic.api.control.validation.validateControlValueBySettings(subvalue, subschema, value, schema, controlComponent, valueIndex.concat([]), schemaIndex.concat([]), assertion);
   if (archtype === "list") {
     assertion(Array.isArray(subvalue), `Value at index «${valueIndex.join(".")}» must be array because it is subtype of «list» at schema index «${schemaIndex.join(".")}» on «NwtStatic.api.control.validation.validateControlValue»`);
     for (let index = 0; index < subvalue.length; index++) {

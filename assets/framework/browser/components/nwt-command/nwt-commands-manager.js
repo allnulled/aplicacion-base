@@ -42,7 +42,7 @@
 
   };
 
-  NwtCommandsManager.global = NwtCommandsManager.create(NwtPaths.global.relative("assets/framework/nwt-command/registry"));
+  NwtCommandsManager.global = NwtCommandsManager.create(NwtPaths.global.relative("assets/app/commands/registry"));
 
   return NwtCommandsManager;
 

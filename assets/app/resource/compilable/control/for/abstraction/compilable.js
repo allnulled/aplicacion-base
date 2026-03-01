@@ -58,7 +58,6 @@ module.exports = {
       },
       onValidate: function () {
         trace("NwtControlForAbstraction.methods.onValidate");
-        console.log("Validation at component-level on control/for/abstraction");
       },
     },
     mounted: function() {
