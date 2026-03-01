@@ -42,8 +42,8 @@ module.exports = {
           return output;
         }
       },
-      getValueByIndex: function () {
-        trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
+      getValueBySchema: function () {
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueBySchema");
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
@@ -52,9 +52,9 @@ module.exports = {
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
-      setValueByIndex: function (value) {
-        trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
-        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.setValueByIndex»");
+      setValueBySchema: function (value) {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
         this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,

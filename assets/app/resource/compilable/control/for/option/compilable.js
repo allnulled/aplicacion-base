@@ -13,6 +13,7 @@ module.exports = {
     "control/trait/for/remoteValue",
     "control/trait/for/remoteSchema",
     "control/trait/for/settings",
+    "control/trait/for/validate",
   ],
   settingsSpec: {
     schema: {
@@ -58,8 +59,8 @@ module.exports = {
           });
         }, 0);
       },
-      getValueByState: function () {
-        trace("NwtControlForOption.methods.getValueByState");
+      getValueByDom: function () {
+        trace("NwtControlForOption.methods.getValueByDom");
         // @TODO: tomar el valor de los controles interiores para devolver el propio
         return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
       },
@@ -67,11 +68,16 @@ module.exports = {
         trace("NwtControlForOption.methods.adaptTypeNameToUser");
         return txt.replace("control/for/", "");
       }
-    }
+    },
+    onValidate: function() {
+      trace("NwtControlForOption.methods.onValidate");
+      console.log("Validation at component-level on control/for/option");
+    },
   },
   control: {
-    onValidate: function (value, settings, component, indexes = [], assertion = NwtAsserter.global) {
-
-    }
+    onValidate: function(...args) {
+      trace("@compilable/control/for/text.control.onValidate");
+      return NwtStatic.api.control.validation.onValidateForOption(...args);
+    },
   },
 };

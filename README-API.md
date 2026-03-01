@@ -15,6 +15,7 @@ Documentación de las APIs de Nwt.
 
 - `1. The NwtAbort API`
 - `2. The NwtAccessor API`
+   - **@uses** `NwtAsserter`
 - `3. The NwtArgumenter API`
    - **@uses** `NwtArgumentes`
    - **@uses** `NwtFramework`
@@ -725,6 +726,13 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtProcess
    - NwtStringShortener
    - NwtSourceViewer
+- NwtAsserter ✖️ 6
+   - NwtAccessor
+   - NwtDecorableTree
+   - NwtFormBuilder
+   - NwtFormBuilder
+   - NwtPack
+   - NwtTester
 - NwtCodeComposer ✖️ 5
    - NwtIterableFunction
    - NwtJsReturnController
@@ -743,12 +751,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtFiletreeSelectorInterpreter
    - NwtProceduresManager
    - NwtPromptsManager
-- NwtAsserter ✖️ 5
-   - NwtDecorableTree
-   - NwtFormBuilder
-   - NwtFormBuilder
-   - NwtPack
-   - NwtTester
 - NwtToasts ✖️ 5
    - NwtClipboard
    - NwtCommandSynchronizer
@@ -1051,7 +1053,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-27T17:04:33.961Z",
+  "generatedAt": "2026-03-01T08:12:41.932Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1070,7 +1072,8 @@ El JSON original es:
       "formalName": "NwtAccessorJs",
       "apiName": "NwtAccessor",
       "dependencies": [
-        "NwtAccessor"
+        "NwtAccessor",
+        "NwtAsserter"
       ]
     },
     {

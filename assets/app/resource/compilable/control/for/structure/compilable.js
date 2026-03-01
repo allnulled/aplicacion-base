@@ -13,6 +13,7 @@ module.exports = {
     "control/trait/for/remoteValue",
     "control/trait/for/remoteSchema",
     "control/trait/for/settings",
+    "control/trait/for/validate",
   ],
   settingsSpec: {
     schema: {
@@ -23,34 +24,41 @@ module.exports = {
   view: {
     name: "NwtControlForStructure",
     template: $template,
-    methods: {
-      getValueByState: function() {
-        trace("NwtControlForStructure.methods.getValueByState");
-        const currentControls = this.$local.controls;
-        const state = {};
-        for(let prop in currentControls) {
-          const control = currentControls[prop];
-          const value = control.getValueByState()
-          state[prop] = value;
-        }
-        return state;
-      },
-      setValueByState: function() {
-        trace("NwtControlForStructure.methods.setValueByState");
-        // @NOTHING
-      }
-    },
-    created: function() {
+    created: function () {
       trace("NwtControlForStructure.created");
       NwtVue2.Toolkit.installToolkit(this);
       NwtVue2.Toolkit.installLocal(this);
       this.$local.controls = {};
     },
-    mounted: function() {
+    mounted: function () {
       trace("NwtControlForStructure.mounted");
-    }
+    },
+    methods: {
+      getValueByDom: function () {
+        trace("NwtControlForStructure.methods.getValueByDom");
+        const currentControls = this.$local.controls;
+        const state = {};
+        for (let prop in currentControls) {
+          const control = currentControls[prop];
+          const value = control.getValueByDom()
+          state[prop] = value;
+        }
+        return state;
+      },
+      setValueByDom: function () {
+        trace("NwtControlForStructure.methods.setValueByDom");
+        // @NOTHING
+      },
+      onValidate: function () {
+        trace("NwtControlForStructure.methods.onValidate");
+        console.log("Validation at component-level on control/for/structure");
+      },
+    },
   },
   control: {
-    
+    onValidate: function(...args) {
+      trace("@compilable/control/for/text.control.onValidate");
+      return NwtStatic.api.control.validation.onValidateForStructure(...args);
+    },
   },
 };

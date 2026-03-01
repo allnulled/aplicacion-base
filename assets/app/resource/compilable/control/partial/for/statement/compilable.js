@@ -38,7 +38,7 @@ module.exports = {
       },
       validateValue: function() {
         trace("NwtControlPartialForStatement.methods.validateValue");
-        return this.control.validateValue();
+        return this.control.validateControlValue(true);
       },
       toggleControl: function() {
         trace("NwtControlPartialForStatement.methods.toggleControl");

@@ -1,6 +1,6 @@
 tester.progressBar.total = 2;
 
-const answer1 = await NwtForm.builder.ask({
+const answer1 = await NwtFormMaker.dialog.fromSchema({
   type: "control/for/list",
   initialValue: [{
     name: "doctor jones",
@@ -72,7 +72,7 @@ assertion(typeof answer1[0].sex === "string", "Parameter «answer1[0].sex» shou
 
 tester.progressBar.advance(1);
 
-const answer2 = await NwtForm.builder.ask({
+const answer2 = await NwtFormMaker.dialog.fromSchema({
   type: "control/for/structure",
   initialValue: {
     name: "doctor jones",

@@ -21,7 +21,7 @@ module.exports = {
     methods: {
       getValue: function () {
         trace("@compilable/control/trait/for/getValue.methods.getValue");
-        const value = NwtStatic.api.control.getValueByIndex(this.settings.value, this.settings.valueIndex);
+        const value = NwtStatic.api.control.getValueBySchema(this.settings.value, this.settings.valueIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(value);
         return formattedValue;

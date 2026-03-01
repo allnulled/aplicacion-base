@@ -83,8 +83,11 @@ const schema1 = {
       schema: [{
         type: "control/for/list",
         schema: {
-          subtipo1: {
-            type: "control/for/text",
+          type: "control/for/structure",
+          schema: {
+            subtipo1: {
+              type: "control/for/text",
+            }
           }
         }
       }, {

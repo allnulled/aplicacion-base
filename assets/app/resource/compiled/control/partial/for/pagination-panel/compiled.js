@@ -22,6 +22,7 @@ NwtResource.define({
           </div>
           <div class="flex_100 text_align_center font_size_small">
               <template v-if="control.totalPages">
+                  <button class="mini fluid" v-on:click="control.digestSearch">♻️</button>
                   <span>Página {{ control.currentPage + 1 }}/{{ control.totalPages }}</span>
                   <button v-if="!isSelectingPage" class="mini fluid" v-on:click="activateSelectingPage">📍</button>
                   <input v-else type="text" class="mini fluid page_selector_box" v-on:keypress.enter="selectPage" ref="manuallySelectedPageBox" :value="control.currentPage+1" v-on:blur="deactivateSelectingPage" v-focus="selectAllTextFromBox" />

@@ -17,7 +17,7 @@
                 :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
                 :settings="{
                     ...column,
-                    // isShowingControl: false,
+                    isShowingControl: true,
                     rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
                     rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
                 }" />

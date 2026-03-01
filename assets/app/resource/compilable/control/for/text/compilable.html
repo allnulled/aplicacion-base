@@ -12,7 +12,7 @@
             type="text"
             :ref="component => { if(component === null) { delete $local.control; } else { $local.control = component; } }"
             :disabled="settings.hasFixedValue"
-            :value="getValueByIndex()"
+            :value="getValueBySchema()"
         />
     </div>
 </div>

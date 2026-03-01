@@ -65,11 +65,14 @@ NwtResource.define({
       NwtVue2.Toolkit.installLocal(this);
       NwtVue2.Toolkit.installStore(this);
       this.$store.set([], this.settings.initialValue);
+      // Compile schema already:
       this.$schema = NwtPropagableStore.create(this.settings);
     },
     mounted: function() {
       // @COMPILED-BY: form/maker/viewer
       trace("NwtFormMakerViewer.mounted");
+      console.log(this.settings);
+      NwtStatic.api.control.validation.validateControlSchema(this.settings);
       window.fmk = this;
     },
   }

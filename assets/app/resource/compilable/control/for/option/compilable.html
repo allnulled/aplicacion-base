@@ -8,6 +8,7 @@
                 ...$nwt.ObjectUtils.onlyKeys(settings, ['hasStatement', 'hasDescription']),
                 ...settings.schema[$local.selectedOption],
                 ...Object.assign({}, $local.isNotFirstTime ? {isShowingControl: true} : {}),
+                isShowingControl: true,
                 rootValueIndex: $toolkit.getIndexForValue().concat([]),
                 rootSchemaIndex: $toolkit.getIndexForSchema().concat([$local.selectedOption]),
             }">

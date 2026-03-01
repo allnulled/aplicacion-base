@@ -13,6 +13,7 @@ module.exports = {
     "control/trait/for/remoteValue",
     "control/trait/for/remoteSchema",
     "control/trait/for/settings",
+    "control/trait/for/validate",
   ],
   settingsSpec: {
     isShowingControl: {
@@ -24,15 +25,15 @@ module.exports = {
     name: "NwtControlForText",
     template: $template,
     methods: {
-      getValueByState: function() {
-        trace("NwtControlForText.methods.getValueByState");
+      getValueByDom: function() {
+        trace("NwtControlForText.methods.getValueByDom");
         if(!this.$local.control) {
-          return this.getValueByIndex();
+          return this.getValueBySchema();
         }
         return this.$local.control.value;
       },
-      setValueByState: function(value) {
-        trace("NwtControlForText.methods.setValueByState");
+      setValueByDom: function(value) {
+        trace("NwtControlForText.methods.setValueByDom");
         if(!this.$local.control) {
           return false;
         }
@@ -43,7 +44,7 @@ module.exports = {
       },
       saveValue: function() {
         trace("NwtControlForText.methods.saveValue");
-        const value = this.getValueByState();
+        const value = this.getValueByDom();
         const indexes = this.getIndexForValue();
         console.log("Saving:", indexes, value);
         this.$toolkit.getRoot().$store.set(indexes, value);
@@ -53,7 +54,11 @@ module.exports = {
         if(!this.$local.control) {
           return false;
         }
-        this.$local.control.value = this.getValueByIndex();
+        this.$local.control.value = this.getValueBySchema();
+      },
+      onValidate: function () {
+        trace("NwtControlForText.methods.onValidate");
+        console.log("Validation at component-level on control/for/text");
       },
     },
     mounted: function() {
@@ -74,8 +79,9 @@ module.exports = {
     }
   },
   control: {
-    onValidate: function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
-      
-    }
+    onValidate: function(...args) {
+      trace("@compilable/control/for/text.control.onValidate");
+      return NwtStatic.api.control.validation.onValidateForText(...args);
+    },
   },
 };

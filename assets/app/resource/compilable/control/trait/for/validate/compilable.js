@@ -12,25 +12,23 @@ module.exports = {
     data: function () {
       trace("@compilable/control/trait/for/validate.data");
       return {
-        validationErrors: [],
+        validationError: false,
       };
     },
     methods: {
       validateControlSchema: function() {
         trace("@compilable/control/trait/for/validate.methods.validateControlSchema");
-        return this.$options.statically.api.control.validation.validateControlSchema(this.settings, [], assertion);
+        return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
       },
-      validateValue: function () {
-        trace("@compilable/control/trait/for/validate.methods.validateValue");
-        const value = this.getValue();
-        this.validationErrors = [];
-        return this.$options.statically.api.control.validation.validateValue(value, this.settings, this, [], NwtAsserter.createAssertionFunction(() => {
-          return true;
-        }, error => {
-          this.validationErrors.push(error);
-          this.showControl();
-          throw error;
-        }));
+      validateControlValue: function () {
+        trace("@compilable/control/trait/for/validate.methods.validateControlValue");
+        const value = this.getValueBySchema();
+        this.validationError = false;
+        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+      },
+      setError: function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setError");
+        this.validationError = error;
       }
     },
   }

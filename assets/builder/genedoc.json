@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-02-27T17:04:33.961Z",
+  "generatedAt": "2026-03-01T08:12:41.932Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
@@ -941,7 +941,8 @@
       "formalName": "NwtAccessorJs",
       "apiName": "NwtAccessor",
       "dependencies": [
-        "NwtAccessor"
+        "NwtAccessor",
+        "NwtAsserter"
       ]
     },
     {

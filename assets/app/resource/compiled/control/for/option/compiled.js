@@ -1,7 +1,7 @@
 NwtResource.define({
   id: "control/for/option",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/settings", "control/trait/for/validate"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
@@ -16,6 +16,12 @@ NwtResource.define({
       "type": Array,
       "required": true
     },
+    "onValidate": {
+      "type": [
+        Function
+      ],
+      "default": NwtUtils.noop
+    },
     "schema": {
       "type": [
         Object
@@ -26,7 +32,10 @@ NwtResource.define({
   subtypeOf: "option",
   compileView: true,
   control: {
-    "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {}
+    "onValidate": function(...args) {
+      trace("@compilable/control/for/text.control.onValidate");
+      return NwtStatic.api.control.validation.onValidateForOption(...args);
+    }
   },
   view: {
     name: "NwtControlForOption",
@@ -47,6 +56,7 @@ NwtResource.define({
                       ...$nwt.ObjectUtils.onlyKeys(settings, ['hasStatement', 'hasDescription']),
                       ...settings.schema[$local.selectedOption],
                       ...Object.assign({}, $local.isNotFirstTime ? {isShowingControl: true} : {}),
+                      isShowingControl: true,
                       rootValueIndex: $toolkit.getIndexForValue().concat([]),
                       rootSchemaIndex: $toolkit.getIndexForSchema().concat([$local.selectedOption]),
                   }">
@@ -70,6 +80,13 @@ NwtResource.define({
         trace("@compilable/control/trait/for/showable.data");
         return {
           isShowingControl: this.settings.isShowingControl,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/trait/for/validate
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/validate.data");
+        return {
+          validationError: false,
         };
       }).call(this));
       // @COMPILED-BY: control/for/option
@@ -127,8 +144,8 @@ NwtResource.define({
           return output;
         }
       },
-      "getValueByIndex": function() {
-        trace("@compilable/control/trait/for/remoteValue.methods.getValueByIndex");
+      "getValueBySchema": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueBySchema");
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
@@ -137,9 +154,9 @@ NwtResource.define({
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
       },
-      "setValueByIndex": function(value) {
-        trace("@compilable/control/trait/for/remoteValue.methods.setValueByIndex");
-        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.setValueByIndex»");
+      "setValueBySchema": function(value) {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
         this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
         this.$toolkit.getRoot().$store.dispatch("set-value", {
           index: this.settings.rootValueIndex,
@@ -169,6 +186,20 @@ NwtResource.define({
           value: value,
         });
       },
+      "validateControlSchema": function() {
+        trace("@compilable/control/trait/for/validate.methods.validateControlSchema");
+        return NwtStatic.api.control.validation.validateControlSchema(this.settings, []);
+      },
+      "validateControlValue": function() {
+        trace("@compilable/control/trait/for/validate.methods.validateControlValue");
+        const value = this.getValueBySchema();
+        this.validationError = false;
+        return NwtStatic.api.control.validation.validateControlValue(value, this.settings, this);
+      },
+      "setError": function(error) {
+        trace("@compilable/control/trait/for/validate.methods.setError");
+        this.validationError = error;
+      },
       "selectOption": function(event) {
         trace("NwtControlForOption.methods.selectOption");
         setTimeout(() => {
@@ -181,8 +212,8 @@ NwtResource.define({
           });
         }, 0);
       },
-      "getValueByState": function() {
-        trace("NwtControlForOption.methods.getValueByState");
+      "getValueByDom": function() {
+        trace("NwtControlForOption.methods.getValueByDom");
         // @TODO: tomar el valor de los controles interiores para devolver el propio
         return [false, "right now", "on assets/app/resource/compilable/control/for/structure/compilable.js"];
       },
@@ -239,6 +270,10 @@ NwtResource.define({
           this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
         }
       }, 0);
+    },
+    onValidate: function() {
+      trace("NwtControlForOption.methods.onValidate");
+      console.log("Validation at component-level on control/for/option");
     },
   }
 });
