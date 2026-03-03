@@ -1,12 +1,6 @@
 <div class="nwt_form_maker_viewer">
-    <div class="flex_row centered">
-        <div class="flex_1">
-            <button class="mini fluid" v-on:click="toggleAll">🔸*️⃣</button>
-        </div>
-        <div class="flex_100 pad_left_1">{{ settings.hasTitle || "Formulario" }}</div>
-    </div>
-    <component
-        v-if="settings.type"
+    <nwt-form-maker-panel :viewer="this" side="top" />
+    <component v-if="settings.type"
         ref="mainControl"
         :is="$toolkit.getComponentNameBySettings(settings)"
         :settings="{
@@ -15,6 +9,5 @@
             rootValueIndex: [],
             rootSchemaIndex: [],
             rootComponentIndex: [],
-        }"
-    />
+        }" />
 </div>

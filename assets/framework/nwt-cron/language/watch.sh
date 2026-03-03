@@ -1,0 +1,1 @@
+nodemon -w test.js -w examples/input -w examples/expectation -w nwt-cron-parser.pegjs -e "js,pegjs,cronn" -x 'bash build.sh'

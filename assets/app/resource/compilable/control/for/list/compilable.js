@@ -28,7 +28,7 @@ module.exports = {
     data: function () {
       return {
         currentPage: 0,
-        maximumItems: 10,
+        currentItemsPerPage: 10,
         totalPages: 0,
       };
     },
@@ -88,7 +88,7 @@ module.exports = {
       },
       updateTotalPages: function () {
         trace("NwtControlForList.methods.updateTotalPages");
-        this.totalPages = Math.ceil(this.getValueBySchema().length / this.maximumItems);
+        this.totalPages = Math.ceil(this.getValueBySchema().length / this.currentItemsPerPage);
       },
       generateDefaultItem: function () {
         trace("NwtControlForList.methods.generateDefaultItem");
@@ -113,7 +113,7 @@ module.exports = {
       removeItem: function (positionInPage) {
         trace("NwtControlForList.methods.removeItem");
         const valueIndex = this.getIndexForValue();
-        const positionOfFirstInPage = this.maximumItems * this.currentPage;
+        const positionOfFirstInPage = this.currentItemsPerPage * this.currentPage;
         this.$toolkit.getRoot().$store.splice(valueIndex, positionOfFirstInPage + positionInPage);
         this.digestSearch();
       },
@@ -121,10 +121,10 @@ module.exports = {
         trace("NwtControlForList.methods.digestSearch");
         const listBrute = this.getValueBySchema();
         const list = Array.isArray(listBrute) ? listBrute : [];
-        this.totalPages = Math.ceil(list.length / this.maximumItems);
-        const currentItem = this.maximumItems * this.currentPage;
+        this.totalPages = Math.ceil(list.length / this.currentItemsPerPage);
+        const currentItem = this.currentItemsPerPage * this.currentPage;
         const paginatedList = [];
-        for (let index = currentItem; index < (currentItem + this.maximumItems); index++) {
+        for (let index = currentItem; index < (currentItem + this.currentItemsPerPage); index++) {
           const item = list[index];
           if (!item) continue;
           paginatedList.push({ index, item });

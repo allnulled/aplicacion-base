@@ -1,0 +1,30 @@
+2026 {
+    01-12 {
+        1-31 {
+            lunes-viernes {
+                0-24 {
+                    0-60 = Tarea repetida cada segundo
+                }
+            }
+        }
+    }
+}
+*=Tarea repetida cada segundo también
+
+
+1=Tarea que va para las 01:00am de todos los días
+
+20=Tarea que va para las 20:00pm de todos los días
+
+20:30=Tarea
+
+10 20:30=Tarea
+
+1 1:1= Tarea para todos los días 01 a las 01:01am
+
+6/1 10:30,11,12:30,14= los 1 de junio a las 10:30, 11:00, 12:30, 14:00
+
+1-15=Tarea para cada hora de las 01:00am a las 15:00am
+1-15 1-15=Tarea para las mismas horas, pero los días del 1 al 15
+
+

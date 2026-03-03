@@ -32,3 +32,5 @@ await NwtStringShortener.global.deleteAllExceptValues(values=[]); // Elimina tod
 await NwtStringShortener.global.add(id, value = false, silently = false); // añade el ID como nuevo shortener + si value no es false lo usa como ID shorteneado + si silently no es false no lanza error de existir ya + retorna el ID shorteneado correspondiente
 ```
 
+
+

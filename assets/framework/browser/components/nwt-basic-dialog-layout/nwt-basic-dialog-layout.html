@@ -1,0 +1,30 @@
+<div class="nwt_basic_dialog_layout dialog_container">
+    <div class="dialog_structure">
+        <div class="dialog_header">
+            <slot name="header"></slot>
+        </div>
+        <div class="dialog_body">
+            <div class="dialog_content">
+                <slot name="body"></slot>
+            </div>
+        </div>
+        <div class="dialog_footer">
+            <slot name="footer"></slot>
+        </div>
+    </div>
+    <!--Ejemplo de uso:-->
+    <!--
+    <nwt-basic-dialog-layout>
+        <template v-slot:header>
+            <div class="title">Titulo</div>
+        </template>
+        <template v-slot:body>
+            <div class="paragraph">Contenido</div>
+        </template>
+        <template v-slot:footer>
+            <hr/>
+            <div class="line">Pie de página</div>
+        </template>
+    </nwt-basic-dialog-layout>
+    -->
+</div>

@@ -19,14 +19,8 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_form_maker_viewer">
-          <div class="flex_row centered">
-              <div class="flex_1">
-                  <button class="mini fluid" v-on:click="toggleAll">🔸*️⃣</button>
-              </div>
-              <div class="flex_100 pad_left_1">{{ settings.hasTitle || "Formulario" }}</div>
-          </div>
-          <component
-              v-if="settings.type"
+          <nwt-form-maker-panel :viewer="this" side="top" />
+          <component v-if="settings.type"
               ref="mainControl"
               :is="$toolkit.getComponentNameBySettings(settings)"
               :settings="{
@@ -35,8 +29,7 @@ NwtResource.define({
                   rootValueIndex: [],
                   rootSchemaIndex: [],
                   rootComponentIndex: [],
-              }"
-          />
+              }" />
       </div>`,
     data: function() {
       const finalData = {};
@@ -48,13 +41,22 @@ NwtResource.define({
     },
     methods: {
       "getValue": function(key = []) {
+        trace("@compilable/form/maker/viewer.view.methods.getValue");
         return this.$store.get(key);
       },
       "setValue": function(key, value) {
+        trace("@compilable/form/maker/viewer.view.methods.setValue");
         return this.$store.set(key, value);
       },
       "toggleAll": function() {
+        trace("@compilable/form/maker/viewer.view.methods.toggleAll");
         this.$refs.mainControl.toggleControl();
+      },
+      "closeForm": function() {
+        trace("@compilable/form/maker/viewer.view.methods.closeForm");
+      },
+      "submitForm": function() {
+        trace("@compilable/form/maker/viewer.view.methods.submitForm");
       }
     },
     computed: {},

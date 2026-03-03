@@ -27,13 +27,23 @@ module.exports = {
     computed: {},
     methods: {
       getValue: function(key = []) {
+        trace("@compilable/form/maker/viewer.view.methods.getValue");
         return this.$store.get(key);
       },
       setValue: function(key, value) {
+        trace("@compilable/form/maker/viewer.view.methods.setValue");
         return this.$store.set(key, value);
       },
       toggleAll: function() {
+        trace("@compilable/form/maker/viewer.view.methods.toggleAll");
         this.$refs.mainControl.toggleControl();
+      },
+      closeForm: function() {
+        trace("@compilable/form/maker/viewer.view.methods.closeForm");
+      },
+      submitForm: function() {
+        trace("@compilable/form/maker/viewer.view.methods.submitForm");
+
       }
     },
     created() {

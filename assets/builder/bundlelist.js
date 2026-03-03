@@ -18,6 +18,7 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/directives/v-draggable.js`,
   `${projectRoot}/assets/framework/browser/directives/v-focus.js`,
   `${projectRoot}/assets/framework/browser/directives/v-forms.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout`,
   `${projectRoot}/assets/framework/browser/components/common-dialogs/common-dialogs`,
   `${projectRoot}/assets/framework/browser/components/common-toasts/common-toasts`,
   `${projectRoot}/assets/framework/browser/components/common-injections/common-injections`,
@@ -89,6 +90,13 @@ const allModules = [
   //*/
   // Static API:
   ...(function() {
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
     // LOS STATIC-API HELPERS:
     const staticHelpersDir = `${projectRoot}/assets/app/static/api/helpers`;
     const staticHelpersSelector = `${projectRoot}/assets/app/static/api/helpers/**/*.js`;
@@ -99,12 +107,26 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource-api-nexer.js`,
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource-api.js`,
   ...(function() {
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
     // LAS RESOURCE-APIS:
     const apisDir = `${projectRoot}/assets/app/resource/api`;
     const apiFiles = require("fs").readdirSync(apisDir,{withFileTypes:true}).filter(d => d.isFile()).map(d => require("path").resolve(apisDir,d.name));
     return apiFiles;
   })(),
   ...(function() {
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
     // LOS RESOURCE-API HELPERS:
     const apisHelpersDir = `${projectRoot}/assets/app/resource/api/helpers`;
     const apisHelpersSelector = `${projectRoot}/assets/app/resource/api/helpers/**/*.js`;
@@ -112,6 +134,22 @@ const allModules = [
     return apiHelpers;
   })(),
   `${projectRoot}/assets/framework/browser/components/nwt-resource/nwt-resource.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-functions.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-collection.js`,
+  `${projectRoot}/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-element.js`,
+  ...(function() {
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
+    // LOS DOM-QUERY-API HELPERS:
+    const apisDir = `${projectRoot}/assets/framework/browser/components/nwt-dom-query/fns`;
+    const apiFiles = require("fs").readdirSync(apisDir,{withFileTypes:true}).filter(d => d.isFile()).map(d => require("path").resolve(apisDir,d.name));
+    return apiFiles;
+  })(),
   // Fondos exóticos:
   `${projectRoot}/assets/framework/browser/components/nwt-stars-background/nwt-stars-background`,
   `${projectRoot}/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background`,

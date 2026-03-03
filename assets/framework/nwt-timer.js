@@ -44,7 +44,7 @@
 
   const NwtTimer = class {
 
-    static fromDateToString(d, options = {}) {
+    static fromDateToString(d = new Date(), options = {}) {
       trace("NwtTimer.fromDateToString");
       // d puede ser Date, número (timestamp) o cadena aceptada por Date
       const date = d instanceof Date ? d : new Date(d);

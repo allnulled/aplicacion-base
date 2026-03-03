@@ -6,8 +6,19 @@
     cursor: default;
 }
 
-.nwt_control_partial_for_pagination_panel input.page_selector_box {
+.nwt_control_partial_for_pagination_panel input.page_selector_box,
+.nwt_control_partial_for_pagination_panel .items_per_page_selector_box {
+    align-self: center;
+    max-height: 17px;
+    padding-top: 2px;
+    padding-bottom: 2px;
     min-width: 20px;
     width: auto;
+}
+
+.nwt_control_partial_for_pagination_panel input.page_selector_box {
     max-width: 92px;
+}
+.nwt_control_partial_for_pagination_panel .items_per_page_selector_box {
+    max-width: 42px;
 }

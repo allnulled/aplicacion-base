@@ -1,7 +1,37 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-03-01T12:50:09.431Z",
+  "generatedAt": "2026-03-03T17:09:51.243Z",
   "nodes": [
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.css",
+      "name": "nwt-basic-dialog-layout.css",
+      "type": "file",
+      "formalName": "NwtBasicDialogLayoutCss",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.html",
+      "name": "nwt-basic-dialog-layout.html",
+      "type": "file",
+      "formalName": "NwtBasicDialogLayoutHtml",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.js",
+      "name": "nwt-basic-dialog-layout.js",
+      "type": "file",
+      "formalName": "NwtBasicDialogLayoutJs",
+      "isVueComponent": true,
+      "componentName": [
+        "NwtBasicDialogLayoutJs",
+        "NwtBasicDialogLayoutHtml",
+        "NwtBasicDialogLayoutCss"
+      ],
+      "apiName": "NwtBasicDialogLayout",
+      "dependencies": [
+        "NwtBasicDialogLayout"
+      ]
+    },
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css",
       "name": "nwt-box-viewer.css",
@@ -270,6 +300,40 @@
         "NwtCommand",
         "NwtPaths",
         "require(\"path\")"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-collection.js",
+      "name": "nwt-dom-query-collection.js",
+      "type": "file",
+      "formalName": "NwtDomQueryCollectionJs",
+      "apiName": "NwtDomQueryCollection",
+      "dependencies": [
+        "NwtDomQueryCollection",
+        "NwtDomQueryFunctions"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-element.js",
+      "name": "nwt-dom-query-element.js",
+      "type": "file",
+      "formalName": "NwtDomQueryElementJs",
+      "apiName": "NwtDomQueryElement",
+      "dependencies": [
+        "NwtDomQueryElement",
+        "NwtDomQueryFunctions",
+        "NwtDomQueryCollection"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-functions.js",
+      "name": "nwt-dom-query-functions.js",
+      "type": "file",
+      "formalName": "NwtDomQueryFunctionsJs",
+      "apiName": "NwtDomQueryFunctions",
+      "dependencies": [
+        "NwtDomQueryFunctions",
+        "NwtUtils"
       ]
     },
     {
@@ -920,6 +984,58 @@
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/language/nwt-cron-parser.js",
+      "name": "nwt-cron-parser.js",
+      "type": "file",
+      "formalName": "NwtCronParserJs",
+      "apiName": "NwtCronParser",
+      "dependencies": [
+        "NwtCronParser"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/language/nwt-cron-parser.pegjs",
+      "name": "nwt-cron-parser.pegjs",
+      "type": "file",
+      "formalName": "NwtCronParserPegjs",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-job.js",
+      "name": "nwt-cron-job.js",
+      "type": "file",
+      "formalName": "NwtCronJobJs",
+      "apiName": "NwtCronJob",
+      "dependencies": [
+        "NwtCronJob",
+        "NwtUtils",
+        "NwtCronManager"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-manager.js",
+      "name": "nwt-cron-manager.js",
+      "type": "file",
+      "formalName": "NwtCronManagerJs",
+      "apiName": "NwtCronManager",
+      "dependencies": [
+        "NwtCronManager",
+        "NwtFilesystem",
+        "NwtCronJob"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-script.js",
+      "name": "nwt-cron-script.js",
+      "type": "file",
+      "formalName": "NwtCronScriptJs",
+      "apiName": "NwtCronScript",
+      "dependencies": [
+        "NwtCronScript",
+        "NwtCronParser"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js",
       "name": "nwt-csv.js",
       "type": "file",
@@ -1307,6 +1423,16 @@
         "require(\"path\")",
         "require(fullpath)",
         "require(\"fs\")"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-indexer.js",
+      "name": "nwt-indexer.js",
+      "type": "file",
+      "formalName": "NwtIndexerJs",
+      "apiName": "NwtIndexer",
+      "dependencies": [
+        "NwtIndexer"
       ]
     },
     {
@@ -1780,6 +1906,41 @@
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service-manager.js",
+      "name": "nwt-service-manager.js",
+      "type": "file",
+      "formalName": "NwtServiceManagerJs",
+      "apiName": "NwtServiceManager",
+      "dependencies": [
+        "NwtServiceManager",
+        "NwtStringShortener",
+        "require(\"path\")"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service-state.js",
+      "name": "nwt-service-state.js",
+      "type": "file",
+      "formalName": "NwtServiceStateJs",
+      "apiName": "NwtServiceState",
+      "dependencies": [
+        "NwtServiceState"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service.js",
+      "name": "nwt-service.js",
+      "type": "file",
+      "formalName": "NwtServiceJs",
+      "apiName": "NwtService",
+      "dependencies": [
+        "NwtService",
+        "NwtServiceManager",
+        "NwtEventsManager",
+        "NwtFilesystem"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js",
       "name": "nwt-settings.js",
       "type": "file",
@@ -1836,6 +1997,17 @@
         "NwtFilesystem",
         "NwtPaths",
         "global.json"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-volatile-string-shortener.js",
+      "name": "nwt-volatile-string-shortener.js",
+      "type": "file",
+      "formalName": "NwtVolatileStringShortenerJs",
+      "apiName": "NwtVolatileStringShortener",
+      "dependencies": [
+        "NwtVolatileStringShortener",
+        "NwtStringShortener"
       ]
     },
     {
