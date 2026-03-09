@@ -113,7 +113,13 @@
       });
     }
 
-    static fromMilisecondsToDuration(ms) {
+    static fromMsToMsResettingMsUnits(ms) {
+      const date = new Date(ms);
+      date.setMilliseconds(0);
+      return date.getTime();
+    }
+
+    static fromMillisecondsToDuration(ms) {
       const sign = ms < 0 ? "-" : "";
       ms = Math.abs(ms);
       const parts = [];

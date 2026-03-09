@@ -11,33 +11,6 @@
   }
 })(function () {
 
-  const NwtCronPersistibleJob = class {
-
-    static create(...args) {
-      trace("NwtCronPersistibleJob.create");
-      return new this(...args);
-    }
-
-    constructor(pattern, options, callback) {
-      trace("NwtCronPersistibleJob.constructor");
-      assertion(typeof pattern === "string", `Parameter «pattern» must be «string» on «NwtCronPersistibleJob.constructor»`);
-      assertion(typeof options === "object", `Parameter «options» must be «object» on «NwtCronPersistibleJob.constructor»`);
-      assertion(typeof callback === "function", `Parameter «callback» must be «function» on «NwtCronPersistibleJob.constructor»`);
-      Object.assign(this, { pattern, options, callback });
-      this.cronObject = new Cron(this.pattern, Object.assign({}, this.options), this.callback);
-    }
-
-    toJSON() {
-      trace("NwtCronPersistibleJob.prototype.toJSON");
-      return {
-        pattern: this.pattern,
-        options: this.options,
-        callback: this.callback.toString(),
-      };
-    }
-    
-  };
-  
   const NwtCronManager = class {
 
     static PersistibleJob = NwtCronPersistibleJob;
@@ -66,7 +39,7 @@
 
     async pause() {
       trace("NwtCronManager.prototype.pause");
-      for(let index=0; index<this.jobs.length; index++) {
+      for (let index = 0; index < this.jobs.length; index++) {
         const job = this.jobs[index];
         job.cronObject.pause();
       }
@@ -74,7 +47,7 @@
 
     async resume() {
       trace("NwtCronManager.prototype.resume");
-      for(let index=0; index<this.jobs.length; index++) {
+      for (let index = 0; index < this.jobs.length; index++) {
         const job = this.jobs[index];
         job.cronObject.resume();
       }
@@ -82,7 +55,7 @@
 
     async stop() {
       trace("NwtCronManager.prototype.stop");
-      for(let index=0; index<this.jobs.length; index++) {
+      for (let index = 0; index < this.jobs.length; index++) {
         const job = this.jobs[index];
         job.cronObject.stop();
       }
@@ -90,13 +63,21 @@
 
     async load() {
       trace("NwtCronManager.prototype.load");
-      this.removeAllJobs();
+      this.removeAllJobs(false);
       const persistedJobs = await NwtFilesystem.readJson(this.basefile);
-      for(let index=0; index<persistedJobs.length; index++) {
+      for (let index = 0; index < persistedJobs.length; index++) {
         const persistedJob = persistedJobs[index];
         const callback = NwtCodeComposer.hydrateFunction(persistedJob.callback);
-        this.addJob(persistedJob.pattern, persistedJob.options, callback);
+        const base = NwtObjectUtils.exceptKeys(persistedJob, NwtCronPersistibleJob.notPersistibleProps);
+        const jobParameters = Object.assign(base, {
+          callback: callback
+        });
+        this.addJob(jobParameters);
       }
+    }
+
+    reload() {
+      return this.load();
     }
 
     async save() {
@@ -104,31 +85,46 @@
       await NwtFilesystem.writeJson(this.basefile, this.jobs);
     }
 
-    async addJob(pattern, options, callback) {
+    async addJob(jobParameters) {
       trace("NwtCronManager.prototype.addJob");
-      const job = NwtCronPersistibleJob.create(pattern, options, callback);
+      const job = NwtCronPersistibleJob.create(jobParameters, this);
       this.jobs.push(job);
       await this.save();
+      return job;
     }
 
-    async removeJob(index) {
+    async removeJobByReference(job) {
+      return this.removeJobByIndex(this.jobs.indexOf(job));
+    }
+
+    async removeJobByIndex(index) {
       this.jobs[index].cronObject.stop();
       this.jobs.splice(index, 1);
       await this.save();
-      await this.restart();
     }
 
-    async removeAllJobs() {
-      for(let index=this.jobs.length-1; index>=0; index--) {
+    async removeAllJobs(persist = true) {
+      for (let index = this.jobs.length - 1; index >= 0; index--) {
         const job = this.jobs[index];
         this.jobs[index].cronObject.stop();
         this.jobs.splice(index, 1);
+      }
+      if (persist) {
+        await this.save();
       }
     }
 
   };
 
   NwtCronManager.global = NwtCronManager.create();
+
+  // @CONTINUES: esto sigue en el evento "app-mounted" de nwt vía window
+  if (NwtEnvironment.hasWindow) {
+    window.addEventListener("app-mounted", async function (event) {
+      trace("AppPayload.inject@app-mounted :: start cron jobs");
+      NwtCronManager.global.start();
+    });
+  }
 
   return NwtCronManager;
 

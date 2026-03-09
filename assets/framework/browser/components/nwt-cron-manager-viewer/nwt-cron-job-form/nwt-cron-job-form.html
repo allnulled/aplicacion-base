@@ -1,0 +1,78 @@
+<div class="nwt_cron_job_form">
+    <div>
+        <div class="nowrap">
+            <div class="flex_row centered">
+                <div class="flex_1">🔔 Nombre: </div>
+                <div class="flex_100 pad_left_1">
+                    <input class="width_100 text_align_right" type="text" :value="job.title" 
+                        :ref="(el) => { if(el === null) { delete $local.controls.title; } else { $local.controls.title = el; } }"/>
+                </div>
+                <div class="flex_1">
+                    <button class="mini" v-on:click="saveJob">💾</button>
+                </div>
+            </div>
+        </div>
+        <div class="nowrap">
+            <div class="flex_row centered">
+                <div class="flex_1">⏰ Alarma: </div>
+                <div class="flex_100 pad_left_1">
+                    <input class="width_100 text_align_right" type="text" disabled="true" :value="$window.cronstrue.toString(job.pattern)" />
+                </div>
+            </div>
+        </div>
+        <div class="nowrap">
+            <div class="flex_row centered">
+                <div class="flex_1">⏳ Cuenta atrás: </div>
+                <div class="flex_100 pad_left_1">
+                    <input class="width_100 text_align_right" type="text" disabled="true" :value="$nwt.Timer.fromMillisecondsToDuration($nwt.Timer.fromMsToMsResettingMsUnits(job.cronObject.msToNext()))" />
+                </div>
+            </div>
+        </div>
+        <div class="nowrap">
+            <div class="flex_row centered">
+                <div class="flex_1">📌 Expresión: </div>
+                <div class="flex_100 pad_left_1">
+                    <input class="width_100 text_align_right" type="text" disabled="true" :value="job.pattern" />
+                </div>
+            </div>
+        </div>
+        <div class="nowrap">
+            <div class="flex_row centered"
+                v-for="magnitude, magnitudeIndex in $local.magnitudes"
+                v-bind:key="'magnitude_' + magnitudeIndex">
+                <div class="flex_1">{{ magnitude.text }}: </div>
+                <div class="flex_100 pad_left_1">
+                    <input class="width_100 text_align_right"
+                        type="text"
+                        :ref="(el) => { if(el === null) { delete $local.controls[magnitude.id]; } else { $local.controls[magnitude.id] = el; } }"
+                        :value="$local.cronExpression[magnitude.id]"
+                        :placeholder="magnitude.placeholder" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="nowrap">
+            <div>
+                <div class="flex_row centered">
+                    <div class="flex_100"> ⚡️ Acción: </div>
+                    <div class="flex_1">
+                        <button class="mini" :class="{active: isEditingCallback}" v-on:click="toggleCallbackEdition">🪛</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="" v-if="!isEditingCallback">
+                    <nwt-code-highlighter syntax="js"
+                        :code="$window.beautifier.js(job.callback.toString())" />
+                </div>
+                <div class="" v-else>
+                    <textarea
+                        class="width_100"
+                        :value="$nwt.CodeComposer.beautifyJs($nwt.CodeComposer.getBlankFunctionBody(job.callback))"
+                        :ref="(el) => { if(el === null) { delete $local.controls.callback; } else { $local.controls.callback = el; } }"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,5 +2,5 @@
     <div class="position_absolute" style="top:4px;right:4px;opacity:.6;">
         <button class="mini" v-on:click="copyCode">🧷 Copiar</button>
     </div>
-    <pre :class="syntax" ref="code_highlighter_box">{{ code || $slots.default[0]?.text || "" }}</pre>
+    <pre :class="syntax" ref="code_highlighter_box">{{ code || $slots.default[0].text || "" }}</pre>
 </div>

@@ -46,11 +46,11 @@
 
   const NwtUtils = class {
 
-    static noop() { }
+    static noop = function () { };
 
-    static noopSelf(s) {
+    static noopSelf = function (s) {
       return s;
-    }
+    };
 
     static printify(...args) {
       console.log("[printify]", ...args);
@@ -75,9 +75,9 @@
         }
         return output;
       } catch (error) {
-        return onFail;
+        return defaultValue;
       }
-    }
+    };
 
     static copify(data) {
       return JSON.parse(JSON.stringify(data));

@@ -25,11 +25,6 @@
     static inject() {
 
       window.addEventListener("app-mounted", async function (event) {
-        trace("AppPayload.inject@app-mounted :: start cron jobs");
-        NwtCronManager.global.start();
-      });
-
-      window.addEventListener("app-mounted", async function (event) {
         trace("AppPayload.inject@app-mounted :: load beautifyjs");
         On_development: {
           await NwtCodeComposer.loadBeautifyJs();

@@ -75,7 +75,7 @@
 
     getCurrentMillisecond() {
       if(typeof NwtTimer === "undefined") return "-";
-      return NwtTimer.fromMilisecondsToDuration((new Date()) - this.originalDate);
+      return NwtTimer.fromMillisecondsToDuration((new Date()) - this.originalDate);
     }
 
     createTrace() {

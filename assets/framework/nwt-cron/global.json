@@ -1,1 +1,1 @@
-[{"pattern":"*/5 * * * * *","options":{},"callback":"async function anonymous(\n) {\nconsole.log(\"Hello!\");\n}"}]
+[{"title":"Nuevo nombre","pattern":"0 0 0 * * * *","options":{},"callback":"function () { }"},{"title":"A otra cosa","pattern":"0 0 0 * * * *","options":{},"callback":"function () { }"},{"title":"Marimpindingquitisosa","pattern":"0 0 0 * * * *","options":{},"callback":"function () { }"}]

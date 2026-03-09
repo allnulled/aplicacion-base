@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-03-09T10:46:46.988Z",
+  "generatedAt": "2026-03-09T17:14:31.334Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.css",
@@ -303,6 +303,45 @@
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form.css",
+      "name": "nwt-cron-job-form.css",
+      "type": "file",
+      "formalName": "NwtCronJobFormCss",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form.html",
+      "name": "nwt-cron-job-form.html",
+      "type": "file",
+      "formalName": "NwtCronJobFormHtml",
+      "dependencies": [
+        "window.cronstrue",
+        "window.beautifier"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form.js",
+      "name": "nwt-cron-job-form.js",
+      "type": "file",
+      "formalName": "NwtCronJobFormJs",
+      "isVueComponent": true,
+      "componentName": [
+        "NwtCronJobFormJs",
+        "NwtCronJobFormHtml",
+        "NwtCronJobFormCss"
+      ],
+      "apiName": "NwtCronJobForm",
+      "dependencies": [
+        "NwtCronJobForm",
+        "NwtCronPersistibleJob",
+        "NwtUtils",
+        "NwtObjectUtils",
+        "NwtCodeComposer",
+        "NwtCronExpression",
+        "NwtVue2Toolkit"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.css",
       "name": "nwt-cron-manager-viewer.css",
       "type": "file",
@@ -329,7 +368,10 @@
       ],
       "apiName": "NwtCronManagerViewer",
       "dependencies": [
-        "NwtCronManagerViewer"
+        "NwtCronManagerViewer",
+        "NwtCronManager",
+        "NwtCronExpression",
+        "NwtUtils"
       ]
     },
     {
@@ -1014,6 +1056,18 @@
       ]
     },
     {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-expression.js",
+      "name": "nwt-cron-expression.js",
+      "type": "file",
+      "formalName": "NwtCronExpressionJs",
+      "apiName": "NwtCronExpression",
+      "dependencies": [
+        "NwtCronExpression",
+        "NwtObjectUtils",
+        "NwtCronManager"
+      ]
+    },
+    {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-manager.js",
       "name": "nwt-cron-manager.js",
       "type": "file",
@@ -1024,7 +1078,22 @@
         "NwtCronPersistibleJob",
         "NwtFilesystem",
         "NwtCodeComposer",
-        "global.json"
+        "NwtObjectUtils",
+        "NwtEnvironment",
+        "global.json",
+        "window.addEventListener"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-persistible-job.js",
+      "name": "nwt-cron-persistible-job.js",
+      "type": "file",
+      "formalName": "NwtCronPersistibleJobJs",
+      "apiName": "NwtCronPersistibleJob",
+      "dependencies": [
+        "NwtCronPersistibleJob",
+        "NwtCronManager",
+        "NwtObjectUtils"
       ]
     },
     {

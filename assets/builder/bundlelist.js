@@ -27,6 +27,7 @@ const allModules = [
   `${projectRoot}/assets/framework/browser/components/common-injections/common-injections`,
   `${projectRoot}/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer`,
   `${projectRoot}/assets/framework/browser/components/nwt-tester-node/nwt-tester-node`,
+  `${projectRoot}/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form`,
   `${projectRoot}/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer`,
   `${projectRoot}/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer`,
   `${projectRoot}/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer`,
