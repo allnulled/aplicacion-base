@@ -1,0 +1,111 @@
+[
+  {
+    "selector": [
+      {
+        "year": 2027
+      }
+    ],
+    "action": "Año"
+  },
+  {
+    "selector": [
+      {
+        "year": 2025
+      },
+      {
+        "year": 2026
+      },
+      {
+        "year": 2027
+      }
+    ],
+    "action": "Lista de años"
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "year": 2025
+        },
+        "to": {
+          "year": 2027
+        }
+      }
+    ],
+    "action": "Rango de años"
+  },
+  {
+    "selector": [
+      {
+        "year": 2026,
+        "month": 1,
+        "day": 1
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "hour": 10,
+            "minute": 0
+          }
+        ],
+        "action": "Día y hora"
+      }
+    ]
+  },
+  {
+    "selector": [
+      {
+        "year": 2026
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "ambiguous": 1
+          }
+        ],
+        "subselector": [
+          {
+            "selector": [
+              {
+                "ambiguous": 1
+              }
+            ],
+            "subselector": [
+              {
+                "selector": [
+                  {
+                    "ambiguous": 10
+                  }
+                ],
+                "subselector": [
+                  {
+                    "selector": [
+                      {
+                        "ambiguous": 0
+                      }
+                    ],
+                    "subselector": [
+                      {
+                        "selector": [
+                          {
+                            "ambiguous": 0
+                          }
+                        ],
+                        "action": "Año, mes ambiguo, día ambiguo, hora ambigua y minuto ambiguo"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

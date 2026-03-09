@@ -1,0 +1,1 @@
+[{"pattern":"*/5 * * * * *","options":{},"callback":"async function anonymous(\n) {\nconsole.log(\"Hello!\");\n}"}]

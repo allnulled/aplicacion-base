@@ -18684,7 +18684,3601 @@ License: MIT
 */
 ((e,t)=>{"function"==typeof define&&define.amd?define([],t):"object"==typeof module&&"undefined"!=typeof exports?module.exports=t():e.Papa=t()})(this,function r(){var n="undefined"!=typeof self?self:"undefined"!=typeof window?window:void 0!==n?n:{};var d,s=!n.document&&!!n.postMessage,a=n.IS_PAPA_WORKER||!1,o={},h=0,v={};function u(e){this._handle=null,this._finished=!1,this._completed=!1,this._halted=!1,this._input=null,this._baseIndex=0,this._partialLine="",this._rowCount=0,this._start=0,this._nextChunk=null,this.isFirstChunk=!0,this._completeResults={data:[],errors:[],meta:{}},function(e){var t=b(e);t.chunkSize=parseInt(t.chunkSize),e.step||e.chunk||(t.chunkSize=null);this._handle=new i(t),(this._handle.streamer=this)._config=t}.call(this,e),this.parseChunk=function(t,e){var i=parseInt(this._config.skipFirstNLines)||0;if(this.isFirstChunk&&0<i){let e=this._config.newline;e||(r=this._config.quoteChar||'"',e=this._handle.guessLineEndings(t,r)),t=[...t.split(e).slice(i)].join(e)}this.isFirstChunk&&U(this._config.beforeFirstChunk)&&void 0!==(r=this._config.beforeFirstChunk(t))&&(t=r),this.isFirstChunk=!1,this._halted=!1;var i=this._partialLine+t,r=(this._partialLine="",this._handle.parse(i,this._baseIndex,!this._finished));if(!this._handle.paused()&&!this._handle.aborted()){t=r.meta.cursor,i=(this._finished||(this._partialLine=i.substring(t-this._baseIndex),this._baseIndex=t),r&&r.data&&(this._rowCount+=r.data.length),this._finished||this._config.preview&&this._rowCount>=this._config.preview);if(a)n.postMessage({results:r,workerId:v.WORKER_ID,finished:i});else if(U(this._config.chunk)&&!e){if(this._config.chunk(r,this._handle),this._handle.paused()||this._handle.aborted())return void(this._halted=!0);this._completeResults=r=void 0}return this._config.step||this._config.chunk||(this._completeResults.data=this._completeResults.data.concat(r.data),this._completeResults.errors=this._completeResults.errors.concat(r.errors),this._completeResults.meta=r.meta),this._completed||!i||!U(this._config.complete)||r&&r.meta.aborted||(this._config.complete(this._completeResults,this._input),this._completed=!0),i||r&&r.meta.paused||this._nextChunk(),r}this._halted=!0},this._sendError=function(e){U(this._config.error)?this._config.error(e):a&&this._config.error&&n.postMessage({workerId:v.WORKER_ID,error:e,finished:!1})}}function f(e){var r;(e=e||{}).chunkSize||(e.chunkSize=v.RemoteChunkSize),u.call(this,e),this._nextChunk=s?function(){this._readChunk(),this._chunkLoaded()}:function(){this._readChunk()},this.stream=function(e){this._input=e,this._nextChunk()},this._readChunk=function(){if(this._finished)this._chunkLoaded();else{if(r=new XMLHttpRequest,this._config.withCredentials&&(r.withCredentials=this._config.withCredentials),s||(r.onload=y(this._chunkLoaded,this),r.onerror=y(this._chunkError,this)),r.open(this._config.downloadRequestBody?"POST":"GET",this._input,!s),this._config.downloadRequestHeaders){var e,t=this._config.downloadRequestHeaders;for(e in t)r.setRequestHeader(e,t[e])}var i;this._config.chunkSize&&(i=this._start+this._config.chunkSize-1,r.setRequestHeader("Range","bytes="+this._start+"-"+i));try{r.send(this._config.downloadRequestBody)}catch(e){this._chunkError(e.message)}s&&0===r.status&&this._chunkError()}},this._chunkLoaded=function(){4===r.readyState&&(r.status<200||400<=r.status?this._chunkError():(this._start+=this._config.chunkSize||r.responseText.length,this._finished=!this._config.chunkSize||this._start>=(e=>null!==(e=e.getResponseHeader("Content-Range"))?parseInt(e.substring(e.lastIndexOf("/")+1)):-1)(r),this.parseChunk(r.responseText)))},this._chunkError=function(e){e=r.statusText||e;this._sendError(new Error(e))}}function l(e){(e=e||{}).chunkSize||(e.chunkSize=v.LocalChunkSize),u.call(this,e);var i,r,n="undefined"!=typeof FileReader;this.stream=function(e){this._input=e,r=e.slice||e.webkitSlice||e.mozSlice,n?((i=new FileReader).onload=y(this._chunkLoaded,this),i.onerror=y(this._chunkError,this)):i=new FileReaderSync,this._nextChunk()},this._nextChunk=function(){this._finished||this._config.preview&&!(this._rowCount<this._config.preview)||this._readChunk()},this._readChunk=function(){var e=this._input,t=(this._config.chunkSize&&(t=Math.min(this._start+this._config.chunkSize,this._input.size),e=r.call(e,this._start,t)),i.readAsText(e,this._config.encoding));n||this._chunkLoaded({target:{result:t}})},this._chunkLoaded=function(e){this._start+=this._config.chunkSize,this._finished=!this._config.chunkSize||this._start>=this._input.size,this.parseChunk(e.target.result)},this._chunkError=function(){this._sendError(i.error)}}function c(e){var i;u.call(this,e=e||{}),this.stream=function(e){return i=e,this._nextChunk()},this._nextChunk=function(){var e,t;if(!this._finished)return e=this._config.chunkSize,i=e?(t=i.substring(0,e),i.substring(e)):(t=i,""),this._finished=!i,this.parseChunk(t)}}function p(e){u.call(this,e=e||{});var t=[],i=!0,r=!1;this.pause=function(){u.prototype.pause.apply(this,arguments),this._input.pause()},this.resume=function(){u.prototype.resume.apply(this,arguments),this._input.resume()},this.stream=function(e){this._input=e,this._input.on("data",this._streamData),this._input.on("end",this._streamEnd),this._input.on("error",this._streamError)},this._checkIsFinished=function(){r&&1===t.length&&(this._finished=!0)},this._nextChunk=function(){this._checkIsFinished(),t.length?this.parseChunk(t.shift()):i=!0},this._streamData=y(function(e){try{t.push("string"==typeof e?e:e.toString(this._config.encoding)),i&&(i=!1,this._checkIsFinished(),this.parseChunk(t.shift()))}catch(e){this._streamError(e)}},this),this._streamError=y(function(e){this._streamCleanUp(),this._sendError(e)},this),this._streamEnd=y(function(){this._streamCleanUp(),r=!0,this._streamData("")},this),this._streamCleanUp=y(function(){this._input.removeListener("data",this._streamData),this._input.removeListener("end",this._streamEnd),this._input.removeListener("error",this._streamError)},this)}function i(m){var n,s,a,t,o=Math.pow(2,53),h=-o,u=/^\s*-?(\d+\.?|\.\d+|\d+\.\d+)([eE][-+]?\d+)?\s*$/,d=/^((\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z))|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d([+-][0-2]\d:[0-5]\d|Z)))$/,i=this,r=0,f=0,l=!1,e=!1,c=[],p={data:[],errors:[],meta:{}};function y(e){return"greedy"===m.skipEmptyLines?""===e.join("").trim():1===e.length&&0===e[0].length}function g(){if(p&&a&&(k("Delimiter","UndetectableDelimiter","Unable to auto-detect delimiting character; defaulted to '"+v.DefaultDelimiter+"'"),a=!1),m.skipEmptyLines&&(p.data=p.data.filter(function(e){return!y(e)})),_()){if(p)if(Array.isArray(p.data[0])){for(var e=0;_()&&e<p.data.length;e++)p.data[e].forEach(t);p.data.splice(0,1)}else p.data.forEach(t);function t(e,t){U(m.transformHeader)&&(e=m.transformHeader(e,t)),c.push(e)}}function i(e,t){for(var i=m.header?{}:[],r=0;r<e.length;r++){var n=r,s=e[r],s=((e,t)=>(e=>(m.dynamicTypingFunction&&void 0===m.dynamicTyping[e]&&(m.dynamicTyping[e]=m.dynamicTypingFunction(e)),!0===(m.dynamicTyping[e]||m.dynamicTyping)))(e)?"true"===t||"TRUE"===t||"false"!==t&&"FALSE"!==t&&((e=>{if(u.test(e)){e=parseFloat(e);if(h<e&&e<o)return 1}})(t)?parseFloat(t):d.test(t)?new Date(t):""===t?null:t):t)(n=m.header?r>=c.length?"__parsed_extra":c[r]:n,s=m.transform?m.transform(s,n):s);"__parsed_extra"===n?(i[n]=i[n]||[],i[n].push(s)):i[n]=s}return m.header&&(r>c.length?k("FieldMismatch","TooManyFields","Too many fields: expected "+c.length+" fields but parsed "+r,f+t):r<c.length&&k("FieldMismatch","TooFewFields","Too few fields: expected "+c.length+" fields but parsed "+r,f+t)),i}var r;p&&(m.header||m.dynamicTyping||m.transform)&&(r=1,!p.data.length||Array.isArray(p.data[0])?(p.data=p.data.map(i),r=p.data.length):p.data=i(p.data,0),m.header&&p.meta&&(p.meta.fields=c),f+=r)}function _(){return m.header&&0===c.length}function k(e,t,i,r){e={type:e,code:t,message:i};void 0!==r&&(e.row=r),p.errors.push(e)}U(m.step)&&(t=m.step,m.step=function(e){p=e,_()?g():(g(),0!==p.data.length&&(r+=e.data.length,m.preview&&r>m.preview?s.abort():(p.data=p.data[0],t(p,i))))}),this.parse=function(e,t,i){var r=m.quoteChar||'"',r=(m.newline||(m.newline=this.guessLineEndings(e,r)),a=!1,m.delimiter?U(m.delimiter)&&(m.delimiter=m.delimiter(e),p.meta.delimiter=m.delimiter):((r=((e,t,i,r,n)=>{var s,a,o,h;n=n||[",","\t","|",";",v.RECORD_SEP,v.UNIT_SEP];for(var u=0;u<n.length;u++){for(var d,f=n[u],l=0,c=0,p=0,g=(o=void 0,new E({comments:r,delimiter:f,newline:t,preview:10}).parse(e)),_=0;_<g.data.length;_++)i&&y(g.data[_])?p++:(d=g.data[_].length,c+=d,void 0===o?o=d:0<d&&(l+=Math.abs(d-o),o=d));0<g.data.length&&(c/=g.data.length-p),(void 0===a||l<=a)&&(void 0===h||h<c)&&1.99<c&&(a=l,s=f,h=c)}return{successful:!!(m.delimiter=s),bestDelimiter:s}})(e,m.newline,m.skipEmptyLines,m.comments,m.delimitersToGuess)).successful?m.delimiter=r.bestDelimiter:(a=!0,m.delimiter=v.DefaultDelimiter),p.meta.delimiter=m.delimiter),b(m));return m.preview&&m.header&&r.preview++,n=e,s=new E(r),p=s.parse(n,t,i),g(),l?{meta:{paused:!0}}:p||{meta:{paused:!1}}},this.paused=function(){return l},this.pause=function(){l=!0,s.abort(),n=U(m.chunk)?"":n.substring(s.getCharIndex())},this.resume=function(){i.streamer._halted?(l=!1,i.streamer.parseChunk(n,!0)):setTimeout(i.resume,3)},this.aborted=function(){return e},this.abort=function(){e=!0,s.abort(),p.meta.aborted=!0,U(m.complete)&&m.complete(p),n=""},this.guessLineEndings=function(e,t){e=e.substring(0,1048576);var t=new RegExp(P(t)+"([^]*?)"+P(t),"gm"),i=(e=e.replace(t,"")).split("\r"),t=e.split("\n"),e=1<t.length&&t[0].length<i[0].length;if(1===i.length||e)return"\n";for(var r=0,n=0;n<i.length;n++)"\n"===i[n][0]&&r++;return r>=i.length/2?"\r\n":"\r"}}function P(e){return e.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}function E(C){var S=(C=C||{}).delimiter,O=C.newline,x=C.comments,I=C.step,A=C.preview,T=C.fastMode,D=null,L=!1,F=null==C.quoteChar?'"':C.quoteChar,j=F;if(void 0!==C.escapeChar&&(j=C.escapeChar),("string"!=typeof S||-1<v.BAD_DELIMITERS.indexOf(S))&&(S=","),x===S)throw new Error("Comment character same as delimiter");!0===x?x="#":("string"!=typeof x||-1<v.BAD_DELIMITERS.indexOf(x))&&(x=!1),"\n"!==O&&"\r"!==O&&"\r\n"!==O&&(O="\n");var z=0,M=!1;this.parse=function(i,t,r){if("string"!=typeof i)throw new Error("Input must be a string");var n=i.length,e=S.length,s=O.length,a=x.length,o=U(I),h=[],u=[],d=[],f=z=0;if(!i)return w();if(T||!1!==T&&-1===i.indexOf(F)){for(var l=i.split(O),c=0;c<l.length;c++){if(d=l[c],z+=d.length,c!==l.length-1)z+=O.length;else if(r)return w();if(!x||d.substring(0,a)!==x){if(o){if(h=[],k(d.split(S)),R(),M)return w()}else k(d.split(S));if(A&&A<=c)return h=h.slice(0,A),w(!0)}}return w()}for(var p=i.indexOf(S,z),g=i.indexOf(O,z),_=new RegExp(P(j)+P(F),"g"),m=i.indexOf(F,z);;)if(i[z]===F)for(m=z,z++;;){if(-1===(m=i.indexOf(F,m+1)))return r||u.push({type:"Quotes",code:"MissingQuotes",message:"Quoted field unterminated",row:h.length,index:z}),E();if(m===n-1)return E(i.substring(z,m).replace(_,F));if(F===j&&i[m+1]===j)m++;else if(F===j||0===m||i[m-1]!==j){-1!==p&&p<m+1&&(p=i.indexOf(S,m+1));var y=v(-1===(g=-1!==g&&g<m+1?i.indexOf(O,m+1):g)?p:Math.min(p,g));if(i.substr(m+1+y,e)===S){d.push(i.substring(z,m).replace(_,F)),i[z=m+1+y+e]!==F&&(m=i.indexOf(F,z)),p=i.indexOf(S,z),g=i.indexOf(O,z);break}y=v(g);if(i.substring(m+1+y,m+1+y+s)===O){if(d.push(i.substring(z,m).replace(_,F)),b(m+1+y+s),p=i.indexOf(S,z),m=i.indexOf(F,z),o&&(R(),M))return w();if(A&&h.length>=A)return w(!0);break}u.push({type:"Quotes",code:"InvalidQuotes",message:"Trailing quote on quoted field is malformed",row:h.length,index:z}),m++}}else if(x&&0===d.length&&i.substring(z,z+a)===x){if(-1===g)return w();z=g+s,g=i.indexOf(O,z),p=i.indexOf(S,z)}else if(-1!==p&&(p<g||-1===g))d.push(i.substring(z,p)),z=p+e,p=i.indexOf(S,z);else{if(-1===g)break;if(d.push(i.substring(z,g)),b(g+s),o&&(R(),M))return w();if(A&&h.length>=A)return w(!0)}return E();function k(e){h.push(e),f=z}function v(e){var t=0;return t=-1!==e&&(e=i.substring(m+1,e))&&""===e.trim()?e.length:t}function E(e){return r||(void 0===e&&(e=i.substring(z)),d.push(e),z=n,k(d),o&&R()),w()}function b(e){z=e,k(d),d=[],g=i.indexOf(O,z)}function w(e){if(C.header&&!t&&h.length&&!L){var s=h[0],a=Object.create(null),o=new Set(s);let n=!1;for(let r=0;r<s.length;r++){let i=s[r];if(a[i=U(C.transformHeader)?C.transformHeader(i,r):i]){let e,t=a[i];for(;e=i+"_"+t,t++,o.has(e););o.add(e),s[r]=e,a[i]++,n=!0,(D=null===D?{}:D)[e]=i}else a[i]=1,s[r]=i;o.add(i)}n&&console.warn("Duplicate headers found and renamed."),L=!0}return{data:h,errors:u,meta:{delimiter:S,linebreak:O,aborted:M,truncated:!!e,cursor:f+(t||0),renamedHeaders:D}}}function R(){I(w()),h=[],u=[]}},this.abort=function(){M=!0},this.getCharIndex=function(){return z}}function g(e){var t=e.data,i=o[t.workerId],r=!1;if(t.error)i.userError(t.error,t.file);else if(t.results&&t.results.data){var n={abort:function(){r=!0,_(t.workerId,{data:[],errors:[],meta:{aborted:!0}})},pause:m,resume:m};if(U(i.userStep)){for(var s=0;s<t.results.data.length&&(i.userStep({data:t.results.data[s],errors:t.results.errors,meta:t.results.meta},n),!r);s++);delete t.results}else U(i.userChunk)&&(i.userChunk(t.results,n,t.file),delete t.results)}t.finished&&!r&&_(t.workerId,t.results)}function _(e,t){var i=o[e];U(i.userComplete)&&i.userComplete(t),i.terminate(),delete o[e]}function m(){throw new Error("Not implemented.")}function b(e){if("object"!=typeof e||null===e)return e;var t,i=Array.isArray(e)?[]:{};for(t in e)i[t]=b(e[t]);return i}function y(e,t){return function(){e.apply(t,arguments)}}function U(e){return"function"==typeof e}return v.parse=function(e,t){var i=(t=t||{}).dynamicTyping||!1;U(i)&&(t.dynamicTypingFunction=i,i={});if(t.dynamicTyping=i,t.transform=!!U(t.transform)&&t.transform,!t.worker||!v.WORKERS_SUPPORTED)return i=null,v.NODE_STREAM_INPUT,"string"==typeof e?(e=(e=>65279!==e.charCodeAt(0)?e:e.slice(1))(e),i=new(t.download?f:c)(t)):!0===e.readable&&U(e.read)&&U(e.on)?i=new p(t):(n.File&&e instanceof File||e instanceof Object)&&(i=new l(t)),i.stream(e);(i=(()=>{var e;return!!v.WORKERS_SUPPORTED&&(e=(()=>{var e=n.URL||n.webkitURL||null,t=r.toString();return v.BLOB_URL||(v.BLOB_URL=e.createObjectURL(new Blob(["var global = (function() { if (typeof self !== 'undefined') { return self; } if (typeof window !== 'undefined') { return window; } if (typeof global !== 'undefined') { return global; } return {}; })(); global.IS_PAPA_WORKER=true; ","(",t,")();"],{type:"text/javascript"})))})(),(e=new n.Worker(e)).onmessage=g,e.id=h++,o[e.id]=e)})()).userStep=t.step,i.userChunk=t.chunk,i.userComplete=t.complete,i.userError=t.error,t.step=U(t.step),t.chunk=U(t.chunk),t.complete=U(t.complete),t.error=U(t.error),delete t.worker,i.postMessage({input:e,config:t,workerId:i.id})},v.unparse=function(e,t){var n=!1,_=!0,m=",",y="\r\n",s='"',a=s+s,i=!1,r=null,o=!1,h=((()=>{if("object"==typeof t){if("string"!=typeof t.delimiter||v.BAD_DELIMITERS.filter(function(e){return-1!==t.delimiter.indexOf(e)}).length||(m=t.delimiter),"boolean"!=typeof t.quotes&&"function"!=typeof t.quotes&&!Array.isArray(t.quotes)||(n=t.quotes),"boolean"!=typeof t.skipEmptyLines&&"string"!=typeof t.skipEmptyLines||(i=t.skipEmptyLines),"string"==typeof t.newline&&(y=t.newline),"string"==typeof t.quoteChar&&(s=t.quoteChar),"boolean"==typeof t.header&&(_=t.header),Array.isArray(t.columns)){if(0===t.columns.length)throw new Error("Option columns is empty");r=t.columns}void 0!==t.escapeChar&&(a=t.escapeChar+s),t.escapeFormulae instanceof RegExp?o=t.escapeFormulae:"boolean"==typeof t.escapeFormulae&&t.escapeFormulae&&(o=/^[=+\-@\t\r].*$/)}})(),new RegExp(P(s),"g"));"string"==typeof e&&(e=JSON.parse(e));if(Array.isArray(e)){if(!e.length||Array.isArray(e[0]))return u(null,e,i);if("object"==typeof e[0])return u(r||Object.keys(e[0]),e,i)}else if("object"==typeof e)return"string"==typeof e.data&&(e.data=JSON.parse(e.data)),Array.isArray(e.data)&&(e.fields||(e.fields=e.meta&&e.meta.fields||r),e.fields||(e.fields=Array.isArray(e.data[0])?e.fields:"object"==typeof e.data[0]?Object.keys(e.data[0]):[]),Array.isArray(e.data[0])||"object"==typeof e.data[0]||(e.data=[e.data])),u(e.fields||[],e.data||[],i);throw new Error("Unable to serialize unrecognized input");function u(e,t,i){var r="",n=("string"==typeof e&&(e=JSON.parse(e)),"string"==typeof t&&(t=JSON.parse(t)),Array.isArray(e)&&0<e.length),s=!Array.isArray(t[0]);if(n&&_){for(var a=0;a<e.length;a++)0<a&&(r+=m),r+=k(e[a],a);0<t.length&&(r+=y)}for(var o=0;o<t.length;o++){var h=(n?e:t[o]).length,u=!1,d=n?0===Object.keys(t[o]).length:0===t[o].length;if(i&&!n&&(u="greedy"===i?""===t[o].join("").trim():1===t[o].length&&0===t[o][0].length),"greedy"===i&&n){for(var f=[],l=0;l<h;l++){var c=s?e[l]:l;f.push(t[o][c])}u=""===f.join("").trim()}if(!u){for(var p=0;p<h;p++){0<p&&!d&&(r+=m);var g=n&&s?e[p]:p;r+=k(t[o][g],p)}o<t.length-1&&(!i||0<h&&!d)&&(r+=y)}}return r}function k(e,t){var i,r;return null==e?"":e.constructor===Date?JSON.stringify(e).slice(1,25):(r=!1,o&&"string"==typeof e&&o.test(e)&&(e="'"+e,r=!0),i=e.toString().replace(h,a),(r=r||!0===n||"function"==typeof n&&n(e,t)||Array.isArray(n)&&n[t]||((e,t)=>{for(var i=0;i<t.length;i++)if(-1<e.indexOf(t[i]))return!0;return!1})(i,v.BAD_DELIMITERS)||-1<i.indexOf(m)||" "===i.charAt(0)||" "===i.charAt(i.length-1))?s+i+s:i)}},v.RECORD_SEP=String.fromCharCode(30),v.UNIT_SEP=String.fromCharCode(31),v.BYTE_ORDER_MARK="\ufeff",v.BAD_DELIMITERS=["\r","\n",'"',v.BYTE_ORDER_MARK],v.WORKERS_SUPPORTED=!s&&!!n.Worker,v.NODE_STREAM_INPUT=1,v.LocalChunkSize=10485760,v.RemoteChunkSize=5242880,v.DefaultDelimiter=",",v.Parser=E,v.ParserHandle=i,v.NetworkStreamer=f,v.FileStreamer=l,v.StringStreamer=c,v.ReadableStreamStreamer=p,n.jQuery&&((d=n.jQuery).fn.parse=function(o){var i=o.config||{},h=[];return this.each(function(e){if(!("INPUT"===d(this).prop("tagName").toUpperCase()&&"file"===d(this).attr("type").toLowerCase()&&n.FileReader)||!this.files||0===this.files.length)return!0;for(var t=0;t<this.files.length;t++)h.push({file:this.files[t],inputElem:this,instanceConfig:d.extend({},i)})}),e(),this;function e(){if(0===h.length)U(o.complete)&&o.complete();else{var e,t,i,r,n=h[0];if(U(o.before)){var s=o.before(n.file,n.inputElem);if("object"==typeof s){if("abort"===s.action)return e="AbortError",t=n.file,i=n.inputElem,r=s.reason,void(U(o.error)&&o.error({name:e},t,i,r));if("skip"===s.action)return void u();"object"==typeof s.config&&(n.instanceConfig=d.extend(n.instanceConfig,s.config))}else if("skip"===s)return void u()}var a=n.instanceConfig.complete;n.instanceConfig.complete=function(e){U(a)&&a(e,n.file,n.inputElem),u()},v.parse(n.file,n.instanceConfig)}}function u(){h.splice(0,1),e()}}),a&&(n.onmessage=function(e){e=e.data;void 0===v.WORKER_ID&&e&&(v.WORKER_ID=e.workerId);"string"==typeof e.input?n.postMessage({workerId:v.WORKER_ID,results:v.parse(e.input,e.config),finished:!0}):(n.File&&e.input instanceof File||e.input instanceof Object)&&(e=v.parse(e.input,e.config))&&n.postMessage({workerId:v.WORKER_ID,results:e,finished:!0})}),(f.prototype=Object.create(u.prototype)).constructor=f,(l.prototype=Object.create(u.prototype)).constructor=l,(c.prototype=Object.create(c.prototype)).constructor=c,(p.prototype=Object.create(u.prototype)).constructor=p,v});
 
-// @vuebundler[Proyecto_base_001][7]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/reloader/reloadable.js
+// @vuebundler[Proyecto_base_001][7]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/cron/croner.js
+var Cron = (() => {
+  var g = (s, e) => () => (s && (e =
+    s(s = 0)), e);
+  var j = (s, e) => () => (e || s((
+    e = {
+      exports: {}
+    })
+    .exports, e), e.exports);
+
+  function C(s) {
+    return Date.UTC(s.y, s.m - 1, s
+      .d, s.h, s.i, s.s)
+  }
+
+  function k(s, e) {
+    return s.y === e.y && s.m === e
+      .m && s.d === e.d && s.h === e
+        .h && s.i === e.i && s.s === e
+          .s
+  }
+
+  function $(s, e) {
+    let t = new Date(Date.parse(s));
+    if (isNaN(t)) throw new Error(
+      "Invalid ISO8601 passed to timezone parser."
+    );
+    let r = s.substring(9);
+    return r.includes("Z") || r
+      .includes("+") || r.includes(
+        "-") ? w(t.getUTCFullYear(),
+          t.getUTCMonth() + 1, t
+            .getUTCDate(), t
+              .getUTCHours(), t
+                .getUTCMinutes(), t
+                  .getUTCSeconds(), "Etc/UTC"
+        ) : w(t.getFullYear(), t
+          .getMonth() + 1, t
+            .getDate(), t.getHours(), t
+              .getMinutes(), t
+                .getSeconds(), e)
+  }
+
+  function O(s, e, t) {
+    return N($(s, e), t)
+  }
+
+  function N(s, e) {
+    let t = new Date(C(s)),
+      r = p(t, s.tz),
+      n = C(s),
+      i = C(r),
+      a = n - i,
+      o = new Date(t.getTime() + a),
+      h = p(o, s.tz);
+    if (k(h, s)) {
+      let u = new Date(o.getTime() -
+        36e5),
+        d = p(u, s.tz);
+      return k(d, s) ? u : o
+    }
+    let l = new Date(o.getTime() +
+      C(s) - C(h)),
+      y = p(l, s.tz);
+    if (k(y, s)) return l;
+    if (e) throw new Error(
+      "Invalid date passed to fromTZ()"
+    );
+    return o.getTime() > l
+      .getTime() ? o : l
+  }
+
+  function p(s, e) {
+    let t, r;
+    try {
+      t = new Intl.DateTimeFormat(
+        "en-US", {
+        timeZone: e,
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: !1
+      }), r = t.formatToParts(s)
+    } catch (i) {
+      let a = i instanceof Error ? i
+        .message : String(i);
+      throw new RangeError(
+        `toTZ: Invalid timezone '${e}' or date. Please provide a valid IANA timezone (e.g., 'America/New_York', 'Europe/Stockholm'). Original error: ${a}`
+      )
+    }
+    let n = {
+      year: 0,
+      month: 0,
+      day: 0,
+      hour: 0,
+      minute: 0,
+      second: 0
+    };
+    for (let i of r) (i.type ===
+      "year" || i.type ===
+      "month" || i.type ===
+      "day" || i.type ===
+      "hour" || i.type ===
+      "minute" || i.type ===
+      "second") && (n[i.type] =
+        parseInt(i.value, 10));
+    if (isNaN(n.year) || isNaN(n
+      .month) || isNaN(n.day) ||
+      isNaN(n.hour) || isNaN(n
+        .minute) || isNaN(n.second))
+      throw new Error(
+        `toTZ: Failed to parse all date components from timezone '${e}'. This may indicate an invalid date or timezone configuration. Parsed components: ${JSON.stringify(n)}`
+      );
+    return n.hour === 24 && (n
+      .hour = 0), {
+      y: n.year,
+      m: n.month,
+      d: n.day,
+      h: n.hour,
+      i: n.minute,
+      s: n.second,
+      tz: e
+    }
+  }
+
+  function w(s, e, t, r, n, i, a) {
+    return {
+      y: s,
+      m: e,
+      d: t,
+      h: r,
+      i: n,
+      s: i,
+      tz: a
+    }
+  }
+  var E = g(() => { });
+  var P, b, M = g(() => {
+    P = [1, 2, 4, 8, 16], b =
+      class {
+        pattern;
+        timezone;
+        mode;
+        alternativeWeekdays;
+        sloppyRanges;
+        second;
+        minute;
+        hour;
+        day;
+        month;
+        dayOfWeek;
+        year;
+        lastDayOfMonth;
+        lastWeekday;
+        nearestWeekdays;
+        starDOM;
+        starDOW;
+        starYear;
+        useAndLogic;
+        constructor(e, t, r) {
+          this.pattern = e,
+            this.timezone = t,
+            this.mode = r
+              ?.mode ?? "auto",
+            this
+              .alternativeWeekdays =
+            r
+              ?.alternativeWeekdays ??
+            !1, this
+              .sloppyRanges = r
+                ?.sloppyRanges ??
+            !1, this.second =
+            Array(60)
+              .fill(0), this
+                .minute = Array(
+                  60)
+                  .fill(0), this
+                    .hour = Array(24)
+                      .fill(0), this
+                        .day = Array(31)
+                          .fill(0), this
+                            .month = Array(12)
+                              .fill(0), this
+                                .dayOfWeek =
+            Array(7)
+              .fill(0), this
+                .year = Array(1e4)
+                  .fill(0), this
+                    .lastDayOfMonth = !
+            1, this
+              .lastWeekday = !1,
+            this
+              .nearestWeekdays =
+            Array(31)
+              .fill(0), this
+                .starDOM = !1,
+            this.starDOW = !1,
+            this.starYear = !
+            1, this
+              .useAndLogic = !1,
+            this.parse()
+        }
+        parse() {
+          if (!(typeof this
+            .pattern ==
+            "string" || this
+              .pattern instanceof String
+          ))
+            throw new TypeError(
+              "CronPattern: Pattern has to be of type string."
+            );
+          this.pattern
+            .indexOf("@") >=
+            0 && (this
+              .pattern = this
+                .handleNicknames(
+                  this.pattern)
+                .trim());
+          let e = this.pattern
+            .match(/\S+/g) ||
+            [""],
+            t = e.length;
+          if (e.length < 5 ||
+            e.length > 7)
+            throw new TypeError(
+              "CronPattern: invalid configuration format ('" +
+              this.pattern +
+              "'), exactly five, six, or seven space separated parts are required."
+            );
+          if (this.mode !==
+            "auto") {
+            let n;
+            switch (this
+              .mode) {
+              case "5-part":
+                n = 5;
+                break;
+              case "6-part":
+                n = 6;
+                break;
+              case "7-part":
+                n = 7;
+                break;
+              case "5-or-6-parts":
+                n = [5, 6];
+                break;
+              case "6-or-7-parts":
+                n = [6, 7];
+                break;
+              default:
+                n = 0
+            }
+            if (!(Array
+              .isArray(n) ?
+              n.includes(
+                t) : t === n
+            )) {
+              let a = Array
+                .isArray(n) ?
+                n.join(
+                  " or ") : n
+                    .toString();
+              throw new TypeError(
+                `CronPattern: mode '${this.mode}' requires exactly ${a} parts, but pattern '${this.pattern}' has ${t} parts.`
+              )
+            }
+          }
+          if (e.length ===
+            5 && e.unshift(
+              "0"), e
+                .length === 6 && e
+                  .push("*"), e[3]
+                    .toUpperCase() ===
+                    "LW" ? (this
+                      .lastWeekday = !
+                      0, e[3] = "") :
+              e[3].toUpperCase()
+                .indexOf("L") >=
+              0 && (e[3] = e[3]
+                .replace(/L/gi,
+                  ""), this
+                    .lastDayOfMonth = !
+                0), e[3] ==
+                "*" && (this
+                  .starDOM = !0),
+            e[6] == "*" && (
+              this
+                .starYear = !0),
+            e[4].length >=
+            3 && (e[4] = this
+              .replaceAlphaMonths(
+                e[4])), e[5]
+                  .length >= 3 && (
+              e[5] = this
+                .alternativeWeekdays ?
+                this
+                  .replaceAlphaDaysQuartz(
+                    e[5]) : this
+                      .replaceAlphaDays(
+                        e[5])), e[5]
+                          .startsWith(
+                            "+") && (this
+                              .useAndLogic = !
+                              0, e[5] = e[5]
+                                .substring(1),
+                              e[5] === ""))
+            throw new TypeError(
+              "CronPattern: Day-of-week field cannot be empty after '+' modifier."
+            );
+          switch (e[5] ==
+          "*" && (this
+            .starDOW = !0),
+          this.pattern
+            .indexOf("?") >=
+          0 && (e[0] = e[0]
+            .replace(/\?/g,
+              "*"), e[1] =
+            e[1].replace(
+              /\?/g, "*"),
+            e[2] = e[2]
+              .replace(/\?/g,
+                "*"), e[3] =
+            e[3].replace(
+              /\?/g, "*"),
+            e[4] = e[4]
+              .replace(/\?/g,
+                "*"), e[5] =
+            e[5].replace(
+              /\?/g, "*"),
+            e[6] && (e[6] =
+              e[6].replace(
+                /\?/g, "*"))
+          ), this.mode) {
+            case "5-part":
+              e[0] = "0", e[
+                6] = "*";
+              break;
+            case "6-part":
+              e[6] = "*";
+              break;
+            case "5-or-6-parts":
+              e[6] = "*";
+              break;
+            case "6-or-7-parts":
+              break;
+            case "7-part":
+            case "auto":
+              break
+          }
+          this
+            .throwAtIllegalCharacters(
+              e), this
+                .partToArray(
+                  "second", e[0],
+                  0, 1), this
+                    .partToArray(
+                      "minute", e[1],
+                      0, 1), this
+                        .partToArray(
+                          "hour", e[2], 0,
+                          1), this
+                            .partToArray(
+                              "day", e[3], -1,
+                              1), this
+                                .partToArray(
+                                  "month", e[4], -
+                                1, 1);
+          let r = this
+            .alternativeWeekdays ?
+            -1 : 0;
+          this.partToArray(
+            "dayOfWeek", e[
+          5], r, 63),
+            this.partToArray(
+              "year", e[6], 0,
+              1), !this
+                .alternativeWeekdays &&
+              this.dayOfWeek[
+              7] && (this
+                .dayOfWeek[0] =
+                this.dayOfWeek[
+                7])
+        }
+        partToArray(e, t, r,
+          n) {
+          let i = this[e],
+            a = e === "day" &&
+              this
+                .lastDayOfMonth,
+            o = e === "day" &&
+              this.lastWeekday;
+          if (t === "" && !
+            a && !o)
+            throw new TypeError(
+              "CronPattern: configuration entry " +
+              e + " (" + t +
+              ") is empty, check for trailing spaces."
+            );
+          if (t === "*")
+            return i.fill(n);
+          let h = t.split(
+            ",");
+          if (h.length > 1)
+            for (let l =
+              0; l < h
+                .length; l++)
+              this
+                .partToArray(e,
+                  h[l], r, n);
+          else t.indexOf(
+            "-") !== -1 && t
+              .indexOf("/") !==
+            -1 ? this
+              .handleRangeWithStepping(
+                t, e, r, n) : t
+                  .indexOf("-") !==
+                  -1 ? this
+                    .handleRange(t, e,
+                      r, n) : t
+                        .indexOf("/") !==
+                        -1 ? this
+                          .handleStepping(t,
+                            e, r, n) : t !==
+                            "" && this
+                              .handleNumber(t,
+                                e, r, n)
+        }
+        throwAtIllegalCharacters
+          (e) {
+          for (let t = 0; t <
+            e.length; t++)
+            if ((t === 3 ?
+              /[^/*0-9,\-WwLl]+/ :
+              t === 5 ?
+                /[^/*0-9,\-#Ll]+/ :
+                /[^/*0-9,\-]+/
+            )
+              .test(e[t]))
+              throw new TypeError(
+                "CronPattern: configuration entry " +
+                t + " (" +
+                e[t] +
+                ") contains illegal characters."
+              )
+        }
+        handleNumber(e, t, r,
+          n) {
+          let i = this
+            .extractNth(e, t),
+            a = e
+              .toUpperCase()
+              .includes("W");
+          if (t !== "day" &&
+            a) throw new TypeError(
+              "CronPattern: Nearest weekday modifier (W) only allowed in day-of-month."
+            );
+          a && (t =
+            "nearestWeekdays"
+          );
+          let o = parseInt(i[
+            0], 10) + r;
+          if (isNaN(o))
+            throw new TypeError(
+              "CronPattern: " +
+              t +
+              " is not a number: '" +
+              e + "'");
+          this.setPart(t, o,
+            i[1] || n)
+        }
+        setPart(e, t, r) {
+          if (!Object
+            .prototype
+            .hasOwnProperty
+            .call(this, e))
+            throw new TypeError(
+              "CronPattern: Invalid part specified: " +
+              e);
+          if (e ===
+            "dayOfWeek") {
+            if (t === 7 && (
+              t = 0), t <
+              0 || t > 6)
+              throw new RangeError(
+                "CronPattern: Invalid value for dayOfWeek: " +
+                t);
+            this
+              .setNthWeekdayOfMonth(
+                t, r);
+            return
+          }
+          if (e ===
+            "second" || e ===
+            "minute") {
+            if (t < 0 || t >=
+              60)
+              throw new RangeError(
+                "CronPattern: Invalid value for " +
+                e + ": " + t
+              )
+          } else if (e ===
+            "hour") {
+            if (t < 0 || t >=
+              24)
+              throw new RangeError(
+                "CronPattern: Invalid value for " +
+                e + ": " + t
+              )
+          } else if (e ===
+            "day" || e ===
+            "nearestWeekdays"
+          ) {
+            if (t < 0 || t >=
+              31)
+              throw new RangeError(
+                "CronPattern: Invalid value for " +
+                e + ": " + t
+              )
+          } else if (e ===
+            "month") {
+            if (t < 0 || t >=
+              12)
+              throw new RangeError(
+                "CronPattern: Invalid value for " +
+                e + ": " + t
+              )
+          } else if (e ===
+            "year" && (t <
+              1 || t >= 1e4))
+            throw new RangeError(
+              "CronPattern: Invalid value for " +
+              e + ": " + t +
+              " (supported range: 1-9999)"
+            );
+          this[e][t] = r
+        }
+        validateNotNaN(e, t) {
+          if (isNaN(e))
+            throw new TypeError(
+              t)
+        }
+        validateRange(e, t, r,
+          n, i) {
+          if (e > t)
+            throw new TypeError(
+              "CronPattern: From value is larger than to value: '" +
+              i + "'");
+          if (r !== void 0) {
+            if (r === 0)
+              throw new TypeError(
+                "CronPattern: Syntax error, illegal stepping: 0"
+              );
+            if (r > this[n]
+              .length)
+              throw new TypeError(
+                "CronPattern: Syntax error, steps cannot be greater than maximum value of part (" +
+                this[n]
+                  .length +
+                ")")
+          }
+        }
+        handleRangeWithStepping(
+          e, t, r, n) {
+          if (e.toUpperCase()
+            .includes("W"))
+            throw new TypeError(
+              "CronPattern: Syntax error, W is not allowed in ranges with stepping."
+            );
+          let i = this
+            .extractNth(e, t),
+            a = i[0].match(
+              /^(\d+)-(\d+)\/(\d+)$/
+            );
+          if (a === null)
+            throw new TypeError(
+              "CronPattern: Syntax error, illegal range with stepping: '" +
+              e + "'");
+          let [, o, h, l] = a,
+            y = parseInt(o,
+              10) + r, u =
+              parseInt(h, 10) +
+              r, d = parseInt(l,
+                10);
+          this.validateNotNaN(
+            y,
+            "CronPattern: Syntax error, illegal lower range (NaN)"
+          ), this
+            .validateNotNaN(u,
+              "CronPattern: Syntax error, illegal upper range (NaN)"
+            ), this
+              .validateNotNaN(d,
+                "CronPattern: Syntax error, illegal stepping: (NaN)"
+              ), this
+                .validateRange(y,
+                  u, d, t, e);
+          for (let c = y; c <=
+            u; c += d) this
+              .setPart(t, c, i[
+                1] || n)
+        }
+        extractNth(e, t) {
+          let r = e,
+            n;
+          if (r.includes(
+            "#")) {
+            if (t !==
+              "dayOfWeek")
+              throw new Error(
+                "CronPattern: nth (#) only allowed in day-of-week field"
+              );
+            n = r.split("#")[
+              1], r = r
+                .split("#")[0]
+          } else if (r
+            .toUpperCase()
+            .endsWith("L")) {
+            if (t !==
+              "dayOfWeek")
+              throw new Error(
+                "CronPattern: L modifier only allowed in day-of-week field (use L alone for day-of-month)"
+              );
+            n = "L", r = r
+              .slice(0, -1)
+          }
+          return [r, n]
+        }
+        handleRange(e, t, r,
+          n) {
+          if (e.toUpperCase()
+            .includes("W"))
+            throw new TypeError(
+              "CronPattern: Syntax error, W is not allowed in a range."
+            );
+          let i = this
+            .extractNth(e, t),
+            a = i[0].split(
+              "-");
+          if (a.length !== 2)
+            throw new TypeError(
+              "CronPattern: Syntax error, illegal range: '" +
+              e + "'");
+          let o = parseInt(a[
+            0], 10) + r,
+            h = parseInt(a[1],
+              10) + r;
+          this.validateNotNaN(
+            o,
+            "CronPattern: Syntax error, illegal lower range (NaN)"
+          ), this
+            .validateNotNaN(h,
+              "CronPattern: Syntax error, illegal upper range (NaN)"
+            ), this
+              .validateRange(o,
+                h, void 0, t, e
+              );
+          for (let l = o; l <=
+            h; l++) this
+              .setPart(t, l, i[
+                1] || n)
+        }
+        handleStepping(e, t, r,
+          n) {
+          if (e.toUpperCase()
+            .includes("W"))
+            throw new TypeError(
+              "CronPattern: Syntax error, W is not allowed in parts with stepping."
+            );
+          let i = this
+            .extractNth(e, t),
+            a = i[0].split(
+              "/");
+          if (a.length !== 2)
+            throw new TypeError(
+              "CronPattern: Syntax error, illegal stepping: '" +
+              e + "'");
+          if (this
+            .sloppyRanges) a[
+              0] === "" && (a[
+                0] = "*");
+          else {
+            if (a[0] === "")
+              throw new TypeError(
+                "CronPattern: Syntax error, stepping with missing prefix ('" +
+                e +
+                "') is not allowed. Use wildcard (*/step) or range (min-max/step) instead."
+              );
+            if (a[0] !== "*")
+              throw new TypeError(
+                "CronPattern: Syntax error, stepping with numeric prefix ('" +
+                e +
+                "') is not allowed. Use wildcard (*/step) or range (min-max/step) instead."
+              )
+          }
+          let o = 0;
+          a[0] !== "*" && (o =
+            parseInt(a[0],
+              10) + r);
+          let h = parseInt(a[
+            1], 10);
+          this.validateNotNaN(
+            h,
+            "CronPattern: Syntax error, illegal stepping: (NaN)"
+          ), this
+            .validateRange(0,
+              this[t].length -
+              1, h, t, e);
+          for (let l = o; l <
+            this[t]
+              .length; l += h)
+            this.setPart(t, l,
+              i[1] || n)
+        }
+        replaceAlphaDays(e) {
+          return e.replace(
+            /-sun/gi, "-7")
+            .replace(/sun/gi,
+              "0")
+            .replace(/mon/gi,
+              "1")
+            .replace(/tue/gi,
+              "2")
+            .replace(/wed/gi,
+              "3")
+            .replace(/thu/gi,
+              "4")
+            .replace(/fri/gi,
+              "5")
+            .replace(/sat/gi,
+              "6")
+        }
+        replaceAlphaDaysQuartz(
+          e) {
+          return e.replace(
+            /sun/gi, "1")
+            .replace(/mon/gi,
+              "2")
+            .replace(/tue/gi,
+              "3")
+            .replace(/wed/gi,
+              "4")
+            .replace(/thu/gi,
+              "5")
+            .replace(/fri/gi,
+              "6")
+            .replace(/sat/gi,
+              "7")
+        }
+        replaceAlphaMonths(e) {
+          return e.replace(
+            /jan/gi, "1")
+            .replace(/feb/gi,
+              "2")
+            .replace(/mar/gi,
+              "3")
+            .replace(/apr/gi,
+              "4")
+            .replace(/may/gi,
+              "5")
+            .replace(/jun/gi,
+              "6")
+            .replace(/jul/gi,
+              "7")
+            .replace(/aug/gi,
+              "8")
+            .replace(/sep/gi,
+              "9")
+            .replace(/oct/gi,
+              "10")
+            .replace(/nov/gi,
+              "11")
+            .replace(/dec/gi,
+              "12")
+        }
+        handleNicknames(e) {
+          let t = e.trim()
+            .toLowerCase();
+          if (t ===
+            "@yearly" || t ===
+            "@annually")
+            return "0 0 1 1 *";
+          if (t ===
+            "@monthly")
+            return "0 0 1 * *";
+          if (t === "@weekly")
+            return "0 0 * * 0";
+          if (t ===
+            "@daily" || t ===
+            "@midnight")
+            return "0 0 * * *";
+          if (t === "@hourly")
+            return "0 * * * *";
+          if (t === "@reboot")
+            throw new TypeError(
+              "CronPattern: @reboot is not supported in this environment. This is an event-based trigger that requires system startup detection."
+            );
+          return e
+        }
+        setNthWeekdayOfMonth(e,
+          t) {
+          if (typeof t !=
+            "number" && t
+              .toUpperCase() ===
+            "L") this
+              .dayOfWeek[e] =
+              this.dayOfWeek[
+              e] | 32;
+          else if (t === 63)
+            this.dayOfWeek[
+              e] = 63;
+          else if (t < 6 &&
+            t > 0) this
+              .dayOfWeek[e] =
+              this.dayOfWeek[
+              e] | P[t - 1];
+          else throw new TypeError(
+            `CronPattern: nth weekday out of range, should be 1-5 or L. Value: ${t}, Type: ${typeof t}`
+          )
+        }
+      }
+  });
+  var _, f, m, x = g(() => {
+    E();
+    M();
+    _ = [31, 28, 31, 30, 31, 30,
+      31, 31, 30, 31, 30, 31
+    ], f = [
+      ["month", "year", 0],
+      ["day", "month", -1],
+      ["hour", "day", 0],
+      ["minute", "hour", 0],
+      ["second", "minute", 0]
+    ], m = class s {
+      tz;
+      ms;
+      second;
+      minute;
+      hour;
+      day;
+      month;
+      year;
+      constructor(e, t) {
+        if (this.tz = t,
+          e &&
+          e instanceof Date)
+          if (!isNaN(e))
+            this.fromDate(
+              e);
+          else throw new TypeError(
+            "CronDate: Invalid date passed to CronDate constructor"
+          );
+        else if (e == null)
+          this.fromDate(
+            new Date);
+        else if (e &&
+          typeof e ==
+          "string") this
+            .fromString(e);
+        else if (
+          e instanceof s)
+          this.fromCronDate(
+            e);
+        else throw new TypeError(
+          "CronDate: Invalid type (" +
+          typeof e +
+          ") passed to CronDate constructor"
+        )
+      }
+      getLastDayOfMonth(e,
+        t) {
+        return t !== 1 ? _[
+          t] : new Date(
+            Date.UTC(e, t +
+              1, 0))
+            .getUTCDate()
+      }
+      getLastWeekday(e, t) {
+        let r = this
+          .getLastDayOfMonth(
+            e, t),
+          i = new Date(Date
+            .UTC(e, t, r))
+            .getUTCDay();
+        return i === 0 ? r -
+          2 : i === 6 ? r -
+            1 : r
+      }
+      getNearestWeekday(e, t,
+        r) {
+        let n = this
+          .getLastDayOfMonth(
+            e, t);
+        if (r > n) return -
+          1;
+        let a = new Date(
+          Date.UTC(e, t,
+            r))
+          .getUTCDay();
+        return a === 0 ?
+          r === n ? r - 2 :
+            r + 1 : a === 6 ?
+            r === 1 ? r + 2 :
+              r - 1 : r
+      }
+      isNthWeekdayOfMonth(e,
+        t, r, n) {
+        let a = new Date(
+          Date.UTC(e, t,
+            r))
+          .getUTCDay(),
+          o = 0;
+        for (let h = 1; h <=
+          r; h++) new Date(
+            Date.UTC(e, t,
+              h))
+            .getUTCDay() ===
+            a && o++;
+        if (n & 63 && P[o -
+          1] & n) return !
+            0;
+        if (n & 32) {
+          let h = this
+            .getLastDayOfMonth(
+              e, t);
+          for (let l = r +
+            1; l <= h; l++)
+            if (new Date(
+              Date.UTC(e,
+                t, l))
+              .getUTCDay() ===
+              a) return !1;
+          return !0
+        }
+        return !1
+      }
+      fromDate(e) {
+        if (this.tz !==
+          void 0)
+          if (typeof this
+            .tz == "number")
+            this.ms = e
+              .getUTCMilliseconds(),
+              this.second = e
+                .getUTCSeconds(),
+              this.minute = e
+                .getUTCMinutes() +
+              this.tz, this
+                .hour = e
+                  .getUTCHours(),
+              this.day = e
+                .getUTCDate(),
+              this.month = e
+                .getUTCMonth(),
+              this.year = e
+                .getUTCFullYear(),
+              this.apply();
+          else try {
+            let t = p(e,
+              this.tz);
+            this.ms = e
+              .getMilliseconds(),
+              this
+                .second = t
+                .s, this
+                  .minute = t
+                .i, this
+                  .hour = t.h,
+              this.day = t
+                .d, this
+                  .month = t
+                    .m - 1, this
+                      .year = t.y
+          } catch (t) {
+            let r =
+              t instanceof Error ?
+                t.message :
+                String(t);
+            throw new TypeError(
+              `CronDate: Failed to convert date to timezone '${this.tz}'. This may happen with invalid timezone names or dates. Original error: ${r}`
+            )
+          } else this.ms =
+            e
+              .getMilliseconds(),
+            this.second =
+            e
+              .getSeconds(),
+            this.minute =
+            e
+              .getMinutes(),
+            this.hour = e
+              .getHours(),
+            this.day = e
+              .getDate(),
+            this.month = e
+              .getMonth(),
+            this.year = e
+              .getFullYear()
+      }
+      fromCronDate(e) {
+        this.tz = e.tz, this
+          .year = e.year,
+          this.month = e
+            .month, this.day =
+          e.day, this.hour =
+          e.hour, this
+            .minute = e
+            .minute, this
+              .second = e
+            .second, this.ms =
+          e.ms
+      }
+      apply() {
+        if (this.month >
+          11 || this.month <
+          0 || this.day > _[
+          this.month] ||
+          this.day < 1 ||
+          this.hour > 59 ||
+          this.minute >
+          59 || this
+            .second > 59 ||
+          this.hour < 0 ||
+          this.minute < 0 ||
+          this.second < 0) {
+          let e = new Date(
+            Date.UTC(this
+              .year, this
+              .month, this
+              .day, this
+              .hour, this
+              .minute,
+              this.second,
+              this.ms));
+          return this.ms = e
+            .getUTCMilliseconds(),
+            this.second = e
+              .getUTCSeconds(),
+            this.minute = e
+              .getUTCMinutes(),
+            this.hour = e
+              .getUTCHours(),
+            this.day = e
+              .getUTCDate(),
+            this.month = e
+              .getUTCMonth(),
+            this.year = e
+              .getUTCFullYear(),
+            !0
+        } else return !1
+      }
+      fromString(e) {
+        if (typeof this
+          .tz == "number") {
+          let t = O(e);
+          this.ms = t
+            .getUTCMilliseconds(),
+            this.second = t
+              .getUTCSeconds(),
+            this.minute = t
+              .getUTCMinutes(),
+            this.hour = t
+              .getUTCHours(),
+            this.day = t
+              .getUTCDate(),
+            this.month = t
+              .getUTCMonth(),
+            this.year = t
+              .getUTCFullYear(),
+            this.apply()
+        } else return this
+          .fromDate(O(e,
+            this.tz))
+      }
+      findNext(e, t, r, n) {
+        return this
+          ._findMatch(e, t,
+            r, n, 1)
+      }
+      _findMatch(e, t, r, n,
+        i) {
+        let a = this[t],
+          o;
+        r.lastDayOfMonth &&
+          (o = this
+            .getLastDayOfMonth(
+              this.year,
+              this.month));
+        let h = !r
+          .starDOW && t ==
+          "day" ? new Date(
+            Date.UTC(this
+              .year, this
+              .month, 1, 0,
+              0, 0, 0))
+            .getUTCDay() :
+          void 0,
+          l = this[t] + n,
+          y = i === 1 ? u =>
+            u < r[t].length :
+            u => u >= 0;
+        for (let u = l; y(
+          u); u += i) {
+          let d = r[t][u];
+          if (t === "day" &&
+            !d) {
+            for (let c =
+              0; c < r
+                .nearestWeekdays
+                .length; c++)
+              if (r
+                .nearestWeekdays[
+                c]) {
+                let W = this
+                  .getNearestWeekday(
+                    this
+                      .year,
+                    this
+                      .month,
+                    c - n);
+                if (W === -
+                  1)
+                  continue;
+                if (W ===
+                  u - n) {
+                  d = 1;
+                  break
+                }
+              }
+          }
+          if (t === "day" &&
+            r.lastWeekday) {
+            let c = this
+              .getLastWeekday(
+                this.year,
+                this.month);
+            u - n === c && (
+              d = 1)
+          }
+          if (t === "day" &&
+            r
+              .lastDayOfMonth &&
+            u - n == o && (
+              d = 1), t ===
+              "day" && !r
+                .starDOW) {
+            let c = r
+              .dayOfWeek[(
+                h + (u -
+                  n - 1)
+              ) % 7];
+            if (c && c & 63)
+              c = this
+                .isNthWeekdayOfMonth(
+                  this.year,
+                  this.month,
+                  u - n, c) ?
+                1 : 0;
+            else if (c)
+              throw new Error(
+                `CronDate: Invalid value for dayOfWeek encountered. ${c}`
+              );
+            r.useAndLogic ?
+              d = d && c : !
+                e.domAndDow &&
+                !r.starDOM ?
+                d = d || c :
+                d = d && c
+          }
+          if (d)
+            return this[t] =
+              u - n, a !==
+                this[t] ? 2 :
+                1
+        }
+        return 3
+      }
+      recurse(e, t, r) {
+        if (r === 0 && !e
+          .starYear) {
+          if (this.year >=
+            0 && this.year <
+            e.year.length &&
+            e.year[this
+              .year] === 0
+          ) {
+            let i = -1;
+            for (let a =
+              this.year +
+              1; a < e
+                .year
+                .length && a <
+              1e4; a++)
+              if (e.year[
+                a] === 1) {
+                i = a;
+                break
+              } if (i === -
+                1)
+              return null;
+            this.year = i,
+              this.month =
+              0, this.day =
+              1, this.hour =
+              0, this
+                .minute = 0,
+              this.second =
+              0, this.ms = 0
+          }
+          if (this.year >=
+            1e4) return null
+        }
+        let n = this
+          .findNext(t, f[r][
+            0
+          ], e, f[r][2]);
+        if (n > 1) {
+          let i = r + 1;
+          for (; i < f
+            .length;) this[
+              f[i][0]] = -f[
+              i][2], i++;
+          if (n === 3) {
+            if (this[f[r][
+              1]]++, this[
+              f[r][0]] = -
+              f[r][2], this
+                .apply(),
+              r === 0 && !e
+                .starYear) {
+              for (; this
+                .year >=
+                0 && this
+                  .year < e
+                    .year
+                  .length && e
+                    .year[this
+                    .year] ===
+                0 && this
+                  .year < 1e4;
+              ) this
+                .year++;
+              if (this
+                .year >=
+                1e4 || this
+                  .year >= e
+                    .year.length
+              ) return null
+            }
+            return this
+              .recurse(e, t,
+                0)
+          } else if (this
+            .apply())
+            return this
+              .recurse(e, t,
+                r - 1)
+        }
+        return r += 1, r >=
+          f.length ? this :
+          (e.starYear ? this
+            .year >= 3e3 :
+            this.year >= 1e4
+          ) ? null : this
+            .recurse(e, t, r)
+      }
+      increment(e, t, r) {
+        return this
+          .second += t
+            .interval !==
+            void 0 && t
+              .interval > 1 &&
+            r ? t.interval :
+            1, this.ms = 0,
+          this.apply(), this
+            .recurse(e, t, 0)
+      }
+      decrement(e, t) {
+        return this
+          .second -= t
+            .interval !==
+            void 0 && t
+              .interval > 1 ? t
+            .interval : 1,
+          this.ms = 0, this
+            .apply(), this
+              .recurseBackward(
+                e, t, 0, 0)
+      }
+      recurseBackward(e, t, r,
+        n = 0) {
+        if (n > 1e4)
+          return null;
+        if (r === 0 && !e
+          .starYear) {
+          if (this.year >=
+            0 && this.year <
+            e.year.length &&
+            e.year[this
+              .year] === 0
+          ) {
+            let a = -1;
+            for (let o =
+              this.year -
+              1; o >=
+              0; o--)
+              if (e.year[
+                o] === 1) {
+                a = o;
+                break
+              } if (a === -
+                1)
+              return null;
+            this.year = a,
+              this.month =
+              11, this.day =
+              31, this
+                .hour = 23,
+              this.minute =
+              59, this
+                .second = 59,
+              this.ms = 0
+          }
+          if (this.year < 0)
+            return null
+        }
+        let i = this
+          .findPrevious(t,
+            f[r][0], e, f[r]
+          [2]);
+        if (i > 1) {
+          let a = r + 1;
+          for (; a < f
+            .length;) {
+            let o = f[a][0],
+              h = f[a][2],
+              l = this
+                .getMaxPatternValue(
+                  o, e, h);
+            this[o] = l, a++
+          }
+          if (i === 3) {
+            if (this[f[r][
+              1]]--, r ===
+              0) {
+              let y = this
+                .getLastDayOfMonth(
+                  this.year,
+                  this.month
+                );
+              this.day >
+                y && (this
+                  .day = y)
+            }
+            if (r === 1)
+              if (this
+                .day <= 0)
+                this.day =
+                  1;
+              else {
+                let y = this
+                  .year,
+                  u = this
+                    .month;
+                for (; u <
+                  0;) u +=
+                    12, y--;
+                for (; u >
+                  11;) u -=
+                    12, y++;
+                let d =
+                  u !== 1 ?
+                    _[u] :
+                    new Date(
+                      Date
+                        .UTC(y,
+                          u + 1,
+                          0))
+                      .getUTCDate();
+                this.day >
+                  d && (this
+                    .day = d
+                  )
+              } this
+                .apply();
+            let o = f[r][0],
+              h = f[r][2],
+              l = this
+                .getMaxPatternValue(
+                  o, e, h);
+            if (o ===
+              "day") {
+              let y = this
+                .getLastDayOfMonth(
+                  this.year,
+                  this.month
+                );
+              this[o] = Math
+                .min(l, y)
+            } else this[o] =
+              l;
+            if (this
+              .apply(), r ===
+              0) {
+              let y = f[1][
+                2],
+                u = this
+                  .getMaxPatternValue(
+                    "day", e,
+                    y),
+                d = this
+                  .getLastDayOfMonth(
+                    this.year,
+                    this.month
+                  ),
+                c = Math
+                  .min(u, d);
+              c !== this
+                .day && (
+                  this.day =
+                  c, this
+                    .hour =
+                  this
+                    .getMaxPatternValue(
+                      "hour",
+                      e, f[2][
+                    2
+                    ]), this
+                      .minute =
+                  this
+                    .getMaxPatternValue(
+                      "minute",
+                      e, f[3][
+                    2
+                    ]), this
+                      .second =
+                  this
+                    .getMaxPatternValue(
+                      "second",
+                      e, f[4][
+                    2
+                    ]))
+            }
+            if (r === 0 && !
+              e.starYear) {
+              for (; this
+                .year >=
+                0 && this
+                  .year < e
+                    .year
+                  .length && e
+                    .year[this
+                    .year] ===
+                0;) this
+                  .year--;
+              if (this
+                .year < 0)
+                return null
+            }
+            return this
+              .recurseBackward(
+                e, t, 0, n +
+              1)
+          } else if (this
+            .apply())
+            return this
+              .recurseBackward(
+                e, t, r - 1,
+                n + 1)
+        }
+        return r += 1, r >=
+          f.length ? this :
+          this.year < 0 ?
+            null : this
+              .recurseBackward(
+                e, t, r, n + 1)
+      }
+      getMaxPatternValue(e, t,
+        r) {
+        if (e === "day" && t
+          .lastDayOfMonth)
+          return this
+            .getLastDayOfMonth(
+              this.year,
+              this.month);
+        if (e === "day" && !
+          t.starDOW)
+          return this
+            .getLastDayOfMonth(
+              this.year,
+              this.month);
+        for (let n = t[e]
+          .length -
+          1; n >= 0; n--)
+          if (t[e][n])
+            return n - r;
+        return t[e].length -
+          1 - r
+      }
+      findPrevious(e, t, r,
+        n) {
+        return this
+          ._findMatch(e, t,
+            r, n, -1)
+      }
+      getDate(e) {
+        return e || this
+          .tz === void 0 ?
+          new Date(this
+            .year, this
+            .month, this
+            .day, this.hour,
+            this.minute,
+            this.second,
+            this.ms) :
+          typeof this.tz ==
+            "number" ?
+            new Date(Date.UTC(
+              this.year,
+              this.month,
+              this.day, this
+              .hour, this
+                .minute - this
+              .tz, this
+              .second, this
+              .ms)) : N(w(this
+                .year, this
+                  .month + 1,
+                this.day, this
+                .hour, this
+                .minute, this
+                .second, this
+                .tz), !1)
+      }
+      getTime() {
+        return this.getDate(
+          !1)
+          .getTime()
+      }
+      match(e, t) {
+        if (!e.starYear && (
+          this.year < 0 ||
+          this.year >= e
+            .year.length ||
+          e.year[this
+            .year] === 0))
+          return !1;
+        for (let r = 0; r <
+          f.length; r++) {
+          let n = f[r][0],
+            i = f[r][2],
+            a = this[n];
+          if (a + i < 0 ||
+            a + i >= e[n]
+              .length)
+            return !1;
+          let o = e[n][a +
+            i];
+          if (n === "day") {
+            if (!o) {
+              for (let h =
+                0; h < e
+                  .nearestWeekdays
+                  .length; h++
+              )
+                if (e
+                  .nearestWeekdays[
+                  h]) {
+                  let l =
+                    this
+                      .getNearestWeekday(
+                        this
+                          .year,
+                        this
+                          .month,
+                        h - i
+                      );
+                  if (l !==
+                    -1 &&
+                    l === a
+                  ) {
+                    o = 1;
+                    break
+                  }
+                }
+            }
+            if (e
+              .lastWeekday
+            ) {
+              let h = this
+                .getLastWeekday(
+                  this.year,
+                  this.month
+                );
+              a === h && (
+                o = 1)
+            }
+            if (e
+              .lastDayOfMonth
+            ) {
+              let h = this
+                .getLastDayOfMonth(
+                  this.year,
+                  this.month
+                );
+              a === h && (
+                o = 1)
+            }
+            if (!e
+              .starDOW) {
+              let h =
+                new Date(
+                  Date.UTC(
+                    this
+                      .year,
+                    this
+                      .month,
+                    1, 0, 0,
+                    0, 0))
+                  .getUTCDay(),
+                l = e
+                  .dayOfWeek[(
+                    h + (a -
+                      1)) %
+                  7];
+              l && l & 63 &&
+                (l = this
+                  .isNthWeekdayOfMonth(
+                    this
+                      .year,
+                    this
+                      .month,
+                    a, l) ?
+                  1 : 0), e
+                    .useAndLogic ?
+                  o = o && l :
+                  !t
+                    .domAndDow &&
+                    !e.starDOM ?
+                    o = o || l :
+                    o = o && l
+            }
+          }
+          if (!o) return !1
+        }
+        return !0
+      }
+    }
+  });
+
+  function A(s) {
+    if (s === void 0 && (s = {}),
+      delete s.name, s
+        .legacyMode !== void 0 && s
+          .domAndDow === void 0 ? s
+            .domAndDow = !s.legacyMode : s
+              .domAndDow === void 0 && (s
+                .domAndDow = !1), s
+                  .legacyMode = !s.domAndDow, s
+                    .paused = s.paused ===
+                      void 0 ? !1 : s.paused, s
+                        .maxRuns = s.maxRuns ===
+                          void 0 ? 1 / 0 : s.maxRuns, s
+                            .catch = s.catch === void 0 ?
+        !1 : s.catch, s.interval = s
+          .interval === void 0 ? 0 :
+          parseInt(s.interval
+            .toString(), 10), s
+              .utcOffset = s.utcOffset ===
+                void 0 ? void 0 : parseInt(s
+                  .utcOffset.toString(), 10),
+      s.dayOffset = s.dayOffset ===
+        void 0 ? 0 : parseInt(s
+          .dayOffset.toString(), 10),
+      s.unref = s.unref === void 0 ?
+        !1 : s.unref, s.mode = s
+          .mode === void 0 ? "auto" : s
+          .mode, s.alternativeWeekdays =
+      s.alternativeWeekdays ===
+        void 0 ? !1 : s
+        .alternativeWeekdays, s
+          .sloppyRanges = s
+            .sloppyRanges === void 0 ? !
+      1 : s.sloppyRanges, !["auto",
+        "5-part", "6-part",
+        "7-part", "5-or-6-parts",
+        "6-or-7-parts"
+      ].includes(s.mode))
+      throw new Error(
+        "CronOptions: mode must be one of 'auto', '5-part', '6-part', '7-part', '5-or-6-parts', or '6-or-7-parts'."
+      );
+    if (s.startAt && (s.startAt =
+      new m(s.startAt, s.timezone)
+    ), s.stopAt && (s.stopAt =
+      new m(s.stopAt, s.timezone)
+    ), s.interval !== null) {
+      if (isNaN(s.interval))
+        throw new Error(
+          "CronOptions: Supplied value for interval is not a number"
+        );
+      if (s.interval < 0)
+        throw new Error(
+          "CronOptions: Supplied value for interval can not be negative"
+        )
+    }
+    if (s.utcOffset !== void 0) {
+      if (isNaN(s.utcOffset))
+        throw new Error(
+          "CronOptions: Invalid value passed for utcOffset, should be number representing minutes offset from UTC."
+        );
+      if (s.utcOffset < -870 || s
+        .utcOffset > 870)
+        throw new Error(
+          "CronOptions: utcOffset out of bounds."
+        );
+      if (s.utcOffset !== void 0 &&
+        s.timezone) throw new Error(
+          "CronOptions: Combining 'utcOffset' with 'timezone' is not allowed."
+        )
+    }
+    if (s.unref !== !0 && s
+      .unref !== !1)
+      throw new Error(
+        "CronOptions: Unref should be either true, false or undefined(false)."
+      );
+    if (s.dayOffset !== void 0 && s
+      .dayOffset !== 0 && isNaN(s
+        .dayOffset))
+      throw new Error(
+        "CronOptions: Invalid value passed for dayOffset, should be a number representing days to offset."
+      );
+    return s
+  }
+  var U = g(() => {
+    x()
+  });
+
+  function T(s) {
+    return Object.prototype.toString
+      .call(s) ===
+      "[object Function]" ||
+      typeof s == "function" ||
+      s instanceof Function
+  }
+
+  function S(s) {
+    return T(s)
+  }
+
+  function z(s) {
+    typeof Deno < "u" && typeof Deno
+      .unrefTimer < "u" ? Deno
+        .unrefTimer(s) : s && typeof s
+          .unref < "u" && s.unref()
+  }
+  var I = g(() => { });
+  var L, D, v, Y = g(() => {
+    x();
+    M();
+    U();
+    I();
+    L = 30 * 1e3, D = [], v =
+      class {
+        name;
+        options;
+        _states;
+        fn;
+        getTz() {
+          return this.options
+            .timezone || this
+              .options.utcOffset
+        }
+        applyDayOffset(e) {
+          if (this.options
+            .dayOffset !==
+            void 0 && this
+              .options
+              .dayOffset !== 0
+          ) {
+            let t = this
+              .options
+              .dayOffset *
+              24 * 60 * 60 *
+              1e3;
+            return new Date(e
+              .getTime() + t
+            )
+          }
+          return e
+        }
+        constructor(e, t, r) {
+          let n, i;
+          if (T(t)) i = t;
+          else if (typeof t ==
+            "object") n = t;
+          else if (t !==
+            void 0)
+            throw new Error(
+              "Cron: Invalid argument passed for optionsIn. Should be one of function, or object (options)."
+            );
+          if (T(r)) i = r;
+          else if (typeof r ==
+            "object") n = r;
+          else if (r !==
+            void 0)
+            throw new Error(
+              "Cron: Invalid argument passed for funcIn. Should be one of function, or object (options)."
+            );
+          if (this.name = n
+            ?.name, this
+              .options = A(n),
+            this._states = {
+              kill: !1,
+              blocking: !1,
+              previousRun: void 0,
+              currentRun: void 0,
+              once: void 0,
+              currentTimeout: void 0,
+              maxRuns: n ? n
+                .maxRuns :
+                void 0,
+              paused: n ? n
+                .paused : !1,
+              pattern: new b(
+                "* * * * *",
+                void 0, {
+                mode: "auto"
+              })
+            }, e && (
+              e instanceof Date ||
+              typeof e ==
+              "string" && e
+                .indexOf(":") >
+              0) ? this
+                ._states.once =
+            new m(e, this
+              .getTz()) : this
+                ._states.pattern =
+            new b(e, this
+              .options
+              .timezone, {
+              mode: this
+                .options
+                .mode,
+              alternativeWeekdays: this
+                .options
+                .alternativeWeekdays,
+              sloppyRanges: this
+                .options
+                .sloppyRanges
+            }), this.name) {
+            if (D.find(o => o
+              .name === this
+                .name))
+              throw new Error(
+                "Cron: Tried to initialize new named job '" +
+                this.name +
+                "', but name already taken."
+              );
+            D.push(this)
+          }
+          return i !==
+            void 0 && S(i) &&
+            (this.fn = i, this
+              .schedule()),
+            this
+        }
+        nextRun(e) {
+          let t = this._next(
+            e);
+          return t ? this
+            .applyDayOffset(t
+              .getDate(!1)) :
+            null
+        }
+        nextRuns(e, t) {
+          this._states
+            .maxRuns !==
+            void 0 && e > this
+              ._states
+              .maxRuns && (e =
+                this._states
+                  .maxRuns);
+          let r = t || this
+            ._states
+            .currentRun ||
+            void 0;
+          return this
+            ._enumerateRuns(e,
+              r, "next")
+        }
+        previousRuns(e, t) {
+          return this
+            ._enumerateRuns(e,
+              t || void 0,
+              "previous")
+        }
+        _enumerateRuns(e, t,
+          r) {
+          let n = [],
+            i = t ? new m(t,
+              this.getTz()) :
+              null,
+            a = r === "next" ?
+              this._next : this
+                ._previous;
+          for (; e--;) {
+            let o = a.call(
+              this, i);
+            if (!o) break;
+            let h = o.getDate(
+              !1);
+            n.push(this
+              .applyDayOffset(
+                h)), i = o
+          }
+          return n
+        }
+        match(e) {
+          if (this._states
+            .once) {
+            let r = new m(e,
+              this.getTz());
+            r.ms = 0;
+            let n = new m(this
+              ._states.once,
+              this.getTz());
+            return n.ms = 0, r
+              .getTime() === n
+                .getTime()
+          }
+          let t = new m(e,
+            this.getTz());
+          return t.ms = 0, t
+            .match(this
+              ._states
+              .pattern, this
+              .options)
+        }
+        getPattern() {
+          if (!this._states
+            .once) return this
+              ._states
+              .pattern ? this
+                ._states.pattern
+              .pattern :
+              void 0
+        }
+        getOnce() {
+          return this._states
+            .once ? this
+              ._states.once
+              .getDate() : null
+        }
+        isRunning() {
+          let e = this
+            .nextRun(this
+              ._states
+              .currentRun),
+            t = !this._states
+              .paused,
+            r = this.fn !==
+              void 0,
+            n = !this._states
+              .kill;
+          return t && r &&
+            n && e !== null
+        }
+        isStopped() {
+          return this._states
+            .kill
+        }
+        isBusy() {
+          return this._states
+            .blocking
+        }
+        currentRun() {
+          return this._states
+            .currentRun ? this
+              ._states
+              .currentRun
+              .getDate() : null
+        }
+        previousRun() {
+          return this._states
+            .previousRun ?
+            this._states
+              .previousRun
+              .getDate() : null
+        }
+        msToNext(e) {
+          let t = this._next(
+            e);
+          return t ?
+            e instanceof m ||
+              e instanceof Date ?
+              t.getTime() - e
+                .getTime() : t
+                  .getTime() -
+              new m(e)
+                .getTime() : null
+        }
+        stop() {
+          this._states
+            .kill = !0, this
+              ._states
+              .currentTimeout &&
+            clearTimeout(this
+              ._states
+              .currentTimeout
+            );
+          let e = D.indexOf(
+            this);
+          e >= 0 && D.splice(
+            e, 1)
+        }
+        pause() {
+          return this._states
+            .paused = !0, !
+            this._states.kill
+        }
+        resume() {
+          return this._states
+            .paused = !1, !
+            this._states.kill
+        }
+        schedule(e) {
+          if (e && this.fn)
+            throw new Error(
+              "Cron: It is not allowed to schedule two functions using the same Croner instance."
+            );
+          e && (this.fn = e);
+          let t = this
+            .msToNext(),
+            r = this.nextRun(
+              this._states
+                .currentRun);
+          return t == null ||
+            isNaN(t) || r ===
+            null ? this : (t >
+              L && (t = L),
+              this._states
+                .currentTimeout =
+              setTimeout(() =>
+                this
+                  ._checkTrigger(
+                    r), t), this
+                      ._states
+                      .currentTimeout &&
+                    this.options
+                      .unref && z(this
+                        ._states
+                        .currentTimeout
+                      ), this)
+        }
+        async _trigger(e) {
+          this._states
+            .blocking = !0,
+            this._states
+              .currentRun =
+            new m(void 0, this
+              .getTz());
+          try {
+            if (this.options
+              .catch) try {
+                this.fn !==
+                  void 0 &&
+                  await this
+                    .fn(this,
+                      this
+                        .options
+                        .context)
+              } catch (t) {
+                if (T(this
+                  .options
+                  .catch))
+                  try {
+                    this
+                      .options
+                      .catch(
+                        t,
+                        this)
+                  } catch { }
+              } else this
+                .fn !==
+                void 0 &&
+                await this.fn(
+                  this, this
+                    .options
+                  .context)
+          } finally {
+            this._states
+              .previousRun =
+              new m(e, this
+                .getTz()),
+              this._states
+                .blocking = !1
+          }
+        }
+        async trigger() {
+          await this
+            ._trigger()
+        }
+        runsLeft() {
+          return this._states
+            .maxRuns
+        }
+        _checkTrigger(e) {
+          let t = new Date,
+            r = !this._states
+              .paused && t
+                .getTime() >= e
+                  .getTime(),
+            n = this._states
+              .blocking && this
+                .options.protect;
+          r && !n ? (this
+            ._states
+            .maxRuns !==
+            void 0 && this
+              ._states
+              .maxRuns--, this
+                ._trigger()) :
+            r && n && T(this
+              .options.protect
+            ) && setTimeout(
+              () => this
+                .options
+                .protect(this),
+              0), this
+                .schedule()
+        }
+        _next(e) {
+          let t = !!(e || this
+            ._states
+            .currentRun),
+            r = !1;
+          !e && this.options
+            .startAt && this
+              .options
+              .interval && ([e,
+                t
+              ] = this
+                ._calculatePreviousRun(
+                  e, t), r = !e
+            ), e = new m(e,
+              this.getTz()),
+            this.options
+              .startAt && e && e
+                .getTime() < this
+                  .options.startAt
+                  .getTime() && (e =
+                    this.options
+                      .startAt);
+          let n = this._states
+            .once || new m(e,
+              this.getTz());
+          return !r && n !==
+            this._states
+              .once && (n = n
+                .increment(this
+                  ._states
+                  .pattern, this
+                  .options, t)),
+            this._states
+              .once && this
+                ._states.once
+                .getTime() <= e
+                  .getTime() ||
+              n === null || this
+                ._states
+                .maxRuns !==
+              void 0 && this
+                ._states
+                .maxRuns <= 0 ||
+              this._states
+                .kill || this
+                  .options.stopAt &&
+              n.getTime() >=
+              this.options
+                .stopAt
+                .getTime() ? null :
+              n
+        }
+        _previous(e) {
+          let t = new m(e,
+            this.getTz());
+          this.options
+            .stopAt && t
+              .getTime() > this
+                .options.stopAt
+                .getTime() && (t =
+                  this.options
+                    .stopAt);
+          let r = new m(t,
+            this.getTz());
+          return this._states
+            .once ? this
+              ._states.once
+              .getTime() < t
+                .getTime() ? this
+                  ._states.once :
+            null : (r = r
+              .decrement(this
+                ._states
+                .pattern, this
+                .options),
+              r === null ||
+                this.options
+                  .startAt && r
+                    .getTime() <
+                this.options
+                  .startAt
+                  .getTime() ?
+                null : r)
+        }
+        _calculatePreviousRun(e,
+          t) {
+          let r = new m(
+            void 0, this
+              .getTz()),
+            n = e;
+          if (this.options
+            .startAt
+            .getTime() <= r
+              .getTime()) {
+            n = this.options
+              .startAt;
+            let i = n
+              .getTime() +
+              this.options
+                .interval * 1e3;
+            for (; i <= r
+              .getTime();) n =
+                new m(n, this
+                  .getTz())
+                  .increment(this
+                    ._states
+                    .pattern, this
+                    .options, !0),
+                i = n
+                  .getTime() + this
+                    .options
+                    .interval * 1e3;
+            t = !0
+          }
+          return n === null &&
+            (n = void 0), [n,
+              t
+            ]
+        }
+      }
+  });
+  var Z = j((oe, F) => {
+    Y();
+    F.exports = v
+  });
+  return Z();
+})();
+
+// @vuebundler[Proyecto_base_001][8]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/cron/cronstrue.js
+(function webpackUniversalModuleDefinition(root, factory) {
+    if (typeof exports === 'object' && typeof module === 'object')
+        module.exports = factory();
+    else if (typeof define === 'function' && define.amd)
+        define("cronstrue", [], factory);
+    else if (typeof exports === 'object')
+        exports["cronstrue"] = factory();
+    else
+        root["cronstrue"] = factory();
+})(globalThis, () => {
+    return /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ 949:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+                    Object.defineProperty(exports, "__esModule", ({ value: true }));
+                    exports.CronParser = void 0;
+                    var rangeValidator_1 = __webpack_require__(515);
+                    var CronParser = (function () {
+                        function CronParser(expression, dayOfWeekStartIndexZero, monthStartIndexZero) {
+                            if (dayOfWeekStartIndexZero === void 0) { dayOfWeekStartIndexZero = true; }
+                            if (monthStartIndexZero === void 0) { monthStartIndexZero = false; }
+                            this.expression = expression;
+                            this.dayOfWeekStartIndexZero = dayOfWeekStartIndexZero;
+                            this.monthStartIndexZero = monthStartIndexZero;
+                        }
+                        CronParser.prototype.parse = function () {
+                            var _a;
+                            var parsed;
+                            var expression = (_a = this.expression) !== null && _a !== void 0 ? _a : '';
+                            if (expression === "@reboot") {
+                                parsed = ["@reboot", "", "", "", "", "", ""];
+                                return parsed;
+                            }
+                            else if (expression.startsWith('@')) {
+                                var special = this.parseSpecial(this.expression);
+                                parsed = this.extractParts(special);
+                            }
+                            else {
+                                parsed = this.extractParts(this.expression);
+                            }
+                            this.normalize(parsed);
+                            this.validate(parsed);
+                            return parsed;
+                        };
+                        CronParser.prototype.parseSpecial = function (expression) {
+                            var specialExpressions = {
+                                '@yearly': '0 0 1 1 *',
+                                '@annually': '0 0 1 1 *',
+                                '@monthly': '0 0 1 * *',
+                                '@weekly': '0 0 * * 0',
+                                '@daily': '0 0 * * *',
+                                '@midnight': '0 0 * * *',
+                                '@hourly': '0 * * * *',
+                                '@reboot': '@reboot'
+                            };
+                            var special = specialExpressions[expression];
+                            if (!special) {
+                                throw new Error('Unknown special expression.');
+                            }
+                            return special;
+                        };
+                        CronParser.prototype.extractParts = function (expression) {
+                            if (!this.expression) {
+                                throw new Error("cron expression is empty");
+                            }
+                            var parsed = expression.trim().split(/[ ]+/);
+                            for (var i = 0; i < parsed.length; i++) {
+                                if (parsed[i].includes(",")) {
+                                    var arrayElement = parsed[i]
+                                        .split(",")
+                                        .map(function (item) { return item.trim(); })
+                                        .filter(function (item) { return item !== ""; })
+                                        .map(function (item) { return (!isNaN(Number(item)) ? Number(item) : item); })
+                                        .filter(function (item) { return item !== null && item !== ""; });
+                                    if (arrayElement.length === 0) {
+                                        arrayElement.push("*");
+                                    }
+                                    arrayElement.sort(function (a, b) { return (a !== null && b !== null ? a - b : 0); });
+                                    parsed[i] = arrayElement.map(function (item) { return (item !== null ? item.toString() : ""); }).join(",");
+                                }
+                            }
+                            if (parsed.length < 5) {
+                                throw new Error("Expression has only ".concat(parsed.length, " part").concat(parsed.length == 1 ? "" : "s", ". At least 5 parts are required."));
+                            }
+                            else if (parsed.length == 5) {
+                                parsed.unshift("");
+                                parsed.push("");
+                            }
+                            else if (parsed.length == 6) {
+                                var isYearWithNoSecondsPart = /\d{4}$/.test(parsed[5]) || parsed[4] == "?" || parsed[2] == "?";
+                                if (isYearWithNoSecondsPart) {
+                                    parsed.unshift("");
+                                }
+                                else {
+                                    parsed.push("");
+                                }
+                            }
+                            else if (parsed.length > 7) {
+                                throw new Error("Expression has ".concat(parsed.length, " parts; too many!"));
+                            }
+                            return parsed;
+                        };
+                        CronParser.prototype.normalize = function (expressionParts) {
+                            var _this = this;
+                            expressionParts[3] = expressionParts[3].replace("?", "*");
+                            expressionParts[5] = expressionParts[5].replace("?", "*");
+                            expressionParts[2] = expressionParts[2].replace("?", "*");
+                            if (expressionParts[0].indexOf("0/") == 0) {
+                                expressionParts[0] = expressionParts[0].replace("0/", "*/");
+                            }
+                            if (expressionParts[1].indexOf("0/") == 0) {
+                                expressionParts[1] = expressionParts[1].replace("0/", "*/");
+                            }
+                            if (expressionParts[2].indexOf("0/") == 0) {
+                                expressionParts[2] = expressionParts[2].replace("0/", "*/");
+                            }
+                            if (expressionParts[3].indexOf("1/") == 0) {
+                                expressionParts[3] = expressionParts[3].replace("1/", "*/");
+                            }
+                            if (expressionParts[4].indexOf("1/") == 0) {
+                                expressionParts[4] = expressionParts[4].replace("1/", "*/");
+                            }
+                            if (expressionParts[6].indexOf("1/") == 0) {
+                                expressionParts[6] = expressionParts[6].replace("1/", "*/");
+                            }
+                            expressionParts[5] = expressionParts[5].replace(/(^\d)|([^#/\s]\d)/g, function (t) {
+                                var dowDigits = t.replace(/\D/, "");
+                                var dowDigitsAdjusted = dowDigits;
+                                if (_this.dayOfWeekStartIndexZero) {
+                                    if (dowDigits == "7") {
+                                        dowDigitsAdjusted = "0";
+                                    }
+                                }
+                                else {
+                                    dowDigitsAdjusted = (parseInt(dowDigits) - 1).toString();
+                                }
+                                return t.replace(dowDigits, dowDigitsAdjusted);
+                            });
+                            if (expressionParts[5] == "L") {
+                                expressionParts[5] = "6";
+                            }
+                            if (expressionParts[3] == "?") {
+                                expressionParts[3] = "*";
+                            }
+                            if (expressionParts[3].indexOf("W") > -1 &&
+                                (expressionParts[3].indexOf(",") > -1 || expressionParts[3].indexOf("-") > -1)) {
+                                throw new Error("The 'W' character can be specified only when the day-of-month is a single day, not a range or list of days.");
+                            }
+                            var days = {
+                                SUN: 0,
+                                MON: 1,
+                                TUE: 2,
+                                WED: 3,
+                                THU: 4,
+                                FRI: 5,
+                                SAT: 6,
+                            };
+                            for (var day in days) {
+                                expressionParts[5] = expressionParts[5].replace(new RegExp(day, "gi"), days[day].toString());
+                            }
+                            expressionParts[4] = expressionParts[4].replace(/(^\d{1,2})|([^#/\s]\d{1,2})/g, function (t) {
+                                var dowDigits = t.replace(/\D/, "");
+                                var dowDigitsAdjusted = dowDigits;
+                                if (_this.monthStartIndexZero) {
+                                    dowDigitsAdjusted = (parseInt(dowDigits) + 1).toString();
+                                }
+                                return t.replace(dowDigits, dowDigitsAdjusted);
+                            });
+                            var months = {
+                                JAN: 1,
+                                FEB: 2,
+                                MAR: 3,
+                                APR: 4,
+                                MAY: 5,
+                                JUN: 6,
+                                JUL: 7,
+                                AUG: 8,
+                                SEP: 9,
+                                OCT: 10,
+                                NOV: 11,
+                                DEC: 12,
+                            };
+                            for (var month in months) {
+                                expressionParts[4] = expressionParts[4].replace(new RegExp(month, "gi"), months[month].toString());
+                            }
+                            if (expressionParts[0] == "0") {
+                                expressionParts[0] = "";
+                            }
+                            if (!/\*|\-|\,|\//.test(expressionParts[2]) &&
+                                (/\*|\//.test(expressionParts[1]) || /\*|\//.test(expressionParts[0]))) {
+                                expressionParts[2] += "-".concat(expressionParts[2]);
+                            }
+                            for (var i = 0; i < expressionParts.length; i++) {
+                                if (expressionParts[i].indexOf(",") != -1) {
+                                    expressionParts[i] =
+                                        expressionParts[i]
+                                            .split(",")
+                                            .filter(function (str) { return str !== ""; })
+                                            .join(",") || "*";
+                                }
+                                if (expressionParts[i] == "*/1") {
+                                    expressionParts[i] = "*";
+                                }
+                                if (expressionParts[i].indexOf("/") > -1 && !/^\*|\-|\,/.test(expressionParts[i])) {
+                                    var stepRangeThrough = null;
+                                    switch (i) {
+                                        case 4:
+                                            stepRangeThrough = "12";
+                                            break;
+                                        case 5:
+                                            stepRangeThrough = "6";
+                                            break;
+                                        case 6:
+                                            stepRangeThrough = "9999";
+                                            break;
+                                        default:
+                                            stepRangeThrough = null;
+                                            break;
+                                    }
+                                    if (stepRangeThrough !== null) {
+                                        var parts = expressionParts[i].split("/");
+                                        expressionParts[i] = "".concat(parts[0], "-").concat(stepRangeThrough, "/").concat(parts[1]);
+                                    }
+                                }
+                            }
+                        };
+                        CronParser.prototype.validate = function (parsed) {
+                            var standardCronPartCharacters = "0-9,\\-*\/";
+                            this.validateOnlyExpectedCharactersFound(parsed[0], standardCronPartCharacters);
+                            this.validateOnlyExpectedCharactersFound(parsed[1], standardCronPartCharacters);
+                            this.validateOnlyExpectedCharactersFound(parsed[2], standardCronPartCharacters);
+                            this.validateOnlyExpectedCharactersFound(parsed[3], "0-9,\\-*\/LW");
+                            this.validateOnlyExpectedCharactersFound(parsed[4], standardCronPartCharacters);
+                            this.validateOnlyExpectedCharactersFound(parsed[5], "0-9,\\-*\/L#");
+                            this.validateOnlyExpectedCharactersFound(parsed[6], standardCronPartCharacters);
+                            this.validateAnyRanges(parsed);
+                        };
+                        CronParser.prototype.validateAnyRanges = function (parsed) {
+                            rangeValidator_1.default.secondRange(parsed[0]);
+                            rangeValidator_1.default.minuteRange(parsed[1]);
+                            rangeValidator_1.default.hourRange(parsed[2]);
+                            rangeValidator_1.default.dayOfMonthRange(parsed[3]);
+                            rangeValidator_1.default.monthRange(parsed[4], this.monthStartIndexZero);
+                            rangeValidator_1.default.dayOfWeekRange(parsed[5], this.dayOfWeekStartIndexZero);
+                        };
+                        CronParser.prototype.validateOnlyExpectedCharactersFound = function (cronPart, allowedCharsExpression) {
+                            var invalidChars = cronPart.match(new RegExp("[^".concat(allowedCharsExpression, "]+"), "gi"));
+                            if (invalidChars && invalidChars.length) {
+                                throw new Error("Expression contains invalid values: '".concat(invalidChars.toString(), "'"));
+                            }
+                        };
+                        return CronParser;
+                    }());
+                    exports.CronParser = CronParser;
+
+
+                    /***/
+}),
+
+/***/ 333:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+                    Object.defineProperty(exports, "__esModule", ({ value: true }));
+                    exports.ExpressionDescriptor = void 0;
+                    var stringUtilities_1 = __webpack_require__(823);
+                    var cronParser_1 = __webpack_require__(949);
+                    var ExpressionDescriptor = (function () {
+                        function ExpressionDescriptor(expression, options) {
+                            this.expression = expression;
+                            this.options = options;
+                            this.expressionParts = new Array(5);
+                            if (!this.options.locale && ExpressionDescriptor.defaultLocale) {
+                                this.options.locale = ExpressionDescriptor.defaultLocale;
+                            }
+                            if (!ExpressionDescriptor.locales[this.options.locale]) {
+                                var fallBackLocale = Object.keys(ExpressionDescriptor.locales)[0];
+                                console.warn("Locale '".concat(this.options.locale, "' could not be found; falling back to '").concat(fallBackLocale, "'."));
+                                this.options.locale = fallBackLocale;
+                            }
+                            this.i18n = ExpressionDescriptor.locales[this.options.locale];
+                            if (options.use24HourTimeFormat === undefined) {
+                                options.use24HourTimeFormat = this.i18n.use24HourTimeFormatByDefault();
+                            }
+                        }
+                        ExpressionDescriptor.toString = function (expression, _a) {
+                            var _b = _a === void 0 ? {} : _a, _c = _b.throwExceptionOnParseError, throwExceptionOnParseError = _c === void 0 ? true : _c, _d = _b.verbose, verbose = _d === void 0 ? false : _d, _e = _b.dayOfWeekStartIndexZero, dayOfWeekStartIndexZero = _e === void 0 ? true : _e, _f = _b.monthStartIndexZero, monthStartIndexZero = _f === void 0 ? false : _f, use24HourTimeFormat = _b.use24HourTimeFormat, _g = _b.locale, locale = _g === void 0 ? null : _g;
+                            var options = {
+                                throwExceptionOnParseError: throwExceptionOnParseError,
+                                verbose: verbose,
+                                dayOfWeekStartIndexZero: dayOfWeekStartIndexZero,
+                                monthStartIndexZero: monthStartIndexZero,
+                                use24HourTimeFormat: use24HourTimeFormat,
+                                locale: locale,
+                            };
+                            if (options.tzOffset) {
+                                console.warn("'tzOffset' option has been deprecated and is no longer supported.");
+                            }
+                            var descripter = new ExpressionDescriptor(expression, options);
+                            return descripter.getFullDescription();
+                        };
+                        ExpressionDescriptor.initialize = function (localesLoader, defaultLocale) {
+                            if (defaultLocale === void 0) { defaultLocale = "en"; }
+                            ExpressionDescriptor.specialCharacters = ["/", "-", ",", "*"];
+                            ExpressionDescriptor.defaultLocale = defaultLocale;
+                            localesLoader.load(ExpressionDescriptor.locales);
+                        };
+                        ExpressionDescriptor.prototype.getFullDescription = function () {
+                            var _a, _b;
+                            var description = "";
+                            try {
+                                var parser = new cronParser_1.CronParser(this.expression, this.options.dayOfWeekStartIndexZero, this.options.monthStartIndexZero);
+                                this.expressionParts = parser.parse();
+                                if (this.expressionParts[0] === "@reboot") {
+                                    return ((_b = (_a = this.i18n).atReboot) === null || _b === void 0 ? void 0 : _b.call(_a)) || "Run once, at startup";
+                                }
+                                var timeSegment = this.getTimeOfDayDescription();
+                                var dayOfMonthDesc = this.getDayOfMonthDescription();
+                                var monthDesc = this.getMonthDescription();
+                                var dayOfWeekDesc = this.getDayOfWeekDescription();
+                                var yearDesc = this.getYearDescription();
+                                description += timeSegment + dayOfMonthDesc + dayOfWeekDesc + monthDesc + yearDesc;
+                                description = this.transformVerbosity(description, !!this.options.verbose);
+                                description = description.charAt(0).toLocaleUpperCase() + description.substr(1);
+                            }
+                            catch (ex) {
+                                if (!this.options.throwExceptionOnParseError) {
+                                    description = this.i18n.anErrorOccuredWhenGeneratingTheExpressionD();
+                                }
+                                else {
+                                    throw "".concat(ex);
+                                }
+                            }
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getTimeOfDayDescription = function () {
+                            var secondsExpression = this.expressionParts[0];
+                            var minuteExpression = this.expressionParts[1];
+                            var hourExpression = this.expressionParts[2];
+                            var description = "";
+                            if (!stringUtilities_1.StringUtilities.containsAny(minuteExpression, ExpressionDescriptor.specialCharacters) &&
+                                !stringUtilities_1.StringUtilities.containsAny(hourExpression, ExpressionDescriptor.specialCharacters) &&
+                                !stringUtilities_1.StringUtilities.containsAny(secondsExpression, ExpressionDescriptor.specialCharacters)) {
+                                description += this.i18n.atSpace() + this.formatTime(hourExpression, minuteExpression, secondsExpression);
+                            }
+                            else if (!secondsExpression &&
+                                minuteExpression.indexOf("-") > -1 &&
+                                !(minuteExpression.indexOf(",") > -1) &&
+                                !(minuteExpression.indexOf("/") > -1) &&
+                                !stringUtilities_1.StringUtilities.containsAny(hourExpression, ExpressionDescriptor.specialCharacters)) {
+                                var minuteParts = minuteExpression.split("-");
+                                description += stringUtilities_1.StringUtilities.format(this.i18n.everyMinuteBetweenX0AndX1(), this.formatTime(hourExpression, minuteParts[0], ""), this.formatTime(hourExpression, minuteParts[1], ""));
+                            }
+                            else if (!secondsExpression &&
+                                hourExpression.indexOf(",") > -1 &&
+                                hourExpression.indexOf("-") == -1 &&
+                                hourExpression.indexOf("/") == -1 &&
+                                !stringUtilities_1.StringUtilities.containsAny(minuteExpression, ExpressionDescriptor.specialCharacters)) {
+                                var hourParts = hourExpression.split(",");
+                                description += this.i18n.at();
+                                for (var i = 0; i < hourParts.length; i++) {
+                                    description += " ";
+                                    description += this.formatTime(hourParts[i], minuteExpression, "");
+                                    if (i < hourParts.length - 2) {
+                                        description += ",";
+                                    }
+                                    if (i == hourParts.length - 2) {
+                                        description += this.i18n.spaceAnd();
+                                    }
+                                }
+                            }
+                            else {
+                                var secondsDescription = this.getSecondsDescription();
+                                var minutesDescription = this.getMinutesDescription();
+                                var hoursDescription = this.getHoursDescription();
+                                description += secondsDescription;
+                                if (description && minutesDescription) {
+                                    description += ", ";
+                                }
+                                description += minutesDescription;
+                                if (minutesDescription === hoursDescription) {
+                                    return description;
+                                }
+                                if (description && hoursDescription) {
+                                    description += ", ";
+                                }
+                                description += hoursDescription;
+                            }
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getSecondsDescription = function () {
+                            var _this = this;
+                            var description = this.getSegmentDescription(this.expressionParts[0], this.i18n.everySecond(), function (s) {
+                                return s;
+                            }, function (s) {
+                                return stringUtilities_1.StringUtilities.format(_this.i18n.everyX0Seconds(s), s);
+                            }, function (s) {
+                                return _this.i18n.secondsX0ThroughX1PastTheMinute();
+                            }, function (s) {
+                                return s == "0"
+                                    ? ""
+                                    : parseInt(s) < 20
+                                        ? _this.i18n.atX0SecondsPastTheMinute(s)
+                                        : _this.i18n.atX0SecondsPastTheMinuteGt20() || _this.i18n.atX0SecondsPastTheMinute(s);
+                            });
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getMinutesDescription = function () {
+                            var _this = this;
+                            var secondsExpression = this.expressionParts[0];
+                            var hourExpression = this.expressionParts[2];
+                            var description = this.getSegmentDescription(this.expressionParts[1], this.i18n.everyMinute(), function (s) {
+                                return s;
+                            }, function (s) {
+                                return stringUtilities_1.StringUtilities.format(_this.i18n.everyX0Minutes(s), s);
+                            }, function (s) {
+                                return _this.i18n.minutesX0ThroughX1PastTheHour();
+                            }, function (s) {
+                                try {
+                                    return s == "0" && hourExpression.indexOf("/") == -1 && secondsExpression == ""
+                                        ? _this.i18n.everyHour()
+                                        : parseInt(s) < 20
+                                            ? _this.i18n.atX0MinutesPastTheHour(s)
+                                            : _this.i18n.atX0MinutesPastTheHourGt20() || _this.i18n.atX0MinutesPastTheHour(s);
+                                }
+                                catch (e) {
+                                    return _this.i18n.atX0MinutesPastTheHour(s);
+                                }
+                            });
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getHoursDescription = function () {
+                            var _this = this;
+                            var expression = this.expressionParts[2];
+                            var hourIndex = 0;
+                            var rangeEndValues = [];
+                            expression
+                                .split("/")[0]
+                                .split(",")
+                                .forEach(function (range) {
+                                    var rangeParts = range.split("-");
+                                    if (rangeParts.length === 2) {
+                                        rangeEndValues.push({ value: rangeParts[1], index: hourIndex + 1 });
+                                    }
+                                    hourIndex += rangeParts.length;
+                                });
+                            var evaluationIndex = 0;
+                            var description = this.getSegmentDescription(expression, this.i18n.everyHour(), function (s) {
+                                var match = rangeEndValues.find(function (r) { return r.value === s && r.index === evaluationIndex; });
+                                var isRangeEndWithNonZeroMinute = match && _this.expressionParts[1] !== "0";
+                                evaluationIndex++;
+                                return isRangeEndWithNonZeroMinute ? _this.formatTime(s, "59", "") : _this.formatTime(s, "0", "");
+                            }, function (s) {
+                                return stringUtilities_1.StringUtilities.format(_this.i18n.everyX0Hours(s), s);
+                            }, function (s) {
+                                return _this.i18n.betweenX0AndX1();
+                            }, function (s) {
+                                return _this.i18n.atX0();
+                            });
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getDayOfWeekDescription = function () {
+                            var _this = this;
+                            var daysOfWeekNames = this.i18n.daysOfTheWeek();
+                            var description = null;
+                            if (this.expressionParts[5] == "*") {
+                                description = "";
+                            }
+                            else {
+                                description = this.getSegmentDescription(this.expressionParts[5], this.i18n.commaEveryDay(), function (s, form) {
+                                    var exp = s;
+                                    if (s.indexOf("#") > -1) {
+                                        exp = s.substring(0, s.indexOf("#"));
+                                    }
+                                    else if (s.indexOf("L") > -1) {
+                                        exp = exp.replace("L", "");
+                                    }
+                                    var parsedExp = parseInt(exp);
+                                    var description = _this.i18n.daysOfTheWeekInCase
+                                        ? _this.i18n.daysOfTheWeekInCase(form)[parsedExp]
+                                        : daysOfWeekNames[parsedExp];
+                                    if (s.indexOf("#") > -1) {
+                                        var dayOfWeekOfMonthDescription = null;
+                                        var dayOfWeekOfMonthNumber = s.substring(s.indexOf("#") + 1);
+                                        var dayOfWeekNumber = s.substring(0, s.indexOf("#"));
+                                        switch (dayOfWeekOfMonthNumber) {
+                                            case "1":
+                                                dayOfWeekOfMonthDescription = _this.i18n.first(dayOfWeekNumber);
+                                                break;
+                                            case "2":
+                                                dayOfWeekOfMonthDescription = _this.i18n.second(dayOfWeekNumber);
+                                                break;
+                                            case "3":
+                                                dayOfWeekOfMonthDescription = _this.i18n.third(dayOfWeekNumber);
+                                                break;
+                                            case "4":
+                                                dayOfWeekOfMonthDescription = _this.i18n.fourth(dayOfWeekNumber);
+                                                break;
+                                            case "5":
+                                                dayOfWeekOfMonthDescription = _this.i18n.fifth(dayOfWeekNumber);
+                                                break;
+                                        }
+                                        description = dayOfWeekOfMonthDescription + " " + description;
+                                    }
+                                    return description;
+                                }, function (s) {
+                                    if (parseInt(s) == 1) {
+                                        return "";
+                                    }
+                                    else {
+                                        return stringUtilities_1.StringUtilities.format(_this.i18n.commaEveryX0DaysOfTheWeek(s), s);
+                                    }
+                                }, function (s) {
+                                    var beginFrom = s.substring(0, s.indexOf("-"));
+                                    var domSpecified = _this.expressionParts[3] != "*";
+                                    return domSpecified ? _this.i18n.commaAndX0ThroughX1(beginFrom) : _this.i18n.commaX0ThroughX1(beginFrom);
+                                }, function (s) {
+                                    var format = null;
+                                    if (s.indexOf("#") > -1) {
+                                        var dayOfWeekOfMonthNumber = s.substring(s.indexOf("#") + 1);
+                                        var dayOfWeek = s.substring(0, s.indexOf("#"));
+                                        format = _this.i18n.commaOnThe(dayOfWeekOfMonthNumber, dayOfWeek).trim() + _this.i18n.spaceX0OfTheMonth();
+                                    }
+                                    else if (s.indexOf("L") > -1) {
+                                        format = _this.i18n.commaOnTheLastX0OfTheMonth(s.replace("L", ""));
+                                    }
+                                    else {
+                                        var domSpecified = _this.expressionParts[3] != "*";
+                                        format = domSpecified ? _this.i18n.commaAndOnX0() : _this.i18n.commaOnlyOnX0(s);
+                                    }
+                                    return format;
+                                });
+                            }
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getMonthDescription = function () {
+                            var _this = this;
+                            var monthNames = this.i18n.monthsOfTheYear();
+                            var description = this.getSegmentDescription(this.expressionParts[4], "", function (s, form) {
+                                return form && _this.i18n.monthsOfTheYearInCase
+                                    ? _this.i18n.monthsOfTheYearInCase(form)[parseInt(s) - 1]
+                                    : monthNames[parseInt(s) - 1];
+                            }, function (s) {
+                                if (parseInt(s) == 1) {
+                                    return "";
+                                }
+                                else {
+                                    return stringUtilities_1.StringUtilities.format(_this.i18n.commaEveryX0Months(s), s);
+                                }
+                            }, function (s) {
+                                return _this.i18n.commaMonthX0ThroughMonthX1() || _this.i18n.commaX0ThroughX1();
+                            }, function (s) {
+                                return _this.i18n.commaOnlyInMonthX0 ? _this.i18n.commaOnlyInMonthX0() : _this.i18n.commaOnlyInX0();
+                            });
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getDayOfMonthDescription = function () {
+                            var _this = this;
+                            var description = null;
+                            var expression = this.expressionParts[3];
+                            switch (expression) {
+                                case "L":
+                                    description = this.i18n.commaOnTheLastDayOfTheMonth();
+                                    break;
+                                case "WL":
+                                case "LW":
+                                    description = this.i18n.commaOnTheLastWeekdayOfTheMonth();
+                                    break;
+                                default:
+                                    var weekDayNumberMatches = expression.match(/(\d{1,2}W)|(W\d{1,2})/);
+                                    if (weekDayNumberMatches) {
+                                        var dayNumber = parseInt(weekDayNumberMatches[0].replace("W", ""));
+                                        var dayString = dayNumber == 1
+                                            ? this.i18n.firstWeekday()
+                                            : stringUtilities_1.StringUtilities.format(this.i18n.weekdayNearestDayX0(), dayNumber.toString());
+                                        description = stringUtilities_1.StringUtilities.format(this.i18n.commaOnTheX0OfTheMonth(), dayString);
+                                        break;
+                                    }
+                                    else {
+                                        var lastDayOffSetMatches = expression.match(/L-(\d{1,2})/);
+                                        if (lastDayOffSetMatches) {
+                                            var offSetDays = lastDayOffSetMatches[1];
+                                            description = stringUtilities_1.StringUtilities.format(this.i18n.commaDaysBeforeTheLastDayOfTheMonth(offSetDays), offSetDays);
+                                            break;
+                                        }
+                                        else if (expression == "*" && this.expressionParts[5] != "*") {
+                                            return "";
+                                        }
+                                        else {
+                                            description = this.getSegmentDescription(expression, this.i18n.commaEveryDay(), function (s) {
+                                                return s == "L"
+                                                    ? _this.i18n.lastDay()
+                                                    : _this.i18n.dayX0
+                                                        ? stringUtilities_1.StringUtilities.format(_this.i18n.dayX0(), s)
+                                                        : s;
+                                            }, function (s) {
+                                                return s == "1" ? _this.i18n.commaEveryDay() : _this.i18n.commaEveryX0Days(s);
+                                            }, function (s) {
+                                                return _this.i18n.commaBetweenDayX0AndX1OfTheMonth(s);
+                                            }, function (s) {
+                                                return _this.i18n.commaOnDayX0OfTheMonth(s);
+                                            });
+                                        }
+                                        break;
+                                    }
+                            }
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getYearDescription = function () {
+                            var _this = this;
+                            var description = this.getSegmentDescription(this.expressionParts[6], "", function (s) {
+                                return /^\d+$/.test(s) ? new Date(parseInt(s), 1).getFullYear().toString() : s;
+                            }, function (s) {
+                                return stringUtilities_1.StringUtilities.format(_this.i18n.commaEveryX0Years(s), s);
+                            }, function (s) {
+                                return _this.i18n.commaYearX0ThroughYearX1() || _this.i18n.commaX0ThroughX1();
+                            }, function (s) {
+                                return _this.i18n.commaOnlyInYearX0 ? _this.i18n.commaOnlyInYearX0() : _this.i18n.commaOnlyInX0();
+                            });
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getSegmentDescription = function (expression, allDescription, getSingleItemDescription, getIncrementDescriptionFormat, getRangeDescriptionFormat, getDescriptionFormat) {
+                            var description = null;
+                            var doesExpressionContainIncrement = expression.indexOf("/") > -1;
+                            var doesExpressionContainRange = expression.indexOf("-") > -1;
+                            var doesExpressionContainMultipleValues = expression.indexOf(",") > -1;
+                            if (!expression) {
+                                description = "";
+                            }
+                            else if (expression === "*") {
+                                description = allDescription;
+                            }
+                            else if (!doesExpressionContainIncrement && !doesExpressionContainRange && !doesExpressionContainMultipleValues) {
+                                description = stringUtilities_1.StringUtilities.format(getDescriptionFormat(expression), getSingleItemDescription(expression));
+                            }
+                            else if (doesExpressionContainMultipleValues) {
+                                var segments = expression.split(",");
+                                var descriptionContent = "";
+                                for (var i = 0; i < segments.length; i++) {
+                                    if (i > 0 && segments.length > 2) {
+                                        descriptionContent += ",";
+                                        if (i < segments.length - 1) {
+                                            descriptionContent += " ";
+                                        }
+                                    }
+                                    if (i > 0 && segments.length > 1 && (i == segments.length - 1 || segments.length == 2)) {
+                                        descriptionContent += "".concat(this.i18n.spaceAnd(), " ");
+                                    }
+                                    if (segments[i].indexOf("/") > -1 || segments[i].indexOf("-") > -1) {
+                                        var isSegmentRangeWithoutIncrement = segments[i].indexOf("-") > -1 && segments[i].indexOf("/") == -1;
+                                        var currentDescriptionContent = this.getSegmentDescription(segments[i], allDescription, getSingleItemDescription, getIncrementDescriptionFormat, isSegmentRangeWithoutIncrement ? this.i18n.commaX0ThroughX1 : getRangeDescriptionFormat, getDescriptionFormat);
+                                        if (isSegmentRangeWithoutIncrement) {
+                                            currentDescriptionContent = currentDescriptionContent.replace(", ", "");
+                                        }
+                                        descriptionContent += currentDescriptionContent;
+                                    }
+                                    else if (!doesExpressionContainIncrement) {
+                                        descriptionContent += getSingleItemDescription(segments[i]);
+                                    }
+                                    else {
+                                        descriptionContent += this.getSegmentDescription(segments[i], allDescription, getSingleItemDescription, getIncrementDescriptionFormat, getRangeDescriptionFormat, getDescriptionFormat);
+                                    }
+                                }
+                                if (!doesExpressionContainIncrement) {
+                                    description = stringUtilities_1.StringUtilities.format(getDescriptionFormat(expression), descriptionContent);
+                                }
+                                else {
+                                    description = descriptionContent;
+                                }
+                            }
+                            else if (doesExpressionContainIncrement) {
+                                var segments = expression.split("/");
+                                description = stringUtilities_1.StringUtilities.format(getIncrementDescriptionFormat(segments[1]), segments[1]);
+                                if (segments[0].indexOf("-") > -1) {
+                                    var rangeSegmentDescription = this.generateRangeSegmentDescription(segments[0], getRangeDescriptionFormat, getSingleItemDescription);
+                                    if (rangeSegmentDescription.indexOf(", ") != 0) {
+                                        description += ", ";
+                                    }
+                                    description += rangeSegmentDescription;
+                                }
+                                else if (segments[0].indexOf("*") == -1) {
+                                    var rangeItemDescription = stringUtilities_1.StringUtilities.format(getDescriptionFormat(segments[0]), getSingleItemDescription(segments[0]));
+                                    rangeItemDescription = rangeItemDescription.replace(", ", "");
+                                    description += stringUtilities_1.StringUtilities.format(this.i18n.commaStartingX0(), rangeItemDescription);
+                                }
+                            }
+                            else if (doesExpressionContainRange) {
+                                description = this.generateRangeSegmentDescription(expression, getRangeDescriptionFormat, getSingleItemDescription);
+                            }
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.generateRangeSegmentDescription = function (rangeExpression, getRangeDescriptionFormat, getSingleItemDescription) {
+                            var description = "";
+                            var rangeSegments = rangeExpression.split("-");
+                            var rangeSegment1Description = getSingleItemDescription(rangeSegments[0], 1);
+                            var rangeSegment2Description = getSingleItemDescription(rangeSegments[1], 2);
+                            var rangeDescriptionFormat = getRangeDescriptionFormat(rangeExpression);
+                            description += stringUtilities_1.StringUtilities.format(rangeDescriptionFormat, rangeSegment1Description, rangeSegment2Description);
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.formatTime = function (hourExpression, minuteExpression, secondExpression) {
+                            var hourOffset = 0;
+                            var minuteOffset = 0;
+                            var hour = parseInt(hourExpression) + hourOffset;
+                            var minute = parseInt(minuteExpression) + minuteOffset;
+                            if (minute >= 60) {
+                                minute -= 60;
+                                hour += 1;
+                            }
+                            else if (minute < 0) {
+                                minute += 60;
+                                hour -= 1;
+                            }
+                            if (hour >= 24) {
+                                hour = hour - 24;
+                            }
+                            else if (hour < 0) {
+                                hour = 24 + hour;
+                            }
+                            var period = "";
+                            var setPeriodBeforeTime = false;
+                            if (!this.options.use24HourTimeFormat) {
+                                setPeriodBeforeTime = !!(this.i18n.setPeriodBeforeTime && this.i18n.setPeriodBeforeTime());
+                                period = setPeriodBeforeTime ? "".concat(this.getPeriod(hour), " ") : " ".concat(this.getPeriod(hour));
+                                if (hour > 12) {
+                                    hour -= 12;
+                                }
+                                if (hour === 0) {
+                                    hour = 12;
+                                }
+                            }
+                            var second = "";
+                            if (secondExpression) {
+                                second = ":".concat(("00" + secondExpression).substring(secondExpression.length));
+                            }
+                            return "".concat(setPeriodBeforeTime ? period : "").concat(("00" + hour.toString()).substring(hour.toString().length), ":").concat(("00" + minute.toString()).substring(minute.toString().length)).concat(second).concat(!setPeriodBeforeTime ? period : "");
+                        };
+                        ExpressionDescriptor.prototype.transformVerbosity = function (description, useVerboseFormat) {
+                            if (!useVerboseFormat) {
+                                description = description.replace(new RegExp(", ".concat(this.i18n.everyMinute()), "g"), "");
+                                description = description.replace(new RegExp(", ".concat(this.i18n.everyHour()), "g"), "");
+                                description = description.replace(new RegExp(this.i18n.commaEveryDay(), "g"), "");
+                                description = description.replace(/\, ?$/, "");
+                                if (this.i18n.conciseVerbosityReplacements) {
+                                    for (var _i = 0, _a = Object.entries(this.i18n.conciseVerbosityReplacements()); _i < _a.length; _i++) {
+                                        var _b = _a[_i], key = _b[0], value = _b[1];
+                                        description = description.replace(new RegExp(key, "g"), value);
+                                    }
+                                }
+                            }
+                            return description;
+                        };
+                        ExpressionDescriptor.prototype.getPeriod = function (hour) {
+                            return hour >= 12 ? (this.i18n.pm && this.i18n.pm()) || "PM" : (this.i18n.am && this.i18n.am()) || "AM";
+                        };
+                        ExpressionDescriptor.locales = {};
+                        return ExpressionDescriptor;
+                    }());
+                    exports.ExpressionDescriptor = ExpressionDescriptor;
+
+
+                    /***/
+}),
+
+/***/ 747:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+                    Object.defineProperty(exports, "__esModule", ({ value: true }));
+                    exports.enLocaleLoader = void 0;
+                    var en_1 = __webpack_require__(486);
+                    var enLocaleLoader = (function () {
+                        function enLocaleLoader() {
+                        }
+                        enLocaleLoader.prototype.load = function (availableLocales) {
+                            availableLocales["en"] = new en_1.en();
+                        };
+                        return enLocaleLoader;
+                    }());
+                    exports.enLocaleLoader = enLocaleLoader;
+
+
+                    /***/
+}),
+
+/***/ 486:
+/***/ ((__unused_webpack_module, exports) => {
+
+
+                    Object.defineProperty(exports, "__esModule", ({ value: true }));
+                    exports.en = void 0;
+                    var en = (function () {
+                        function en() {
+                        }
+                        en.prototype.atX0SecondsPastTheMinuteGt20 = function () {
+                            return null;
+                        };
+                        en.prototype.atX0MinutesPastTheHourGt20 = function () {
+                            return null;
+                        };
+                        en.prototype.commaMonthX0ThroughMonthX1 = function () {
+                            return null;
+                        };
+                        en.prototype.commaYearX0ThroughYearX1 = function () {
+                            return null;
+                        };
+                        en.prototype.use24HourTimeFormatByDefault = function () {
+                            return false;
+                        };
+                        en.prototype.anErrorOccuredWhenGeneratingTheExpressionD = function () {
+                            return "An error occurred when generating the expression description. Check the cron expression syntax.";
+                        };
+                        en.prototype.everyMinute = function () {
+                            return "every minute";
+                        };
+                        en.prototype.everyHour = function () {
+                            return "every hour";
+                        };
+                        en.prototype.atSpace = function () {
+                            return "At ";
+                        };
+                        en.prototype.everyMinuteBetweenX0AndX1 = function () {
+                            return "Every minute between %s and %s";
+                        };
+                        en.prototype.at = function () {
+                            return "At";
+                        };
+                        en.prototype.spaceAnd = function () {
+                            return " and";
+                        };
+                        en.prototype.everySecond = function () {
+                            return "every second";
+                        };
+                        en.prototype.everyX0Seconds = function () {
+                            return "every %s seconds";
+                        };
+                        en.prototype.secondsX0ThroughX1PastTheMinute = function () {
+                            return "seconds %s through %s past the minute";
+                        };
+                        en.prototype.atX0SecondsPastTheMinute = function () {
+                            return "at %s seconds past the minute";
+                        };
+                        en.prototype.everyX0Minutes = function () {
+                            return "every %s minutes";
+                        };
+                        en.prototype.minutesX0ThroughX1PastTheHour = function () {
+                            return "minutes %s through %s past the hour";
+                        };
+                        en.prototype.atX0MinutesPastTheHour = function () {
+                            return "at %s minutes past the hour";
+                        };
+                        en.prototype.everyX0Hours = function () {
+                            return "every %s hours";
+                        };
+                        en.prototype.betweenX0AndX1 = function () {
+                            return "between %s and %s";
+                        };
+                        en.prototype.atX0 = function () {
+                            return "at %s";
+                        };
+                        en.prototype.commaEveryDay = function () {
+                            return ", every day";
+                        };
+                        en.prototype.commaEveryX0DaysOfTheWeek = function () {
+                            return ", every %s days of the week";
+                        };
+                        en.prototype.commaX0ThroughX1 = function () {
+                            return ", %s through %s";
+                        };
+                        en.prototype.commaAndX0ThroughX1 = function () {
+                            return ", %s through %s";
+                        };
+                        en.prototype.first = function () {
+                            return "first";
+                        };
+                        en.prototype.second = function () {
+                            return "second";
+                        };
+                        en.prototype.third = function () {
+                            return "third";
+                        };
+                        en.prototype.fourth = function () {
+                            return "fourth";
+                        };
+                        en.prototype.fifth = function () {
+                            return "fifth";
+                        };
+                        en.prototype.commaOnThe = function () {
+                            return ", on the ";
+                        };
+                        en.prototype.spaceX0OfTheMonth = function () {
+                            return " %s of the month";
+                        };
+                        en.prototype.lastDay = function () {
+                            return "the last day";
+                        };
+                        en.prototype.commaOnTheLastX0OfTheMonth = function () {
+                            return ", on the last %s of the month";
+                        };
+                        en.prototype.commaOnlyOnX0 = function () {
+                            return ", only on %s";
+                        };
+                        en.prototype.commaAndOnX0 = function () {
+                            return ", and on %s";
+                        };
+                        en.prototype.commaEveryX0Months = function () {
+                            return ", every %s months";
+                        };
+                        en.prototype.commaOnlyInX0 = function () {
+                            return ", only in %s";
+                        };
+                        en.prototype.commaOnTheLastDayOfTheMonth = function () {
+                            return ", on the last day of the month";
+                        };
+                        en.prototype.commaOnTheLastWeekdayOfTheMonth = function () {
+                            return ", on the last weekday of the month";
+                        };
+                        en.prototype.commaDaysBeforeTheLastDayOfTheMonth = function () {
+                            return ", %s days before the last day of the month";
+                        };
+                        en.prototype.firstWeekday = function () {
+                            return "first weekday";
+                        };
+                        en.prototype.weekdayNearestDayX0 = function () {
+                            return "weekday nearest day %s";
+                        };
+                        en.prototype.commaOnTheX0OfTheMonth = function () {
+                            return ", on the %s of the month";
+                        };
+                        en.prototype.commaEveryX0Days = function () {
+                            return ", every %s days";
+                        };
+                        en.prototype.commaBetweenDayX0AndX1OfTheMonth = function () {
+                            return ", between day %s and %s of the month";
+                        };
+                        en.prototype.commaOnDayX0OfTheMonth = function () {
+                            return ", on day %s of the month";
+                        };
+                        en.prototype.commaEveryHour = function () {
+                            return ", every hour";
+                        };
+                        en.prototype.commaEveryX0Years = function () {
+                            return ", every %s years";
+                        };
+                        en.prototype.commaStartingX0 = function () {
+                            return ", starting %s";
+                        };
+                        en.prototype.daysOfTheWeek = function () {
+                            return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                        };
+                        en.prototype.monthsOfTheYear = function () {
+                            return [
+                                "January",
+                                "February",
+                                "March",
+                                "April",
+                                "May",
+                                "June",
+                                "July",
+                                "August",
+                                "September",
+                                "October",
+                                "November",
+                                "December",
+                            ];
+                        };
+                        en.prototype.atReboot = function () {
+                            return "Run once, at startup";
+                        };
+                        return en;
+                    }());
+                    exports.en = en;
+
+
+                    /***/
+}),
+
+/***/ 515:
+/***/ ((__unused_webpack_module, exports) => {
+
+
+                    Object.defineProperty(exports, "__esModule", ({ value: true }));
+                    function assert(value, message) {
+                        if (!value) {
+                            throw new Error(message);
+                        }
+                    }
+                    var RangeValidator = (function () {
+                        function RangeValidator() {
+                        }
+                        RangeValidator.secondRange = function (parse) {
+                            var parsed = parse.split(',');
+                            for (var i = 0; i < parsed.length; i++) {
+                                if (!isNaN(parseInt(parsed[i], 10))) {
+                                    var second = parseInt(parsed[i], 10);
+                                    assert(second >= 0 && second <= 59, 'seconds part must be >= 0 and <= 59');
+                                }
+                            }
+                        };
+                        RangeValidator.minuteRange = function (parse) {
+                            var parsed = parse.split(',');
+                            for (var i = 0; i < parsed.length; i++) {
+                                if (!isNaN(parseInt(parsed[i], 10))) {
+                                    var minute = parseInt(parsed[i], 10);
+                                    assert(minute >= 0 && minute <= 59, 'minutes part must be >= 0 and <= 59');
+                                }
+                            }
+                        };
+                        RangeValidator.hourRange = function (parse) {
+                            var parsed = parse.split(',');
+                            for (var i = 0; i < parsed.length; i++) {
+                                if (!isNaN(parseInt(parsed[i], 10))) {
+                                    var hour = parseInt(parsed[i], 10);
+                                    assert(hour >= 0 && hour <= 23, 'hours part must be >= 0 and <= 23');
+                                }
+                            }
+                        };
+                        RangeValidator.dayOfMonthRange = function (parse) {
+                            var parsed = parse.split(',');
+                            for (var i = 0; i < parsed.length; i++) {
+                                if (!isNaN(parseInt(parsed[i], 10))) {
+                                    var dayOfMonth = parseInt(parsed[i], 10);
+                                    assert(dayOfMonth >= 1 && dayOfMonth <= 31, 'DOM part must be >= 1 and <= 31');
+                                }
+                            }
+                        };
+                        RangeValidator.monthRange = function (parse, monthStartIndexZero) {
+                            var parsed = parse.split(',');
+                            for (var i = 0; i < parsed.length; i++) {
+                                if (!isNaN(parseInt(parsed[i], 10))) {
+                                    var month = parseInt(parsed[i], 10);
+                                    assert(month >= 1 && month <= 12, monthStartIndexZero ? 'month part must be >= 0 and <= 11' : 'month part must be >= 1 and <= 12');
+                                }
+                            }
+                        };
+                        RangeValidator.dayOfWeekRange = function (parse, dayOfWeekStartIndexZero) {
+                            var parsed = parse.split(',');
+                            for (var i = 0; i < parsed.length; i++) {
+                                if (!isNaN(parseInt(parsed[i], 10))) {
+                                    var dayOfWeek = parseInt(parsed[i], 10);
+                                    assert(dayOfWeek >= 0 && dayOfWeek <= 6, dayOfWeekStartIndexZero ? 'DOW part must be >= 0 and <= 6' : 'DOW part must be >= 1 and <= 7');
+                                }
+                            }
+                        };
+                        return RangeValidator;
+                    }());
+                    exports["default"] = RangeValidator;
+
+
+                    /***/
+}),
+
+/***/ 823:
+/***/ ((__unused_webpack_module, exports) => {
+
+
+                    Object.defineProperty(exports, "__esModule", ({ value: true }));
+                    exports.StringUtilities = void 0;
+                    var StringUtilities = (function () {
+                        function StringUtilities() {
+                        }
+                        StringUtilities.format = function (template) {
+                            var values = [];
+                            for (var _i = 1; _i < arguments.length; _i++) {
+                                values[_i - 1] = arguments[_i];
+                            }
+                            return template.replace(/%s/g, function (substring) {
+                                var args = [];
+                                for (var _i = 1; _i < arguments.length; _i++) {
+                                    args[_i - 1] = arguments[_i];
+                                }
+                                return values.shift();
+                            });
+                        };
+                        StringUtilities.containsAny = function (text, searchStrings) {
+                            return searchStrings.some(function (c) {
+                                return text.indexOf(c) > -1;
+                            });
+                        };
+                        return StringUtilities;
+                    }());
+                    exports.StringUtilities = StringUtilities;
+
+
+                    /***/
+})
+
+            /******/
+});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+                /******/
+}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+                /******/
+};
+/******/
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+            /******/
+}
+        /******/
+        /************************************************************************/
+        var __webpack_exports__ = {};
+        // This entry need to be wrapped in an IIFE because it uses a non-standard name for the exports (exports).
+        (() => {
+            var exports = __webpack_exports__;
+
+            Object.defineProperty(exports, "__esModule", ({ value: true }));
+            exports.toString = void 0;
+            var expressionDescriptor_1 = __webpack_require__(333);
+            var enLocaleLoader_1 = __webpack_require__(747);
+            expressionDescriptor_1.ExpressionDescriptor.initialize(new enLocaleLoader_1.enLocaleLoader());
+            exports["default"] = expressionDescriptor_1.ExpressionDescriptor;
+            var toString = expressionDescriptor_1.ExpressionDescriptor.toString;
+            exports.toString = toString;
+
+        })();
+
+/******/ 	return __webpack_exports__;
+        /******/
+})()
+        ;
+});
+
+// @vuebundler[Proyecto_base_001][9]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/cron/cronstrue.locale-es.js
+cronstrue.default.locales.es = new class {
+  atX0SecondsPastTheMinuteGt20() {
+    return null
+  }
+  atX0MinutesPastTheHourGt20() {
+    return null
+  }
+  commaMonthX0ThroughMonthX1() {
+    return null
+  }
+  commaYearX0ThroughYearX1() {
+    return null
+  }
+
+  use24HourTimeFormatByDefault() {
+    return true
+  }
+
+  anErrorOccuredWhenGeneratingTheExpressionD() {
+    return "Ocurrió un error mientras se generaba la descripción de la expresión. Revise la sintaxis de la expresión de cron."
+  }
+  at() {
+    return "A las"
+  }
+  atSpace() {
+    return "A las "
+  }
+  atX0() {
+    return "a las %s"
+  }
+  atX0MinutesPastTheHour() {
+    return "a los %s minutos de la hora"
+  }
+  atX0SecondsPastTheMinute() {
+    return "a los %s segundos del minuto"
+  }
+  betweenX0AndX1() {
+    return "entre las %s y las %s"
+  }
+  commaBetweenDayX0AndX1OfTheMonth() {
+    return ", entre los días %s y %s del mes"
+  }
+  commaEveryDay() {
+    return ", cada día"
+  }
+  commaEveryX0Days() {
+    return ", cada %s días"
+  }
+  commaEveryX0DaysOfTheWeek() {
+    return ", cada %s días de la semana"
+  }
+  commaEveryX0Months() {
+    return ", cada %s meses"
+  }
+  commaOnDayX0OfTheMonth() {
+    return ", el día %s del mes"
+  }
+  commaOnlyInX0() {
+    return ", sólo en %s"
+  }
+  commaOnlyOnX0() {
+    return ", sólo el %s"
+  }
+  commaAndOnX0() {
+    return ", y el %s"
+  }
+  commaOnThe() {
+    return ", en el "
+  }
+  commaOnTheLastDayOfTheMonth() {
+    return ", en el último día del mes"
+  }
+  commaOnTheLastWeekdayOfTheMonth() {
+    return ", en el último día de la semana del mes"
+  }
+  commaDaysBeforeTheLastDayOfTheMonth() {
+    return ", %s días antes del último día del mes"
+  }
+  commaOnTheLastX0OfTheMonth() {
+    return ", en el último %s del mes"
+  }
+  commaOnTheX0OfTheMonth() {
+    return ", en el %s del mes"
+  }
+  commaX0ThroughX1() {
+    return ", de %s a %s"
+  }
+  commaAndX0ThroughX1() {
+    return ", y de %s a %s"
+  }
+  everyHour() {
+    return "cada hora"
+  }
+  everyMinute() {
+    return "cada minuto"
+  }
+  everyMinuteBetweenX0AndX1() {
+    return "cada minuto entre las %s y las %s"
+  }
+  everySecond() {
+    return "cada segundo"
+  }
+  everyX0Hours() {
+    return "cada %s horas"
+  }
+  everyX0Minutes() {
+    return "cada %s minutos"
+  }
+  everyX0Seconds() {
+    return "cada %s segundos"
+  }
+  fifth() {
+    return "quinto"
+  }
+  first() {
+    return "primero"
+  }
+  firstWeekday() {
+    return "primer día de la semana"
+  }
+  fourth() {
+    return "cuarto"
+  }
+  minutesX0ThroughX1PastTheHour() {
+    return "del minuto %s al %s pasada la hora"
+  }
+  second() {
+    return "segundo"
+  }
+  secondsX0ThroughX1PastTheMinute() {
+    return "En los segundos %s al %s de cada minuto"
+  }
+  spaceAnd() {
+    return " y"
+  }
+  spaceX0OfTheMonth() {
+    return " %s del mes"
+  }
+  lastDay() {
+    return "el último día"
+  }
+  third() {
+    return "tercer"
+  }
+  weekdayNearestDayX0() {
+    return "día de la semana más próximo al %s"
+  }
+  commaEveryX0Years() {
+    return ", cada %s años"
+  }
+  commaStartingX0() {
+    return ", comenzando %s"
+  }
+  daysOfTheWeek() {
+    return [
+      "domingo",
+      "lunes",
+      "martes",
+      "miércoles",
+      "jueves",
+      "viernes",
+      "sábado"
+    ]
+  }
+  monthsOfTheYear() {
+    return [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre"
+    ]
+  }
+
+  onTheHour() {
+    return "en punto"
+  }
+};
+cronstrue.default.defaultLocale = "es";
+
+// @vuebundler[Proyecto_base_001][10]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/reloader/reloadable.js
 // @code.start: LswReloadable injection | @$section: LswReloader API » LswReloadable injection
 const serverUrl = 'http://127.0.0.1';
 const serverPort = 3000;
@@ -18698,7 +22292,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 }
 // @code.end: LswReloadable injection
 
-// @vuebundler[Proyecto_base_001][8]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-boot.js
+// @vuebundler[Proyecto_base_001][11]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-boot.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -18722,7 +22316,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][9]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
+// @vuebundler[Proyecto_base_001][12]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-root.js
 /**
  * 
  * # App Root API
@@ -18792,7 +22386,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][10]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tracer.js
+// @vuebundler[Proyecto_base_001][13]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tracer.js
 /**
  * 
  * # Nwt Tracer API
@@ -18896,7 +22490,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][11]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-environment.js
+// @vuebundler[Proyecto_base_001][14]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-environment.js
 /**
  * 
  * # Nwt Environment API
@@ -19118,7 +22712,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][12]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-browser-polyfill.js
+// @vuebundler[Proyecto_base_001][15]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-browser-polyfill.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -19161,7 +22755,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][13]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-argumenter.js
+// @vuebundler[Proyecto_base_001][16]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-argumenter.js
 /**
  * 
  * # NwtArgumentes
@@ -19484,7 +23078,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][14]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-asserter.js
+// @vuebundler[Proyecto_base_001][17]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-asserter.js
 /**
  * 
  * # Nwt Asserter API
@@ -19609,7 +23203,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][15]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-debug.js
+// @vuebundler[Proyecto_base_001][18]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-debug.js
 /**
  * 
  * # NwtDebug
@@ -19691,7 +23285,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][16]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-constrainer.js
+// @vuebundler[Proyecto_base_001][19]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-constrainer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -19787,7 +23381,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][17]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-unificated-error.js
+// @vuebundler[Proyecto_base_001][20]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-unificated-error.js
 /**
  * 
  * # NwtUnificatedError
@@ -19836,7 +23430,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][18]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-errors-manager.js
+// @vuebundler[Proyecto_base_001][21]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-errors-manager.js
 /**
  * 
  * # NwtErrorsManager
@@ -20134,7 +23728,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][19]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-error-utils.js
+// @vuebundler[Proyecto_base_001][22]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-error-utils.js
 /**
  * 
  * # NwtErrorUtils
@@ -20197,7 +23791,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][20]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dialog-definition.js
+// @vuebundler[Proyecto_base_001][23]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dialog-definition.js
 /**
  * 
  * # Nwt Dialog Definition API
@@ -20502,7 +24096,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][21]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-importer.js
+// @vuebundler[Proyecto_base_001][24]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-importer.js
 /**
  * 
  * # Nwt Importer API
@@ -20698,7 +24292,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][22]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-events/nwt-events-manager.js
+// @vuebundler[Proyecto_base_001][25]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-events/nwt-events-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -20817,7 +24411,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][23]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-events/nwt-keyed-events-manager.js
+// @vuebundler[Proyecto_base_001][26]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-events/nwt-keyed-events-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -20935,7 +24529,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
   return NwtKeyedEventsManager;
 });
 
-// @vuebundler[Proyecto_base_001][24]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-events/nwt-events.js
+// @vuebundler[Proyecto_base_001][27]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-events/nwt-events.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -20959,7 +24553,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][25]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-paths.js
+// @vuebundler[Proyecto_base_001][28]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-paths.js
 /**
  * 
  * # App Paths API
@@ -21056,7 +24650,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][26]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js
+// @vuebundler[Proyecto_base_001][29]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21086,7 +24680,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][27]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-decorable-tree.js
+// @vuebundler[Proyecto_base_001][30]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-decorable-tree.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21183,7 +24777,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
   return NwtDecorableTree;
 });
 
-// @vuebundler[Proyecto_base_001][28]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain/nwt-proxy-chain-nexer.js
+// @vuebundler[Proyecto_base_001][31]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain/nwt-proxy-chain-nexer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21210,7 +24804,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][29]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain/nwt-proxy-chain.js
+// @vuebundler[Proyecto_base_001][32]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-proxy-chain/nwt-proxy-chain.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21264,7 +24858,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][30]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-static.js
+// @vuebundler[Proyecto_base_001][33]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-static.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21290,7 +24884,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][31]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-strings.js
+// @vuebundler[Proyecto_base_001][34]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-strings.js
 /**
  * 
  * # NwtStrings
@@ -21370,7 +24964,7 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
 });
 
-// @vuebundler[Proyecto_base_001][32]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-object-utils.js
+// @vuebundler[Proyecto_base_001][35]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-object-utils.js
 const { lutimesSync } = require("fs-extra");
 
 /**
@@ -21478,7 +25072,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][33]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-array-utils.js
+// @vuebundler[Proyecto_base_001][36]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-array-utils.js
 /**
  * 
  * # NwtArrayUtils
@@ -21578,7 +25172,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][34]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-collection-utils.js
+// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-collection-utils.js
 /**
  * 
  * # NwtCollectionUtils
@@ -21674,7 +25268,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][35]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-module-manager/nwt-module-manager.js
+// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-module-manager/nwt-module-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -21807,7 +25401,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][36]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-timer.js
+// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-timer.js
 /**
  * 
  * # Nwt Timer API
@@ -21946,7 +25540,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][37]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/interfaces/nwt-vue2-toolkit.form-control-interface.js
+// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/interfaces/nwt-vue2-toolkit.form-control-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22000,7 +25594,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][38]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2-toolkit.js
+// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2-toolkit.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22053,7 +25647,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][39]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2.js
+// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-vue2/nwt-vue2.js
 /**
  * 
  * # Nwt Vue2 API
@@ -22207,7 +25801,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][40]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prototyper.js
+// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prototyper.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22356,7 +25950,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][41]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom-automator.js
+// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom-automator.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -22394,6 +25988,11 @@ const { lutimesSync } = require("fs-extra");
       NwtDomAutomator.find(document.body, "*", "Tests de la aplicación")[0].click();
     }
 
+    static async abrirTemporizador() {
+      trace("NwtDomAutomator.abrirTemporizador");
+      NwtDomAutomator.find(document.body, "*", "Temporizador")[0].click();
+    }
+
     static async abrirTodosLosTestsDeLaAplicacion() {
       trace("NwtDomAutomator.abrirTodosLosTestsDeLaAplicacion");
       await this.abrirTestsDeLaAplicacion();
@@ -22420,7 +26019,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][42]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
+// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-lazy-loader.js
 /**
  * 
  * # Nwt Lazy Loader API
@@ -22532,7 +26131,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][43]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
+// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-json-storer.js
 /**
  * 
  * # Nwt Json Storer API
@@ -22699,7 +26298,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][44]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
+// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-settings.js
 /**
  * 
  * # Nwt Settings API
@@ -22829,7 +26428,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][45]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-accessor.js
+// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-accessor.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -23017,7 +26616,144 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][46]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
+// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-manager.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCronManager'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCronManager'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtCronPersistibleJob = class {
+
+    static create(...args) {
+      trace("NwtCronPersistibleJob.create");
+      return new this(...args);
+    }
+
+    constructor(pattern, options, callback) {
+      trace("NwtCronPersistibleJob.constructor");
+      assertion(typeof pattern === "string", `Parameter «pattern» must be «string» on «NwtCronPersistibleJob.constructor»`);
+      assertion(typeof options === "object", `Parameter «options» must be «object» on «NwtCronPersistibleJob.constructor»`);
+      assertion(typeof callback === "function", `Parameter «callback» must be «function» on «NwtCronPersistibleJob.constructor»`);
+      Object.assign(this, { pattern, options, callback });
+      this.cronObject = new Cron(this.pattern, Object.assign({}, this.options), this.callback);
+    }
+
+    toJSON() {
+      trace("NwtCronPersistibleJob.prototype.toJSON");
+      return {
+        pattern: this.pattern,
+        options: this.options,
+        callback: this.callback.toString(),
+      };
+    }
+    
+  };
+  
+  const NwtCronManager = class {
+
+    static PersistibleJob = NwtCronPersistibleJob;
+
+    static create(...args) {
+      trace("NwtCronManager.create");
+      return new this(...args);
+    }
+
+    constructor(basefile = "assets/framework/nwt-cron/global.json") {
+      trace("NwtCronManager.constructor");
+      this.basefile = basefile;
+      this.jobs = [];
+    }
+
+    async start() {
+      trace("NwtCronManager.prototype.start");
+      await this.load();
+      return await this.resume();
+    }
+
+    restart(...args) {
+      trace("NwtCronManager.prototype.restart");
+      return this.start(...args);
+    }
+
+    async pause() {
+      trace("NwtCronManager.prototype.pause");
+      for(let index=0; index<this.jobs.length; index++) {
+        const job = this.jobs[index];
+        job.cronObject.pause();
+      }
+    }
+
+    async resume() {
+      trace("NwtCronManager.prototype.resume");
+      for(let index=0; index<this.jobs.length; index++) {
+        const job = this.jobs[index];
+        job.cronObject.resume();
+      }
+    }
+
+    async stop() {
+      trace("NwtCronManager.prototype.stop");
+      for(let index=0; index<this.jobs.length; index++) {
+        const job = this.jobs[index];
+        job.cronObject.stop();
+      }
+    }
+
+    async load() {
+      trace("NwtCronManager.prototype.load");
+      this.removeAllJobs();
+      const persistedJobs = await NwtFilesystem.readJson(this.basefile);
+      for(let index=0; index<persistedJobs.length; index++) {
+        const persistedJob = persistedJobs[index];
+        const callback = NwtCodeComposer.hydrateFunction(persistedJob.callback);
+        this.addJob(persistedJob.pattern, persistedJob.options, callback);
+      }
+    }
+
+    async save() {
+      trace("NwtCronManager.prototype.save");
+      await NwtFilesystem.writeJson(this.basefile, this.jobs);
+    }
+
+    async addJob(pattern, options, callback) {
+      trace("NwtCronManager.prototype.addJob");
+      const job = NwtCronPersistibleJob.create(pattern, options, callback);
+      this.jobs.push(job);
+      await this.save();
+    }
+
+    async removeJob(index) {
+      this.jobs[index].cronObject.stop();
+      this.jobs.splice(index, 1);
+      await this.save();
+      await this.restart();
+    }
+
+    async removeAllJobs() {
+      for(let index=this.jobs.length-1; index>=0; index--) {
+        const job = this.jobs[index];
+        this.jobs[index].cronObject.stop();
+        this.jobs.splice(index, 1);
+      }
+    }
+
+  };
+
+  NwtCronManager.global = NwtCronManager.create();
+
+  return NwtCronManager;
+
+});
+
+// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -23056,7 +26792,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][47]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
+// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -23104,7 +26840,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][48]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
+// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -23152,7 +26888,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
+// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -24094,7 +27830,7 @@ const { lutimesSync } = require("fs-extra");
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
+// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
 /**
  * 
  * # NwtTemplates
@@ -24329,7 +28065,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
+// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
 /**
  * 
  * # Nwt Utils API
@@ -24714,7 +28450,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
+// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24830,7 +28566,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
+// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24889,7 +28625,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
+// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -24940,7 +28676,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
+// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
 /**
  * 
  * # Nwt Code Composer
@@ -25123,6 +28859,19 @@ const { lutimesSync } = require("fs-extra");
       return isAsync ? this.createAsyncFunction(source, argnames) : this.createSyncFunction(source, argnames);
     }
 
+    static SyncFunction = Function;
+
+    static AsyncFunction = (async function() {}).constructor;
+
+    static hydrateFunction(source) {
+      const body = this.getBlankFunctionBody(source);
+      const callback = this.createAsyncFunction(body);
+      return callback;
+    }
+
+    static dehydrateFunction(callback) {
+      return callback.toString();
+    }
 
   };
 
@@ -25130,7 +28879,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
+// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
 /**
  * 
  * # Nwt Randomizer API
@@ -25246,7 +28995,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
+// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
 /**
  * 
  * # Nwt Progress Bar API
@@ -25373,7 +29122,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
+// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
 /**
  * 
  * # Nwt Globalizer API
@@ -25433,7 +29182,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-indexer.js
+// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-indexer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -25522,7 +29271,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
+// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
 /**
  * 
  * # Nwt Tester API
@@ -25886,7 +29635,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
+// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
 /**
  * 
  * # Nwt Process API
@@ -26033,7 +29782,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
+// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
 /**
  * 
  * # NwtProcessManager
@@ -26104,7 +29853,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
+// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26162,7 +29911,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
+// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26326,7 +30075,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
+// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26387,7 +30136,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
+// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26430,7 +30179,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
+// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
 /**
  * 
  * # NwtCsv
@@ -26519,7 +30268,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
+// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
 /**
  * 
  * # NwtIterableFunction
@@ -26753,7 +30502,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
+// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
 /**
  * 
  * # NwtIterableClass
@@ -26929,7 +30678,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
+// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
 /**
  * 
  * # NwtIterableCommandClass
@@ -27030,7 +30779,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
+// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
 /**
  * 
  * # NwtFilesystem
@@ -27467,7 +31216,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
+// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
 /**
  * 
  * # NwtFileChooser
@@ -27573,7 +31322,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
+// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
 /**
  * 
  * # Nwt Shell API
@@ -27786,7 +31535,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
+// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
 /**
  * 
  * # NwtLiveInjector
@@ -27866,7 +31615,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
+// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
 /**
  * 
  * # Nwt Prompt Manager API
@@ -27965,7 +31714,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
+// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
 /**
  * 
  * # NwtChatgpt
@@ -28141,7 +31890,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
+// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
 /**
  * 
  * # NwtStringShortener
@@ -28283,7 +32032,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service.js
+// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28417,7 +32166,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service-manager.js
+// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28457,7 +32206,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
+// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
 /**
  * 
  * # NwtJsonPersister
@@ -28789,7 +32538,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
+// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
 /**
  * 
  * # NwtJsonlPersister
@@ -28951,7 +32700,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
+// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
 /**
  * 
  * # NwtFilePersister
@@ -29112,7 +32861,7 @@ const { lutimesSync } = require("fs-extra");
 });
 
 
-// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
+// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
 /**
  * 
  * # NwtDirectoryPersister
@@ -29305,7 +33054,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
+// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
 /**
  * 
  * # NwtPersister
@@ -29361,7 +33110,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
 (function (factory) {
       const mod = factory();
       if (typeof window !== 'undefined') {
@@ -29377,7 +33126,7 @@ const { lutimesSync } = require("fs-extra");
       return "{\n  const /**<?=localMemoryName?>**/localMemory = {};\n  /**<?#onFunctionStart?>**/\n  /**<?#onInitializeCollection?>**/\n  /**<?#onInitializeDimensions?>**/\n  try {\n    /**<?#onNextIteration?>**/\n    /**<?=localMemoryName?>**/localMemory.conditionalCallback = async () => {\n      /**<?#onCondition?>**/\n    };\n    /**<?=localMemoryName?>**/localMemory.output = undefined;\n    /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n    /**<?=onIdentifier + \":\"?>**/\n    while (/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n      /**<?#onIterationStart?>**/\n      try {\n        /**<?#onIteration?>**/\n        /**<?#onIterationSuccess?>**/\n      } catch (error) {\n        /**<?#onIterationError?>**/\n      } finally {\n        /**<?#onIterationFinally?>**/\n      }\n      /**<?#onIterationEnd?>**/\n      /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n      if (!/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n        break /**<?=onIdentifier?>**/;\n      }\n      /**<?#onInterlapse?>**/\n      /**<?#onNextIteration?>**/\n      /**<?#onProgression?>**/\n    }\n    /**<?#onFunctionSuccess?>**/\n  } catch (error) {\n    /**<?#onFunctionError?>**/\n  } finally {\n    /**<?#onFunctionFinally?>**/\n  }\n  /**<?#onFunctionEnd?>**/\n  return /**<?=localMemoryName?>**/localMemory.output;\n}"
     });
 
-// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29486,7 +33235,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -30938,7 +34687,7 @@ const { lutimesSync } = require("fs-extra");
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30966,7 +34715,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31053,7 +34802,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31149,7 +34898,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31187,7 +34936,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31224,7 +34973,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31251,7 +35000,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31278,7 +35027,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31305,7 +35054,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-glob-engine/nwt-glob-engine.js
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-glob-engine/nwt-glob-engine.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31477,7 +35226,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
 /**
  * 
  * # NwtDom
@@ -31668,7 +35417,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
 /**
  * 
  * # NwtExporter
@@ -31763,7 +35512,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
 /**
  * 
  * # NwtClipboard
@@ -31816,7 +35565,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31900,7 +35649,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-reflection.js
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-reflection.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -31973,7 +35722,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-propagable-store.js
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-propagable-store.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32053,7 +35802,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
+// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
 /**
  * 
  * # NwtCacheDirectory
@@ -32169,7 +35918,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context-pointer.js
+// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context-pointer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32214,7 +35963,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context.js
+// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32329,7 +36078,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validable-schema.js
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validable-schema.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32373,7 +36122,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validator.js
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validator.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32400,7 +36149,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
 /**
  * 
  * # Nwt Framework API
@@ -32478,7 +36227,7 @@ const { lutimesSync } = require("fs-extra");
 
 })();
 
-// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
 /**
  * 
  * # Nwt Injection API
@@ -32513,7 +36262,7 @@ if (typeof window !== "undefined") {
     });
 }
 
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
 /**
  * 
  * # Nwt V-Resizable Directive - Vue directive
@@ -32620,7 +36369,7 @@ Vue.directive("resizable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
 /**
  * 
  * 
@@ -32690,7 +36439,7 @@ Vue.directive("draggable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
 /**
  * 
  * # Nwt V-Focus Directive - Vue directive
@@ -32719,7 +36468,7 @@ Vue.directive("focus", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
 Vue.directive("forms", {
   bind(el, binding, vnode) {
     const value = binding.value || {};
@@ -32737,9 +36486,9 @@ Vue.directive("forms", {
 });
 
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.html
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.html
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.js
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.js
 /**
  * 
  * # Nwt Box Viewer API / Componente Vue2
@@ -32813,11 +36562,11 @@ Vue.component("NwtBasicDialogLayout", {
 });
 
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.css
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.css
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
 /**
  * 
  * # Common Dialogs
@@ -33046,11 +36795,11 @@ Vue.component("CommonDialogs", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
 /**
  * 
  * # Nwt Toasts API
@@ -33164,11 +36913,11 @@ Vue.component("CommonToasts", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
 /**
  * 
  * # Nwt Common Injections API
@@ -33260,11 +37009,11 @@ Vue.component("CommonInjections", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
 /**
  * 
  * # Nwt Tester Viewer API / Componente Vue2
@@ -33349,11 +37098,11 @@ Vue.component("NwtTesterViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
 /**
  * 
  * # NwtTesterNode
@@ -33484,11 +37233,32 @@ Vue.component("NwtTesterNode", {
 });
 
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.js
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.js
+Vue.component("NwtCronManagerViewer", {
+  name: "NwtCronManagerViewer",
+  template: `<div class="nwt_cron_manager_viewer">
+    Cron manager viewer
+</div>`,
+  props: {},
+  mixins: [],
+  data() {
+    trace("NwtCronManagerViewer.data");
+    return {};
+  },
+  methods: {},
+  created() {},
+  mounted() {},
+});
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.css
+
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html
+
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.js
 /**
  * 
  * # Nwt Dynamic Tester Viewer API / Componente Vue2
@@ -33635,11 +37405,11 @@ Vue.component("NwtDynamicTesterViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.css
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.html
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.js
 /**
  * 
  * # Nwt Progress Bar Viewer API / Componente Vue2
@@ -33701,11 +37471,11 @@ Vue.component("NwtProgressBarViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-progress-bar-viewer/nwt-progress-bar-viewer.css
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.html
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.js
 /**
  * 
  * # Nwt Box Viewer API / Componente Vue2
@@ -33783,11 +37553,11 @@ Vue.component("NwtBoxViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-box-viewer/nwt-box-viewer.css
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.html
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.js
 /**
  * 
  * # NwtSourceViewer
@@ -33870,11 +37640,11 @@ Vue.component("NwtSourceViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css
+// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-source-viewer/nwt-source-viewer.css
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.js
 /**
  * 
  * # Nwt Process Manager Viewer API / Componente Vue2
@@ -34038,11 +37808,11 @@ Vue.component("NwtProcessManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
+// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-process-manager-viewer/nwt-process-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.html
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.js
 /**
  * 
  * # Nwt Settings Viewer API / Componente Vue2
@@ -34351,11 +38121,11 @@ Vue.component("NwtSettingsViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css
+// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-settings-viewer/nwt-settings-viewer.css
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.js
 Vue.component("NwtProceduresManagerViewer", {
   template: `<div class="app_procedures_manager_viewer">
     <div class="title">
@@ -34514,11 +38284,11 @@ Vue.component("NwtProceduresManagerViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
+// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedures-manager-viewer/nwt-procedures-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.html
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.js
 Vue.component("AppProcedureDocumentationViewer", {
   template: `<div class="app_procedure_documentation_viewer">
     <template v-if="markdownContentToHtml">
@@ -34560,11 +38330,11 @@ Vue.component("AppProcedureDocumentationViewer", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
+// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-procedure-documentation-viewer/nwt-procedure-documentation-viewer.css
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
+// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.html
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
+// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.js
 /**
  * 
  * # NwtFileExplorer
@@ -34942,11 +38712,11 @@ Vue.component("NwtFileExplorer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css
+// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-file-explorer/nwt-file-explorer.css
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.html
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.js
 /**
  * 
  * # Nwt Code Highlighter API / Componente Vue2
@@ -35027,11 +38797,11 @@ Vue.component("NwtCodeHighlighter", {
 });
 
 
-// @vuebundler[Proyecto_base_001][129]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css
+// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-code-highlighter/nwt-code-highlighter.css
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.js
 /**
  * 
  * # NwtPromptsManagerViewer
@@ -35349,11 +39119,11 @@ Vue.component("NwtPromptsManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][130]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
+// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-prompts-manager-viewer/nwt-prompts-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.js
 /**
  * 
  * # Nwt Chatgpt Files Manager Viewer API / Componente Vue2
@@ -35586,9 +39356,9 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][131]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
+// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-chatgpt-files-manager-viewer/nwt-chatgpt-files-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][132]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-maker/nwt-form-maker.js
+// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-form-maker/nwt-form-maker.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35660,7 +39430,7 @@ Vue.component("NwtChatgptFilesManagerViewer", {
 
 });
 
-// @vuebundler[Proyecto_base_001][133]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/ValidationResult.js
+// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/ValidationResult.js
 NwtStatic.api.set("control.validation.ValidationResult", class {
   static create(...args) {
     return new this(...args);
@@ -35689,42 +39459,42 @@ NwtStatic.api.set("control.validation.ValidationResult", class {
   }
 });
 
-// @vuebundler[Proyecto_base_001][134]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForAbstraction.js
+// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForAbstraction.js
 NwtStatic.api.set("control.validation.onValidateForAbstraction", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForAbstraction");
   const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   // @TODO.
 });
 
-// @vuebundler[Proyecto_base_001][135]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForList.js
+// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForList.js
 NwtStatic.api.set("control.validation.onValidateForList", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForList");
   const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   
 });
 
-// @vuebundler[Proyecto_base_001][136]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForOption.js
+// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForOption.js
 NwtStatic.api.set("control.validation.onValidateForOption", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForOption");
   const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   // @TODO.
 });
 
-// @vuebundler[Proyecto_base_001][137]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForStructure.js
+// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForStructure.js
 NwtStatic.api.set("control.validation.onValidateForStructure", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForStructure");
   const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   // @TODO.
 });
 
-// @vuebundler[Proyecto_base_001][138]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForText.js
+// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/onValidateForText.js
 NwtStatic.api.set("control.validation.onValidateForText", function(...args) {
   trace("NwtStatic.api.control.validation.onValidateForText");
   const [assertion, subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = []] = args;
   assertion(typeof subvalue === "string", `Value must be string because it is subtype of «text» but type «${typeof subvalue}» was found at index «${valueIndex.join(".") || "[]"}» at schema index «${schemaIndex.join(".")||"[]"}» on «NwtStatic.api.control.validation.onValidateForText»`);
 });
 
-// @vuebundler[Proyecto_base_001][139]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/safelyValidateControlValue.js
+// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/safelyValidateControlValue.js
 NwtStatic.api.set("control.validation.safelyValidateControlValue", function (...args) {
   trace("NwtStatic.api.control.validation.safelyValidateControlValue");
   const result = NwtStatic.api.control.validation.ValidationResult.create();
@@ -35737,7 +39507,7 @@ NwtStatic.api.set("control.validation.safelyValidateControlValue", function (...
   return result;
 });
 
-// @vuebundler[Proyecto_base_001][140]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlSchema.js
+// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlSchema.js
 NwtStatic.api.set("control.validation.validateControlSchema", function (schema, schemaIndex = [], assertion = NwtAsserter.silently) {
   trace("NwtStatic.api.control.validation.validateControlSchema", [schema, schemaIndex]);
   const subschema = !schemaIndex.length ? schema : NwtAccessor.get(schema, schemaIndex, NwtAccessor.strategy.RETURN_ACCESS_ERROR);
@@ -35784,7 +39554,7 @@ NwtStatic.api.set("control.validation.validateControlSchema", function (schema, 
 });
 NwtStatic.api.set("control.validation.compileSchema", NwtStatic.api.control.validation.validateControlSchema);
 
-// @vuebundler[Proyecto_base_001][141]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValue.js
+// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValue.js
 NwtStatic.api.set("control.validation.validateControlValue", function (...args) {
   trace("NwtStatic.api.control.validation.validateControlValue");
   const [value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
@@ -35865,7 +39635,7 @@ NwtStatic.api.set("control.validation.validateControlValue", function (...args) 
   }
 });
 
-// @vuebundler[Proyecto_base_001][142]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueByComponent.js
+// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueByComponent.js
 NwtStatic.api.set("control.validation.validateControlValueByComponent", function(...args) {
   trace("NwtStatic.api.control.validation.validateControlValueByComponent");
   const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
@@ -35874,7 +39644,7 @@ NwtStatic.api.set("control.validation.validateControlValueByComponent", function
   controlComponent.onValidate(assertion, ...args);
 });
 
-// @vuebundler[Proyecto_base_001][143]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueByResource.js
+// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueByResource.js
 NwtStatic.api.set("control.validation.validateControlValueByResource", function(...args) {
   trace("NwtStatic.api.control.validation.validateControlValueByResource");
   const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
@@ -35884,7 +39654,7 @@ NwtStatic.api.set("control.validation.validateControlValueByResource", function(
   resource.control.onValidate(assertion, ...args);
 });
 
-// @vuebundler[Proyecto_base_001][144]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueBySchema.js
+// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueBySchema.js
 NwtStatic.api.set("control.validation.validateControlValueBySchema", function(...args) {
   trace("NwtStatic.api.control.validation.validateControlValueBySchema");
   const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
@@ -35893,7 +39663,7 @@ NwtStatic.api.set("control.validation.validateControlValueBySchema", function(..
   subschema.onValidate(assertion, ...args);
 });
 
-// @vuebundler[Proyecto_base_001][145]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueBySettings.js
+// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/static/api/helpers/control/validation/validateControlValueBySettings.js
 NwtStatic.api.set("control.validation.validateControlValueBySettings", function(...args) {
   trace("NwtStatic.api.control.validation.validateControlValueBySettings");
   const [subvalue, subschema, value, schema, controlComponent = false, valueIndex = [], schemaIndex = [], componentIndex = [], assertion = NwtAsserter.silently] = args;
@@ -35904,7 +39674,7 @@ NwtStatic.api.set("control.validation.validateControlValueBySettings", function(
   controlComponent.settings.onValidate(assertion, ...args);
 });
 
-// @vuebundler[Proyecto_base_001][146]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api-nexer.js
+// @vuebundler[Proyecto_base_001][151]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api-nexer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35931,7 +39701,7 @@ NwtStatic.api.set("control.validation.validateControlValueBySettings", function(
 
 });
 
-// @vuebundler[Proyecto_base_001][147]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api.js
+// @vuebundler[Proyecto_base_001][152]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource-api.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36064,7 +39834,7 @@ NwtStatic.api.set("control.validation.validateControlValueBySettings", function(
 
 });
 
-// @vuebundler[Proyecto_base_001][148]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/control.js
+// @vuebundler[Proyecto_base_001][153]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/control.js
 Resource_api_control: {
   const Nexer = NwtResourceApi.Nexer;
   NwtResourceApi.register({
@@ -36085,7 +39855,7 @@ Resource_api_control: {
   });
 }
 
-// @vuebundler[Proyecto_base_001][149]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/settings.js
+// @vuebundler[Proyecto_base_001][154]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/settings.js
 NwtResourceApi.register({
   namespace: "settings",
   getSettingsSpec: function() {
@@ -36096,7 +39866,7 @@ NwtResourceApi.register({
   }
 });
 
-// @vuebundler[Proyecto_base_001][150]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/test.js
+// @vuebundler[Proyecto_base_001][155]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/test.js
 NwtResourceApi.register({
   namespace: "test",
   getVersion() {
@@ -36104,7 +39874,7 @@ NwtResourceApi.register({
   }
 });
 
-// @vuebundler[Proyecto_base_001][151]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/trait.js
+// @vuebundler[Proyecto_base_001][156]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/trait.js
 NwtResourceApi.register({
   namespace: "trait",
   getId() {
@@ -36112,56 +39882,56 @@ NwtResourceApi.register({
   },
 });
 
-// @vuebundler[Proyecto_base_001][152]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/validation.js
+// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/validation.js
 NwtResourceApi.register({
   namespace: "validation",
 });
 
-// @vuebundler[Proyecto_base_001][153]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/control/schema/getControlSchema.js
+// @vuebundler[Proyecto_base_001][158]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/control/schema/getControlSchema.js
 NwtResourceApi.set(["control","schema","getControlSchema"], function() {
   return Object.assign({}, { type: this.id }, this.control?.schema ? { schema: this.control.schema } : {});
 });
 
-// @vuebundler[Proyecto_base_001][154]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/control/validation/safelyValidateValue.js
+// @vuebundler[Proyecto_base_001][159]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/control/validation/safelyValidateValue.js
 NwtResourceApi.set(["control","validation","safelyValidateValue"], function(value, schemaInput = false, component = false) {
   const schemaFromInputOrResource = schemaInput || this.api.control.schema.getControlSchema();
   return NwtStatic.api.control.validation.safelyValidateControlValue(value, schemaFromInputOrResource, component);
 });
 
-// @vuebundler[Proyecto_base_001][155]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/control/validation/validateValue.js
+// @vuebundler[Proyecto_base_001][160]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/control/validation/validateValue.js
 NwtResourceApi.set(["control","validation","validateValue"], function(value, schemaInput = false, component = false) {
   const schemaFromInputOrResource = schemaInput || this.api.control.schema.getControlSchema();
   return NwtStatic.api.control.validation.validateControlValue(value, schemaFromInputOrResource, component);
 });
 
-// @vuebundler[Proyecto_base_001][156]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/hello.js
+// @vuebundler[Proyecto_base_001][161]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/hello.js
 NwtResourceApi.set(["test","hello"], false);
 
-// @vuebundler[Proyecto_base_001][157]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit.getVersion.js
+// @vuebundler[Proyecto_base_001][162]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit.getVersion.js
 NwtResourceApi.set("test.utils.basicToolkit.getVersion", function() {
   return this.id;
 });
 
-// @vuebundler[Proyecto_base_001][158]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit.js
+// @vuebundler[Proyecto_base_001][163]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit.js
 NwtResourceApi.expand("test.utils.basicToolkit", {
   getId() {
     return this.id;
   },
 });
 
-// @vuebundler[Proyecto_base_001][159]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit2.js
+// @vuebundler[Proyecto_base_001][164]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/basicToolkit2.js
 NwtResourceApi.expand("test.utils.basicToolkit", {
   getModernId() {
     return this.id;
   },
 });
 
-// @vuebundler[Proyecto_base_001][160]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/validateSettings.js
+// @vuebundler[Proyecto_base_001][165]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/api/helpers/test/utils/validateSettings.js
 NwtResourceApi.set(["test","utils","validateSettings"], function() {
   return this.id;
 });
 
-// @vuebundler[Proyecto_base_001][161]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js
+// @vuebundler[Proyecto_base_001][166]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-resource/nwt-resource.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36263,7 +40033,7 @@ NwtResourceApi.set(["test","utils","validateSettings"], function() {
 
 });
 
-// @vuebundler[Proyecto_base_001][162]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-functions.js
+// @vuebundler[Proyecto_base_001][167]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-functions.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36294,7 +40064,7 @@ NwtResourceApi.set(["test","utils","validateSettings"], function() {
 
 });
 
-// @vuebundler[Proyecto_base_001][163]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-collection.js
+// @vuebundler[Proyecto_base_001][168]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-collection.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36343,7 +40113,7 @@ NwtResourceApi.set(["test","utils","validateSettings"], function() {
 
 });
 
-// @vuebundler[Proyecto_base_001][164]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-element.js
+// @vuebundler[Proyecto_base_001][169]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/nwt-dom-query-element.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36656,13 +40426,13 @@ NwtResourceApi.set(["test","utils","validateSettings"], function() {
 
 });
 
-// @vuebundler[Proyecto_base_001][165]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/fns/print.js
+// @vuebundler[Proyecto_base_001][170]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/fns/print.js
 NwtDomQueryFunctions.prototype.print = function() {
   console.log(this.getTarget());
   return this;
 };
 
-// @vuebundler[Proyecto_base_001][166]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/fns/printEach.js
+// @vuebundler[Proyecto_base_001][171]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dom-query/fns/printEach.js
 NwtDomQueryFunctions.prototype.printEach = function() {
   const list = this.getTarget();
   for(let index in list) {
@@ -36672,9 +40442,9 @@ NwtDomQueryFunctions.prototype.printEach = function() {
   return this;
 };
 
-// @vuebundler[Proyecto_base_001][167]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
+// @vuebundler[Proyecto_base_001][172]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.html
 
-// @vuebundler[Proyecto_base_001][167]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
+// @vuebundler[Proyecto_base_001][172]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.js
 /**
  * 
  * # NwtStarsBackground
@@ -36762,11 +40532,11 @@ Vue.component("NwtStarsBackground", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][167]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
+// @vuebundler[Proyecto_base_001][172]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-stars-background/nwt-stars-background.css
 
-// @vuebundler[Proyecto_base_001][168]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
+// @vuebundler[Proyecto_base_001][173]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.html
 
-// @vuebundler[Proyecto_base_001][168]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
+// @vuebundler[Proyecto_base_001][173]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.js
 /**
  * 
  * # NwtMatrixBackground
@@ -36838,9 +40608,9 @@ Vue.component("NwtMatrixBackground", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][168]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
+// @vuebundler[Proyecto_base_001][173]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-matrix-background/nwt-matrix-background.css
 
-// @vuebundler[Proyecto_base_001][169]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-command-synchronizer.js
+// @vuebundler[Proyecto_base_001][174]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-command-synchronizer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -37049,7 +40819,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][170]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-command.js
+// @vuebundler[Proyecto_base_001][175]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-command.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -37252,7 +41022,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][171]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager.js
+// @vuebundler[Proyecto_base_001][176]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -37303,7 +41073,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][172]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/mixins/nwt-command-context-interface.js
+// @vuebundler[Proyecto_base_001][177]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/mixins/nwt-command-context-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -37334,7 +41104,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][173]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/mixins/nwt-command-form-interface.js
+// @vuebundler[Proyecto_base_001][178]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/mixins/nwt-command-form-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -37376,7 +41146,7 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][174]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/mixins/nwt-command-view-interface.js
+// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/mixins/nwt-command-view-interface.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -37442,9 +41212,9 @@ Vue.component("NwtMatrixBackground", {
 
 });
 
-// @vuebundler[Proyecto_base_001][175]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form.html
+// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form.html
 
-// @vuebundler[Proyecto_base_001][175]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form.js
+// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form.js
 Vue.component("NwtAnonymousCommandForm", {
   name: "NwtAnonymousCommandForm",
   template: `<div class="nwt_anonymous_command_form">
@@ -37467,11 +41237,11 @@ Vue.component("NwtAnonymousCommandForm", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][175]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form.css
+// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-form/nwt-anonymous-command-form.css
 
-// @vuebundler[Proyecto_base_001][176]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view.html
+// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view.html
 
-// @vuebundler[Proyecto_base_001][176]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view.js
+// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view.js
 Vue.component("NwtAnonymousCommandView", {
   name: "NwtAnonymousCommandView",
   template: `<div class="nwt_anonymous_command_view">
@@ -37488,11 +41258,11 @@ Vue.component("NwtAnonymousCommandView", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][176]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view.css
+// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-anonymous-command-view/nwt-anonymous-command-view.css
 
-// @vuebundler[Proyecto_base_001][177]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
+// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][177]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
+// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer.js
 Vue.component("NwtCommandsManagerViewer", {
   name: "NwtCommandsManagerViewer",
   template: `<div class="nwt_commands_manager_viewer">
@@ -37682,13 +41452,13 @@ Vue.component("NwtCommandsManagerViewer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][177]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
+// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-command/nwt-commands-manager-viewer/nwt-commands-manager-viewer.css
 
-// @vuebundler[Proyecto_base_001][178]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
+// @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/templates/nwt/nwt-errors-manager/viewer/template.css
 
-// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
+// @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.html
 
-// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
+// @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.js
 /**
  * 
  * 
@@ -37808,6 +41578,9 @@ Vue.component("MainWindow", {
         text: "Ficheros de ChatGPT",
         event: () => this.startGestorDeFicherosDeChatgpt(),
       }, {
+        text: "Temporizador",
+        event: () => this.startTemporizador(),
+      }, {
         text: "Tests de la aplicación",
         event: () => this.startDynamicTesterViewer(),
       }]
@@ -37863,7 +41636,14 @@ Vue.component("MainWindow", {
         windowClasses: "no_scroll"
       });
     },
-
+    startTemporizador() {
+      trace("MainWindow.methods.startTemporizador");
+      this.$dialogs.open({
+        title: "Temporizador",
+        template: `<nwt-cron-manager-viewer />`,
+        windowClasses: "no_scroll"
+      });
+    },
     startDynamicTesterViewer() {
       trace("MainWindow.methods.startDynamicTesterViewer");
       this.$dialogs.open({
@@ -38058,9 +41838,9 @@ Vue.component("MainWindow", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][179]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
+// @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/components/main-window/main-window.css
 
-// @vuebundler[Proyecto_base_001][180]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
+// @vuebundler[Proyecto_base_001][185]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/app-payload.js
 /**
  * 
  * # App Payload API
@@ -38086,8 +41866,14 @@ Vue.component("MainWindow", {
   const AppPayload = class {
 
     static inject() {
+
       window.addEventListener("app-mounted", async function (event) {
-        trace("AppPayload.inject@app-mounted");
+        trace("AppPayload.inject@app-mounted :: start cron jobs");
+        NwtCronManager.global.start();
+      });
+
+      window.addEventListener("app-mounted", async function (event) {
+        trace("AppPayload.inject@app-mounted :: load beautifyjs");
         On_development: {
           await NwtCodeComposer.loadBeautifyJs();
         }
@@ -38103,7 +41889,7 @@ Vue.component("MainWindow", {
         window.dispatchEvent(new CustomEvent("app-started"));
       });
       window.addEventListener("app-started", async function (event) {
-        trace("AppPayload.inject@app-started");
+        trace("AppPayload.inject@app-started :: inject app last feature introducer");
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {
@@ -38121,7 +41907,7 @@ Vue.component("MainWindow", {
 
 });
 
-// @vuebundler[Proyecto_base_001][181]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/error-handler/compiled.js
+// @vuebundler[Proyecto_base_001][186]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/error-handler/compiled.js
 NwtResource.define({
   id: "control/error-handler",
   apis: [],
@@ -38174,9 +41960,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][182]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/error-handler/compilable.css
+// @vuebundler[Proyecto_base_001][187]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/error-handler/compilable.css
 
-// @vuebundler[Proyecto_base_001][183]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/abstraction/compiled.js
+// @vuebundler[Proyecto_base_001][188]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/abstraction/compiled.js
 NwtResource.define({
   id: "control/for/abstraction",
   apis: ["control", "view", "validation"],
@@ -38466,7 +42252,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][184]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compiled.js
+// @vuebundler[Proyecto_base_001][189]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compiled.js
 NwtResource.define({
   id: "control/for/list",
   apis: ["control", "view", "validation"],
@@ -38863,9 +42649,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][185]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compilable.css
+// @vuebundler[Proyecto_base_001][190]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/list/compilable.css
 
-// @vuebundler[Proyecto_base_001][186]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/option/compiled.js
+// @vuebundler[Proyecto_base_001][191]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/option/compiled.js
 NwtResource.define({
   id: "control/for/option",
   apis: ["control", "view", "validation"],
@@ -39176,7 +42962,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][187]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compiled.js
+// @vuebundler[Proyecto_base_001][192]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compiled.js
 NwtResource.define({
   id: "control/for/structure",
   apis: ["control", "view", "validation"],
@@ -39469,9 +43255,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][188]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compilable.css
+// @vuebundler[Proyecto_base_001][193]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/structure/compilable.css
 
-// @vuebundler[Proyecto_base_001][189]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compiled.js
+// @vuebundler[Proyecto_base_001][194]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compiled.js
 NwtResource.define({
   id: "control/for/text",
   apis: ["control", "view", "validation"],
@@ -39785,9 +43571,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][190]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compilable.css
+// @vuebundler[Proyecto_base_001][195]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/text/compilable.css
 
-// @vuebundler[Proyecto_base_001][191]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/panel/compiled.js
+// @vuebundler[Proyecto_base_001][196]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/panel/compiled.js
 NwtResource.define({
   id: "form/maker/panel",
   apis: ["trait", "control", "validation"],
@@ -39836,9 +43622,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][192]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/panel/compilable.css
+// @vuebundler[Proyecto_base_001][197]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/panel/compilable.css
 
-// @vuebundler[Proyecto_base_001][193]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compiled.js
+// @vuebundler[Proyecto_base_001][198]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compiled.js
 NwtResource.define({
   id: "form/maker/viewer",
   apis: ["trait", "control", "validation"],
@@ -39921,9 +43707,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][194]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css
+// @vuebundler[Proyecto_base_001][199]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css
 
-// @vuebundler[Proyecto_base_001][195]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date/compiled.js
+// @vuebundler[Proyecto_base_001][200]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date/compiled.js
 NwtResource.define({
   id: "control/for/type/date",
   apis: ["control", "view", "validation"],
@@ -40200,7 +43986,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][196]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js
+// @vuebundler[Proyecto_base_001][201]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js
 NwtResource.define({
   id: "control/for/type/duration",
   apis: ["control", "view", "validation"],
@@ -40457,7 +44243,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][197]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
+// @vuebundler[Proyecto_base_001][202]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
 NwtResource.define({
   id: "control/partial/for/error-handler",
   apis: ["control", "view", "validation"],
@@ -40507,9 +44293,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][198]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
+// @vuebundler[Proyecto_base_001][203]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
 
-// @vuebundler[Proyecto_base_001][199]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
+// @vuebundler[Proyecto_base_001][204]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
 NwtResource.define({
   id: "control/partial/for/list-panel",
   apis: ["control", "view", "validation"],
@@ -40540,7 +44326,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][200]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js
+// @vuebundler[Proyecto_base_001][205]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js
 NwtResource.define({
   id: "control/partial/for/pagination-panel",
   apis: ["control", "view", "validation"],
@@ -40651,9 +44437,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][201]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css
+// @vuebundler[Proyecto_base_001][206]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css
 
-// @vuebundler[Proyecto_base_001][202]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
+// @vuebundler[Proyecto_base_001][207]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
 NwtResource.define({
   id: "control/partial/for/statement",
   apis: ["control", "view", "validation"],
@@ -40776,9 +44562,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][203]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
+// @vuebundler[Proyecto_base_001][208]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
 
-// @vuebundler[Proyecto_base_001][204]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
+// @vuebundler[Proyecto_base_001][209]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
 NwtResource.define({
   id: "test/control/for/settingsSpecExample",
   apis: ["settings", "test"],
@@ -40800,8 +44586,8 @@ NwtResource.define({
   },
 });
 
-// @vuebundler[Proyecto_base_001][205]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][210]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][206]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+// @vuebundler[Proyecto_base_001][211]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
 
-// @vuebundler[Proyecto_base_001][207]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][212]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

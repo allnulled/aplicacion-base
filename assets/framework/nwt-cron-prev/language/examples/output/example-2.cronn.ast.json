@@ -1,0 +1,426 @@
+[
+  {
+    "selector": [
+      {
+        "year": 2026,
+        "month": 1,
+        "day": 1,
+        "hour": 0,
+        "minute": 0,
+        "second": 0
+      },
+      {
+        "month": "*",
+        "day": 2,
+        "hour": 0,
+        "minute": 0,
+        "second": 0
+      },
+      {
+        "month": "*",
+        "day": 3,
+        "hour": 0,
+        "minute": 0,
+        "second": 0
+      }
+    ],
+    "action": "a"
+  },
+  {
+    "selector": [
+      {
+        "day": 1,
+        "hour": "*"
+      },
+      {
+        "day": 2,
+        "hour": "*"
+      },
+      {
+        "day": 3,
+        "hour": "*"
+      }
+    ],
+    "action": "b"
+  },
+  {
+    "selector": [
+      {
+        "day": 1,
+        "hour": 10
+      },
+      {
+        "day": 2,
+        "hour": 11
+      },
+      {
+        "day": 3,
+        "hour": 12
+      }
+    ],
+    "action": "c"
+  },
+  {
+    "selector": [
+      {
+        "year": 2026
+      },
+      {
+        "year": 2027
+      },
+      {
+        "year": 2028
+      }
+    ],
+    "action": "d"
+  },
+  {
+    "selector": [
+      {
+        "month": 12,
+        "day": 1
+      }
+    ],
+    "action": "e"
+  },
+  {
+    "selector": [
+      {
+        "year": 2026
+      },
+      {
+        "year": 2027
+      },
+      {
+        "year": 2028
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "month": 1,
+            "day": 1
+          },
+          {
+            "month": 1,
+            "day": 2
+          },
+          {
+            "month": 1,
+            "day": 3
+          }
+        ],
+        "subselector": [
+          {
+            "selector": [
+              {
+                "hour": 14,
+                "minute": 0
+              },
+              {
+                "hour": 15,
+                "minute": 0
+              }
+            ],
+            "action": "f"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "year": 2026
+        },
+        "to": {
+          "year": 2029
+        }
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "type": "range",
+            "from": {
+              "month": 1,
+              "day": "*"
+            },
+            "to": {
+              "month": 12,
+              "day": "*"
+            }
+          }
+        ],
+        "subselector": [
+          {
+            "selector": [
+              {
+                "type": "range",
+                "from": {
+                  "ambiguous": 0
+                },
+                "to": {
+                  "ambiguous": 8
+                }
+              }
+            ],
+            "action": "desayunar"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "month": 1,
+          "day": 1
+        },
+        "to": {
+          "month": 12,
+          "day": 31
+        }
+      }
+    ],
+    "action": "ok"
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "month": 1,
+          "day": 1
+        },
+        "to": {
+          "month": 12,
+          "day": 31
+        }
+      }
+    ],
+    "action": "ok"
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "month": "*",
+          "day": 1
+        },
+        "to": {
+          "month": "*",
+          "day": 31
+        }
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "type": "range",
+            "from": {
+              "month": 1,
+              "day": "*"
+            },
+            "to": {
+              "month": 12,
+              "day": "*"
+            }
+          }
+        ],
+        "action": "ok"
+      }
+    ]
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "month": 0
+        },
+        "to": {
+          "month": 11
+        }
+      }
+    ],
+    "action": "go"
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "month": 0
+        },
+        "to": {
+          "month": 11
+        }
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "type": "range",
+            "from": {
+              "month": "*",
+              "day": 1
+            },
+            "to": {
+              "month": "*",
+              "day": 15
+            }
+          }
+        ],
+        "action": "callar"
+      },
+      {
+        "selector": [
+          {
+            "type": "range",
+            "from": {
+              "month": 1,
+              "day": "*"
+            },
+            "to": {
+              "ambiguous": 12
+            }
+          }
+        ],
+        "action": "callar"
+      }
+    ]
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "month": 0
+        },
+        "to": {
+          "month": 1
+        }
+      }
+    ],
+    "action": "ok"
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "year": 2025
+        },
+        "to": {
+          "year": 2026
+        }
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "type": "range",
+            "from": {
+              "month": "*",
+              "day": 1
+            },
+            "to": {
+              "month": "*",
+              "day": 15
+            }
+          }
+        ],
+        "subselector": [
+          {
+            "selector": [
+              {
+                "type": "range",
+                "from": {
+                  "ambiguous": 0
+                },
+                "to": {
+                  "ambiguous": 8
+                }
+              }
+            ],
+            "action": "aquí puedes poner varias líneas"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "selector": [
+      {
+        "day": 5,
+        "hour": 5
+      }
+    ],
+    "action": "ok"
+  },
+  {
+    "selector": [
+      {
+        "year": 2026
+      },
+      {
+        "year": 2027
+      },
+      {
+        "year": 2028
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "type": "range",
+            "from": {
+              "month": 0
+            },
+            "to": {
+              "month": 2
+            }
+          }
+        ],
+        "subselector": [
+          {
+            "selector": [
+              {
+                "ambiguous": 10
+              },
+              {
+                "ambiguous": 11
+              },
+              {
+                "month": 12,
+                "day": 20
+              }
+            ],
+            "subselector": [
+              {
+                "selector": [
+                  {
+                    "ambiguous": 5
+                  }
+                ],
+                "action": "ok"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

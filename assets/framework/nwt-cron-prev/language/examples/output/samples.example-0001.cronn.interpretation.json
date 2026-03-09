@@ -1,0 +1,101 @@
+{
+  "compilation": {
+    "Año": [
+      [
+        [
+          {
+            "year": 2027
+          }
+        ]
+      ]
+    ],
+    "Lista de años": [
+      [
+        [
+          {
+            "year": 2025
+          },
+          {
+            "year": 2026
+          },
+          {
+            "year": 2027
+          }
+        ]
+      ]
+    ],
+    "Rango de años": [
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "year": 2025
+            },
+            "to": {
+              "year": 2027
+            }
+          }
+        ]
+      ]
+    ],
+    "Día y hora": [
+      [
+        [
+          {
+            "year": 2026,
+            "month": 1,
+            "day": 1
+          }
+        ],
+        [
+          {
+            "hour": 10,
+            "minute": 0
+          }
+        ]
+      ]
+    ],
+    "Año, mes ambiguo, día ambiguo, hora ambigua y minuto ambiguo": [
+      [
+        [
+          {
+            "year": 2026
+          }
+        ],
+        [
+          {
+            "month": 1
+          }
+        ],
+        [
+          {
+            "day": 1
+          }
+        ],
+        [
+          {
+            "hour": 10
+          }
+        ],
+        [
+          {
+            "minute": 0
+          }
+        ],
+        [
+          {
+            "second": 0
+          }
+        ]
+      ]
+    ]
+  },
+  "dates": {
+    "Año": "xxx",
+    "Lista de años": "xxx",
+    "Rango de años": "yyy",
+    "Día y hora": "xxx",
+    "Año, mes ambiguo, día ambiguo, hora ambigua y minuto ambiguo": "xxx"
+  }
+}

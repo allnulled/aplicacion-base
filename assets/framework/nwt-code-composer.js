@@ -180,6 +180,19 @@
       return isAsync ? this.createAsyncFunction(source, argnames) : this.createSyncFunction(source, argnames);
     }
 
+    static SyncFunction = Function;
+
+    static AsyncFunction = (async function() {}).constructor;
+
+    static hydrateFunction(source) {
+      const body = this.getBlankFunctionBody(source);
+      const callback = this.createAsyncFunction(body);
+      return callback;
+    }
+
+    static dehydrateFunction(callback) {
+      return callback.toString();
+    }
 
   };
 

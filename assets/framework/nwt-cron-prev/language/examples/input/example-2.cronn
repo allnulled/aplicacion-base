@@ -1,6 +1,9 @@
 // El lenguaje tendría que permitir estas expresiones:
 
 // Listas de fechas: amd/am/md/a/d/combinaciones
+
+
+
 2026/01/01 00:00:00,*/02 00:00:00,*/03 00:00:00=a
 1 *,2 *,3 *=b
 1 10,2 11,3 12=c
@@ -18,7 +21,7 @@
     }
 }
 01/01-12/31=ok
-01/01-12/31>{ok}
+01/01-12/31<<ok>>
 */01-*/31{
     01/*-12/*=ok
 }
@@ -28,6 +31,34 @@ enero-diciembre {
     // Aquí tendría que petar por validación:
     1/*-12=callar
 }
+enero-febrero=ok
+2025-2026 {
+  */1-*/15{
+    0-8 <<aquí puedes poner varias líneas>>
+  }
+}
+
+5 5=ok
+
+2026,2027,2028 {
+  enero-marzo {
+    10,11,12/20 {
+      5=ok
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 2026/01/01,2027/01/01,2028/01/01

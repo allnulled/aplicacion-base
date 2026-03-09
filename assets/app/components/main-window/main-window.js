@@ -33,6 +33,9 @@ Vue.component("MainWindow", {
         text: "Ficheros de ChatGPT",
         event: () => this.startGestorDeFicherosDeChatgpt(),
       }, {
+        text: "Temporizador",
+        event: () => this.startTemporizador(),
+      }, {
         text: "Tests de la aplicación",
         event: () => this.startDynamicTesterViewer(),
       }]
@@ -88,7 +91,14 @@ Vue.component("MainWindow", {
         windowClasses: "no_scroll"
       });
     },
-
+    startTemporizador() {
+      trace("MainWindow.methods.startTemporizador");
+      this.$dialogs.open({
+        title: "Temporizador",
+        template: `<nwt-cron-manager-viewer />`,
+        windowClasses: "no_scroll"
+      });
+    },
     startDynamicTesterViewer() {
       trace("MainWindow.methods.startDynamicTesterViewer");
       this.$dialogs.open({

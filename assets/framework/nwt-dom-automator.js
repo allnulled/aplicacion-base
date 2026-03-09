@@ -35,6 +35,11 @@
       NwtDomAutomator.find(document.body, "*", "Tests de la aplicación")[0].click();
     }
 
+    static async abrirTemporizador() {
+      trace("NwtDomAutomator.abrirTemporizador");
+      NwtDomAutomator.find(document.body, "*", "Temporizador")[0].click();
+    }
+
     static async abrirTodosLosTestsDeLaAplicacion() {
       trace("NwtDomAutomator.abrirTodosLosTestsDeLaAplicacion");
       await this.abrirTestsDeLaAplicacion();

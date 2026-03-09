@@ -64,6 +64,7 @@ module.exports = [
   `${projectRoot}/assets/framework/nwt-json-storer.js`,
   `${projectRoot}/assets/framework/nwt-settings.js`,
   `${projectRoot}/assets/framework/nwt-accessor.js`,
+  `${projectRoot}/assets/framework/nwt-cron/nwt-cron-manager.js`,
   `${projectRoot}/assets/framework/nwt-js-controllers/nwt-js-controller.js`,
   `${projectRoot}/assets/framework/nwt-js-controllers/nwt-js-return-controller.js`,
   `${projectRoot}/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js`,

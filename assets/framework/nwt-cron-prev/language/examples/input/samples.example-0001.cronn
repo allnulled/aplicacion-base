@@ -1,0 +1,17 @@
+2027=Año
+2025,2026,2027=Lista de años
+2025-2027=Rango de años
+2026/01/01 {
+    10:00=Día y hora
+}
+2026 {
+    01 {
+        01 {
+            10 {
+                0 {
+                    0=Año, mes ambiguo, día ambiguo, hora ambigua y minuto ambiguo
+                }
+            }
+        }
+    }
+}

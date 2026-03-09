@@ -1,0 +1,413 @@
+{
+  "compilation": {
+    "a": [
+      [
+        [
+          {
+            "year": 2026,
+            "month": 1,
+            "day": 1,
+            "hour": 0,
+            "minute": 0,
+            "second": 0
+          },
+          {
+            "month": "*",
+            "day": 2,
+            "hour": 0,
+            "minute": 0,
+            "second": 0
+          },
+          {
+            "month": "*",
+            "day": 3,
+            "hour": 0,
+            "minute": 0,
+            "second": 0
+          }
+        ]
+      ]
+    ],
+    "b": [
+      [
+        [
+          {
+            "day": 1,
+            "hour": "*"
+          },
+          {
+            "day": 2,
+            "hour": "*"
+          },
+          {
+            "day": 3,
+            "hour": "*"
+          }
+        ]
+      ]
+    ],
+    "c": [
+      [
+        [
+          {
+            "day": 1,
+            "hour": 10
+          },
+          {
+            "day": 2,
+            "hour": 11
+          },
+          {
+            "day": 3,
+            "hour": 12
+          }
+        ]
+      ]
+    ],
+    "d": [
+      [
+        [
+          {
+            "year": 2026
+          },
+          {
+            "year": 2027
+          },
+          {
+            "year": 2028
+          }
+        ]
+      ]
+    ],
+    "e": [
+      [
+        [
+          {
+            "month": 12,
+            "day": 1
+          }
+        ]
+      ]
+    ],
+    "f": [
+      [
+        [
+          {
+            "year": 2026
+          },
+          {
+            "year": 2027
+          },
+          {
+            "year": 2028
+          }
+        ],
+        [
+          {
+            "month": 1,
+            "day": 1
+          },
+          {
+            "month": 1,
+            "day": 2
+          },
+          {
+            "month": 1,
+            "day": 3
+          }
+        ],
+        [
+          {
+            "hour": 14,
+            "minute": 0
+          },
+          {
+            "hour": 15,
+            "minute": 0
+          }
+        ]
+      ]
+    ],
+    "desayunar": [
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "year": 2026
+            },
+            "to": {
+              "year": 2029
+            }
+          }
+        ],
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 1,
+              "day": "*"
+            },
+            "to": {
+              "month": 12,
+              "day": "*"
+            }
+          }
+        ],
+        [
+          {
+            "type": "range",
+            "from": {
+              "hour": 0
+            },
+            "to": {
+              "hour": 8
+            }
+          }
+        ]
+      ]
+    ],
+    "ok": [
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 1,
+              "day": 1
+            },
+            "to": {
+              "month": 12,
+              "day": 31
+            }
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 1,
+              "day": 1
+            },
+            "to": {
+              "month": 12,
+              "day": 31
+            }
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": "*",
+              "day": 1
+            },
+            "to": {
+              "month": "*",
+              "day": 31
+            }
+          }
+        ],
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 1,
+              "day": "*"
+            },
+            "to": {
+              "month": 12,
+              "day": "*"
+            }
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 0
+            },
+            "to": {
+              "month": 1
+            }
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "day": 5,
+            "hour": 5
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "year": 2026
+          },
+          {
+            "year": 2027
+          },
+          {
+            "year": 2028
+          }
+        ],
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 0
+            },
+            "to": {
+              "month": 2
+            }
+          }
+        ],
+        [
+          {
+            "day": 10
+          },
+          {
+            "day": 11
+          },
+          {
+            "month": 12,
+            "day": 20
+          }
+        ],
+        [
+          {
+            "hour": 5
+          }
+        ]
+      ]
+    ],
+    "go": [
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 0
+            },
+            "to": {
+              "month": 11
+            }
+          }
+        ]
+      ]
+    ],
+    "callar": [
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 0
+            },
+            "to": {
+              "month": 11
+            }
+          }
+        ],
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": "*",
+              "day": 1
+            },
+            "to": {
+              "month": "*",
+              "day": 15
+            }
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 0
+            },
+            "to": {
+              "month": 11
+            }
+          }
+        ],
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": 1,
+              "day": "*"
+            },
+            "to": {
+              "day": 12
+            }
+          }
+        ]
+      ]
+    ],
+    "aquí puedes poner varias líneas": [
+      [
+        [
+          {
+            "type": "range",
+            "from": {
+              "year": 2025
+            },
+            "to": {
+              "year": 2026
+            }
+          }
+        ],
+        [
+          {
+            "type": "range",
+            "from": {
+              "month": "*",
+              "day": 1
+            },
+            "to": {
+              "month": "*",
+              "day": 15
+            }
+          }
+        ],
+        [
+          {
+            "type": "range",
+            "from": {
+              "hour": 0
+            },
+            "to": {
+              "hour": 8
+            }
+          }
+        ]
+      ]
+    ]
+  },
+  "dates": {
+    "a": "xxx",
+    "b": "xxx",
+    "c": "xxx",
+    "d": "xxx",
+    "e": "xxx",
+    "f": "xxx",
+    "desayunar": "yyy",
+    "ok": "xxx",
+    "go": "yyy",
+    "callar": "yyy",
+    "aquí puedes poner varias líneas": "yyy"
+  }
+}

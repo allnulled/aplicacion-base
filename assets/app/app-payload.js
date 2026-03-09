@@ -23,8 +23,14 @@
   const AppPayload = class {
 
     static inject() {
+
       window.addEventListener("app-mounted", async function (event) {
-        trace("AppPayload.inject@app-mounted");
+        trace("AppPayload.inject@app-mounted :: start cron jobs");
+        NwtCronManager.global.start();
+      });
+
+      window.addEventListener("app-mounted", async function (event) {
+        trace("AppPayload.inject@app-mounted :: load beautifyjs");
         On_development: {
           await NwtCodeComposer.loadBeautifyJs();
         }
@@ -40,7 +46,7 @@
         window.dispatchEvent(new CustomEvent("app-started"));
       });
       window.addEventListener("app-started", async function (event) {
-        trace("AppPayload.inject@app-started");
+        trace("AppPayload.inject@app-started :: inject app last feature introducer");
         await NwtLiveInjector.start();
         await NwtTimer.timeout(400);
         Final_payload: {

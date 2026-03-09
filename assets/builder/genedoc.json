@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-03-03T17:09:51.243Z",
+  "generatedAt": "2026-03-09T10:46:46.988Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.css",
@@ -300,6 +300,36 @@
         "NwtCommand",
         "NwtPaths",
         "require(\"path\")"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.css",
+      "name": "nwt-cron-manager-viewer.css",
+      "type": "file",
+      "formalName": "NwtCronManagerViewerCss",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.html",
+      "name": "nwt-cron-manager-viewer.html",
+      "type": "file",
+      "formalName": "NwtCronManagerViewerHtml",
+      "dependencies": []
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.js",
+      "name": "nwt-cron-manager-viewer.js",
+      "type": "file",
+      "formalName": "NwtCronManagerViewerJs",
+      "isVueComponent": true,
+      "componentName": [
+        "NwtCronManagerViewerJs",
+        "NwtCronManagerViewerHtml",
+        "NwtCronManagerViewerCss"
+      ],
+      "apiName": "NwtCronManagerViewer",
+      "dependencies": [
+        "NwtCronManagerViewer"
       ]
     },
     {
@@ -984,7 +1014,79 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/language/nwt-cron-parser.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-manager.js",
+      "name": "nwt-cron-manager.js",
+      "type": "file",
+      "formalName": "NwtCronManagerJs",
+      "apiName": "NwtCronManager",
+      "dependencies": [
+        "NwtCronManager",
+        "NwtCronPersistibleJob",
+        "NwtFilesystem",
+        "NwtCodeComposer",
+        "global.json"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/language/nwt-cron-index.js",
+      "name": "nwt-cron-index.js",
+      "type": "file",
+      "formalName": "NwtCronIndexJs",
+      "apiName": "NwtCronIndex",
+      "dependencies": [
+        "NwtCronIndex"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/language/nwt-cron-machine-prev.js",
+      "name": "nwt-cron-machine-prev.js",
+      "type": "file",
+      "formalName": "NwtCronMachinePrevJs",
+      "apiName": "NwtCronMachinePrev",
+      "dependencies": [
+        "NwtCronMachine",
+        "NwtCronParser"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/language/nwt-cron-machine-prev2.js",
+      "name": "nwt-cron-machine-prev2.js",
+      "type": "file",
+      "formalName": "NwtCronMachinePrev2Js",
+      "apiName": "NwtCronMachinePrev2",
+      "dependencies": [
+        "NwtCronMachine",
+        "NwtCronMachineUtils",
+        "NwtCronParser"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/language/nwt-cron-machine-prev3.js",
+      "name": "nwt-cron-machine-prev3.js",
+      "type": "file",
+      "formalName": "NwtCronMachinePrev3Js",
+      "apiName": "NwtCronMachinePrev3",
+      "dependencies": [
+        "NwtCronMachine",
+        "NwtCronMachineUtils",
+        "NwtCronParser"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/language/nwt-cron-machine.js",
+      "name": "nwt-cron-machine.js",
+      "type": "file",
+      "formalName": "NwtCronMachineJs",
+      "apiName": "NwtCronMachine",
+      "dependencies": [
+        "NwtCronMachine",
+        "NwtCronMachineUtils",
+        "NwtCronBacktracker",
+        "NwtCronParser"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/language/nwt-cron-parser.js",
       "name": "nwt-cron-parser.js",
       "type": "file",
       "formalName": "NwtCronParserJs",
@@ -994,14 +1096,34 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/language/nwt-cron-parser.pegjs",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/language/nwt-cron-parser.pegjs",
       "name": "nwt-cron-parser.pegjs",
       "type": "file",
       "formalName": "NwtCronParserPegjs",
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-job.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/language/nwt-cron-report.js",
+      "name": "nwt-cron-report.js",
+      "type": "file",
+      "formalName": "NwtCronReportJs",
+      "apiName": "NwtCronReport",
+      "dependencies": [
+        "NwtCronReport"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/language/nwt-cron-scope.js",
+      "name": "nwt-cron-scope.js",
+      "type": "file",
+      "formalName": "NwtCronScopeJs",
+      "apiName": "NwtCronScope",
+      "dependencies": [
+        "NwtCronScope"
+      ]
+    },
+    {
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/nwt-cron-job.js",
       "name": "nwt-cron-job.js",
       "type": "file",
       "formalName": "NwtCronJobJs",
@@ -1013,7 +1135,7 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/nwt-cron-manager.js",
       "name": "nwt-cron-manager.js",
       "type": "file",
       "formalName": "NwtCronManagerJs",
@@ -1025,7 +1147,7 @@
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-script.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron-prev/nwt-cron-script.js",
       "name": "nwt-cron-script.js",
       "type": "file",
       "formalName": "NwtCronScriptJs",

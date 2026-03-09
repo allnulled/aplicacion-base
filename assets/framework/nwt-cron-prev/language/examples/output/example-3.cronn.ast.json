@@ -1,0 +1,185 @@
+[
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "year": 2026
+        },
+        "to": {
+          "year": 2029
+        }
+      },
+      {
+        "type": "range",
+        "from": {
+          "year": 2030
+        },
+        "to": {
+          "year": 2034
+        }
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "type": "range",
+            "from": {
+              "ambiguous": 1
+            },
+            "to": {
+              "ambiguous": 3
+            }
+          },
+          {
+            "type": "range",
+            "from": {
+              "ambiguous": 6
+            },
+            "to": {
+              "ambiguous": 9
+            }
+          },
+          {
+            "ambiguous": 12
+          }
+        ],
+        "subselector": [
+          {
+            "selector": [
+              {
+                "type": "range",
+                "from": {
+                  "ambiguous": 1
+                },
+                "to": {
+                  "ambiguous": 15
+                }
+              },
+              {
+                "ambiguous": 21
+              },
+              {
+                "ambiguous": 27
+              }
+            ],
+            "subselector": [
+              {
+                "selector": [
+                  {
+                    "type": "range",
+                    "from": {
+                      "ambiguous": 0
+                    },
+                    "to": {
+                      "ambiguous": 8
+                    }
+                  }
+                ],
+                "action": "Dormir"
+              },
+              {
+                "selector": [
+                  {
+                    "type": "range",
+                    "from": {
+                      "ambiguous": 8
+                    },
+                    "to": {
+                      "hour": 8,
+                      "minute": 30
+                    }
+                  }
+                ],
+                "action": "Desayunar"
+              },
+              {
+                "selector": [
+                  {
+                    "ambiguous": 9
+                  },
+                  {
+                    "ambiguous": 10
+                  },
+                  {
+                    "ambiguous": 11
+                  },
+                  {
+                    "ambiguous": 12
+                  }
+                ],
+                "action": "Recordatorio 1"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "selector": [
+      {
+        "type": "range",
+        "from": {
+          "ambiguous": 7
+        },
+        "to": {
+          "ambiguous": 15
+        }
+      }
+    ],
+    "action": "tomar el sol"
+  },
+  {
+    "selector": [
+      {
+        "ambiguous": 7
+      }
+    ],
+    "action": "estar preparado para tomar el sol"
+  },
+  {
+    "selector": [
+      {
+        "year": 2026
+      },
+      {
+        "year": 2027
+      }
+    ],
+    "subselector": [
+      {
+        "selector": [
+          {
+            "type": "range",
+            "from": {
+              "month": 1,
+              "day": 1
+            },
+            "to": {
+              "month": 31,
+              "day": 12
+            }
+          }
+        ],
+        "subselector": [
+          {
+            "selector": [
+              {
+                "type": "range",
+                "from": {
+                  "ambiguous": 0
+                },
+                "to": {
+                  "ambiguous": 8
+                }
+              }
+            ],
+            "action": "task"
+          }
+        ]
+      }
+    ]
+  }
+]
