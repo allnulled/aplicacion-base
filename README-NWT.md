@@ -151,6 +151,10 @@ Además, hace una tabla de contenidos general e imprime la estructura del proyec
   - [Crear un diálogo con formulario y extraer la respuesta](#crear-un-dilogo-con-formulario-y-extraer-la-respuesta)
   - [API de diálogos](#api-de-dilogos)
     - [`NwtDialogs.open(definition:Object)`](#nwtdialogsopendefinitionobject)
+    - [`NwtDialogs.confirm(definition:Object|String)`](#nwtdialogsconfirmdefinitionobjectstring)
+    - [`NwtDialogs.alert(definition:Object|String)`](#nwtdialogsalertdefinitionobjectstring)
+    - [`NwtDialogs.text(definition:Object|String)`](#nwtdialogstextdefinitionobjectstring)
+    - [`NwtDialogs.openLayout1(definition:Object)`](#nwtdialogsopenlayout1definitionobject)
     - [`NwtDialogs.openByTemplateId(definition:Object)`](#nwtdialogsopenbytemplateiddefinitionobject)
     - [`NwtDialogs.subdialog(definition:Object)`](#nwtdialogssubdialogdefinitionobject)
     - [`NwtDialogs.closeDialog(process:NwtProcess)`](#nwtdialogsclosedialogprocessnwtprocess)
@@ -1779,6 +1783,28 @@ Este método llamará a `NwtDialogDefinition.create(definition)` y devolverá la
 Esa promesa se cumple cuando se llama a `accept` o `cancel` desde el diálogo mismo, métodos que se inyectan automáticamente y están disponibles desde la plantilla del diálogo directamente.
 
 Para más información, buscar en la documentación la interfaz `NwtDialogDefinition` y saber las opciones del parámetro `definition:Object`.
+
+### `NwtDialogs.confirm(definition:Object|String)`
+
+Imita a window.confirm pero hace el bridge completo mediante el método `openLayout1`.
+
+### `NwtDialogs.alert(definition:Object|String)`
+
+Imita a window.alert pero hace el bridge completo mediante el método `openLayout1`.
+
+### `NwtDialogs.text(definition:Object|String)`
+
+Imita a window.prompt pero hace el bridge completo mediante el método `openLayout1`.
+
+### `NwtDialogs.openLayout1(definition:Object)`
+
+Este método no pide la propiedad `template` (lo ignorará) pero obliga a proporcionar las propiedades:
+
+- `header:String`
+- `body:String`
+- `footer:String`
+
+Y así conseguir el layout básico de diálogos mediante función js.
 
 ### `NwtDialogs.openByTemplateId(definition:Object)`
 

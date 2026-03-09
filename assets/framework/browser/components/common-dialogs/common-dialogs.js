@@ -80,6 +80,142 @@ Vue.component("CommonDialogs", {
     },
     /**
      * 
+     * ### `NwtDialogs.confirm(definition:Object|String)`
+     * 
+     * Imita a window.confirm pero hace el bridge completo mediante el método `openLayout1`.
+     * 
+     */
+    confirm(userDialogDefinition) {
+      trace("CommonDialogs.methods.confirm");
+      // Shortcut con string directo:
+      if(typeof userDialogDefinition === "string") {
+        return this.confirm({
+          title: "Confirmar",
+          template: userDialogDefinition,
+        });
+      }
+      return this.openLayout1({
+        ...userDialogDefinition,
+        header: `<div class="title">${userDialogDefinition.title}</div>`,
+        body: `<div class="pad_1">
+          ${userDialogDefinition.template}
+        </div>`,
+        footer: `<div class="flex_row centered pad_1">
+          <div class="flex_100"></div>
+          <div class="flex_1 pad_left_1">
+            <button v-on:click="() => accept(true)">Aceptar</button>
+          </div>
+          <div class="flex_1 pad_left_1">
+            <button v-on:click="() => accept(false)">Cancelar</button>
+          </div>
+        </div>`,
+      })
+    },
+    /**
+     * 
+     * ### `NwtDialogs.alert(definition:Object|String)`
+     * 
+     * Imita a window.alert pero hace el bridge completo mediante el método `openLayout1`.
+     * 
+     */
+    alert(userDialogDefinition) {
+      trace("CommonDialogs.methods.alert");
+      // Shortcut con string directo:
+      if(typeof userDialogDefinition === "string") {
+        return this.alert({
+          title: "Alerta",
+          template: userDialogDefinition,
+        });
+      }
+      return this.openLayout1({
+        ...userDialogDefinition,
+        header: `<div class="title">${userDialogDefinition.title}</div>`,
+        body: `<div class="pad_1">
+          ${userDialogDefinition.template}
+        </div>`,
+        footer: `<div class="flex_row centered pad_1">
+          <div class="flex_100"></div>
+          <div class="flex_1 pad_left_1">
+            <button v-on:click="() => accept(true)">Aceptar</button>
+          </div>
+        </div>`,
+      })
+    },
+    /**
+     * 
+     * ### `NwtDialogs.text(definition:Object|String)`
+     * 
+     * Imita a window.prompt pero hace el bridge completo mediante el método `openLayout1`.
+     * 
+     */
+    text(userDialogDefinition) {
+      trace("CommonDialogs.methods.text");
+      // Shortcut con string directo:
+      if(typeof userDialogDefinition === "string") {
+        return this.alert({
+          title: "Entrada de texto",
+          template: userDialogDefinition,
+        });
+      }
+      return this.openLayout1({
+        ...userDialogDefinition,
+        header: `<div class="title">${userDialogDefinition.title}</div>`,
+        body: `<div class="pad_1">
+          ${userDialogDefinition.template}
+          <hr/>
+          <textarea class="width_100" v-model="value"></textarea>
+        </div>`,
+        footer: `<div class="flex_row centered pad_1">
+          <div class="flex_100"></div>
+          <div class="flex_1 pad_left_1">
+            <button v-on:click="accept">Aceptar</button>
+          </div>
+          <div class="flex_1 pad_left_1">
+            <button v-on:click="cancel">Cancelar</button>
+          </div>
+        </div>`,
+      })
+    },
+    /**
+     * 
+     * ### `NwtDialogs.openLayout1(definition:Object)`
+     * 
+     * Este método no pide la propiedad `template` (lo ignorará) pero obliga a proporcionar las propiedades:
+     * 
+     * - `header:String`
+     * - `body:String`
+     * - `footer:String`
+     * 
+     * Y así conseguir el layout básico de diálogos mediante función js.
+     * 
+     */
+    openLayout1(userDialogDefinition) {
+      trace("CommonDialogs.methods.openLayout1");
+      assertion(typeof userDialogDefinition.header === "string", "Parameter «header» must be string on «CommonDialogs.methods.openLayout1»");
+      assertion(typeof userDialogDefinition.body === "string", "Parameter «body» must be string on «CommonDialogs.methods.openLayout1»");
+      assertion(typeof userDialogDefinition.footer === "string", "Parameter «footer» must be string on «CommonDialogs.methods.openLayout1»");
+      const { header, body, footer } = userDialogDefinition;
+      const template = `
+        <nwt-basic-dialog-layout>
+          <template v-slot:header>
+            ${header}
+          </template>
+          <template v-slot:body>
+            ${body}
+          </template>
+          <template v-slot:footer>
+            ${footer}
+          </template>
+        </nwt-basic-dialog-layout>
+      `;
+      return this.open({
+        ...userDialogDefinition,
+        windowClasses: "no_scroll",
+        template,
+      });
+    },
+    /**
+     * 
      * ### `NwtDialogs.openByTemplateId(definition:Object)`
      * 
      * Este método difiere con `open` en 2 cosas:

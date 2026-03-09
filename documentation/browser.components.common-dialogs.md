@@ -59,6 +59,28 @@ Esa promesa se cumple cuando se llama a `accept` o `cancel` desde el diálogo mi
 
 Para más información, buscar en la documentación la interfaz `NwtDialogDefinition` y saber las opciones del parámetro `definition:Object`.
 
+### `NwtDialogs.confirm(definition:Object|String)`
+
+Imita a window.confirm pero hace el bridge completo mediante el método `openLayout1`.
+
+### `NwtDialogs.alert(definition:Object|String)`
+
+Imita a window.alert pero hace el bridge completo mediante el método `openLayout1`.
+
+### `NwtDialogs.text(definition:Object|String)`
+
+Imita a window.prompt pero hace el bridge completo mediante el método `openLayout1`.
+
+### `NwtDialogs.openLayout1(definition:Object)`
+
+Este método no pide la propiedad `template` (lo ignorará) pero obliga a proporcionar las propiedades:
+
+- `header:String`
+- `body:String`
+- `footer:String`
+
+Y así conseguir el layout básico de diálogos mediante función js.
+
 ### `NwtDialogs.openByTemplateId(definition:Object)`
 
 Este método difiere con `open` en 2 cosas:
