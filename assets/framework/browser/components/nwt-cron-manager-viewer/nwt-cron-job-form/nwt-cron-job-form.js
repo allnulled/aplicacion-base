@@ -44,7 +44,13 @@ Vue.component("NwtCronJobForm", {
       }
       this.job.pattern = NwtCronExpression.create(valueByUi).toString();
       await this.job.manager.save();
+      await this.job.manager.reload();
       this.onSaved();
+    },
+
+    pastePlaceholderTemplate() {
+      trace("NwtCronJobForm.methods.pastePlaceholderTemplate");
+      this.$local.controls.callback.value = this.$local.controls.callback.placeholder;
     }
   },
   created() {

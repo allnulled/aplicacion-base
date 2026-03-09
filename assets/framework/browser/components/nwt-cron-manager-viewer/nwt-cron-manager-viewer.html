@@ -10,26 +10,29 @@
         </div>
     </div>
     <div class="">
-        <div class=""
+        <div class="pad_top_1 pad_horizontal_1"
             v-for="job, jobIndex in manager.jobs"
             v-bind:key="'job_' + jobIndex">
             <div class="flex_row centered">
-                <div class="flex_100 nowrap pad_1">
-                    {{ job.title }}
+                <div class="flex_100 nowrap">
+                    🔔 {{ job.title }}
                 </div>
-                <div class="flex_1 nowrap pad_1 pad_left_1">
+                <div class="flex_1 nowrap pad_left_1">
+                    <button class="mini"
+                        v-on:click="() => runJob(job)">⚡️</button>
+                </div>
+                <div class="flex_1 nowrap pad_left_1">
                     <button class="mini"
                         :class="{active:isOpened.indexOf(job) !== -1}"
                         v-on:click="() => toggleJob(job)">🔧</button>
                 </div>
-                <div class="flex_1 nowrap pad_1 pad_left_1">
+                <div class="flex_1 nowrap pad_left_1">
                     <button class="mini"
                         v-on:click="() => removeJob(job)">❌</button>
                 </div>
             </div>
-            <div class="pad_1 pad_right_2">
-                <div class="card"
-                    v-if="isOpened.indexOf(job) !== -1">
+            <div class="pad_top_1 pad_right_1" v-if="isOpened.indexOf(job) !== -1">
+                <div class="card">
                     <nwt-cron-job-form :job="job" :on-saved="() => toggleJob(job)" />
                 </div>
             </div>

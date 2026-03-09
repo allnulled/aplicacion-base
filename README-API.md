@@ -459,6 +459,7 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtProgressBar`
 - `123. The NwtTimer API`
    - **@uses** `NwtFramework`
+   - **@uses** `NwtUtils`
 - `124. The NwtTracer API`
    - **@uses** `NwtFramework`
    - **@uses** `NwtTimer`
@@ -681,7 +682,7 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtShell
    - NwtStrings
    - NwtProcedureDocumentationViewer
-- NwtUtils ✖️ 15
+- NwtUtils ✖️ 16
    - NwtCronJob
    - NwtDebug
    - NwtDomQueryFunctions
@@ -692,6 +693,7 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtPack
    - NwtPrototyper
    - NwtStrings
+   - NwtTimer
    - NwtCodeHighlighter
    - NwtCronJobForm
    - NwtCronManagerViewer
@@ -1106,7 +1108,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-03-09T17:14:31.334Z",
+  "generatedAt": "2026-03-09T22:53:58.712Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1504,6 +1506,7 @@ El JSON original es:
       "type": "file",
       "formalName": "NwtCronJobFormHtml",
       "dependencies": [
+        "NwtDialogs",
         "window.cronstrue",
         "window.beautifier"
       ]
@@ -2951,7 +2954,8 @@ El JSON original es:
       "apiName": "NwtTimer",
       "dependencies": [
         "NwtTimer",
-        "NwtFramework"
+        "NwtFramework",
+        "NwtUtils"
       ]
     },
     {

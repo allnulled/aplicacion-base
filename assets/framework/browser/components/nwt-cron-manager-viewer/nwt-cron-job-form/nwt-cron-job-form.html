@@ -2,7 +2,7 @@
     <div>
         <div class="nowrap">
             <div class="flex_row centered">
-                <div class="flex_1">🔔 Nombre: </div>
+                <div class="flex_1">🪧 Nombre: </div>
                 <div class="flex_100 pad_left_1">
                     <input class="width_100 text_align_right" type="text" :value="job.title" 
                         :ref="(el) => { if(el === null) { delete $local.controls.title; } else { $local.controls.title = el; } }"/>
@@ -15,10 +15,14 @@
         <div class="nowrap">
             <div class="flex_row centered">
                 <div class="flex_1">⏰ Alarma: </div>
-                <div class="flex_100 pad_left_1">
-                    <input class="width_100 text_align_right" type="text" disabled="true" :value="$window.cronstrue.toString(job.pattern)" />
-                </div>
             </div>
+            <textarea class="width_100 text_align_right" type="text" disabled="true" :value="$window.cronstrue.toString(job.pattern)" />
+        </div>
+        <div class="nowrap">
+            <div class="flex_row centered">
+                <div class="flex_1">▶️ Siguiente alarma: </div>
+            </div>
+            <input class="width_100 text_align_right" type="text" disabled="true" :value="$nwt.Timer.fromDateToNatural(job.cronObject.nextRun(new Date()))" />
         </div>
         <div class="nowrap">
             <div class="flex_row centered">
@@ -66,11 +70,38 @@
                     <nwt-code-highlighter syntax="js"
                         :code="$window.beautifier.js(job.callback.toString())" />
                 </div>
-                <div class="" v-else>
+                <div class="position_relative" v-else>
+                    <div class="position_absolute top_1 right_1 left_auto bottom_auto ">
+                        <button class="mini" v-on:click="pastePlaceholderTemplate">💉</button>
+                    </div>
                     <textarea
-                        class="width_100"
+                        class="width_100 monospaced"
                         :value="$nwt.CodeComposer.beautifyJs($nwt.CodeComposer.getBlankFunctionBody(job.callback))"
-                        :ref="(el) => { if(el === null) { delete $local.controls.callback; } else { $local.controls.callback = el; } }"></textarea>
+                        :ref="(el) => { if(el === null) { delete $local.controls.callback; } else { $local.controls.callback = el; } }"
+                        placeholder='NwtDialogs.open({
+  title: "Ejemplo de diálogo",
+  template: `<nwt-basic-dialog-layout>
+    <template v-slot:header>
+      <div class="title">Titulo</div>
+    </template>
+    <template v-slot:body>
+      <div class="paragraph">Contenido</div>
+    </template>
+    <template v-slot:footer>
+      <hr/>
+      <div class="flex_row centered pad_1">
+        <div class="flex_100"></div>
+        <div class="flex_1 pad_left_1 "><button class="mini" v-on:click="accept">Aceptar</button></div>
+        <div class="flex_1 pad_left_1 "><button class="mini" v-on:click="cancel">Cancelar</button></div>
+      </div>
+    </template>
+  </nwt-basic-dialog-layout>`,
+  windowClasses: "no_scroll",
+  factory: {
+    data: {},
+    methods: {},
+  },
+})'></textarea>
                 </div>
             </div>
         </div>

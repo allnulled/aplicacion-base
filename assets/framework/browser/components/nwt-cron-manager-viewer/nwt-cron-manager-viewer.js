@@ -33,8 +33,13 @@ Vue.component("NwtCronManagerViewer", {
       trace("NwtCronManagerViewer.methods.removeJob");
       this.manager.removeJobByReference(job);
     },
+    runJob(job) {
+      trace("NwtCronManagerViewer.methods.runJob");
+      job.callback();
+    },
     createNewBlankJob() {
-      return NwtCronExpression.create({title: "Tarea en blanco"}).toPersistibleJob(NwtUtils.noop);
+      trace("NwtCronManagerViewer.methods.createNewBlankJob");
+      return NwtCronExpression.create({title: "Sin título"}).toPersistibleJob(NwtUtils.noop);
     }
   },
   created() {},

@@ -25452,6 +25452,18 @@ const { lutimesSync } = require("fs-extra");
 
   const NwtTimer = class {
 
+    static defaultNaturalOptions = {
+      dateStyle: "full",
+      timeStyle: "long",
+    };
+
+    static defaultLocale = "es-ES";
+
+    static fromDateToNatural(d = new Date(), options = this.defaultNaturalOptions, locale = this.defaultLocale, capitalize = true) {
+      const datestring = new Intl.DateTimeFormat(locale, options).format(d);
+      return capitalize ? NwtUtils.capitalize(datestring) : datestring;
+    }
+
     static fromDateToString(d = new Date(), options = {}) {
       trace("NwtTimer.fromDateToString");
       // d puede ser Date, número (timestamp) o cadena aceptada por Date
@@ -28595,6 +28607,10 @@ const { lutimesSync } = require("fs-extra");
         output = onFailCallback();
       }
       return [output, decision];
+    }
+
+    static capitalize(text) {
+      return text.substr(0,1).toUpperCase() + text.substr(1);
     }
 
   };
@@ -37397,7 +37413,7 @@ Vue.component("NwtCronJobForm", {
     <div>
         <div class="nowrap">
             <div class="flex_row centered">
-                <div class="flex_1">🔔 Nombre: </div>
+                <div class="flex_1">🪧 Nombre: </div>
                 <div class="flex_100 pad_left_1">
                     <input class="width_100 text_align_right" type="text" :value="job.title" 
                         :ref="(el) => { if(el === null) { delete \$local.controls.title; } else { \$local.controls.title = el; } }"/>
@@ -37410,10 +37426,14 @@ Vue.component("NwtCronJobForm", {
         <div class="nowrap">
             <div class="flex_row centered">
                 <div class="flex_1">⏰ Alarma: </div>
-                <div class="flex_100 pad_left_1">
-                    <input class="width_100 text_align_right" type="text" disabled="true" :value="\$window.cronstrue.toString(job.pattern)" />
-                </div>
             </div>
+            <textarea class="width_100 text_align_right" type="text" disabled="true" :value="\$window.cronstrue.toString(job.pattern)" />
+        </div>
+        <div class="nowrap">
+            <div class="flex_row centered">
+                <div class="flex_1">▶️ Siguiente alarma: </div>
+            </div>
+            <input class="width_100 text_align_right" type="text" disabled="true" :value="\$nwt.Timer.fromDateToNatural(job.cronObject.nextRun(new Date()))" />
         </div>
         <div class="nowrap">
             <div class="flex_row centered">
@@ -37461,11 +37481,38 @@ Vue.component("NwtCronJobForm", {
                     <nwt-code-highlighter syntax="js"
                         :code="\$window.beautifier.js(job.callback.toString())" />
                 </div>
-                <div class="" v-else>
+                <div class="position_relative" v-else>
+                    <div class="position_absolute top_1 right_1 left_auto bottom_auto ">
+                        <button class="mini" v-on:click="pastePlaceholderTemplate">💉</button>
+                    </div>
                     <textarea
-                        class="width_100"
+                        class="width_100 monospaced"
                         :value="\$nwt.CodeComposer.beautifyJs(\$nwt.CodeComposer.getBlankFunctionBody(job.callback))"
-                        :ref="(el) => { if(el === null) { delete \$local.controls.callback; } else { \$local.controls.callback = el; } }"></textarea>
+                        :ref="(el) => { if(el === null) { delete \$local.controls.callback; } else { \$local.controls.callback = el; } }"
+                        placeholder='NwtDialogs.open({
+  title: "Ejemplo de diálogo",
+  template: \`<nwt-basic-dialog-layout>
+    <template v-slot:header>
+      <div class="title">Titulo</div>
+    </template>
+    <template v-slot:body>
+      <div class="paragraph">Contenido</div>
+    </template>
+    <template v-slot:footer>
+      <hr/>
+      <div class="flex_row centered pad_1">
+        <div class="flex_100"></div>
+        <div class="flex_1 pad_left_1 "><button class="mini" v-on:click="accept">Aceptar</button></div>
+        <div class="flex_1 pad_left_1 "><button class="mini" v-on:click="cancel">Cancelar</button></div>
+      </div>
+    </template>
+  </nwt-basic-dialog-layout>\`,
+  windowClasses: "no_scroll",
+  factory: {
+    data: {},
+    methods: {},
+  },
+})'></textarea>
                 </div>
             </div>
         </div>
@@ -37514,7 +37561,13 @@ Vue.component("NwtCronJobForm", {
       }
       this.job.pattern = NwtCronExpression.create(valueByUi).toString();
       await this.job.manager.save();
+      await this.job.manager.reload();
       this.onSaved();
+    },
+
+    pastePlaceholderTemplate() {
+      trace("NwtCronJobForm.methods.pastePlaceholderTemplate");
+      this.$local.controls.callback.value = this.$local.controls.callback.placeholder;
     }
   },
   created() {
@@ -37554,26 +37607,29 @@ Vue.component("NwtCronManagerViewer", {
         </div>
     </div>
     <div class="">
-        <div class=""
+        <div class="pad_top_1 pad_horizontal_1"
             v-for="job, jobIndex in manager.jobs"
             v-bind:key="'job_' + jobIndex">
             <div class="flex_row centered">
-                <div class="flex_100 nowrap pad_1">
-                    {{ job.title }}
+                <div class="flex_100 nowrap">
+                    🔔 {{ job.title }}
                 </div>
-                <div class="flex_1 nowrap pad_1 pad_left_1">
+                <div class="flex_1 nowrap pad_left_1">
+                    <button class="mini"
+                        v-on:click="() => runJob(job)">⚡️</button>
+                </div>
+                <div class="flex_1 nowrap pad_left_1">
                     <button class="mini"
                         :class="{active:isOpened.indexOf(job) !== -1}"
                         v-on:click="() => toggleJob(job)">🔧</button>
                 </div>
-                <div class="flex_1 nowrap pad_1 pad_left_1">
+                <div class="flex_1 nowrap pad_left_1">
                     <button class="mini"
                         v-on:click="() => removeJob(job)">❌</button>
                 </div>
             </div>
-            <div class="pad_1 pad_right_2">
-                <div class="card"
-                    v-if="isOpened.indexOf(job) !== -1">
+            <div class="pad_top_1 pad_right_1" v-if="isOpened.indexOf(job) !== -1">
+                <div class="card">
                     <nwt-cron-job-form :job="job" :on-saved="() => toggleJob(job)" />
                 </div>
             </div>
@@ -37612,8 +37668,13 @@ Vue.component("NwtCronManagerViewer", {
       trace("NwtCronManagerViewer.methods.removeJob");
       this.manager.removeJobByReference(job);
     },
+    runJob(job) {
+      trace("NwtCronManagerViewer.methods.runJob");
+      job.callback();
+    },
     createNewBlankJob() {
-      return NwtCronExpression.create({title: "Tarea en blanco"}).toPersistibleJob(NwtUtils.noop);
+      trace("NwtCronManagerViewer.methods.createNewBlankJob");
+      return NwtCronExpression.create({title: "Sin título"}).toPersistibleJob(NwtUtils.noop);
     }
   },
   created() {},

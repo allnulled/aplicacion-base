@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-03-09T17:14:31.334Z",
+  "generatedAt": "2026-03-09T22:53:58.712Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.css",
@@ -315,6 +315,7 @@
       "type": "file",
       "formalName": "NwtCronJobFormHtml",
       "dependencies": [
+        "NwtDialogs",
         "window.cronstrue",
         "window.beautifier"
       ]
@@ -2257,7 +2258,8 @@
       "apiName": "NwtTimer",
       "dependencies": [
         "NwtTimer",
-        "NwtFramework"
+        "NwtFramework",
+        "NwtUtils"
       ]
     },
     {

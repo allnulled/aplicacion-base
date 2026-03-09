@@ -44,6 +44,18 @@
 
   const NwtTimer = class {
 
+    static defaultNaturalOptions = {
+      dateStyle: "full",
+      timeStyle: "long",
+    };
+
+    static defaultLocale = "es-ES";
+
+    static fromDateToNatural(d = new Date(), options = this.defaultNaturalOptions, locale = this.defaultLocale, capitalize = true) {
+      const datestring = new Intl.DateTimeFormat(locale, options).format(d);
+      return capitalize ? NwtUtils.capitalize(datestring) : datestring;
+    }
+
     static fromDateToString(d = new Date(), options = {}) {
       trace("NwtTimer.fromDateToString");
       // d puede ser Date, número (timestamp) o cadena aceptada por Date
