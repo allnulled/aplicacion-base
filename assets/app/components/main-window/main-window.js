@@ -45,66 +45,58 @@ Vue.component("MainWindow", {
 
     startProcedimientos() {
       trace("MainWindow.methods.startProcedimientos");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Procedimientos",
-        template: `<nwt-commands-manager-viewer :dialog="this" />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-commands-manager-viewer :dialog="this" />`,
       });
     },
     startConfiguraciones() {
       trace("MainWindow.methods.startConfiguraciones");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Configuraciones",
-        template: `<nwt-settings-viewer :dialog="this" />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-settings-viewer :dialog="this" />`,
       });
     },
     startProcesos() {
       trace("MainWindow.methods.startProcesos");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Procesos",
-        template: `<nwt-process-manager-viewer :dialog="this" />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-process-manager-viewer :dialog="this" />`,
       });
     },
     startExploradorDeFicheros() {
       trace("MainWindow.methods.startExploradorDeFicheros");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Explorador de ficheros",
-        template: `<nwt-file-explorer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-file-explorer />`,
       });
     },
     startGestorDePrompts() {
       trace("MainWindow.methods.startGestorDePrompts");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Gestor de prompts",
-        template: `<nwt-prompts-manager-viewer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-prompts-manager-viewer />`,
       });
     },
     startGestorDeFicherosDeChatgpt() {
       trace("MainWindow.methods.startGestorDeFicherosDeChatgpt");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Gestor de ficheros de ChatGPT",
-        template: `<nwt-chatgpt-files-manager-viewer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-chatgpt-files-manager-viewer />`,
       });
     },
     startTemporizador() {
       trace("MainWindow.methods.startTemporizador");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Temporizador",
-        template: `<nwt-cron-manager-viewer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-cron-manager-viewer />`,
       });
     },
     startDynamicTesterViewer() {
       trace("MainWindow.methods.startDynamicTesterViewer");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Tests de la aplicación",
-        template: `<nwt-dynamic-tester-viewer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-dynamic-tester-viewer />`,
       });
     },
 

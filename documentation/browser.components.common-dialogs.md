@@ -75,9 +75,9 @@ Imita a window.prompt pero hace el bridge completo mediante el método `openLayo
 
 Este método no pide la propiedad `template` (lo ignorará) pero obliga a proporcionar las propiedades:
 
-- `header:String`
-- `body:String`
-- `footer:String`
+- `header:String` (opcional)
+- `body:String` (requerido)
+- `footer:String` (opcional)
 
 Y así conseguir el layout básico de diálogos mediante función js.
 

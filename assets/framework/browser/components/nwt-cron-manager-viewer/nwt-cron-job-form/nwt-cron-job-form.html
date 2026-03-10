@@ -75,33 +75,17 @@
                         <button class="mini" v-on:click="pastePlaceholderTemplate">💉</button>
                     </div>
                     <textarea
-                        class="width_100 monospaced"
+                        class="width_100 monospaced_1"
                         :value="$nwt.CodeComposer.beautifyJs($nwt.CodeComposer.getBlankFunctionBody(job.callback))"
                         :ref="(el) => { if(el === null) { delete $local.controls.callback; } else { $local.controls.callback = el; } }"
-                        placeholder='NwtDialogs.open({
+                        placeholder='await NwtDialogs.confirm({
   title: "Ejemplo de diálogo",
-  template: `<nwt-basic-dialog-layout>
-    <template v-slot:header>
-      <div class="title">Titulo</div>
-    </template>
-    <template v-slot:body>
-      <div class="paragraph">Contenido</div>
-    </template>
-    <template v-slot:footer>
-      <hr/>
-      <div class="flex_row centered pad_1">
-        <div class="flex_100"></div>
-        <div class="flex_1 pad_left_1 "><button class="mini" v-on:click="accept">Aceptar</button></div>
-        <div class="flex_1 pad_left_1 "><button class="mini" v-on:click="cancel">Cancelar</button></div>
-      </div>
-    </template>
-  </nwt-basic-dialog-layout>`,
-  windowClasses: "no_scroll",
+  template: `<div class="paragraph"><br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.</div>`,
   factory: {
     data: {},
     methods: {},
   },
-})'></textarea>
+});'></textarea>
                 </div>
             </div>
         </div>

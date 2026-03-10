@@ -1,6 +1,6 @@
 <div class="nwt_basic_dialog_layout dialog_container">
     <div class="dialog_structure">
-        <div class="dialog_header">
+        <div class="dialog_header" v-if="$slots.header">
             <slot name="header"></slot>
         </div>
         <div class="dialog_body">
@@ -8,7 +8,7 @@
                 <slot name="body"></slot>
             </div>
         </div>
-        <div class="dialog_footer">
+        <div class="dialog_footer" v-if="$slots.footer">
             <slot name="footer"></slot>
         </div>
     </div>

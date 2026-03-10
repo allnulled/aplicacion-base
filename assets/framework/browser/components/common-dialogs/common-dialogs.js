@@ -182,30 +182,30 @@ Vue.component("CommonDialogs", {
      * 
      * Este método no pide la propiedad `template` (lo ignorará) pero obliga a proporcionar las propiedades:
      * 
-     * - `header:String`
-     * - `body:String`
-     * - `footer:String`
+     * - `header:String` (opcional)
+     * - `body:String` (requerido)
+     * - `footer:String` (opcional)
      * 
      * Y así conseguir el layout básico de diálogos mediante función js.
      * 
      */
     openLayout1(userDialogDefinition) {
       trace("CommonDialogs.methods.openLayout1");
+      Patch_header_and_footer_to_be_ignored_if_falsy: {
+        if(!userDialogDefinition.header) userDialogDefinition.header = "";
+        if(!userDialogDefinition.footer) userDialogDefinition.footer = "";
+      }
       assertion(typeof userDialogDefinition.header === "string", "Parameter «header» must be string on «CommonDialogs.methods.openLayout1»");
       assertion(typeof userDialogDefinition.body === "string", "Parameter «body» must be string on «CommonDialogs.methods.openLayout1»");
       assertion(typeof userDialogDefinition.footer === "string", "Parameter «footer» must be string on «CommonDialogs.methods.openLayout1»");
       const { header, body, footer } = userDialogDefinition;
       const template = `
         <nwt-basic-dialog-layout>
-          <template v-slot:header>
-            ${header}
-          </template>
+          ${header ? "<template v-slot:header>" + header +  "</template>" : ""}
           <template v-slot:body>
             ${body}
           </template>
-          <template v-slot:footer>
-            ${footer}
-          </template>
+          ${footer ? "<template v-slot:footer>" + footer +  "</template>" : ""}
         </nwt-basic-dialog-layout>
       `;
       return this.open({

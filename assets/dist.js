@@ -36688,7 +36688,7 @@ Vue.directive("forms", {
 Vue.component("NwtBasicDialogLayout", {
   template: `<div class="nwt_basic_dialog_layout dialog_container">
     <div class="dialog_structure">
-        <div class="dialog_header">
+        <div class="dialog_header" v-if="\$slots.header">
             <slot name="header"></slot>
         </div>
         <div class="dialog_body">
@@ -36696,7 +36696,7 @@ Vue.component("NwtBasicDialogLayout", {
                 <slot name="body"></slot>
             </div>
         </div>
-        <div class="dialog_footer">
+        <div class="dialog_footer" v-if="\$slots.footer">
             <slot name="footer"></slot>
         </div>
     </div>
@@ -36949,30 +36949,30 @@ Vue.component("CommonDialogs", {
      * 
      * Este método no pide la propiedad `template` (lo ignorará) pero obliga a proporcionar las propiedades:
      * 
-     * - `header:String`
-     * - `body:String`
-     * - `footer:String`
+     * - `header:String` (opcional)
+     * - `body:String` (requerido)
+     * - `footer:String` (opcional)
      * 
      * Y así conseguir el layout básico de diálogos mediante función js.
      * 
      */
     openLayout1(userDialogDefinition) {
       trace("CommonDialogs.methods.openLayout1");
+      Patch_header_and_footer_to_be_ignored_if_falsy: {
+        if(!userDialogDefinition.header) userDialogDefinition.header = "";
+        if(!userDialogDefinition.footer) userDialogDefinition.footer = "";
+      }
       assertion(typeof userDialogDefinition.header === "string", "Parameter «header» must be string on «CommonDialogs.methods.openLayout1»");
       assertion(typeof userDialogDefinition.body === "string", "Parameter «body» must be string on «CommonDialogs.methods.openLayout1»");
       assertion(typeof userDialogDefinition.footer === "string", "Parameter «footer» must be string on «CommonDialogs.methods.openLayout1»");
       const { header, body, footer } = userDialogDefinition;
       const template = `
         <nwt-basic-dialog-layout>
-          <template v-slot:header>
-            ${header}
-          </template>
+          ${header ? "<template v-slot:header>" + header +  "</template>" : ""}
           <template v-slot:body>
             ${body}
           </template>
-          <template v-slot:footer>
-            ${footer}
-          </template>
+          ${footer ? "<template v-slot:footer>" + footer +  "</template>" : ""}
         </nwt-basic-dialog-layout>
       `;
       return this.open({
@@ -37622,33 +37622,17 @@ Vue.component("NwtCronJobForm", {
                         <button class="mini" v-on:click="pastePlaceholderTemplate">💉</button>
                     </div>
                     <textarea
-                        class="width_100 monospaced"
+                        class="width_100 monospaced_1"
                         :value="\$nwt.CodeComposer.beautifyJs(\$nwt.CodeComposer.getBlankFunctionBody(job.callback))"
                         :ref="(el) => { if(el === null) { delete \$local.controls.callback; } else { \$local.controls.callback = el; } }"
-                        placeholder='NwtDialogs.open({
+                        placeholder='await NwtDialogs.confirm({
   title: "Ejemplo de diálogo",
-  template: \`<nwt-basic-dialog-layout>
-    <template v-slot:header>
-      <div class="title">Titulo</div>
-    </template>
-    <template v-slot:body>
-      <div class="paragraph">Contenido</div>
-    </template>
-    <template v-slot:footer>
-      <hr/>
-      <div class="flex_row centered pad_1">
-        <div class="flex_100"></div>
-        <div class="flex_1 pad_left_1 "><button class="mini" v-on:click="accept">Aceptar</button></div>
-        <div class="flex_1 pad_left_1 "><button class="mini" v-on:click="cancel">Cancelar</button></div>
-      </div>
-    </template>
-  </nwt-basic-dialog-layout>\`,
-  windowClasses: "no_scroll",
+  template: \`<div class="paragraph"><br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.<br/>Cosas.</div>\`,
   factory: {
     data: {},
     methods: {},
   },
-})'></textarea>
+});'></textarea>
                 </div>
             </div>
         </div>
@@ -37732,6 +37716,7 @@ Vue.component("NwtCronJobForm", {
 Vue.component("NwtCronManagerViewer", {
   name: "NwtCronManagerViewer",
   template: `<div class="nwt_cron_manager_viewer">
+
     <div class="title">
         <div class="flex_row centered">
             <div class="flex_100">
@@ -37771,6 +37756,7 @@ Vue.component("NwtCronManagerViewer", {
             </div>
         </div>
     </div>
+    
 </div>`,
   props: {
     manager: {
@@ -42155,66 +42141,58 @@ Vue.component("MainWindow", {
 
     startProcedimientos() {
       trace("MainWindow.methods.startProcedimientos");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Procedimientos",
-        template: `<nwt-commands-manager-viewer :dialog="this" />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-commands-manager-viewer :dialog="this" />`,
       });
     },
     startConfiguraciones() {
       trace("MainWindow.methods.startConfiguraciones");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Configuraciones",
-        template: `<nwt-settings-viewer :dialog="this" />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-settings-viewer :dialog="this" />`,
       });
     },
     startProcesos() {
       trace("MainWindow.methods.startProcesos");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Procesos",
-        template: `<nwt-process-manager-viewer :dialog="this" />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-process-manager-viewer :dialog="this" />`,
       });
     },
     startExploradorDeFicheros() {
       trace("MainWindow.methods.startExploradorDeFicheros");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Explorador de ficheros",
-        template: `<nwt-file-explorer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-file-explorer />`,
       });
     },
     startGestorDePrompts() {
       trace("MainWindow.methods.startGestorDePrompts");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Gestor de prompts",
-        template: `<nwt-prompts-manager-viewer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-prompts-manager-viewer />`,
       });
     },
     startGestorDeFicherosDeChatgpt() {
       trace("MainWindow.methods.startGestorDeFicherosDeChatgpt");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Gestor de ficheros de ChatGPT",
-        template: `<nwt-chatgpt-files-manager-viewer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-chatgpt-files-manager-viewer />`,
       });
     },
     startTemporizador() {
       trace("MainWindow.methods.startTemporizador");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Temporizador",
-        template: `<nwt-cron-manager-viewer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-cron-manager-viewer />`,
       });
     },
     startDynamicTesterViewer() {
       trace("MainWindow.methods.startDynamicTesterViewer");
-      this.$dialogs.open({
+      this.$dialogs.openLayout1({
         title: "Tests de la aplicación",
-        template: `<nwt-dynamic-tester-viewer />`,
-        windowClasses: "no_scroll"
+        body: `<nwt-dynamic-tester-viewer />`,
       });
     },
 
