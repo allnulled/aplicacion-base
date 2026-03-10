@@ -1,0 +1,53 @@
+<div class="nwt_control_for_type_date_by_boxes">
+    <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+    <nwt-control-partial-for-statement :control="this">
+        <template v-slot:hideable>
+            <slot name="hideable"></slot>
+        </template>
+        <slot></slot>
+    </nwt-control-partial-for-statement>
+    <div v-if="isShowingControl">
+        <div class="flex_row centered">
+            <div class="flex_1">
+                <div class="clock for_hours">
+                    <span v-on:click="selectHour" style="--i:1">1</span>
+                    <span v-on:click="selectHour" style="--i:2">2</span>
+                    <span v-on:click="selectHour" style="--i:3">3</span>
+                    <span v-on:click="selectHour" style="--i:4">4</span>
+                    <span v-on:click="selectHour" style="--i:5">5</span>
+                    <span v-on:click="selectHour" style="--i:6">6</span>
+                    <span v-on:click="selectHour" style="--i:7">7</span>
+                    <span v-on:click="selectHour" style="--i:8">8</span>
+                    <span v-on:click="selectHour" style="--i:9">9</span>
+                    <span v-on:click="selectHour" style="--i:10">10</span>
+                    <span v-on:click="selectHour" style="--i:11">11</span>
+                    <span v-on:click="selectHour" style="--i:12">12</span>
+                    <div class="center">
+                        <button class="mini" :class="{active: false}">AM</button>
+                        <span v-on:click="selectHour" style="min-width:4px;"></span>
+                        <button class="mini" :class="{active: false}">PM</button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex_1" style="min-width:20px;"></div>
+            <div class="flex_1">
+                <div class="clock for_minutes">
+                    <span v-on:click="selectMinute" style="--i:1">5</span>
+                    <span v-on:click="selectMinute" style="--i:2">10</span>
+                    <span v-on:click="selectMinute" style="--i:3">15</span>
+                    <span v-on:click="selectMinute" style="--i:4">20</span>
+                    <span v-on:click="selectMinute" style="--i:5">25</span>
+                    <span v-on:click="selectMinute" style="--i:6">30</span>
+                    <span v-on:click="selectMinute" style="--i:7">35</span>
+                    <span v-on:click="selectMinute" style="--i:8">40</span>
+                    <span v-on:click="selectMinute" style="--i:9">45</span>
+                    <span v-on:click="selectMinute" style="--i:10">50</span>
+                    <span v-on:click="selectMinute" style="--i:11">55</span>
+                    <span v-on:click="selectMinute" style="--i:12">0</span>
+                </div>
+            </div>
+            <div class="flex_100"></div>
+        </div>
+    </div>
+    <nwt-control-error-handler :control="this" />
+</div>

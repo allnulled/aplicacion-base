@@ -1,5 +1,5 @@
 NwtResource.define({
-  id: "control/for/type/date",
+  id: "control/for/type/day-picker",
   apis: ["control", "view", "validation"],
   inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
   traits: {},
@@ -30,42 +30,16 @@ NwtResource.define({
       "required": true
     }
   },
-  subtypeOf: "structure",
+  subtypeOf: "text",
   compileView: true,
   control: {
-    "schema": {
-      "year": {
-        "type": "control/for/text",
-        "hasStatement": "Año de creación"
-      },
-      "month": {
-        "type": "control/for/text",
-        "hasStatement": "Mes de creación"
-      },
-      "day": {
-        "type": "control/for/text",
-        "hasStatement": "Día de creación"
-      },
-      "hour": {
-        "type": "control/for/text",
-        "hasStatement": "Hora de creación"
-      },
-      "minute": {
-        "type": "control/for/text",
-        "hasStatement": "Minuto de creación"
-      },
-      "second": {
-        "type": "control/for/text",
-        "hasStatement": "Segundo de creación"
-      }
-    },
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
-      trace("@compilable/control/for/type/date.control.onValidate");
-      console.log("Validation at resource-level on control/for/type/date");
+      trace("@compilable/control/for/type/day-picker.control.onValidate");
+      console.log("Validation at resource-level on control/for/type/day-picker");
     }
   },
   view: {
-    name: "NwtControlForTypeDate",
+    name: "NwtControlForTypeDayPicker",
     props: {
       "settings": {
         "type": Object,
@@ -73,7 +47,7 @@ NwtResource.define({
       }
     },
     template: `
-      <div class="nwt_control_for_type_date">
+      <div class="nwt_control_for_type_day_picker">
           <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
@@ -81,19 +55,47 @@ NwtResource.define({
               </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
-          <div v-if="isShowingControl">
-              <div v-for="column, columnName in $options.statically.control.schema"
-                  v-bind:key="'column-' + columnName"
-                  class="pad_left_1">
-                  <component :is="$toolkit.getComponentNameBySettings(column)"
-                      :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
-                      :settings="{
-                          ...column,
-                          isShowingControl: true,
-                          rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
-                          rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
-                          rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
-                      }" />
+          <div class="calendar_container" v-if="isShowingControl">
+              <div class="flex_row">
+                  <div class="flex_1">
+                      <button class="mini fluid width_100">◀️</button>
+                  </div>
+                  <div class="flex_100 text_align_center">
+                      {{ dateForMonth.getFullYear() }}
+                  </div>
+                  <div class="flex_1">
+                      <button class="mini fluid width_100">▶️</button>
+                  </div>
+      
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToPreviousMonth">◀️</button>
+                  </div>
+                  <div class="flex_100 text_align_center">
+                      {{ dateForMonth.toLocaleDateString(undefined, { month: "long"} ) }}
+                  </div>
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToNextMonth">▶️</button>
+                  </div>
+              </div>
+              <div class="no_table calendar">
+                  <div class="thead">
+                      <div class="row">
+                          <div class="cell">mon</div>
+                          <div class="cell">tue</div>
+                          <div class="cell">wed</div>
+                          <div class="cell">thu</div>
+                          <div class="cell">fri</div>
+                          <div class="cell">sat</div>
+                          <div class="cell">sun</div>
+                      </div>
+                  </div>
+                  <div class="tbody">
+                      <div class="row" v-for="week, weekIndex in cellsForMonth" v-bind:key="'week_' + weekIndex">
+                          <div class="cell" v-for="cell, cellIndex in week" v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex">
+                              {{ cell.day }}
+                          </div>
+                      </div>
+                  </div>
               </div>
           </div>
           <nwt-control-error-handler :control="this" />
@@ -112,6 +114,13 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.data");
         return {
           value: undefined,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/for/type/day-picker
+      Object.assign(finalData, (function() {
+        return {
+          dateForMonth: new Date(),
+          selectedDate: undefined,
         };
       }).call(this));
       return finalData;
@@ -229,14 +238,14 @@ NwtResource.define({
         });
       },
       "getValueByDom": function() {
-        trace("NwtControlForTypeDate.methods.getValueByDom");
+        trace("NwtControlForTypeDayPicker.methods.getValueByDom");
         if (!this.$local.control) {
           return this.getValueBySchema();
         }
         return this.$local.control.value;
       },
       "setValueByDom": function(value) {
-        trace("NwtControlForTypeDate.methods.setValueByDom");
+        trace("NwtControlForTypeDayPicker.methods.setValueByDom");
         if (!this.$local.control) {
           return false;
         }
@@ -246,25 +255,62 @@ NwtResource.define({
         return this.loadValue();
       },
       "saveValue": function() {
-        trace("NwtControlForTypeDate.methods.saveValue");
+        trace("NwtControlForTypeDayPicker.methods.saveValue");
         const value = this.getValueByDom();
         const indexes = this.getIndexForValue();
         console.log("Saving:", indexes, value);
         this.$toolkit.getRoot().$store.set(indexes, value);
       },
       "loadValue": function() {
-        trace("NwtControlForTypeDate.methods.loadValue");
+        trace("NwtControlForTypeDayPicker.methods.loadValue");
         if (!this.$local.control) {
           return false;
         }
         this.$local.control.value = this.getValueBySchema();
       },
       "onValidate": function() {
-        trace("NwtControlForTypeDate.methods.onValidate");
-        console.log("Validation at component-level on control/for/type/date");
+        trace("NwtControlForTypeDayPicker.methods.onValidate");
+        console.log("Validation at component-level on control/for/type/day-picker");
+      },
+      "goToPreviousMonth": function() {
+        trace("NwtControlForTypeDayPicker.methods.goToPreviousMonth");
+        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() - 1));
+      },
+      "goToNextMonth": function() {
+        trace("NwtControlForTypeDayPicker.methods.goToNextMonth");
+        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() + 1));
       }
     },
-    computed: {},
+    computed: {
+      "cellsForMonth": function() {
+        const currentMonth = this.dateForMonth;
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+        const firstOfMonth = new Date(year, month, 1);
+        const lastOfMonth = new Date(year, month + 1, 0);
+        const cells = [];
+        // JS: domingo=0 ... sábado=6 y queremos lunes=0
+        const day = (firstOfMonth.getDay() + 6) % 7;
+        const startDate = new Date(firstOfMonth);
+        startDate.setDate(firstOfMonth.getDate() - day);
+        const cursor = new Date(startDate);
+        while (true) {
+          const week = [];
+          for (let i = 0; i < 7; i++) {
+            week.push({
+              month: cursor.getMonth(),
+              day: cursor.getDate()
+            });
+            cursor.setDate(cursor.getDate() + 1);
+          }
+          cells.push(week);
+          if (cursor > lastOfMonth && cursor.getDay() === 1) {
+            break;
+          }
+        }
+        return cells;
+      }
+    },
     watch: {
       "value": function(newValue, oldValue) {
         trace("@compilable/control/trait/for/getValue.watch.value");
@@ -281,8 +327,8 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/toolkit
       trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
-      // @COMPILED-BY: control/for/type/date
-      trace("NwtControlForTypeDate.created");
+      // @COMPILED-BY: control/for/type/day-picker
+      trace("NwtControlForTypeDayPicker.created");
       NwtVue2.Toolkit.installToolkit(this);
       NwtVue2.Toolkit.installLocal(this);
       this.$local.controls = {};
@@ -306,8 +352,8 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
-      // @COMPILED-BY: control/for/type/date
-      trace("NwtControlForTypeDate.mounted");
+      // @COMPILED-BY: control/for/type/day-picker
+      trace("NwtControlForTypeDayPicker.mounted");
       this.reloadValue();
     },
     beforeDestroy: function() {

@@ -20,10 +20,14 @@
       return new this(...args);
     }
 
-    constructor(basefile = "assets/framework/nwt-cron/global.json") {
+    constructor(basefile = "assets/framework/browser/components/nwt-cron/global.json") {
       trace("NwtCronManager.constructor");
       this.basefile = basefile;
       this.jobs = [];
+    }
+
+    isRunning() {
+      return true;
     }
 
     async start() {

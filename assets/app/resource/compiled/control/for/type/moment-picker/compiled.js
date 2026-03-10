@@ -1,5 +1,5 @@
 NwtResource.define({
-  id: "control/for/type/date",
+  id: "control/for/type/moment-picker",
   apis: ["control", "view", "validation"],
   inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
   traits: {},
@@ -34,38 +34,22 @@ NwtResource.define({
   compileView: true,
   control: {
     "schema": {
-      "year": {
-        "type": "control/for/text",
-        "hasStatement": "Año de creación"
-      },
-      "month": {
-        "type": "control/for/text",
-        "hasStatement": "Mes de creación"
-      },
       "day": {
-        "type": "control/for/text",
-        "hasStatement": "Día de creación"
+        "type": "control/for/type/day-picker",
+        "hasStatement": "Día"
       },
       "hour": {
-        "type": "control/for/text",
-        "hasStatement": "Hora de creación"
-      },
-      "minute": {
-        "type": "control/for/text",
-        "hasStatement": "Minuto de creación"
-      },
-      "second": {
-        "type": "control/for/text",
-        "hasStatement": "Segundo de creación"
+        "type": "control/for/type/hour-picker",
+        "hasStatement": "Hora"
       }
     },
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
-      trace("@compilable/control/for/type/date.control.onValidate");
-      console.log("Validation at resource-level on control/for/type/date");
+      trace("@compilable/control/for/type/moment-picker.control.onValidate");
+      console.log("Validation at resource-level on control/for/type/moment-picker");
     }
   },
   view: {
-    name: "NwtControlForTypeDate",
+    name: "NwtControlForTypeMomentPicker",
     props: {
       "settings": {
         "type": Object,
@@ -73,7 +57,7 @@ NwtResource.define({
       }
     },
     template: `
-      <div class="nwt_control_for_type_date">
+      <div class="nwt_control_for_type_date_by_moment_picker">
           <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
@@ -229,14 +213,14 @@ NwtResource.define({
         });
       },
       "getValueByDom": function() {
-        trace("NwtControlForTypeDate.methods.getValueByDom");
+        trace("NwtControlForTypeMomentPicker.methods.getValueByDom");
         if (!this.$local.control) {
           return this.getValueBySchema();
         }
         return this.$local.control.value;
       },
       "setValueByDom": function(value) {
-        trace("NwtControlForTypeDate.methods.setValueByDom");
+        trace("NwtControlForTypeMomentPicker.methods.setValueByDom");
         if (!this.$local.control) {
           return false;
         }
@@ -246,22 +230,22 @@ NwtResource.define({
         return this.loadValue();
       },
       "saveValue": function() {
-        trace("NwtControlForTypeDate.methods.saveValue");
+        trace("NwtControlForTypeMomentPicker.methods.saveValue");
         const value = this.getValueByDom();
         const indexes = this.getIndexForValue();
         console.log("Saving:", indexes, value);
         this.$toolkit.getRoot().$store.set(indexes, value);
       },
       "loadValue": function() {
-        trace("NwtControlForTypeDate.methods.loadValue");
+        trace("NwtControlForTypeMomentPicker.methods.loadValue");
         if (!this.$local.control) {
           return false;
         }
         this.$local.control.value = this.getValueBySchema();
       },
       "onValidate": function() {
-        trace("NwtControlForTypeDate.methods.onValidate");
-        console.log("Validation at component-level on control/for/type/date");
+        trace("NwtControlForTypeMomentPicker.methods.onValidate");
+        console.log("Validation at component-level on control/for/type/moment-picker");
       }
     },
     computed: {},
@@ -281,8 +265,8 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/toolkit
       trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
-      // @COMPILED-BY: control/for/type/date
-      trace("NwtControlForTypeDate.created");
+      // @COMPILED-BY: control/for/type/moment-picker
+      trace("NwtControlForTypeMomentPicker.created");
       NwtVue2.Toolkit.installToolkit(this);
       NwtVue2.Toolkit.installLocal(this);
       this.$local.controls = {};
@@ -306,8 +290,8 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
-      // @COMPILED-BY: control/for/type/date
-      trace("NwtControlForTypeDate.mounted");
+      // @COMPILED-BY: control/for/type/moment-picker
+      trace("NwtControlForTypeMomentPicker.mounted");
       this.reloadValue();
     },
     beforeDestroy: function() {

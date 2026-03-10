@@ -1,0 +1,25 @@
+<div class="nwt_control_for_type_date_by_moment_picker">
+    <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+    <nwt-control-partial-for-statement :control="this">
+        <template v-slot:hideable>
+            <slot name="hideable"></slot>
+        </template>
+        <slot></slot>
+    </nwt-control-partial-for-statement>
+    <div v-if="isShowingControl">
+        <div v-for="column, columnName in $options.statically.control.schema"
+            v-bind:key="'column-' + columnName"
+            class="pad_left_1">
+            <component :is="$toolkit.getComponentNameBySettings(column)"
+                :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
+                :settings="{
+                    ...column,
+                    isShowingControl: true,
+                    rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
+                    rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
+                    rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
+                }" />
+        </div>
+    </div>
+    <nwt-control-error-handler :control="this" />
+</div>

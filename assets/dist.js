@@ -26638,287 +26638,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-expression.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtCronExpression'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtCronExpression'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-
-  // @FROM: https://github.com/Hexagon/croner
-  //
-  // ┌──────────────── (optional) second (0 - 59)
-  // | ┌────────────── minute (0 - 59)
-  // | | ┌──────────── hour (0 - 23)
-  // | | | ┌────────── day of month (1 - 31)
-  // | | | | ┌──────── month (1 - 12, JAN-DEC)
-  // | | | | | ┌────── day of week (0 - 6, SUN-Mon) 
-  // | | | | | |       (0 to 6 are Sunday to Saturday; 7 is Sunday, the same as 0)
-  // | | | | | | ┌──── (optional) year (1 - 9999)
-  // | | | | | | |
-  // * * * * * * *
-
-  const NwtCronExpression = class {
-
-    static create(...args) {
-      return new this(...args);
-    }
-
-    static defaultScope = {
-      title: false,
-      year: "*",
-      month: "*",
-      day: "*",
-      weekday: "*",
-      hour: "0",
-      minute: "0",
-      second: "0",
-    };
-
-    static fromString(code) {
-      const [second, minute, hour, day, month, weekday, year = "*"] = code.split(" ");
-      return new this({ second, minute, hour, day, month, weekday, year });
-    }
-
-    constructor(scope = {}) {
-      Object.assign(this, this.constructor.defaultScope, scope);
-    }
-
-    override(units = {}) {
-      Object.assign(this, units);
-      return this;
-    }
-
-    toString() {
-      return `${this.second} ${this.minute} ${this.hour} ${this.day} ${this.month} ${this.weekday} ${this.year}`;
-    }
-
-    toObject() {
-      return NwtObjectUtils.exceptKeys(this, [
-        "override",
-        "toString",
-        "toObject",
-        "toSchedulable",
-        "toPersistibleJob",
-      ]);
-    }
-
-    toSchedulable(options = {}) {
-      return new Cron(this.toString(), options);
-    }
-
-    toPersistibleJob(callback, options = {}) {
-      assertion(typeof callback === "function", `Parameter «callback» must be function on «NwtCronExpression.toPersistibleJob»`);
-      assertion(typeof options === "object", `Parameter «options» must be object on «NwtCronExpression.toPersistibleJob»`);
-      return NwtCronManager.global.addJob({
-        title: this.title,
-        pattern: this.toString(),
-        options: options,
-        callback: callback,
-      });
-    }
-
-  };
-
-  return NwtCronExpression;
-
-});
-
-// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-persistible-job.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtCronPersistibleJob'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtCronPersistibleJob'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-  
-  const NwtCronPersistibleJob = class {
-
-    static notPersistibleProps = [
-      "callback",
-      "cronObject",
-      "manager",
-    ];
-
-    static create(...args) {
-      trace("NwtCronPersistibleJob.create");
-      return new this(...args);
-    }
-
-    constructor(parameters, manager) {
-      trace("NwtCronPersistibleJob.constructor");
-      const { title, pattern, options, callback } = parameters;
-      assertion(typeof title === "string", `Parameter «title» must be «string» on «NwtCronPersistibleJob.constructor»`);
-      assertion(typeof pattern === "string", `Parameter «pattern» must be «string» on «NwtCronPersistibleJob.constructor»`);
-      assertion(typeof options === "object", `Parameter «options» must be «object» on «NwtCronPersistibleJob.constructor»`);
-      assertion(typeof callback === "function", `Parameter «callback» must be «function» on «NwtCronPersistibleJob.constructor»`);
-      assertion(manager instanceof NwtCronManager, `Parameter «manager» must be instance of «NwtCronManager» on «NwtCronPersistibleJob.constructor»`);
-      this.manager = manager;
-      Object.assign(this, parameters);
-      this.cronObject = new Cron(this.pattern, Object.assign({}, this.options), this.callback);
-    }
-
-    toJSON() {
-      trace("NwtCronPersistibleJob.prototype.toJSON");
-      const persistible = NwtObjectUtils.exceptKeys(this, this.constructor.notPersistibleProps);
-      return Object.assign(persistible, {
-        callback: this.callback.toString(),
-      });
-    }
-    
-  };
-
-  return NwtCronPersistibleJob;
-
-});
-
-// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-manager.js
-(function (factory) {
-  const mod = factory();
-  if (typeof window !== 'undefined') {
-    window['NwtCronManager'] = mod;
-  }
-  if (typeof global !== 'undefined') {
-    global['NwtCronManager'] = mod;
-  }
-  if (typeof module !== 'undefined') {
-    module.exports = mod;
-  }
-})(function () {
-
-  const NwtCronManager = class {
-
-    static PersistibleJob = NwtCronPersistibleJob;
-
-    static create(...args) {
-      trace("NwtCronManager.create");
-      return new this(...args);
-    }
-
-    constructor(basefile = "assets/framework/nwt-cron/global.json") {
-      trace("NwtCronManager.constructor");
-      this.basefile = basefile;
-      this.jobs = [];
-    }
-
-    async start() {
-      trace("NwtCronManager.prototype.start");
-      await this.load();
-      return await this.resume();
-    }
-
-    restart(...args) {
-      trace("NwtCronManager.prototype.restart");
-      return this.start(...args);
-    }
-
-    async pause() {
-      trace("NwtCronManager.prototype.pause");
-      for (let index = 0; index < this.jobs.length; index++) {
-        const job = this.jobs[index];
-        job.cronObject.pause();
-      }
-    }
-
-    async resume() {
-      trace("NwtCronManager.prototype.resume");
-      for (let index = 0; index < this.jobs.length; index++) {
-        const job = this.jobs[index];
-        job.cronObject.resume();
-      }
-    }
-
-    async stop() {
-      trace("NwtCronManager.prototype.stop");
-      for (let index = 0; index < this.jobs.length; index++) {
-        const job = this.jobs[index];
-        job.cronObject.stop();
-      }
-    }
-
-    async load() {
-      trace("NwtCronManager.prototype.load");
-      this.removeAllJobs(false);
-      const persistedJobs = await NwtFilesystem.readJson(this.basefile);
-      for (let index = 0; index < persistedJobs.length; index++) {
-        const persistedJob = persistedJobs[index];
-        const callback = NwtCodeComposer.hydrateFunction(persistedJob.callback);
-        const base = NwtObjectUtils.exceptKeys(persistedJob, NwtCronPersistibleJob.notPersistibleProps);
-        const jobParameters = Object.assign(base, {
-          callback: callback
-        });
-        this.addJob(jobParameters);
-      }
-    }
-
-    reload() {
-      return this.load();
-    }
-
-    async save() {
-      trace("NwtCronManager.prototype.save");
-      await NwtFilesystem.writeJson(this.basefile, this.jobs);
-    }
-
-    async addJob(jobParameters) {
-      trace("NwtCronManager.prototype.addJob");
-      const job = NwtCronPersistibleJob.create(jobParameters, this);
-      this.jobs.push(job);
-      await this.save();
-      return job;
-    }
-
-    async removeJobByReference(job) {
-      return this.removeJobByIndex(this.jobs.indexOf(job));
-    }
-
-    async removeJobByIndex(index) {
-      this.jobs[index].cronObject.stop();
-      this.jobs.splice(index, 1);
-      await this.save();
-    }
-
-    async removeAllJobs(persist = true) {
-      for (let index = this.jobs.length - 1; index >= 0; index--) {
-        const job = this.jobs[index];
-        this.jobs[index].cronObject.stop();
-        this.jobs.splice(index, 1);
-      }
-      if (persist) {
-        await this.save();
-      }
-    }
-
-  };
-
-  NwtCronManager.global = NwtCronManager.create();
-
-  // @CONTINUES: esto sigue en el evento "app-mounted" de nwt vía window
-  if (NwtEnvironment.hasWindow) {
-    window.addEventListener("app-mounted", async function (event) {
-      trace("AppPayload.inject@app-mounted :: start cron jobs");
-      NwtCronManager.global.start();
-    });
-  }
-
-  return NwtCronManager;
-
-});
-
-// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
+// @vuebundler[Proyecto_base_001][49]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -26957,7 +26677,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
+// @vuebundler[Proyecto_base_001][50]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-return-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -27005,7 +26725,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
+// @vuebundler[Proyecto_base_001][51]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-js-controllers/nwt-js-throw-controller.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -27053,7 +26773,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
+// @vuebundler[Proyecto_base_001][52]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/tjs-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -27995,7 +27715,7 @@ const { lutimesSync } = require("fs-extra");
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
+// @vuebundler[Proyecto_base_001][53]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-templates/nwt-templates.js
 /**
  * 
  * # NwtTemplates
@@ -28230,7 +27950,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
+// @vuebundler[Proyecto_base_001][54]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-utils.js
 /**
  * 
  * # Nwt Utils API
@@ -28619,7 +28339,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
+// @vuebundler[Proyecto_base_001][55]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruptible.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28735,7 +28455,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
+// @vuebundler[Proyecto_base_001][56]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28794,7 +28514,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
+// @vuebundler[Proyecto_base_001][57]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-interruption/nwt-interruption-handler.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -28845,7 +28565,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
+// @vuebundler[Proyecto_base_001][58]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-code-composer.js
 /**
  * 
  * # Nwt Code Composer
@@ -29048,7 +28768,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
+// @vuebundler[Proyecto_base_001][59]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-randomizer.js
 /**
  * 
  * # Nwt Randomizer API
@@ -29164,7 +28884,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
+// @vuebundler[Proyecto_base_001][60]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-progress-bar.js
 /**
  * 
  * # Nwt Progress Bar API
@@ -29291,7 +29011,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
+// @vuebundler[Proyecto_base_001][61]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-globalizer.js
 /**
  * 
  * # Nwt Globalizer API
@@ -29351,7 +29071,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-indexer.js
+// @vuebundler[Proyecto_base_001][62]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-indexer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -29440,7 +29160,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
+// @vuebundler[Proyecto_base_001][63]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-tester.js
 /**
  * 
  * # Nwt Tester API
@@ -29804,7 +29524,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
+// @vuebundler[Proyecto_base_001][64]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process.js
 /**
  * 
  * # Nwt Process API
@@ -29951,7 +29671,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
+// @vuebundler[Proyecto_base_001][65]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-process-manager.js
 /**
  * 
  * # NwtProcessManager
@@ -30022,7 +29742,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
+// @vuebundler[Proyecto_base_001][66]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-seed.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30080,7 +29800,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
+// @vuebundler[Proyecto_base_001][67]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-definition.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30244,7 +29964,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
+// @vuebundler[Proyecto_base_001][68]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedures-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30305,7 +30025,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
+// @vuebundler[Proyecto_base_001][69]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-procedure-injections.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -30348,7 +30068,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
+// @vuebundler[Proyecto_base_001][70]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-csv.js
 /**
  * 
  * # NwtCsv
@@ -30437,7 +30157,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
+// @vuebundler[Proyecto_base_001][71]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-function.js
 /**
  * 
  * # NwtIterableFunction
@@ -30671,7 +30391,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
+// @vuebundler[Proyecto_base_001][72]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-class.js
 /**
  * 
  * # NwtIterableClass
@@ -30847,7 +30567,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
+// @vuebundler[Proyecto_base_001][73]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-iterable-command-class.js
 /**
  * 
  * # NwtIterableCommandClass
@@ -30948,7 +30668,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
+// @vuebundler[Proyecto_base_001][74]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filesystem.js
 /**
  * 
  * # NwtFilesystem
@@ -31385,7 +31105,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
+// @vuebundler[Proyecto_base_001][75]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-file-chooser.js
 /**
  * 
  * # NwtFileChooser
@@ -31491,7 +31211,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
+// @vuebundler[Proyecto_base_001][76]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-shell.js
 /**
  * 
  * # Nwt Shell API
@@ -31704,7 +31424,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
+// @vuebundler[Proyecto_base_001][77]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-live-injector.js
 /**
  * 
  * # NwtLiveInjector
@@ -31784,7 +31504,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
+// @vuebundler[Proyecto_base_001][78]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-prompts-manager.js
 /**
  * 
  * # Nwt Prompt Manager API
@@ -31883,7 +31603,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
+// @vuebundler[Proyecto_base_001][79]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-chatgpt.js
 /**
  * 
  * # NwtChatgpt
@@ -32059,7 +31779,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
+// @vuebundler[Proyecto_base_001][80]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-string-shortener/nwt-string-shortener.js
 /**
  * 
  * # NwtStringShortener
@@ -32201,7 +31921,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service.js
+// @vuebundler[Proyecto_base_001][81]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32335,7 +32055,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service-manager.js
+// @vuebundler[Proyecto_base_001][82]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-service/nwt-service-manager.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -32375,7 +32095,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
+// @vuebundler[Proyecto_base_001][83]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-json-persister.js
 /**
  * 
  * # NwtJsonPersister
@@ -32707,7 +32427,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
+// @vuebundler[Proyecto_base_001][84]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-jsonl-persister.js
 /**
  * 
  * # NwtJsonlPersister
@@ -32869,7 +32589,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
+// @vuebundler[Proyecto_base_001][85]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-file-persister.js
 /**
  * 
  * # NwtFilePersister
@@ -33030,7 +32750,7 @@ const { lutimesSync } = require("fs-extra");
 });
 
 
-// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
+// @vuebundler[Proyecto_base_001][86]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-directory-persister.js
 /**
  * 
  * # NwtDirectoryPersister
@@ -33223,7 +32943,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
+// @vuebundler[Proyecto_base_001][87]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-persister/nwt-persister.js
 /**
  * 
  * # NwtPersister
@@ -33279,7 +32999,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
+// @vuebundler[Proyecto_base_001][88]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-template-source.js
 (function (factory) {
       const mod = factory();
       if (typeof window !== 'undefined') {
@@ -33295,7 +33015,7 @@ const { lutimesSync } = require("fs-extra");
       return "{\n  const /**<?=localMemoryName?>**/localMemory = {};\n  /**<?#onFunctionStart?>**/\n  /**<?#onInitializeCollection?>**/\n  /**<?#onInitializeDimensions?>**/\n  try {\n    /**<?#onNextIteration?>**/\n    /**<?=localMemoryName?>**/localMemory.conditionalCallback = async () => {\n      /**<?#onCondition?>**/\n    };\n    /**<?=localMemoryName?>**/localMemory.output = undefined;\n    /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n    /**<?=onIdentifier + \":\"?>**/\n    while (/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n      /**<?#onIterationStart?>**/\n      try {\n        /**<?#onIteration?>**/\n        /**<?#onIterationSuccess?>**/\n      } catch (error) {\n        /**<?#onIterationError?>**/\n      } finally {\n        /**<?#onIterationFinally?>**/\n      }\n      /**<?#onIterationEnd?>**/\n      /**<?=localMemoryName?>**/localMemory.conditionalFlag = await /**<?=localMemoryName?>**/localMemory.conditionalCallback();\n      if (!/**<?=localMemoryName?>**/localMemory.conditionalFlag) {\n        break /**<?=onIdentifier?>**/;\n      }\n      /**<?#onInterlapse?>**/\n      /**<?#onNextIteration?>**/\n      /**<?#onProgression?>**/\n    }\n    /**<?#onFunctionSuccess?>**/\n  } catch (error) {\n    /**<?#onFunctionError?>**/\n  } finally {\n    /**<?#onFunctionFinally?>**/\n  }\n  /**<?#onFunctionEnd?>**/\n  return /**<?=localMemoryName?>**/localMemory.output;\n}"
     });
 
-// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
+// @vuebundler[Proyecto_base_001][89]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-ast-tree-class.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -33404,7 +33124,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
+// @vuebundler[Proyecto_base_001][90]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-parser.js
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -34856,7 +34576,7 @@ const { lutimesSync } = require("fs-extra");
 })(globalThis);
 
 
-// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
+// @vuebundler[Proyecto_base_001][91]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34884,7 +34604,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
+// @vuebundler[Proyecto_base_001][92]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/selector/nwt-filetree-selector-interpreter.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -34971,7 +34691,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
+// @vuebundler[Proyecto_base_001][93]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-node.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35067,7 +34787,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
+// @vuebundler[Proyecto_base_001][94]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-glob.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35105,7 +34825,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
+// @vuebundler[Proyecto_base_001][95]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-directory.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35142,7 +34862,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
+// @vuebundler[Proyecto_base_001][96]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-file.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35169,7 +34889,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
+// @vuebundler[Proyecto_base_001][97]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-json.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35196,7 +34916,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
+// @vuebundler[Proyecto_base_001][98]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/interfaces/nwt-filetree-property.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35223,7 +34943,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-glob-engine/nwt-glob-engine.js
+// @vuebundler[Proyecto_base_001][99]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-glob-engine/nwt-glob-engine.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35395,7 +35115,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
+// @vuebundler[Proyecto_base_001][100]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-dom.js
 /**
  * 
  * # NwtDom
@@ -35586,7 +35306,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
+// @vuebundler[Proyecto_base_001][101]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-exporter.js
 /**
  * 
  * # NwtExporter
@@ -35681,7 +35401,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
+// @vuebundler[Proyecto_base_001][102]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-clipboard.js
 /**
  * 
  * # NwtClipboard
@@ -35734,7 +35454,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
+// @vuebundler[Proyecto_base_001][103]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-filetree/nwt-filetree.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35818,7 +35538,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-reflection.js
+// @vuebundler[Proyecto_base_001][104]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-reflection.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35891,7 +35611,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-propagable-store.js
+// @vuebundler[Proyecto_base_001][105]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-propagable-store.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -35971,7 +35691,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
+// @vuebundler[Proyecto_base_001][106]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cache-directory.js
 /**
  * 
  * # NwtCacheDirectory
@@ -36087,7 +35807,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context-pointer.js
+// @vuebundler[Proyecto_base_001][107]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context-pointer.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36132,7 +35852,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context.js
+// @vuebundler[Proyecto_base_001][108]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validation-context.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36247,7 +35967,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validable-schema.js
+// @vuebundler[Proyecto_base_001][109]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validable-schema.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36291,7 +36011,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validator.js
+// @vuebundler[Proyecto_base_001][110]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-validation/nwt-validator.js
 (function (factory) {
   const mod = factory();
   if (typeof window !== 'undefined') {
@@ -36318,7 +36038,7 @@ const { lutimesSync } = require("fs-extra");
 
 });
 
-// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
+// @vuebundler[Proyecto_base_001][111]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-pack.js
 /**
  * 
  * # Nwt Framework API
@@ -36396,7 +36116,7 @@ const { lutimesSync } = require("fs-extra");
 
 })();
 
-// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
+// @vuebundler[Proyecto_base_001][112]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-injection.js
 /**
  * 
  * # Nwt Injection API
@@ -36431,7 +36151,7 @@ if (typeof window !== "undefined") {
     });
 }
 
-// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
+// @vuebundler[Proyecto_base_001][113]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-resizable.js
 /**
  * 
  * # Nwt V-Resizable Directive - Vue directive
@@ -36538,7 +36258,7 @@ Vue.directive("resizable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
+// @vuebundler[Proyecto_base_001][114]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-draggable.js
 /**
  * 
  * 
@@ -36608,7 +36328,7 @@ Vue.directive("draggable", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
+// @vuebundler[Proyecto_base_001][115]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-focus.js
 /**
  * 
  * # Nwt V-Focus Directive - Vue directive
@@ -36637,7 +36357,7 @@ Vue.directive("focus", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
+// @vuebundler[Proyecto_base_001][116]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/directives/v-forms.js
 Vue.directive("forms", {
   bind(el, binding, vnode) {
     const value = binding.value || {};
@@ -36655,9 +36375,9 @@ Vue.directive("forms", {
 });
 
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.html
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.html
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.js
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.js
 /**
  * 
  * # Nwt Box Viewer API / Componente Vue2
@@ -36731,11 +36451,11 @@ Vue.component("NwtBasicDialogLayout", {
 });
 
 
-// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.css
+// @vuebundler[Proyecto_base_001][117]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.css
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.html
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.js
 /**
  * 
  * # Common Dialogs
@@ -37100,11 +36820,11 @@ Vue.component("CommonDialogs", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
+// @vuebundler[Proyecto_base_001][118]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-dialogs/common-dialogs.css
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.html
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.js
 /**
  * 
  * # Nwt Toasts API
@@ -37218,11 +36938,11 @@ Vue.component("CommonToasts", {
   }
 })
 
-// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
+// @vuebundler[Proyecto_base_001][119]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-toasts/common-toasts.css
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.html
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.js
 /**
  * 
  * # Nwt Common Injections API
@@ -37314,11 +37034,11 @@ Vue.component("CommonInjections", {
   }
 });
 
-// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
+// @vuebundler[Proyecto_base_001][120]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/common-injections/common-injections.css
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.html
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.js
 /**
  * 
  * # Nwt Tester Viewer API / Componente Vue2
@@ -37403,11 +37123,11 @@ Vue.component("NwtTesterViewer", {
 });
 
 
-// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
+// @vuebundler[Proyecto_base_001][121]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-viewer/nwt-tester-viewer.css
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.html
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.js
 /**
  * 
  * # NwtTesterNode
@@ -37538,11 +37258,295 @@ Vue.component("NwtTesterNode", {
 });
 
 
-// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
+// @vuebundler[Proyecto_base_001][122]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-tester-node/nwt-tester-node.css
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form.html
+// @vuebundler[Proyecto_base_001][123]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-expression.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCronExpression'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCronExpression'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form.js
+  // @FROM: https://github.com/Hexagon/croner
+  //
+  // ┌──────────────── (optional) second (0 - 59)
+  // | ┌────────────── minute (0 - 59)
+  // | | ┌──────────── hour (0 - 23)
+  // | | | ┌────────── day of month (1 - 31)
+  // | | | | ┌──────── month (1 - 12, JAN-DEC)
+  // | | | | | ┌────── day of week (0 - 6, SUN-Mon) 
+  // | | | | | |       (0 to 6 are Sunday to Saturday; 7 is Sunday, the same as 0)
+  // | | | | | | ┌──── (optional) year (1 - 9999)
+  // | | | | | | |
+  // * * * * * * *
+
+  const NwtCronExpression = class {
+
+    static create(...args) {
+      return new this(...args);
+    }
+
+    static defaultScope = {
+      title: false,
+      year: "*",
+      month: "*",
+      day: "*",
+      weekday: "*",
+      hour: "0",
+      minute: "0",
+      second: "0",
+    };
+
+    static fromString(code) {
+      const [second, minute, hour, day, month, weekday, year = "*"] = code.split(" ");
+      return new this({ second, minute, hour, day, month, weekday, year });
+    }
+
+    constructor(scope = {}) {
+      Object.assign(this, this.constructor.defaultScope, scope);
+    }
+
+    override(units = {}) {
+      Object.assign(this, units);
+      return this;
+    }
+
+    toString() {
+      return `${this.second} ${this.minute} ${this.hour} ${this.day} ${this.month} ${this.weekday} ${this.year}`;
+    }
+
+    toObject() {
+      return NwtObjectUtils.exceptKeys(this, [
+        "override",
+        "toString",
+        "toObject",
+        "toSchedulable",
+        "toPersistibleJob",
+      ]);
+    }
+
+    toSchedulable(options = {}) {
+      return new Cron(this.toString(), options);
+    }
+
+    toPersistibleJob(callback, options = {}) {
+      assertion(typeof callback === "function", `Parameter «callback» must be function on «NwtCronExpression.toPersistibleJob»`);
+      assertion(typeof options === "object", `Parameter «options» must be object on «NwtCronExpression.toPersistibleJob»`);
+      return NwtCronManager.global.addJob({
+        title: this.title,
+        pattern: this.toString(),
+        options: options,
+        callback: callback,
+      });
+    }
+
+  };
+
+  return NwtCronExpression;
+
+});
+
+// @vuebundler[Proyecto_base_001][124]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-persistible-job.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCronPersistibleJob'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCronPersistibleJob'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+  
+  const NwtCronPersistibleJob = class {
+
+    static notPersistibleProps = [
+      "callback",
+      "cronObject",
+      "manager",
+    ];
+
+    static create(...args) {
+      trace("NwtCronPersistibleJob.create");
+      return new this(...args);
+    }
+
+    constructor(parameters, manager) {
+      trace("NwtCronPersistibleJob.constructor");
+      const { title, pattern, options, callback } = parameters;
+      assertion(typeof title === "string", `Parameter «title» must be «string» on «NwtCronPersistibleJob.constructor»`);
+      assertion(typeof pattern === "string", `Parameter «pattern» must be «string» on «NwtCronPersistibleJob.constructor»`);
+      assertion(typeof options === "object", `Parameter «options» must be «object» on «NwtCronPersistibleJob.constructor»`);
+      assertion(typeof callback === "function", `Parameter «callback» must be «function» on «NwtCronPersistibleJob.constructor»`);
+      assertion(manager instanceof NwtCronManager, `Parameter «manager» must be instance of «NwtCronManager» on «NwtCronPersistibleJob.constructor»`);
+      this.manager = manager;
+      Object.assign(this, parameters);
+      this.cronObject = new Cron(this.pattern, Object.assign({}, this.options), this.callback);
+    }
+
+    toJSON() {
+      trace("NwtCronPersistibleJob.prototype.toJSON");
+      const persistible = NwtObjectUtils.exceptKeys(this, this.constructor.notPersistibleProps);
+      return Object.assign(persistible, {
+        callback: this.callback.toString(),
+      });
+    }
+    
+  };
+
+  return NwtCronPersistibleJob;
+
+});
+
+// @vuebundler[Proyecto_base_001][125]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-manager.js
+(function (factory) {
+  const mod = factory();
+  if (typeof window !== 'undefined') {
+    window['NwtCronManager'] = mod;
+  }
+  if (typeof global !== 'undefined') {
+    global['NwtCronManager'] = mod;
+  }
+  if (typeof module !== 'undefined') {
+    module.exports = mod;
+  }
+})(function () {
+
+  const NwtCronManager = class {
+
+    static PersistibleJob = NwtCronPersistibleJob;
+
+    static create(...args) {
+      trace("NwtCronManager.create");
+      return new this(...args);
+    }
+
+    constructor(basefile = "assets/framework/browser/components/nwt-cron/global.json") {
+      trace("NwtCronManager.constructor");
+      this.basefile = basefile;
+      this.jobs = [];
+    }
+
+    isRunning() {
+      return true;
+    }
+
+    async start() {
+      trace("NwtCronManager.prototype.start");
+      await this.load();
+      return await this.resume();
+    }
+
+    restart(...args) {
+      trace("NwtCronManager.prototype.restart");
+      return this.start(...args);
+    }
+
+    async pause() {
+      trace("NwtCronManager.prototype.pause");
+      for (let index = 0; index < this.jobs.length; index++) {
+        const job = this.jobs[index];
+        job.cronObject.pause();
+      }
+    }
+
+    async resume() {
+      trace("NwtCronManager.prototype.resume");
+      for (let index = 0; index < this.jobs.length; index++) {
+        const job = this.jobs[index];
+        job.cronObject.resume();
+      }
+    }
+
+    async stop() {
+      trace("NwtCronManager.prototype.stop");
+      for (let index = 0; index < this.jobs.length; index++) {
+        const job = this.jobs[index];
+        job.cronObject.stop();
+      }
+    }
+
+    async load() {
+      trace("NwtCronManager.prototype.load");
+      this.removeAllJobs(false);
+      const persistedJobs = await NwtFilesystem.readJson(this.basefile);
+      for (let index = 0; index < persistedJobs.length; index++) {
+        const persistedJob = persistedJobs[index];
+        const callback = NwtCodeComposer.hydrateFunction(persistedJob.callback);
+        const base = NwtObjectUtils.exceptKeys(persistedJob, NwtCronPersistibleJob.notPersistibleProps);
+        const jobParameters = Object.assign(base, {
+          callback: callback
+        });
+        this.addJob(jobParameters);
+      }
+    }
+
+    reload() {
+      return this.load();
+    }
+
+    async save() {
+      trace("NwtCronManager.prototype.save");
+      await NwtFilesystem.writeJson(this.basefile, this.jobs);
+    }
+
+    async addJob(jobParameters) {
+      trace("NwtCronManager.prototype.addJob");
+      const job = NwtCronPersistibleJob.create(jobParameters, this);
+      this.jobs.push(job);
+      await this.save();
+      return job;
+    }
+
+    async removeJobByReference(job) {
+      return this.removeJobByIndex(this.jobs.indexOf(job));
+    }
+
+    async removeJobByIndex(index) {
+      this.jobs[index].cronObject.stop();
+      this.jobs.splice(index, 1);
+      await this.save();
+    }
+
+    async removeAllJobs(persist = true) {
+      for (let index = this.jobs.length - 1; index >= 0; index--) {
+        const job = this.jobs[index];
+        this.jobs[index].cronObject.stop();
+        this.jobs.splice(index, 1);
+      }
+      if (persist) {
+        await this.save();
+      }
+    }
+
+  };
+
+  NwtCronManager.global = NwtCronManager.create();
+
+  // @CONTINUES: esto sigue en el evento "app-mounted" de nwt vía window
+  if (NwtEnvironment.hasWindow) {
+    window.addEventListener("app-mounted", async function (event) {
+      trace("AppPayload.inject@app-mounted :: start cron jobs");
+      NwtCronManager.global.start();
+    });
+  }
+
+  return NwtCronManager;
+
+});
+
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-job-form/nwt-cron-job-form.html
+
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-job-form/nwt-cron-job-form.js
 Vue.component("NwtCronJobForm", {
   name: "NwtCronJobForm",
   template: `<div class="nwt_cron_job_form">
@@ -37708,11 +37712,11 @@ Vue.component("NwtCronJobForm", {
   mounted() {},
 });
 
-// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form.css
+// @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-job-form/nwt-cron-job-form.css
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.html
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-manager-viewer/nwt-cron-manager-viewer.html
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.js
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-manager-viewer/nwt-cron-manager-viewer.js
 Vue.component("NwtCronManagerViewer", {
   name: "NwtCronManagerViewer",
   template: `<div class="nwt_cron_manager_viewer">
@@ -37805,7 +37809,7 @@ Vue.component("NwtCronManagerViewer", {
   },
 });
 
-// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.css
+// @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-manager-viewer/nwt-cron-manager-viewer.css
 
 // @vuebundler[Proyecto_base_001][128]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-dynamic-tester-viewer/nwt-dynamic-tester-viewer.html
 
@@ -44247,16 +44251,25 @@ NwtResource.define({
 
 // @vuebundler[Proyecto_base_001][202]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css
 
-// @vuebundler[Proyecto_base_001][203]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date/compiled.js
+// @vuebundler[Proyecto_base_001][203]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date-by-boxes/compiled.js
 NwtResource.define({
-  id: "control/for/type/date",
+  id: "control/for/type/date-by-boxes",
   apis: ["control", "view", "validation"],
-  inherits: ["control/trait/for/showable", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
+  inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
   traits: {},
   settingsSpec: {
     "isShowingControl": {
       "type": Boolean,
       "default": true
+    },
+    "initialValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "default": function() {
+        return new Date();
+      }
+    },
+    "hasFixedValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "rootValueIndex": {
       "type": Array,
@@ -44276,31 +44289,37 @@ NwtResource.define({
   control: {
     "schema": {
       "year": {
-        "type": "control/for/text"
+        "type": "control/for/text",
+        "hasStatement": "Año de creación"
       },
       "month": {
-        "type": "control/for/text"
+        "type": "control/for/text",
+        "hasStatement": "Mes de creación"
       },
       "day": {
-        "type": "control/for/text"
+        "type": "control/for/text",
+        "hasStatement": "Día de creación"
       },
       "hour": {
-        "type": "control/for/text"
+        "type": "control/for/text",
+        "hasStatement": "Hora de creación"
       },
       "minute": {
-        "type": "control/for/text"
+        "type": "control/for/text",
+        "hasStatement": "Minuto de creación"
       },
       "second": {
-        "type": "control/for/text"
+        "type": "control/for/text",
+        "hasStatement": "Segundo de creación"
       }
     },
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
-      trace("@compilable/control/for/type/date.control.onValidate");
-      console.log("Validation at resource-level on control/for/type/date");
+      trace("@compilable/control/for/type/date-by-boxes.control.onValidate");
+      console.log("Validation at resource-level on control/for/type/date-by-boxes");
     }
   },
   view: {
-    name: "NwtControlForDate",
+    name: "NwtControlForTypeDateByBoxes",
     props: {
       "settings": {
         "type": Object,
@@ -44308,7 +44327,7 @@ NwtResource.define({
       }
     },
     template: `
-      <div class="nwt_control_for_date">
+      <div class="nwt_control_for_type_date_by_boxes">
           <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
@@ -44317,13 +44336,19 @@ NwtResource.define({
               <slot></slot>
           </nwt-control-partial-for-statement>
           <div v-if="isShowingControl">
-              <input
-                  class="width_100"
-                  type="date"
-                  :ref="component => { if(component === null) { delete $local.control; } else { $local.control = component; } }"
-                  :disabled="settings.hasFixedValue"
-                  :value="getValueBySchema()"
-              />
+              <div v-for="column, columnName in $options.statically.control.schema"
+                  v-bind:key="'column-' + columnName"
+                  class="pad_left_1">
+                  <component :is="$toolkit.getComponentNameBySettings(column)"
+                      :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
+                      :settings="{
+                          ...column,
+                          isShowingControl: true,
+                          rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
+                          rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
+                          rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
+                      }" />
+              </div>
           </div>
           <nwt-control-error-handler :control="this" />
       </div>`,
@@ -44334,6 +44359,13 @@ NwtResource.define({
         trace("@compilable/control/trait/for/showable.data");
         return {
           isShowingControl: this.settings.isShowingControl,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/trait/for/getValue
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/getValue.data");
+        return {
+          value: undefined,
         };
       }).call(this));
       return finalData;
@@ -44350,6 +44382,13 @@ NwtResource.define({
       "toggleControl": function() {
         trace("@compilable/control/trait/for/showable.methods.toggleControl");
         this.isShowingControl = !this.isShowingControl;
+      },
+      "getValue": function() {
+        trace("@compilable/control/trait/for/getValue.methods.getValue");
+        const value = NwtStatic.api.control.getValueBySchema(this.settings.value, this.settings.valueIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(value);
+        return formattedValue;
       },
       "getComponentNameBySettings": function(...args) {
         return this.$toolkit.getComponentNameBySettings(...args);
@@ -44444,14 +44483,14 @@ NwtResource.define({
         });
       },
       "getValueByDom": function() {
-        trace("NwtControlForDate.methods.getValueByDom");
+        trace("NwtControlForTypeDateByBoxes.methods.getValueByDom");
         if (!this.$local.control) {
           return this.getValueBySchema();
         }
         return this.$local.control.value;
       },
       "setValueByDom": function(value) {
-        trace("NwtControlForDate.methods.setValueByDom");
+        trace("NwtControlForTypeDateByBoxes.methods.setValueByDom");
         if (!this.$local.control) {
           return false;
         }
@@ -44461,32 +44500,51 @@ NwtResource.define({
         return this.loadValue();
       },
       "saveValue": function() {
-        trace("NwtControlForDate.methods.saveValue");
+        trace("NwtControlForTypeDateByBoxes.methods.saveValue");
         const value = this.getValueByDom();
         const indexes = this.getIndexForValue();
         console.log("Saving:", indexes, value);
         this.$toolkit.getRoot().$store.set(indexes, value);
       },
       "loadValue": function() {
-        trace("NwtControlForDate.methods.loadValue");
+        trace("NwtControlForTypeDateByBoxes.methods.loadValue");
         if (!this.$local.control) {
           return false;
         }
         this.$local.control.value = this.getValueBySchema();
       },
       "onValidate": function() {
-        trace("NwtControlForDate.methods.onValidate");
-        console.log("Validation at component-level on control/for/type/date");
+        trace("NwtControlForTypeDateByBoxes.methods.onValidate");
+        console.log("Validation at component-level on control/for/type/date-by-boxes");
       }
     },
     computed: {},
-    watch: {},
+    watch: {
+      "value": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.value");
+        const propagator = this.settings.onChange || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      },
+      "valueOption": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.valueOption");
+        const propagator = this.settings.onChangeOption || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      }
+    },
     created: function() {
       // @COMPILED-BY: control/trait/for/toolkit
       trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/for/type/date-by-boxes
+      trace("NwtControlForTypeDateByBoxes.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {};
     },
     mounted: function() {
+      // @COMPILED-BY: control/trait/for/getValue
+      trace("@compilable/control/trait/for/getValue.mounted");
+      this.value = this.settings.hasFixedValue || this.settings.initialValue;
       // @COMPILED-BY: control/trait/for/remoteValue
       // @DONE: Self-synchronized
       trace("@compilable/control/trait/for/remoteValue.mounted");
@@ -44502,10 +44560,8 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
-      // @COMPILED-BY: control/for/type/date
-      trace("NwtControlForDate.mounted");
-      NwtVue2.Toolkit.installToolkit(this);
-      NwtVue2.Toolkit.installLocal(this);
+      // @COMPILED-BY: control/for/type/date-by-boxes
+      trace("NwtControlForTypeDateByBoxes.mounted");
       this.reloadValue();
     },
     beforeDestroy: function() {
@@ -44524,7 +44580,384 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][204]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js
+// @vuebundler[Proyecto_base_001][204]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compiled.js
+NwtResource.define({
+  id: "control/for/type/day-picker",
+  apis: ["control", "view", "validation"],
+  inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
+  traits: {},
+  settingsSpec: {
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
+    },
+    "initialValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "default": function() {
+        return new Date();
+      }
+    },
+    "hasFixedValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
+    },
+    "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
+      "type": Array,
+      "required": true
+    }
+  },
+  subtypeOf: "text",
+  compileView: true,
+  control: {
+    "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
+      trace("@compilable/control/for/type/day-picker.control.onValidate");
+      console.log("Validation at resource-level on control/for/type/day-picker");
+    }
+  },
+  view: {
+    name: "NwtControlForTypeDayPicker",
+    props: {
+      "settings": {
+        "type": Object,
+        "required": true
+      }
+    },
+    template: `
+      <div class="nwt_control_for_type_day_picker">
+          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+          <nwt-control-partial-for-statement :control="this">
+              <template v-slot:hideable>
+                  <slot name="hideable"></slot>
+              </template>
+              <slot></slot>
+          </nwt-control-partial-for-statement>
+          <div class="calendar_container" v-if="isShowingControl">
+              <div class="flex_row">
+                  <div class="flex_1">
+                      <button class="mini fluid width_100">◀️</button>
+                  </div>
+                  <div class="flex_100 text_align_center">
+                      {{ dateForMonth.getFullYear() }}
+                  </div>
+                  <div class="flex_1">
+                      <button class="mini fluid width_100">▶️</button>
+                  </div>
+      
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToPreviousMonth">◀️</button>
+                  </div>
+                  <div class="flex_100 text_align_center">
+                      {{ dateForMonth.toLocaleDateString(undefined, { month: "long"} ) }}
+                  </div>
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToNextMonth">▶️</button>
+                  </div>
+              </div>
+              <div class="no_table calendar">
+                  <div class="thead">
+                      <div class="row">
+                          <div class="cell">mon</div>
+                          <div class="cell">tue</div>
+                          <div class="cell">wed</div>
+                          <div class="cell">thu</div>
+                          <div class="cell">fri</div>
+                          <div class="cell">sat</div>
+                          <div class="cell">sun</div>
+                      </div>
+                  </div>
+                  <div class="tbody">
+                      <div class="row" v-for="week, weekIndex in cellsForMonth" v-bind:key="'week_' + weekIndex">
+                          <div class="cell" v-for="cell, cellIndex in week" v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex">
+                              {{ cell.day }}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <nwt-control-error-handler :control="this" />
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: control/trait/for/showable
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/trait/for/getValue
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/getValue.data");
+        return {
+          value: undefined,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/for/type/day-picker
+      Object.assign(finalData, (function() {
+        return {
+          dateForMonth: new Date(),
+          selectedDate: undefined,
+        };
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getValue": function() {
+        trace("@compilable/control/trait/for/getValue.methods.getValue");
+        const value = NwtStatic.api.control.getValueBySchema(this.settings.value, this.settings.valueIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(value);
+        return formattedValue;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
+      "getValueBySchema": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueBySchema");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(originalValue);
+        return formattedValue;
+      },
+      "setValueBySchema": function(value) {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootValueIndex,
+          value: value,
+        });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
+      },
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
+      "getValueByDom": function() {
+        trace("NwtControlForTypeDayPicker.methods.getValueByDom");
+        if (!this.$local.control) {
+          return this.getValueBySchema();
+        }
+        return this.$local.control.value;
+      },
+      "setValueByDom": function(value) {
+        trace("NwtControlForTypeDayPicker.methods.setValueByDom");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = value;
+      },
+      "reloadValue": function() {
+        return this.loadValue();
+      },
+      "saveValue": function() {
+        trace("NwtControlForTypeDayPicker.methods.saveValue");
+        const value = this.getValueByDom();
+        const indexes = this.getIndexForValue();
+        console.log("Saving:", indexes, value);
+        this.$toolkit.getRoot().$store.set(indexes, value);
+      },
+      "loadValue": function() {
+        trace("NwtControlForTypeDayPicker.methods.loadValue");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = this.getValueBySchema();
+      },
+      "onValidate": function() {
+        trace("NwtControlForTypeDayPicker.methods.onValidate");
+        console.log("Validation at component-level on control/for/type/day-picker");
+      },
+      "goToPreviousMonth": function() {
+        trace("NwtControlForTypeDayPicker.methods.goToPreviousMonth");
+        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() - 1));
+      },
+      "goToNextMonth": function() {
+        trace("NwtControlForTypeDayPicker.methods.goToNextMonth");
+        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() + 1));
+      }
+    },
+    computed: {
+      "cellsForMonth": function() {
+        const currentMonth = this.dateForMonth;
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+        const firstOfMonth = new Date(year, month, 1);
+        const lastOfMonth = new Date(year, month + 1, 0);
+        const cells = [];
+        // JS: domingo=0 ... sábado=6 y queremos lunes=0
+        const day = (firstOfMonth.getDay() + 6) % 7;
+        const startDate = new Date(firstOfMonth);
+        startDate.setDate(firstOfMonth.getDate() - day);
+        const cursor = new Date(startDate);
+        while (true) {
+          const week = [];
+          for (let i = 0; i < 7; i++) {
+            week.push({
+              month: cursor.getMonth(),
+              day: cursor.getDate()
+            });
+            cursor.setDate(cursor.getDate() + 1);
+          }
+          cells.push(week);
+          if (cursor > lastOfMonth && cursor.getDay() === 1) {
+            break;
+          }
+        }
+        return cells;
+      }
+    },
+    watch: {
+      "value": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.value");
+        const propagator = this.settings.onChange || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      },
+      "valueOption": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.valueOption");
+        const propagator = this.settings.onChangeOption || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      }
+    },
+    created: function() {
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/for/type/day-picker
+      trace("NwtControlForTypeDayPicker.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {};
+    },
+    mounted: function() {
+      // @COMPILED-BY: control/trait/for/getValue
+      trace("@compilable/control/trait/for/getValue.mounted");
+      this.value = this.settings.hasFixedValue || this.settings.initialValue;
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
+      // @COMPILED-BY: control/trait/for/settings
+      trace("@compilable/control/trait/for/settings.mounted");
+      NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
+      // @COMPILED-BY: control/for/type/day-picker
+      trace("NwtControlForTypeDayPicker.mounted");
+      this.reloadValue();
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
+    },
+  }
+});
+
+// @vuebundler[Proyecto_base_001][205]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compilable.css
+
+// @vuebundler[Proyecto_base_001][206]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js
 NwtResource.define({
   id: "control/for/type/duration",
   apis: ["control", "view", "validation"],
@@ -44781,7 +45214,685 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][205]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
+// @vuebundler[Proyecto_base_001][207]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compiled.js
+NwtResource.define({
+  id: "control/for/type/hour-picker",
+  apis: ["control", "view", "validation"],
+  inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
+  traits: {},
+  settingsSpec: {
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
+    },
+    "initialValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "default": function() {
+        return new Date();
+      }
+    },
+    "hasFixedValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
+    },
+    "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
+      "type": Array,
+      "required": true
+    }
+  },
+  subtypeOf: "structure",
+  compileView: true,
+  control: {
+    "schema": {
+      "year": {
+        "type": "control/for/text",
+        "hasStatement": "Año de creación"
+      },
+      "month": {
+        "type": "control/for/text",
+        "hasStatement": "Mes de creación"
+      },
+      "day": {
+        "type": "control/for/text",
+        "hasStatement": "Día de creación"
+      },
+      "hour": {
+        "type": "control/for/text",
+        "hasStatement": "Hora de creación"
+      },
+      "minute": {
+        "type": "control/for/text",
+        "hasStatement": "Minuto de creación"
+      },
+      "second": {
+        "type": "control/for/text",
+        "hasStatement": "Segundo de creación"
+      }
+    },
+    "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
+      trace("@compilable/control/for/type/hour-picker.control.onValidate");
+      console.log("Validation at resource-level on control/for/type/hour-picker");
+    }
+  },
+  view: {
+    name: "NwtControlForTypeHourPicker",
+    props: {
+      "settings": {
+        "type": Object,
+        "required": true
+      }
+    },
+    template: `
+      <div class="nwt_control_for_type_date_by_boxes">
+          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+          <nwt-control-partial-for-statement :control="this">
+              <template v-slot:hideable>
+                  <slot name="hideable"></slot>
+              </template>
+              <slot></slot>
+          </nwt-control-partial-for-statement>
+          <div v-if="isShowingControl">
+              <div class="flex_row centered">
+                  <div class="flex_1">
+                      <div class="clock for_hours">
+                          <span v-on:click="selectHour" style="--i:1">1</span>
+                          <span v-on:click="selectHour" style="--i:2">2</span>
+                          <span v-on:click="selectHour" style="--i:3">3</span>
+                          <span v-on:click="selectHour" style="--i:4">4</span>
+                          <span v-on:click="selectHour" style="--i:5">5</span>
+                          <span v-on:click="selectHour" style="--i:6">6</span>
+                          <span v-on:click="selectHour" style="--i:7">7</span>
+                          <span v-on:click="selectHour" style="--i:8">8</span>
+                          <span v-on:click="selectHour" style="--i:9">9</span>
+                          <span v-on:click="selectHour" style="--i:10">10</span>
+                          <span v-on:click="selectHour" style="--i:11">11</span>
+                          <span v-on:click="selectHour" style="--i:12">12</span>
+                          <div class="center">
+                              <button class="mini" :class="{active: false}">AM</button>
+                              <span v-on:click="selectHour" style="min-width:4px;"></span>
+                              <button class="mini" :class="{active: false}">PM</button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="flex_1" style="min-width:20px;"></div>
+                  <div class="flex_1">
+                      <div class="clock for_minutes">
+                          <span v-on:click="selectMinute" style="--i:1">5</span>
+                          <span v-on:click="selectMinute" style="--i:2">10</span>
+                          <span v-on:click="selectMinute" style="--i:3">15</span>
+                          <span v-on:click="selectMinute" style="--i:4">20</span>
+                          <span v-on:click="selectMinute" style="--i:5">25</span>
+                          <span v-on:click="selectMinute" style="--i:6">30</span>
+                          <span v-on:click="selectMinute" style="--i:7">35</span>
+                          <span v-on:click="selectMinute" style="--i:8">40</span>
+                          <span v-on:click="selectMinute" style="--i:9">45</span>
+                          <span v-on:click="selectMinute" style="--i:10">50</span>
+                          <span v-on:click="selectMinute" style="--i:11">55</span>
+                          <span v-on:click="selectMinute" style="--i:12">0</span>
+                      </div>
+                  </div>
+                  <div class="flex_100"></div>
+              </div>
+          </div>
+          <nwt-control-error-handler :control="this" />
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: control/trait/for/showable
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/trait/for/getValue
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/getValue.data");
+        return {
+          value: undefined,
+        };
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getValue": function() {
+        trace("@compilable/control/trait/for/getValue.methods.getValue");
+        const value = NwtStatic.api.control.getValueBySchema(this.settings.value, this.settings.valueIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(value);
+        return formattedValue;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
+      "getValueBySchema": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueBySchema");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(originalValue);
+        return formattedValue;
+      },
+      "setValueBySchema": function(value) {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootValueIndex,
+          value: value,
+        });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
+      },
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
+      "getValueByDom": function() {
+        trace("NwtControlForTypeHourPicker.methods.getValueByDom");
+        if (!this.$local.control) {
+          return this.getValueBySchema();
+        }
+        return this.$local.control.value;
+      },
+      "setValueByDom": function(value) {
+        trace("NwtControlForTypeHourPicker.methods.setValueByDom");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = value;
+      },
+      "reloadValue": function() {
+        return this.loadValue();
+      },
+      "saveValue": function() {
+        trace("NwtControlForTypeHourPicker.methods.saveValue");
+        const value = this.getValueByDom();
+        const indexes = this.getIndexForValue();
+        console.log("Saving:", indexes, value);
+        this.$toolkit.getRoot().$store.set(indexes, value);
+      },
+      "loadValue": function() {
+        trace("NwtControlForTypeHourPicker.methods.loadValue");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = this.getValueBySchema();
+      },
+      "onValidate": function() {
+        trace("NwtControlForTypeHourPicker.methods.onValidate");
+        console.log("Validation at component-level on control/for/type/hour-picker");
+      },
+      "selectHour": function() {
+        trace("NwtControlForTypeHourPicker.methods.selectHour");
+      },
+      "selectMinute": function() {
+        trace("NwtControlForTypeMinutePicker.methods.selectMinute");
+      }
+    },
+    computed: {},
+    watch: {
+      "value": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.value");
+        const propagator = this.settings.onChange || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      },
+      "valueOption": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.valueOption");
+        const propagator = this.settings.onChangeOption || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      }
+    },
+    created: function() {
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/for/type/hour-picker
+      trace("NwtControlForTypeHourPicker.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {};
+    },
+    mounted: function() {
+      // @COMPILED-BY: control/trait/for/getValue
+      trace("@compilable/control/trait/for/getValue.mounted");
+      this.value = this.settings.hasFixedValue || this.settings.initialValue;
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
+      // @COMPILED-BY: control/trait/for/settings
+      trace("@compilable/control/trait/for/settings.mounted");
+      NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
+      // @COMPILED-BY: control/for/type/hour-picker
+      trace("NwtControlForTypeHourPicker.mounted");
+      this.reloadValue();
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
+    },
+  }
+});
+
+// @vuebundler[Proyecto_base_001][208]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compilable.css
+
+// @vuebundler[Proyecto_base_001][209]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/moment-picker/compiled.js
+NwtResource.define({
+  id: "control/for/type/moment-picker",
+  apis: ["control", "view", "validation"],
+  inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
+  traits: {},
+  settingsSpec: {
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
+    },
+    "initialValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "default": function() {
+        return new Date();
+      }
+    },
+    "hasFixedValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
+    },
+    "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
+      "type": Array,
+      "required": true
+    }
+  },
+  subtypeOf: "structure",
+  compileView: true,
+  control: {
+    "schema": {
+      "day": {
+        "type": "control/for/type/day-picker",
+        "hasStatement": "Día"
+      },
+      "hour": {
+        "type": "control/for/type/hour-picker",
+        "hasStatement": "Hora"
+      }
+    },
+    "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
+      trace("@compilable/control/for/type/moment-picker.control.onValidate");
+      console.log("Validation at resource-level on control/for/type/moment-picker");
+    }
+  },
+  view: {
+    name: "NwtControlForTypeMomentPicker",
+    props: {
+      "settings": {
+        "type": Object,
+        "required": true
+      }
+    },
+    template: `
+      <div class="nwt_control_for_type_date_by_moment_picker">
+          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+          <nwt-control-partial-for-statement :control="this">
+              <template v-slot:hideable>
+                  <slot name="hideable"></slot>
+              </template>
+              <slot></slot>
+          </nwt-control-partial-for-statement>
+          <div v-if="isShowingControl">
+              <div v-for="column, columnName in $options.statically.control.schema"
+                  v-bind:key="'column-' + columnName"
+                  class="pad_left_1">
+                  <component :is="$toolkit.getComponentNameBySettings(column)"
+                      :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
+                      :settings="{
+                          ...column,
+                          isShowingControl: true,
+                          rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
+                          rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
+                          rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
+                      }" />
+              </div>
+          </div>
+          <nwt-control-error-handler :control="this" />
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: control/trait/for/showable
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/trait/for/getValue
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/getValue.data");
+        return {
+          value: undefined,
+        };
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getValue": function() {
+        trace("@compilable/control/trait/for/getValue.methods.getValue");
+        const value = NwtStatic.api.control.getValueBySchema(this.settings.value, this.settings.valueIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(value);
+        return formattedValue;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
+      "getValueBySchema": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueBySchema");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(originalValue);
+        return formattedValue;
+      },
+      "setValueBySchema": function(value) {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootValueIndex,
+          value: value,
+        });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
+      },
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
+      "getValueByDom": function() {
+        trace("NwtControlForTypeMomentPicker.methods.getValueByDom");
+        if (!this.$local.control) {
+          return this.getValueBySchema();
+        }
+        return this.$local.control.value;
+      },
+      "setValueByDom": function(value) {
+        trace("NwtControlForTypeMomentPicker.methods.setValueByDom");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = value;
+      },
+      "reloadValue": function() {
+        return this.loadValue();
+      },
+      "saveValue": function() {
+        trace("NwtControlForTypeMomentPicker.methods.saveValue");
+        const value = this.getValueByDom();
+        const indexes = this.getIndexForValue();
+        console.log("Saving:", indexes, value);
+        this.$toolkit.getRoot().$store.set(indexes, value);
+      },
+      "loadValue": function() {
+        trace("NwtControlForTypeMomentPicker.methods.loadValue");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = this.getValueBySchema();
+      },
+      "onValidate": function() {
+        trace("NwtControlForTypeMomentPicker.methods.onValidate");
+        console.log("Validation at component-level on control/for/type/moment-picker");
+      }
+    },
+    computed: {},
+    watch: {
+      "value": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.value");
+        const propagator = this.settings.onChange || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      },
+      "valueOption": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.valueOption");
+        const propagator = this.settings.onChangeOption || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      }
+    },
+    created: function() {
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: control/for/type/moment-picker
+      trace("NwtControlForTypeMomentPicker.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {};
+    },
+    mounted: function() {
+      // @COMPILED-BY: control/trait/for/getValue
+      trace("@compilable/control/trait/for/getValue.mounted");
+      this.value = this.settings.hasFixedValue || this.settings.initialValue;
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
+      // @COMPILED-BY: control/trait/for/settings
+      trace("@compilable/control/trait/for/settings.mounted");
+      NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
+      // @COMPILED-BY: control/for/type/moment-picker
+      trace("NwtControlForTypeMomentPicker.mounted");
+      this.reloadValue();
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
+    },
+  }
+});
+
+// @vuebundler[Proyecto_base_001][210]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
 NwtResource.define({
   id: "control/partial/for/error-handler",
   apis: ["control", "view", "validation"],
@@ -44831,9 +45942,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][206]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
+// @vuebundler[Proyecto_base_001][211]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
 
-// @vuebundler[Proyecto_base_001][207]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
+// @vuebundler[Proyecto_base_001][212]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
 NwtResource.define({
   id: "control/partial/for/list-panel",
   apis: ["control", "view", "validation"],
@@ -44864,7 +45975,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][208]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js
+// @vuebundler[Proyecto_base_001][213]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js
 NwtResource.define({
   id: "control/partial/for/pagination-panel",
   apis: ["control", "view", "validation"],
@@ -44975,9 +46086,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][209]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css
+// @vuebundler[Proyecto_base_001][214]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css
 
-// @vuebundler[Proyecto_base_001][210]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
+// @vuebundler[Proyecto_base_001][215]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
 NwtResource.define({
   id: "control/partial/for/statement",
   apis: ["control", "view", "validation"],
@@ -45100,9 +46211,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][211]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
+// @vuebundler[Proyecto_base_001][216]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
 
-// @vuebundler[Proyecto_base_001][212]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
+// @vuebundler[Proyecto_base_001][217]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
 NwtResource.define({
   id: "test/control/for/settingsSpecExample",
   apis: ["settings", "test"],
@@ -45124,8 +46235,8 @@ NwtResource.define({
   },
 });
 
-// @vuebundler[Proyecto_base_001][213]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][218]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
 
-// @vuebundler[Proyecto_base_001][214]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+// @vuebundler[Proyecto_base_001][219]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
 
-// @vuebundler[Proyecto_base_001][215]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][220]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

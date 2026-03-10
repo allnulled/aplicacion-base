@@ -1,0 +1,35 @@
+.calendar_container {
+    max-width: 310px;
+}
+.no_table.calendar {
+    border: 1px solid #1c5a93;
+}
+
+.no_table.calendar > .thead > .row,
+.no_table.calendar > .tbody > .row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.no_table.calendar > .tbody > .row > .cell,
+.no_table.calendar > .thead > .row > .cell {
+    text-align: center;
+    border: 0px solid black;
+}
+
+.no_table.calendar > .thead > .row > .cell {
+    background-color: #1c5a93;
+    color: white;
+}
+
+.no_table.calendar > .tbody > .row > .cell {
+    min-height: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no_table.calendar > .tbody > .row > .cell:hover {
+    background-color: #DDD;
+    cursor: pointer;
+}

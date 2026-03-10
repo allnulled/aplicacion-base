@@ -1108,7 +1108,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-03-10T11:54:38.613Z",
+  "generatedAt": "2026-03-10T23:23:50.945Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1472,7 +1472,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-expression.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-expression.js",
       "name": "nwt-cron-expression.js",
       "type": "file",
       "formalName": "NwtCronExpressionJs",
@@ -1494,14 +1494,14 @@ El JSON original es:
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-job-form/nwt-cron-job-form.css",
       "name": "nwt-cron-job-form.css",
       "type": "file",
       "formalName": "NwtCronJobFormCss",
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-job-form/nwt-cron-job-form.html",
       "name": "nwt-cron-job-form.html",
       "type": "file",
       "formalName": "NwtCronJobFormHtml",
@@ -1572,7 +1572,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-manager.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-manager.js",
       "name": "nwt-cron-manager.js",
       "type": "file",
       "formalName": "NwtCronManagerJs",
@@ -1601,14 +1601,14 @@ El JSON original es:
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.css",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-manager-viewer/nwt-cron-manager-viewer.css",
       "name": "nwt-cron-manager-viewer.css",
       "type": "file",
       "formalName": "NwtCronManagerViewerCss",
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.html",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-manager-viewer/nwt-cron-manager-viewer.html",
       "name": "nwt-cron-manager-viewer.html",
       "type": "file",
       "formalName": "NwtCronManagerViewerHtml",
@@ -1632,7 +1632,7 @@ El JSON original es:
       "dependencies": []
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-cron/nwt-cron-persistible-job.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-persistible-job.js",
       "name": "nwt-cron-persistible-job.js",
       "type": "file",
       "formalName": "NwtCronPersistibleJobJs",
@@ -3215,7 +3215,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-job-form/nwt-cron-job-form.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-job-form/nwt-cron-job-form.js",
       "name": "nwt-cron-job-form.js",
       "type": "file",
       "formalName": "NwtCronJobFormJs",
@@ -3237,7 +3237,7 @@ El JSON original es:
       ]
     },
     {
-      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron-manager-viewer/nwt-cron-manager-viewer.js",
+      "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-manager-viewer/nwt-cron-manager-viewer.js",
       "name": "nwt-cron-manager-viewer.js",
       "type": "file",
       "formalName": "NwtCronManagerViewerJs",

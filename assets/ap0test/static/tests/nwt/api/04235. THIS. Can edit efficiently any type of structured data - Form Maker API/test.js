@@ -3,6 +3,26 @@ tester.progressBar.total = 2;
 const schema1 = {
   type: "control/for/structure",
   schema: {
+    creation: {
+      type: "control/for/type/date-by-boxes",
+      hasStatement: "Fecha de creación:",
+      hasDescription: "Ejemplo de date-by-boxes",
+    },
+    moment: {
+      type: "control/for/type/moment-picker",
+      hasStatement: "Momento de moment picker:",
+      hasDescription: "Ejemplo de control de moment-picker",
+    },
+    day: {
+      type: "control/for/type/day-picker",
+      hasStatement: "Fecha de day picker:",
+      hasDescription: "Ejemplo de control de day-picker",
+    },
+    hour: {
+      type: "control/for/type/hour-picker",
+      hasStatement: "Fecha de hour picker:",
+      hasDescription: "Ejemplo de control de hour-picker",
+    },
     name: {
       type: "control/for/text",
       hasStatement: "Nombre de la persona:",

@@ -415,6 +415,10 @@ hr {
     display: inline-block;
 }
 
+.display_grid {
+    display: grid;
+}
+
 button.bg_danger {
     background: linear-gradient(#eec4c4 45%, #d3b6b6 45%, #d9b1b1);
 }

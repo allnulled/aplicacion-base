@@ -97,6 +97,7 @@ table>thead>tr>* {
     padding: 0 8px;
     position: sticky;
     top: 0;
+    /* Esto es para joder las tables, porque hay una forma de escribir tables, y tienes que acordarte */
     display: grid;
     align-content: center;
 }

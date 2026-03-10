@@ -15,7 +15,7 @@ module.exports = {
     data: function() {
       trace("@compilable/control/trait/for/getValue.data");
       return {
-        
+        value: undefined,
       };
     },
     methods: {
