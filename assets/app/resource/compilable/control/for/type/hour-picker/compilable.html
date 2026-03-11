@@ -7,43 +7,65 @@
         <slot></slot>
     </nwt-control-partial-for-statement>
     <div v-if="isShowingControl">
+        <input type="text" class="width_100" disabled="true" :value="getSelectedHourFormatted()" />
         <div class="flex_row centered">
             <div class="flex_1">
                 <div class="clock for_hours">
-                    <span v-on:click="selectHour" style="--i:1">1</span>
-                    <span v-on:click="selectHour" style="--i:2">2</span>
-                    <span v-on:click="selectHour" style="--i:3">3</span>
-                    <span v-on:click="selectHour" style="--i:4">4</span>
-                    <span v-on:click="selectHour" style="--i:5">5</span>
-                    <span v-on:click="selectHour" style="--i:6">6</span>
-                    <span v-on:click="selectHour" style="--i:7">7</span>
-                    <span v-on:click="selectHour" style="--i:8">8</span>
-                    <span v-on:click="selectHour" style="--i:9">9</span>
-                    <span v-on:click="selectHour" style="--i:10">10</span>
-                    <span v-on:click="selectHour" style="--i:11">11</span>
-                    <span v-on:click="selectHour" style="--i:12">12</span>
+                    <template v-if="selectedHourRange === 'am'">
+                        <span :class="{active:selectedHour === 1}" v-on:click="selectHour" style="--i:1">1</span>
+                        <span :class="{active:selectedHour === 2}" v-on:click="selectHour" style="--i:2">2</span>
+                        <span :class="{active:selectedHour === 3}" v-on:click="selectHour" style="--i:3">3</span>
+                        <span :class="{active:selectedHour === 4}" v-on:click="selectHour" style="--i:4">4</span>
+                        <span :class="{active:selectedHour === 5}" v-on:click="selectHour" style="--i:5">5</span>
+                        <span :class="{active:selectedHour === 6}" v-on:click="selectHour" style="--i:6">6</span>
+                        <span :class="{active:selectedHour === 7}" v-on:click="selectHour" style="--i:7">7</span>
+                        <span :class="{active:selectedHour === 8}" v-on:click="selectHour" style="--i:8">8</span>
+                        <span :class="{active:selectedHour === 9}" v-on:click="selectHour" style="--i:9">9</span>
+                        <span :class="{active:selectedHour === 10}" v-on:click="selectHour" style="--i:10">10</span>
+                        <span :class="{active:selectedHour === 11}" v-on:click="selectHour" style="--i:11">11</span>
+                        <span :class="{active:selectedHour === 12}" v-on:click="selectHour" style="--i:12">12</span>
+                    </template>
+                    <template v-else-if="selectedHourRange === 'pm'">
+                        <span :class="{active:selectedHour === 13}" v-on:click="selectHour" style="--i:1">13</span>
+                        <span :class="{active:selectedHour === 14}" v-on:click="selectHour" style="--i:2">14</span>
+                        <span :class="{active:selectedHour === 15}" v-on:click="selectHour" style="--i:3">15</span>
+                        <span :class="{active:selectedHour === 16}" v-on:click="selectHour" style="--i:4">16</span>
+                        <span :class="{active:selectedHour === 17}" v-on:click="selectHour" style="--i:5">17</span>
+                        <span :class="{active:selectedHour === 18}" v-on:click="selectHour" style="--i:6">18</span>
+                        <span :class="{active:selectedHour === 19}" v-on:click="selectHour" style="--i:7">19</span>
+                        <span :class="{active:selectedHour === 20}" v-on:click="selectHour" style="--i:8">20</span>
+                        <span :class="{active:selectedHour === 21}" v-on:click="selectHour" style="--i:9">21</span>
+                        <span :class="{active:selectedHour === 22}" v-on:click="selectHour" style="--i:10">22</span>
+                        <span :class="{active:selectedHour === 23}" v-on:click="selectHour" style="--i:11">23</span>
+                        <span :class="{active:selectedHour === 0}" v-on:click="selectHour" style="--i:12">0</span>
+                    </template>
                     <div class="center">
-                        <button class="mini" :class="{active: false}">AM</button>
-                        <span v-on:click="selectHour" style="min-width:4px;"></span>
-                        <button class="mini" :class="{active: false}">PM</button>
+                        <button :class="{active:selectedHourRange === 'am'}" v-on:click="selectAm" class="mini">AM</button>
+                        <span style="min-width:4px;"></span>
+                        <button :class="{active:selectedHourRange === 'pm'}" v-on:click="selectPm" class="mini">PM</button>
                     </div>
                 </div>
             </div>
             <div class="flex_1" style="min-width:20px;"></div>
             <div class="flex_1">
                 <div class="clock for_minutes">
-                    <span v-on:click="selectMinute" style="--i:1">5</span>
-                    <span v-on:click="selectMinute" style="--i:2">10</span>
-                    <span v-on:click="selectMinute" style="--i:3">15</span>
-                    <span v-on:click="selectMinute" style="--i:4">20</span>
-                    <span v-on:click="selectMinute" style="--i:5">25</span>
-                    <span v-on:click="selectMinute" style="--i:6">30</span>
-                    <span v-on:click="selectMinute" style="--i:7">35</span>
-                    <span v-on:click="selectMinute" style="--i:8">40</span>
-                    <span v-on:click="selectMinute" style="--i:9">45</span>
-                    <span v-on:click="selectMinute" style="--i:10">50</span>
-                    <span v-on:click="selectMinute" style="--i:11">55</span>
-                    <span v-on:click="selectMinute" style="--i:12">0</span>
+                    <span :class="{active:selectedMinute === 5}" v-on:click="selectMinute" style="--i:1">5</span>
+                    <span :class="{active:selectedMinute === 10}" v-on:click="selectMinute" style="--i:2">10</span>
+                    <span :class="{active:selectedMinute === 15}" v-on:click="selectMinute" style="--i:3">15</span>
+                    <span :class="{active:selectedMinute === 20}" v-on:click="selectMinute" style="--i:4">20</span>
+                    <span :class="{active:selectedMinute === 25}" v-on:click="selectMinute" style="--i:5">25</span>
+                    <span :class="{active:selectedMinute === 30}" v-on:click="selectMinute" style="--i:6">30</span>
+                    <span :class="{active:selectedMinute === 35}" v-on:click="selectMinute" style="--i:7">35</span>
+                    <span :class="{active:selectedMinute === 40}" v-on:click="selectMinute" style="--i:8">40</span>
+                    <span :class="{active:selectedMinute === 45}" v-on:click="selectMinute" style="--i:9">45</span>
+                    <span :class="{active:selectedMinute === 50}" v-on:click="selectMinute" style="--i:10">50</span>
+                    <span :class="{active:selectedMinute === 55}" v-on:click="selectMinute" style="--i:11">55</span>
+                    <span :class="{active:selectedMinute === 0}" v-on:click="selectMinute" style="--i:12">0</span>
+                    <div class="center">
+                        <button v-on:click="decreaseMinute" class="mini">🔽</button>
+                        <span style="min-width:4px;"></span>
+                        <button v-on:click="increaseMinute" class="mini">🔼</button>
+                    </div>
                 </div>
             </div>
             <div class="flex_100"></div>

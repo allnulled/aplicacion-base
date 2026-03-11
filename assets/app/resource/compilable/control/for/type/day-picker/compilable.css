@@ -22,6 +22,7 @@
     color: white;
 }
 
+.no_table.calendar > .thead > .row > .cell,
 .no_table.calendar > .tbody > .row > .cell {
     min-height: 21px;
     display: flex;
@@ -32,4 +33,19 @@
 .no_table.calendar > .tbody > .row > .cell:hover {
     background-color: #DDD;
     cursor: pointer;
+}
+
+.no_table.calendar > .tbody > .row > .cell.inactive {
+    color: #BBB;
+}
+
+.no_table.calendar > .tbody > .row > .cell.inactive:hover {
+    background-color: inherit;
+    cursor: pointer;
+}
+
+.no_table.calendar > .tbody > .row > .cell.active {
+    background-color: #709dd2;
+    color: white;
+    font-weight: bold;
 }

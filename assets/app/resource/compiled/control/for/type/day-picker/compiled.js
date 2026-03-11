@@ -56,22 +56,22 @@ NwtResource.define({
               <slot></slot>
           </nwt-control-partial-for-statement>
           <div class="calendar_container" v-if="isShowingControl">
-              <div class="flex_row">
+              <div class="flex_row centered">
                   <div class="flex_1">
-                      <button class="mini fluid width_100">◀️</button>
+                      <button class="mini fluid width_100" v-on:click="goToPreviousYear">◀️</button>
                   </div>
                   <div class="flex_100 text_align_center">
                       {{ dateForMonth.getFullYear() }}
                   </div>
                   <div class="flex_1">
-                      <button class="mini fluid width_100">▶️</button>
+                      <button class="mini fluid width_100" v-on:click="goToNextYear">▶️</button>
                   </div>
       
                   <div class="flex_1">
                       <button class="mini fluid width_100" v-on:click="goToPreviousMonth">◀️</button>
                   </div>
                   <div class="flex_100 text_align_center">
-                      {{ dateForMonth.toLocaleDateString(undefined, { month: "long"} ) }}
+                      {{ $nwt.Utils.capitalize(dateForMonth.toLocaleDateString(undefined, { month: "long"} )) }}
                   </div>
                   <div class="flex_1">
                       <button class="mini fluid width_100" v-on:click="goToNextMonth">▶️</button>
@@ -91,7 +91,14 @@ NwtResource.define({
                   </div>
                   <div class="tbody">
                       <div class="row" v-for="week, weekIndex in cellsForMonth" v-bind:key="'week_' + weekIndex">
-                          <div class="cell" v-for="cell, cellIndex in week" v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex">
+                          <div class="cell"
+                              :class="{
+                                  inactive: cell.notSameMonth,
+                                  active: (!cell.notSameMonth) && (selectedCell) && (selectedCell.day === cell.day) && (selectedCell.month === cell.month),
+                              }"
+                              v-for="cell, cellIndex in week"
+                              v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex"
+                              v-on:click="() => cell.notSameMonth ? 0 : selectCell(cell)">
                               {{ cell.day }}
                           </div>
                       </div>
@@ -120,7 +127,7 @@ NwtResource.define({
       Object.assign(finalData, (function() {
         return {
           dateForMonth: new Date(),
-          selectedDate: undefined,
+          selectedCell: undefined,
         };
       }).call(this));
       return finalData;
@@ -279,6 +286,22 @@ NwtResource.define({
       "goToNextMonth": function() {
         trace("NwtControlForTypeDayPicker.methods.goToNextMonth");
         this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() + 1));
+      },
+      "goToPreviousYear": function() {
+        trace("NwtControlForTypeDayPicker.methods.goToPreviousYear");
+        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() - 1));
+      },
+      "goToNextYear": function() {
+        trace("NwtControlForTypeDayPicker.methods.goToNextYear");
+        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() + 1));
+      },
+      "selectCell": function(cell) {
+        trace("NwtControlForTypeDayPicker.methods.selectCell");
+        if (cell === this.selectedCell) {
+          this.selectedCell = undefined;
+        } else {
+          this.selectedCell = cell;
+        }
       }
     },
     computed: {
@@ -299,6 +322,7 @@ NwtResource.define({
           for (let i = 0; i < 7; i++) {
             week.push({
               month: cursor.getMonth(),
+              notSameMonth: cursor.getMonth() !== month,
               day: cursor.getDate()
             });
             cursor.setDate(cursor.getDate() + 1);

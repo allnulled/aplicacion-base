@@ -1,5 +1,5 @@
 NwtResource.define({
-  id: "control/for/type/hour-picker",
+  id: "control/for/type/moment-picker",
   apis: ["control", "view", "validation"],
   inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
   traits: {},
@@ -30,42 +30,26 @@ NwtResource.define({
       "required": true
     }
   },
-  subtypeOf: "text",
+  subtypeOf: "structure",
   compileView: true,
   control: {
     "schema": {
-      "year": {
-        "type": "control/for/text",
-        "hasStatement": "Año de creación"
-      },
-      "month": {
-        "type": "control/for/text",
-        "hasStatement": "Mes de creación"
-      },
       "day": {
-        "type": "control/for/text",
-        "hasStatement": "Día de creación"
+        "type": "control/for/type/day-picker",
+        "hasStatement": "Día"
       },
       "hour": {
-        "type": "control/for/text",
-        "hasStatement": "Hora de creación"
-      },
-      "minute": {
-        "type": "control/for/text",
-        "hasStatement": "Minuto de creación"
-      },
-      "second": {
-        "type": "control/for/text",
-        "hasStatement": "Segundo de creación"
+        "type": "control/for/type/hour-picker",
+        "hasStatement": "Hora"
       }
     },
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
-      trace("@compilable/control/for/type/hour-picker.control.onValidate");
-      console.log("Validation at resource-level on control/for/type/hour-picker");
+      trace("@compilable/control/for/type/moment-picker.control.onValidate");
+      console.log("Validation at resource-level on control/for/type/moment-picker");
     }
   },
   view: {
-    name: "NwtControlForTypeHourPicker",
+    name: "NwtControlForTypeMomentPicker",
     props: {
       "settings": {
         "type": Object,
@@ -73,7 +57,7 @@ NwtResource.define({
       }
     },
     template: `
-      <div class="nwt_control_for_type_date_by_boxes">
+      <div class="nwt_control_for_type_date_by_moment_picker">
           <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
@@ -82,68 +66,18 @@ NwtResource.define({
               <slot></slot>
           </nwt-control-partial-for-statement>
           <div v-if="isShowingControl">
-              <input type="text" class="width_100" disabled="true" :value="getSelectedHourFormatted()" />
-              <div class="flex_row centered">
-                  <div class="flex_1">
-                      <div class="clock for_hours">
-                          <template v-if="selectedHourRange === 'am'">
-                              <span :class="{active:selectedHour === 1}" v-on:click="selectHour" style="--i:1">1</span>
-                              <span :class="{active:selectedHour === 2}" v-on:click="selectHour" style="--i:2">2</span>
-                              <span :class="{active:selectedHour === 3}" v-on:click="selectHour" style="--i:3">3</span>
-                              <span :class="{active:selectedHour === 4}" v-on:click="selectHour" style="--i:4">4</span>
-                              <span :class="{active:selectedHour === 5}" v-on:click="selectHour" style="--i:5">5</span>
-                              <span :class="{active:selectedHour === 6}" v-on:click="selectHour" style="--i:6">6</span>
-                              <span :class="{active:selectedHour === 7}" v-on:click="selectHour" style="--i:7">7</span>
-                              <span :class="{active:selectedHour === 8}" v-on:click="selectHour" style="--i:8">8</span>
-                              <span :class="{active:selectedHour === 9}" v-on:click="selectHour" style="--i:9">9</span>
-                              <span :class="{active:selectedHour === 10}" v-on:click="selectHour" style="--i:10">10</span>
-                              <span :class="{active:selectedHour === 11}" v-on:click="selectHour" style="--i:11">11</span>
-                              <span :class="{active:selectedHour === 12}" v-on:click="selectHour" style="--i:12">12</span>
-                          </template>
-                          <template v-else-if="selectedHourRange === 'pm'">
-                              <span :class="{active:selectedHour === 13}" v-on:click="selectHour" style="--i:1">13</span>
-                              <span :class="{active:selectedHour === 14}" v-on:click="selectHour" style="--i:2">14</span>
-                              <span :class="{active:selectedHour === 15}" v-on:click="selectHour" style="--i:3">15</span>
-                              <span :class="{active:selectedHour === 16}" v-on:click="selectHour" style="--i:4">16</span>
-                              <span :class="{active:selectedHour === 17}" v-on:click="selectHour" style="--i:5">17</span>
-                              <span :class="{active:selectedHour === 18}" v-on:click="selectHour" style="--i:6">18</span>
-                              <span :class="{active:selectedHour === 19}" v-on:click="selectHour" style="--i:7">19</span>
-                              <span :class="{active:selectedHour === 20}" v-on:click="selectHour" style="--i:8">20</span>
-                              <span :class="{active:selectedHour === 21}" v-on:click="selectHour" style="--i:9">21</span>
-                              <span :class="{active:selectedHour === 22}" v-on:click="selectHour" style="--i:10">22</span>
-                              <span :class="{active:selectedHour === 23}" v-on:click="selectHour" style="--i:11">23</span>
-                              <span :class="{active:selectedHour === 0}" v-on:click="selectHour" style="--i:12">0</span>
-                          </template>
-                          <div class="center">
-                              <button :class="{active:selectedHourRange === 'am'}" v-on:click="selectAm" class="mini">AM</button>
-                              <span style="min-width:4px;"></span>
-                              <button :class="{active:selectedHourRange === 'pm'}" v-on:click="selectPm" class="mini">PM</button>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="flex_1" style="min-width:20px;"></div>
-                  <div class="flex_1">
-                      <div class="clock for_minutes">
-                          <span :class="{active:selectedMinute === 5}" v-on:click="selectMinute" style="--i:1">5</span>
-                          <span :class="{active:selectedMinute === 10}" v-on:click="selectMinute" style="--i:2">10</span>
-                          <span :class="{active:selectedMinute === 15}" v-on:click="selectMinute" style="--i:3">15</span>
-                          <span :class="{active:selectedMinute === 20}" v-on:click="selectMinute" style="--i:4">20</span>
-                          <span :class="{active:selectedMinute === 25}" v-on:click="selectMinute" style="--i:5">25</span>
-                          <span :class="{active:selectedMinute === 30}" v-on:click="selectMinute" style="--i:6">30</span>
-                          <span :class="{active:selectedMinute === 35}" v-on:click="selectMinute" style="--i:7">35</span>
-                          <span :class="{active:selectedMinute === 40}" v-on:click="selectMinute" style="--i:8">40</span>
-                          <span :class="{active:selectedMinute === 45}" v-on:click="selectMinute" style="--i:9">45</span>
-                          <span :class="{active:selectedMinute === 50}" v-on:click="selectMinute" style="--i:10">50</span>
-                          <span :class="{active:selectedMinute === 55}" v-on:click="selectMinute" style="--i:11">55</span>
-                          <span :class="{active:selectedMinute === 0}" v-on:click="selectMinute" style="--i:12">0</span>
-                          <div class="center">
-                              <button v-on:click="decreaseMinute" class="mini">🔽</button>
-                              <span style="min-width:4px;"></span>
-                              <button v-on:click="increaseMinute" class="mini">🔼</button>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="flex_100"></div>
+              <div v-for="column, columnName in $options.statically.control.schema"
+                  v-bind:key="'column-' + columnName"
+                  class="pad_left_1">
+                  <component :is="$toolkit.getComponentNameBySettings(column)"
+                      :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
+                      :settings="{
+                          ...column,
+                          isShowingControl: true,
+                          rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
+                          rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
+                          rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
+                      }" />
               </div>
           </div>
           <nwt-control-error-handler :control="this" />
@@ -162,14 +96,6 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.data");
         return {
           value: undefined,
-        };
-      }).call(this));
-      // @COMPILED-BY: control/for/type/hour-picker
-      Object.assign(finalData, (function() {
-        return {
-          selectedHour: 0,
-          selectedMinute: 0,
-          selectedHourRange: "am",
         };
       }).call(this));
       return finalData;
@@ -287,14 +213,14 @@ NwtResource.define({
         });
       },
       "getValueByDom": function() {
-        trace("NwtControlForTypeHourPicker.methods.getValueByDom");
+        trace("NwtControlForTypeMomentPicker.methods.getValueByDom");
         if (!this.$local.control) {
           return this.getValueBySchema();
         }
         return this.$local.control.value;
       },
       "setValueByDom": function(value) {
-        trace("NwtControlForTypeHourPicker.methods.setValueByDom");
+        trace("NwtControlForTypeMomentPicker.methods.setValueByDom");
         if (!this.$local.control) {
           return false;
         }
@@ -304,62 +230,22 @@ NwtResource.define({
         return this.loadValue();
       },
       "saveValue": function() {
-        trace("NwtControlForTypeHourPicker.methods.saveValue");
+        trace("NwtControlForTypeMomentPicker.methods.saveValue");
         const value = this.getValueByDom();
         const indexes = this.getIndexForValue();
         console.log("Saving:", indexes, value);
         this.$toolkit.getRoot().$store.set(indexes, value);
       },
       "loadValue": function() {
-        trace("NwtControlForTypeHourPicker.methods.loadValue");
+        trace("NwtControlForTypeMomentPicker.methods.loadValue");
         if (!this.$local.control) {
           return false;
         }
         this.$local.control.value = this.getValueBySchema();
       },
       "onValidate": function() {
-        trace("NwtControlForTypeHourPicker.methods.onValidate");
-        console.log("Validation at component-level on control/for/type/hour-picker");
-      },
-      "selectHour": function(event) {
-        trace("NwtControlForTypeHourPicker.methods.selectHour");
-        this.selectedHour = parseInt(event.target.textContent);
-      },
-      "selectMinute": function(event) {
-        trace("NwtControlForTypeHourPicker.methods.selectMinute");
-        this.selectedMinute = parseInt(event.target.textContent);
-      },
-      "selectAm": function() {
-        trace("NwtControlForTypeHourPicker.methods.selectAm");
-        this.selectedHourRange = "am";
-      },
-      "selectPm": function() {
-        trace("NwtControlForTypeHourPicker.methods.selectPm");
-        this.selectedHourRange = "pm";
-      },
-      "increaseMinute": function() {
-        trace("NwtControlForTypeHourPicker.methods.increaseMinute");
-        this.selectedMinute++;
-      },
-      "decreaseMinute": function() {
-        trace("NwtControlForTypeHourPicker.methods.decreaseMinute");
-        this.selectedMinute--;
-      },
-      "getSelectedHourFormatted": function() {
-        trace("NwtControlForTypeHourPicker.methods.getSelectedHourFormatted");
-        let out = "";
-        if (typeof this.selectedHour === "number") {
-          out += NwtUtils.padStart(this.selectedHour, 2, '0');
-        } else {
-          out += NwtUtils.padStart(0, 2, '0');
-        }
-        out += ":";
-        if (typeof this.selectedMinute === "number") {
-          out += NwtUtils.padStart(this.selectedMinute, 2, '0');
-        } else {
-          out += NwtUtils.padStart(0, 2, '0');
-        }
-        return out;
+        trace("NwtControlForTypeMomentPicker.methods.onValidate");
+        console.log("Validation at component-level on control/for/type/moment-picker");
       }
     },
     computed: {},
@@ -379,8 +265,8 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/toolkit
       trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
-      // @COMPILED-BY: control/for/type/hour-picker
-      trace("NwtControlForTypeHourPicker.created");
+      // @COMPILED-BY: control/for/type/moment-picker
+      trace("NwtControlForTypeMomentPicker.created");
       NwtVue2.Toolkit.installToolkit(this);
       NwtVue2.Toolkit.installLocal(this);
       this.$local.controls = {};
@@ -404,8 +290,8 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
-      // @COMPILED-BY: control/for/type/hour-picker
-      trace("NwtControlForTypeHourPicker.mounted");
+      // @COMPILED-BY: control/for/type/moment-picker
+      trace("NwtControlForTypeMomentPicker.mounted");
       this.reloadValue();
     },
     beforeDestroy: function() {

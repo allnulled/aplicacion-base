@@ -31,7 +31,9 @@
 }
 
 .clock > span.active {
-    background-color: #1c5a93;
+    background-color: #709dd2;
+    color: white;
+    font-weight: bold;
 }
 
 .clock > div.center {

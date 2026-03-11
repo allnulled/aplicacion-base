@@ -1,6 +1,6 @@
 module.exports = {
   id: "control/for/type/hour-picker",
-  subtypeOf: "structure",
+  subtypeOf: "text",
   compile: true,
   compileView: true,
   apis: [
@@ -68,12 +68,47 @@ module.exports = {
         console.log("Validation at component-level on control/for/type/hour-picker");
       },
       ////////////////////////////////////
-      selectHour: function() {
+      selectHour: function(event) {
         trace("NwtControlForTypeHourPicker.methods.selectHour");
+        this.selectedHour = parseInt(event.target.textContent);
       },
-      selectMinute: function() {
-        trace("NwtControlForTypeMinutePicker.methods.selectMinute");
+      selectMinute: function(event) {
+        trace("NwtControlForTypeHourPicker.methods.selectMinute");
+        this.selectedMinute = parseInt(event.target.textContent);
+      },
+      selectAm: function() {
+        trace("NwtControlForTypeHourPicker.methods.selectAm");
+        this.selectedHourRange = "am";
+      },
+      selectPm: function() {
+        trace("NwtControlForTypeHourPicker.methods.selectPm");
+        this.selectedHourRange = "pm";
+      },
+      increaseMinute: function() {
+        trace("NwtControlForTypeHourPicker.methods.increaseMinute");
+        this.selectedMinute++;
+      },
+      decreaseMinute: function() {
+        trace("NwtControlForTypeHourPicker.methods.decreaseMinute");
+        this.selectedMinute--;
+      },
+      getSelectedHourFormatted: function() {
+        trace("NwtControlForTypeHourPicker.methods.getSelectedHourFormatted");
+        let out = "";
+        if(typeof this.selectedHour === "number") {
+          out += NwtUtils.padStart(this.selectedHour, 2, '0');
+        } else {
+          out += NwtUtils.padStart(0, 2, '0');
+        }
+        out += ":";
+        if(typeof this.selectedMinute === "number") {
+          out += NwtUtils.padStart(this.selectedMinute, 2, '0');
+        } else {
+          out += NwtUtils.padStart(0, 2, '0');
+        }
+        return out;
       }
+      ////////////////////////////////////
     },
     created: function() {
       trace("NwtControlForTypeHourPicker.created");
@@ -84,7 +119,14 @@ module.exports = {
     mounted: function() {
       trace("NwtControlForTypeHourPicker.mounted");
       this.reloadValue();
-    }
+    },
+    data: function() {
+      return {
+        selectedHour: 0,
+        selectedMinute: 0,
+        selectedHourRange: "am",
+      };
+    },
   },
   control: {
     schema: {

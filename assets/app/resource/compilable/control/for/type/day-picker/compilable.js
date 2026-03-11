@@ -76,6 +76,22 @@ module.exports = {
         trace("NwtControlForTypeDayPicker.methods.goToNextMonth");
         this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() + 1));
       },
+      goToPreviousYear: function () {
+        trace("NwtControlForTypeDayPicker.methods.goToPreviousYear");
+        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() - 1));
+      },
+      goToNextYear: function () {
+        trace("NwtControlForTypeDayPicker.methods.goToNextYear");
+        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() + 1));
+      },
+      selectCell: function(cell) {
+        trace("NwtControlForTypeDayPicker.methods.selectCell");
+        if(cell === this.selectedCell) {
+          this.selectedCell = undefined;
+        } else {
+          this.selectedCell = cell;
+        }
+      }
       /////////////////////////////////////
     },
     created: function () {
@@ -92,7 +108,7 @@ module.exports = {
     data: function () {
       return {
         dateForMonth: new Date(),
-        selectedDate: undefined,
+        selectedCell: undefined,
       };
     },
     computed: {
@@ -113,6 +129,7 @@ module.exports = {
           for (let i = 0; i < 7; i++) {
             week.push({
               month: cursor.getMonth(),
+              notSameMonth: cursor.getMonth() !== month,
               day: cursor.getDate()
             });
             cursor.setDate(cursor.getDate() + 1);

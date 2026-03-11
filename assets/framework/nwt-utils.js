@@ -380,6 +380,14 @@
       return text.substr(0,1).toUpperCase() + text.substr(1);
     }
 
+    static padStart(text, len = 2, filler = "0") {
+      let out = "" + text;
+      while(out.length < len) {
+        out = filler + out;
+      }
+      return out;
+    }
+
   };
 
   return NwtUtils;

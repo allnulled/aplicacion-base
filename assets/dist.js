@@ -28333,6 +28333,14 @@ const { lutimesSync } = require("fs-extra");
       return text.substr(0,1).toUpperCase() + text.substr(1);
     }
 
+    static padStart(text, len = 2, filler = "0") {
+      let out = "" + text;
+      while(out.length < len) {
+        out = filler + out;
+      }
+      return out;
+    }
+
   };
 
   return NwtUtils;
@@ -44639,22 +44647,22 @@ NwtResource.define({
               <slot></slot>
           </nwt-control-partial-for-statement>
           <div class="calendar_container" v-if="isShowingControl">
-              <div class="flex_row">
+              <div class="flex_row centered">
                   <div class="flex_1">
-                      <button class="mini fluid width_100">◀️</button>
+                      <button class="mini fluid width_100" v-on:click="goToPreviousYear">◀️</button>
                   </div>
                   <div class="flex_100 text_align_center">
                       {{ dateForMonth.getFullYear() }}
                   </div>
                   <div class="flex_1">
-                      <button class="mini fluid width_100">▶️</button>
+                      <button class="mini fluid width_100" v-on:click="goToNextYear">▶️</button>
                   </div>
       
                   <div class="flex_1">
                       <button class="mini fluid width_100" v-on:click="goToPreviousMonth">◀️</button>
                   </div>
                   <div class="flex_100 text_align_center">
-                      {{ dateForMonth.toLocaleDateString(undefined, { month: "long"} ) }}
+                      {{ $nwt.Utils.capitalize(dateForMonth.toLocaleDateString(undefined, { month: "long"} )) }}
                   </div>
                   <div class="flex_1">
                       <button class="mini fluid width_100" v-on:click="goToNextMonth">▶️</button>
@@ -44674,7 +44682,14 @@ NwtResource.define({
                   </div>
                   <div class="tbody">
                       <div class="row" v-for="week, weekIndex in cellsForMonth" v-bind:key="'week_' + weekIndex">
-                          <div class="cell" v-for="cell, cellIndex in week" v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex">
+                          <div class="cell"
+                              :class="{
+                                  inactive: cell.notSameMonth,
+                                  active: (!cell.notSameMonth) && (selectedCell) && (selectedCell.day === cell.day) && (selectedCell.month === cell.month),
+                              }"
+                              v-for="cell, cellIndex in week"
+                              v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex"
+                              v-on:click="() => cell.notSameMonth ? 0 : selectCell(cell)">
                               {{ cell.day }}
                           </div>
                       </div>
@@ -44703,7 +44718,7 @@ NwtResource.define({
       Object.assign(finalData, (function() {
         return {
           dateForMonth: new Date(),
-          selectedDate: undefined,
+          selectedCell: undefined,
         };
       }).call(this));
       return finalData;
@@ -44862,6 +44877,22 @@ NwtResource.define({
       "goToNextMonth": function() {
         trace("NwtControlForTypeDayPicker.methods.goToNextMonth");
         this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() + 1));
+      },
+      "goToPreviousYear": function() {
+        trace("NwtControlForTypeDayPicker.methods.goToPreviousYear");
+        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() - 1));
+      },
+      "goToNextYear": function() {
+        trace("NwtControlForTypeDayPicker.methods.goToNextYear");
+        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() + 1));
+      },
+      "selectCell": function(cell) {
+        trace("NwtControlForTypeDayPicker.methods.selectCell");
+        if (cell === this.selectedCell) {
+          this.selectedCell = undefined;
+        } else {
+          this.selectedCell = cell;
+        }
       }
     },
     computed: {
@@ -44882,6 +44913,7 @@ NwtResource.define({
           for (let i = 0; i < 7; i++) {
             week.push({
               month: cursor.getMonth(),
+              notSameMonth: cursor.getMonth() !== month,
               day: cursor.getDate()
             });
             cursor.setDate(cursor.getDate() + 1);
@@ -45247,7 +45279,7 @@ NwtResource.define({
       "required": true
     }
   },
-  subtypeOf: "structure",
+  subtypeOf: "text",
   compileView: true,
   control: {
     "schema": {
@@ -45299,43 +45331,65 @@ NwtResource.define({
               <slot></slot>
           </nwt-control-partial-for-statement>
           <div v-if="isShowingControl">
+              <input type="text" class="width_100" disabled="true" :value="getSelectedHourFormatted()" />
               <div class="flex_row centered">
                   <div class="flex_1">
                       <div class="clock for_hours">
-                          <span v-on:click="selectHour" style="--i:1">1</span>
-                          <span v-on:click="selectHour" style="--i:2">2</span>
-                          <span v-on:click="selectHour" style="--i:3">3</span>
-                          <span v-on:click="selectHour" style="--i:4">4</span>
-                          <span v-on:click="selectHour" style="--i:5">5</span>
-                          <span v-on:click="selectHour" style="--i:6">6</span>
-                          <span v-on:click="selectHour" style="--i:7">7</span>
-                          <span v-on:click="selectHour" style="--i:8">8</span>
-                          <span v-on:click="selectHour" style="--i:9">9</span>
-                          <span v-on:click="selectHour" style="--i:10">10</span>
-                          <span v-on:click="selectHour" style="--i:11">11</span>
-                          <span v-on:click="selectHour" style="--i:12">12</span>
+                          <template v-if="selectedHourRange === 'am'">
+                              <span :class="{active:selectedHour === 1}" v-on:click="selectHour" style="--i:1">1</span>
+                              <span :class="{active:selectedHour === 2}" v-on:click="selectHour" style="--i:2">2</span>
+                              <span :class="{active:selectedHour === 3}" v-on:click="selectHour" style="--i:3">3</span>
+                              <span :class="{active:selectedHour === 4}" v-on:click="selectHour" style="--i:4">4</span>
+                              <span :class="{active:selectedHour === 5}" v-on:click="selectHour" style="--i:5">5</span>
+                              <span :class="{active:selectedHour === 6}" v-on:click="selectHour" style="--i:6">6</span>
+                              <span :class="{active:selectedHour === 7}" v-on:click="selectHour" style="--i:7">7</span>
+                              <span :class="{active:selectedHour === 8}" v-on:click="selectHour" style="--i:8">8</span>
+                              <span :class="{active:selectedHour === 9}" v-on:click="selectHour" style="--i:9">9</span>
+                              <span :class="{active:selectedHour === 10}" v-on:click="selectHour" style="--i:10">10</span>
+                              <span :class="{active:selectedHour === 11}" v-on:click="selectHour" style="--i:11">11</span>
+                              <span :class="{active:selectedHour === 12}" v-on:click="selectHour" style="--i:12">12</span>
+                          </template>
+                          <template v-else-if="selectedHourRange === 'pm'">
+                              <span :class="{active:selectedHour === 13}" v-on:click="selectHour" style="--i:1">13</span>
+                              <span :class="{active:selectedHour === 14}" v-on:click="selectHour" style="--i:2">14</span>
+                              <span :class="{active:selectedHour === 15}" v-on:click="selectHour" style="--i:3">15</span>
+                              <span :class="{active:selectedHour === 16}" v-on:click="selectHour" style="--i:4">16</span>
+                              <span :class="{active:selectedHour === 17}" v-on:click="selectHour" style="--i:5">17</span>
+                              <span :class="{active:selectedHour === 18}" v-on:click="selectHour" style="--i:6">18</span>
+                              <span :class="{active:selectedHour === 19}" v-on:click="selectHour" style="--i:7">19</span>
+                              <span :class="{active:selectedHour === 20}" v-on:click="selectHour" style="--i:8">20</span>
+                              <span :class="{active:selectedHour === 21}" v-on:click="selectHour" style="--i:9">21</span>
+                              <span :class="{active:selectedHour === 22}" v-on:click="selectHour" style="--i:10">22</span>
+                              <span :class="{active:selectedHour === 23}" v-on:click="selectHour" style="--i:11">23</span>
+                              <span :class="{active:selectedHour === 0}" v-on:click="selectHour" style="--i:12">0</span>
+                          </template>
                           <div class="center">
-                              <button class="mini" :class="{active: false}">AM</button>
-                              <span v-on:click="selectHour" style="min-width:4px;"></span>
-                              <button class="mini" :class="{active: false}">PM</button>
+                              <button :class="{active:selectedHourRange === 'am'}" v-on:click="selectAm" class="mini">AM</button>
+                              <span style="min-width:4px;"></span>
+                              <button :class="{active:selectedHourRange === 'pm'}" v-on:click="selectPm" class="mini">PM</button>
                           </div>
                       </div>
                   </div>
                   <div class="flex_1" style="min-width:20px;"></div>
                   <div class="flex_1">
                       <div class="clock for_minutes">
-                          <span v-on:click="selectMinute" style="--i:1">5</span>
-                          <span v-on:click="selectMinute" style="--i:2">10</span>
-                          <span v-on:click="selectMinute" style="--i:3">15</span>
-                          <span v-on:click="selectMinute" style="--i:4">20</span>
-                          <span v-on:click="selectMinute" style="--i:5">25</span>
-                          <span v-on:click="selectMinute" style="--i:6">30</span>
-                          <span v-on:click="selectMinute" style="--i:7">35</span>
-                          <span v-on:click="selectMinute" style="--i:8">40</span>
-                          <span v-on:click="selectMinute" style="--i:9">45</span>
-                          <span v-on:click="selectMinute" style="--i:10">50</span>
-                          <span v-on:click="selectMinute" style="--i:11">55</span>
-                          <span v-on:click="selectMinute" style="--i:12">0</span>
+                          <span :class="{active:selectedMinute === 5}" v-on:click="selectMinute" style="--i:1">5</span>
+                          <span :class="{active:selectedMinute === 10}" v-on:click="selectMinute" style="--i:2">10</span>
+                          <span :class="{active:selectedMinute === 15}" v-on:click="selectMinute" style="--i:3">15</span>
+                          <span :class="{active:selectedMinute === 20}" v-on:click="selectMinute" style="--i:4">20</span>
+                          <span :class="{active:selectedMinute === 25}" v-on:click="selectMinute" style="--i:5">25</span>
+                          <span :class="{active:selectedMinute === 30}" v-on:click="selectMinute" style="--i:6">30</span>
+                          <span :class="{active:selectedMinute === 35}" v-on:click="selectMinute" style="--i:7">35</span>
+                          <span :class="{active:selectedMinute === 40}" v-on:click="selectMinute" style="--i:8">40</span>
+                          <span :class="{active:selectedMinute === 45}" v-on:click="selectMinute" style="--i:9">45</span>
+                          <span :class="{active:selectedMinute === 50}" v-on:click="selectMinute" style="--i:10">50</span>
+                          <span :class="{active:selectedMinute === 55}" v-on:click="selectMinute" style="--i:11">55</span>
+                          <span :class="{active:selectedMinute === 0}" v-on:click="selectMinute" style="--i:12">0</span>
+                          <div class="center">
+                              <button v-on:click="decreaseMinute" class="mini">🔽</button>
+                              <span style="min-width:4px;"></span>
+                              <button v-on:click="increaseMinute" class="mini">🔼</button>
+                          </div>
                       </div>
                   </div>
                   <div class="flex_100"></div>
@@ -45357,6 +45411,14 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.data");
         return {
           value: undefined,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/for/type/hour-picker
+      Object.assign(finalData, (function() {
+        return {
+          selectedHour: 0,
+          selectedMinute: 0,
+          selectedHourRange: "am",
         };
       }).call(this));
       return finalData;
@@ -45508,11 +45570,45 @@ NwtResource.define({
         trace("NwtControlForTypeHourPicker.methods.onValidate");
         console.log("Validation at component-level on control/for/type/hour-picker");
       },
-      "selectHour": function() {
+      "selectHour": function(event) {
         trace("NwtControlForTypeHourPicker.methods.selectHour");
+        this.selectedHour = parseInt(event.target.textContent);
       },
-      "selectMinute": function() {
-        trace("NwtControlForTypeMinutePicker.methods.selectMinute");
+      "selectMinute": function(event) {
+        trace("NwtControlForTypeHourPicker.methods.selectMinute");
+        this.selectedMinute = parseInt(event.target.textContent);
+      },
+      "selectAm": function() {
+        trace("NwtControlForTypeHourPicker.methods.selectAm");
+        this.selectedHourRange = "am";
+      },
+      "selectPm": function() {
+        trace("NwtControlForTypeHourPicker.methods.selectPm");
+        this.selectedHourRange = "pm";
+      },
+      "increaseMinute": function() {
+        trace("NwtControlForTypeHourPicker.methods.increaseMinute");
+        this.selectedMinute++;
+      },
+      "decreaseMinute": function() {
+        trace("NwtControlForTypeHourPicker.methods.decreaseMinute");
+        this.selectedMinute--;
+      },
+      "getSelectedHourFormatted": function() {
+        trace("NwtControlForTypeHourPicker.methods.getSelectedHourFormatted");
+        let out = "";
+        if (typeof this.selectedHour === "number") {
+          out += NwtUtils.padStart(this.selectedHour, 2, '0');
+        } else {
+          out += NwtUtils.padStart(0, 2, '0');
+        }
+        out += ":";
+        if (typeof this.selectedMinute === "number") {
+          out += NwtUtils.padStart(this.selectedMinute, 2, '0');
+        } else {
+          out += NwtUtils.padStart(0, 2, '0');
+        }
+        return out;
       }
     },
     computed: {},
