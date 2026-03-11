@@ -1,6 +1,6 @@
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-03-11T09:07:21.512Z",
+  "generatedAt": "2026-03-11T23:34:56.932Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-basic-dialog-layout/nwt-basic-dialog-layout.css",
@@ -2382,7 +2382,8 @@
         "NwtFramework",
         "NwtEnvironment",
         "NwtCommand",
-        "NwtVue2Toolkit"
+        "NwtVue2Toolkit",
+        "NwtAccessor"
       ]
     }
   ]

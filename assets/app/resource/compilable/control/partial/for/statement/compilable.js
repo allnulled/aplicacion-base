@@ -44,6 +44,10 @@ module.exports = {
         trace("NwtControlPartialForStatement.methods.toggleControl");
         this.control.toggleControl();
         this.control.$forceUpdate(true);
+      },
+      minimizeType: function(typeText) {
+        trace("NwtControlPartialForStatement.methods.minimizeType");
+        return typeText.replace("control/for/type/","").replace("control/for/","");
       }
     },
     created: function() {

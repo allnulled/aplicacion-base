@@ -1,5 +1,5 @@
 NwtResource.define({
-  id: "control/for/type/day-picker",
+  id: "control/for/type/moment-picker",
   apis: ["control", "view", "validation"],
   inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
   traits: {},
@@ -30,16 +30,26 @@ NwtResource.define({
       "required": true
     }
   },
-  subtypeOf: "text",
+  subtypeOf: "structure",
   compileView: true,
   control: {
+    "schema": {
+      "day": {
+        "type": "control/for/type/day-picker",
+        "hasStatement": "Día"
+      },
+      "hour": {
+        "type": "control/for/type/hour-picker",
+        "hasStatement": "Hora"
+      }
+    },
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
-      trace("@compilable/control/for/type/day-picker.control.onValidate");
-      console.log("Validation at resource-level on control/for/type/day-picker");
+      trace("@compilable/control/for/type/moment-picker.control.onValidate");
+      console.log("Validation at resource-level on control/for/type/moment-picker");
     }
   },
   view: {
-    name: "NwtControlForTypeDayPicker",
+    name: "NwtControlForTypeMomentPicker",
     props: {
       "settings": {
         "type": Object,
@@ -47,17 +57,30 @@ NwtResource.define({
       }
     },
     template: `
-      <div class="nwt_control_for_type_day_picker">
+      <div class="nwt_control_for_type_date_by_moment_picker">
+          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
                   <slot name="hideable"></slot>
               </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
-          <template v-if="isShowingControl">
-              <nwt-view-for-type-day-picker :settings="settings" />
-              <nwt-control-error-handler :control="this" />
-          </template>
+          <div v-if="isShowingControl">
+              <div v-for="column, columnName in $options.statically.control.schema"
+                  v-bind:key="'column-' + columnName"
+                  class="pad_left_1">
+                  <component :is="$toolkit.getComponentNameBySettings(column)"
+                      :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
+                      :settings="{
+                          ...column,
+                          isShowingControl: true,
+                          rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
+                          rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
+                          rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
+                      }" />
+              </div>
+          </div>
+          <nwt-control-error-handler :control="this" />
       </div>`,
     data: function() {
       const finalData = {};
@@ -73,13 +96,6 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.data");
         return {
           value: undefined,
-        };
-      }).call(this));
-      // @COMPILED-BY: control/for/type/day-picker
-      Object.assign(finalData, (function() {
-        return {
-          dateForMonth: new Date(),
-          selectedCell: undefined,
         };
       }).call(this));
       return finalData;
@@ -197,14 +213,14 @@ NwtResource.define({
         });
       },
       "getValueByDom": function() {
-        trace("NwtControlForTypeDayPicker.methods.getValueByDom");
+        trace("NwtControlForTypeMomentPicker.methods.getValueByDom");
         if (!this.$local.control) {
           return this.getValueBySchema();
         }
         return this.$local.control.value;
       },
       "setValueByDom": function(value) {
-        trace("NwtControlForTypeDayPicker.methods.setValueByDom");
+        trace("NwtControlForTypeMomentPicker.methods.setValueByDom");
         if (!this.$local.control) {
           return false;
         }
@@ -214,91 +230,25 @@ NwtResource.define({
         return this.loadValue();
       },
       "saveValue": function() {
-        trace("NwtControlForTypeDayPicker.methods.saveValue");
+        trace("NwtControlForTypeMomentPicker.methods.saveValue");
         const value = this.getValueByDom();
         const indexes = this.getIndexForValue();
         console.log("Saving:", indexes, value);
         this.$toolkit.getRoot().$store.set(indexes, value);
       },
       "loadValue": function() {
-        trace("NwtControlForTypeDayPicker.methods.loadValue");
+        trace("NwtControlForTypeMomentPicker.methods.loadValue");
         if (!this.$local.control) {
           return false;
         }
         this.$local.control.value = this.getValueBySchema();
       },
       "onValidate": function() {
-        trace("NwtControlForTypeDayPicker.methods.onValidate");
-        console.log("Validation at component-level on control/for/type/day-picker");
-      },
-      "goToPreviousMonth": function() {
-        trace("NwtControlForTypeDayPicker.methods.goToPreviousMonth");
-        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() - 1));
-      },
-      "goToNextMonth": function() {
-        trace("NwtControlForTypeDayPicker.methods.goToNextMonth");
-        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() + 1));
-      },
-      "goToPreviousYear": function() {
-        trace("NwtControlForTypeDayPicker.methods.goToPreviousYear");
-        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() - 1));
-      },
-      "goToNextYear": function() {
-        trace("NwtControlForTypeDayPicker.methods.goToNextYear");
-        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() + 1));
-      },
-      "selectCell": function(cell) {
-        trace("NwtControlForTypeDayPicker.methods.selectCell");
-        if (cell === this.selectedCell) {
-          this.selectedCell = undefined;
-        } else {
-          this.selectedCell = cell;
-        }
-      },
-      "getSelectedDayFormatted": function() {
-        trace("NwtControlForTypeDayPicker.methods.getSelectedDayFormatted");
-        let out = "none";
-        if (this.selectedCell) {
-          const year = this.selectedCell.year;
-          const month = this.selectedCell.month;
-          const day = this.selectedCell.day;
-          out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
-        }
-        return out;
+        trace("NwtControlForTypeMomentPicker.methods.onValidate");
+        console.log("Validation at component-level on control/for/type/moment-picker");
       }
     },
-    computed: {
-      "cellsForMonth": function() {
-        const currentMonth = this.dateForMonth;
-        const year = currentMonth.getFullYear();
-        const month = currentMonth.getMonth();
-        const firstOfMonth = new Date(year, month, 1);
-        const lastOfMonth = new Date(year, month + 1, 0);
-        const cells = [];
-        // JS: domingo=0 ... sábado=6 y queremos lunes=0
-        const day = (firstOfMonth.getDay() + 6) % 7;
-        const startDate = new Date(firstOfMonth);
-        startDate.setDate(firstOfMonth.getDate() - day);
-        const cursor = new Date(startDate);
-        while (true) {
-          const week = [];
-          for (let i = 0; i < 7; i++) {
-            week.push({
-              year: cursor.getFullYear(),
-              month: cursor.getMonth(),
-              notSameMonth: cursor.getMonth() !== month,
-              day: cursor.getDate()
-            });
-            cursor.setDate(cursor.getDate() + 1);
-          }
-          cells.push(week);
-          if (cursor > lastOfMonth && cursor.getDay() === 1) {
-            break;
-          }
-        }
-        return cells;
-      }
-    },
+    computed: {},
     watch: {
       "value": function(newValue, oldValue) {
         trace("@compilable/control/trait/for/getValue.watch.value");
@@ -315,8 +265,8 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/toolkit
       trace("@compilable/control/trait/for/toolkit.created");
       NwtVue2.Toolkit.installToolkit(this);
-      // @COMPILED-BY: control/for/type/day-picker
-      trace("NwtControlForTypeDayPicker.created");
+      // @COMPILED-BY: control/for/type/moment-picker
+      trace("NwtControlForTypeMomentPicker.created");
       NwtVue2.Toolkit.installToolkit(this);
       NwtVue2.Toolkit.installLocal(this);
       this.$local.controls = {};
@@ -340,8 +290,8 @@ NwtResource.define({
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
       NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
-      // @COMPILED-BY: control/for/type/day-picker
-      trace("NwtControlForTypeDayPicker.mounted");
+      // @COMPILED-BY: control/for/type/moment-picker
+      trace("NwtControlForTypeMomentPicker.mounted");
       this.reloadValue();
     },
     beforeDestroy: function() {

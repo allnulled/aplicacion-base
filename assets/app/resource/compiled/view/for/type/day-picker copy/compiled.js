@@ -48,16 +48,65 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_type_day_picker">
+          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
                   <slot name="hideable"></slot>
               </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
-          <template v-if="isShowingControl">
-              <nwt-view-for-type-day-picker :settings="settings" />
-              <nwt-control-error-handler :control="this" />
-          </template>
+          <div class="calendar_container" v-if="isShowingControl">
+              <input type="text" class="width_100" disabled="true" :value="getSelectedDayFormatted()" />
+              <div class="flex_row centered">
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToPreviousYear">◀️</button>
+                  </div>
+                  <div class="flex_100 text_align_center">
+                      {{ dateForMonth.getFullYear() }}
+                  </div>
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToNextYear">▶️</button>
+                  </div>
+      
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToPreviousMonth">◀️</button>
+                  </div>
+                  <div class="flex_100 text_align_center">
+                      {{ $nwt.Utils.capitalize(dateForMonth.toLocaleDateString(undefined, { month: "long"} )) }}
+                  </div>
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToNextMonth">▶️</button>
+                  </div>
+              </div>
+              <div class="no_table calendar">
+                  <div class="thead">
+                      <div class="row">
+                          <div class="cell">mon</div>
+                          <div class="cell">tue</div>
+                          <div class="cell">wed</div>
+                          <div class="cell">thu</div>
+                          <div class="cell">fri</div>
+                          <div class="cell">sat</div>
+                          <div class="cell">sun</div>
+                      </div>
+                  </div>
+                  <div class="tbody">
+                      <div class="row" v-for="week, weekIndex in cellsForMonth" v-bind:key="'week_' + weekIndex">
+                          <div class="cell"
+                              :class="{
+                                  inactive: cell.notSameMonth,
+                                  active: (!cell.notSameMonth) && (selectedCell) && (selectedCell.day === cell.day) && (selectedCell.month === cell.month),
+                              }"
+                              v-for="cell, cellIndex in week"
+                              v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex"
+                              v-on:click="() => cell.notSameMonth ? 0 : selectCell(cell)">
+                              {{ cell.day }}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <nwt-control-error-handler :control="this" />
       </div>`,
     data: function() {
       const finalData = {};

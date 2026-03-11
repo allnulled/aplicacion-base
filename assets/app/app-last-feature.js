@@ -13,7 +13,7 @@ Iniciar_test: {
   Con_el_form_maker: {
     // break Con_el_form_maker;
     await NwtDomAutomator.abrirTestsDeLaAplicacion();
-    await NwtTimer.timeout(100);
+    await NwtTimer.timeout(400);
     NwtDomAutomator.find(document.body, "*", `nwt » api » ${TEST_ID}. `)[0].parentElement.previousElementSibling.children[0].click();
     NwtDomAutomator.followTheRabbit();
   }

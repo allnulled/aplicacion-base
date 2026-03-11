@@ -1,0 +1,27 @@
+<div class="nwt_view_for_type_date_by_moment_picker">
+    <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+    <div class="flex_row centered">
+        <div class="flex_1 no_wrap">
+            📌 Momento: 
+        </div>
+        <div class="flex_100">
+            <input type="text" class="width_100" :disabled="true" :ref="$nwt.Vue2.generateRefCallback(['$local','controls','moment'])" />
+        </div>
+    </div>
+    <nwt-view-for-type-day-picker
+        :settings="{
+            ...settings,
+            onChange: onChangeWrapper()
+        }"
+        :is-attached="true"
+        :ref="$nwt.Vue2.generateRefCallback(['$local', 'controls', 'day'])"
+    />
+    <nwt-view-for-type-hour-picker
+        :settings="{
+            ...settings,
+            onChange: onChangeWrapper()
+        }"
+        :is-attached="true"
+        :ref="$nwt.Vue2.generateRefCallback(['$local', 'controls', 'hour'])"
+    />
+</div>

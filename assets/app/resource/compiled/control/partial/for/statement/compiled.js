@@ -27,7 +27,7 @@ NwtResource.define({
                           <span v-else
                               class="text_decoration_underline">{{ $local.statement }}</span>
                           <span class="type_text">
-                              <span class="control_type_badge">{{ control.$options.statically.subtypeOf }}</span>
+                              <span class="control_type_badge">{{ minimizeType(control.$options.statically.id) }}</span>
                           </span>
                       </span>
                       <span class="description_text"
@@ -103,6 +103,10 @@ NwtResource.define({
         trace("NwtControlPartialForStatement.methods.toggleControl");
         this.control.toggleControl();
         this.control.$forceUpdate(true);
+      },
+      "minimizeType": function(typeText) {
+        trace("NwtControlPartialForStatement.methods.minimizeType");
+        return typeText.replace("control/for/type/", "").replace("control/for/", "");
       }
     },
     computed: {},

@@ -54,3 +54,40 @@ El desarrollo básico requiere de la implicación de las APIs de:
 - `NwtStatic`, carpeta `helpers`, registrando las **funciones estáticas reales** para toda la API
    - `assets/app/static/api/helpers/control/validation/interface.js` como interfaz global común
 
+## Criterio y fundamentos
+
+La idea es que un nuevo tipo siempre requiere de estos 3 ficheros:
+
+- Una NwtResource.
+   - La definición abstracta del tipo
+- Una NwtResourceApi, si tiene
+   - La API satelital para cualquier Resource asociada a este tipo concreto
+   - Una API satelital es una API que interesa que sea globalmente accesible
+   - La mayoría no tiene una API satelital asociada
+- Una NwtStatic, si tiene, que debería
+   - La API estática que tiene todos los métodos de interés finales de la API
+
+El criterio es este porque:
+
+- Con Resource definimos las propiedades abstractas
+- Con ResourceApi definimos las funciones y clases abstractas asociadas
+- Con Static traslandamos la lógica final a nodos satelitales centralizados y reutilizables
+
+El fundamento de implementar esta estrategia final de desarrollo es porque, ahora mismo:
+
+- El proceso de compilación **no hereda** rasgos (*traits*), sino que los hardcodea en la clase final
+   - Estamos escribiendo la misma función en cada clase
+   - No estamos reutilizando los métodos de la lógica final como rasgos lógicos, sino como snippets duplicados
+   - Es útil para nosotros a nivel humano, pero a nivel máquina es un paso atrás
+
+Sin embargo, sí hay 1 fórmula para reutilizar la lógica final, y es: **LowCode.create** + **Static API**. Me explico.
+
+- Si en el `compilable.js` defines los métodos siempre con `LowCode.create("NwtStatic.api.de.mi.tema.mi.metodo")`, consigues:
+   - Satelitizar el acceso de toda la API
+      - Haciendo reutilizable desde cualquier punto de la aplicación cualquier función
+   - No duplicar código con forma de snippets, sino usar herencia lógica mediante igualación de variables
+      - Minimizando la huella de código y maximizando la reutilización de lógica
+
+De esta forma, la duplicación de código desaparece, y se consiguen estas ventajas que a fin de cuentas, interesan a la larga para poder tener más proyección en el código.
+
+

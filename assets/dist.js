@@ -25817,6 +25817,26 @@ const { lutimesSync } = require("fs-extra");
 
     static Toolkit = NwtVue2Toolkit;
 
+    static generateRefCallback(propIndex, mode = "object", arrayPos = undefined) {
+      return function(element) {
+        if(mode === "object") {
+          if(element === null) {
+            NwtAccessor.delete(this, propIndex);
+          } else {
+            NwtAccessor.set(this, propIndex, element);
+          }
+        } else if(mode === "array") {
+          if(element === null) {
+            NwtAccessor.splice(this, propIndex, [arrayPos, 1]);
+          } else {
+            NwtAccessor.push(this, propIndex, element);
+          }
+        } else {
+          throw new Error(`Supported modes are only 'object', 'array' but not «${mode}» on «NwtVue2.generateRefCallback»`);
+        }
+      }
+    }
+
   };
 
   return NwtVue2;
@@ -26474,6 +26494,7 @@ const { lutimesSync } = require("fs-extra");
       SIMPLE_GETTER: {},
       SIMPLE_SETTER: {},
       SIMPLE_MODIFIER: {},
+      SIMPLE_DELETER: {},
     };
 
     static Error = class extends Error {
@@ -26533,6 +26554,11 @@ const { lutimesSync } = require("fs-extra");
             assertion(["string", "number"].includes(typeof selectorId), `Last provided selector at index «${index}» must be string or number but «${typeof selectorId}» was found at index «${currentIndex.join(".") || "[]"}» on selector «${selector.join(".")}» on «NwtAccessor.set»`);
             pivot[selectorId] = extra.payload;
             return pivot[selectorId];
+          } else if (successHandler === NwtAccessor.strategy.SIMPLE_DELETER) {
+            assertion(!["undefined", "boolean", "number", "string"].includes(typeof pivot), `Penultimate property «${currentIndex.concat([]).splice(-2)}» at index «${currentIndex.join(".") || "[]"}» must have accessible properties but it is type «${typeof pivot}» on selector «${selector.join(".")}» on «NwtAccessor.delete»`);
+            assertion(["string", "number"].includes(typeof selectorId), `Last provided selector at index «${index}» must be string or number but «${typeof selectorId}» was found at index «${currentIndex.join(".") || "[]"}» on selector «${selector.join(".")}» on «NwtAccessor.delete»`);
+            delete pivot[selectorId];
+            return true;
           } else if (successHandler === NwtAccessor.strategy.SIMPLE_MODIFIER) {
             assertion(!["undefined", "boolean", "number", "string"].includes(typeof pivot), `Penultimate property «${currentIndex.concat([]).splice(-2)}» at index «${currentIndex.join(".") || "[]"}» must have accessible properties but it is type «${typeof pivot}» on selector «${selector.join(".")}» on «NwtAccessor.modify»`);
             assertion(["string", "number"].includes(typeof selectorId), `Last provided selector at index «${index}» must be string or number but «${typeof selectorId}» was found at index «${currentIndex.join(".") || "[]"}» on selector «${selector.join(".")}» on «NwtAccessor.modify»`);
@@ -26571,6 +26597,11 @@ const { lutimesSync } = require("fs-extra");
     static set(data, selector, payload, errorHandler = NwtAccessor.strategy.THROW_ORIGINAL_ERROR) {
       trace("NwtAccessor.set");
       return this.visit(data, selector, NwtAccessor.strategy.SIMPLE_SETTER, errorHandler, { payload });
+    }
+
+    static delete(data, selector, payload, errorHandler = NwtAccessor.strategy.THROW_ORIGINAL_ERROR) {
+      trace("NwtAccessor.delete");
+      return this.visit(data, selector, NwtAccessor.strategy.SIMPLE_DELETER, errorHandler, { payload });
     }
 
     static has(data, selector) {
@@ -44639,64 +44670,16 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_type_day_picker">
-          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
                   <slot name="hideable"></slot>
               </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
-          <div class="calendar_container" v-if="isShowingControl">
-              <div class="flex_row centered">
-                  <div class="flex_1">
-                      <button class="mini fluid width_100" v-on:click="goToPreviousYear">◀️</button>
-                  </div>
-                  <div class="flex_100 text_align_center">
-                      {{ dateForMonth.getFullYear() }}
-                  </div>
-                  <div class="flex_1">
-                      <button class="mini fluid width_100" v-on:click="goToNextYear">▶️</button>
-                  </div>
-      
-                  <div class="flex_1">
-                      <button class="mini fluid width_100" v-on:click="goToPreviousMonth">◀️</button>
-                  </div>
-                  <div class="flex_100 text_align_center">
-                      {{ $nwt.Utils.capitalize(dateForMonth.toLocaleDateString(undefined, { month: "long"} )) }}
-                  </div>
-                  <div class="flex_1">
-                      <button class="mini fluid width_100" v-on:click="goToNextMonth">▶️</button>
-                  </div>
-              </div>
-              <div class="no_table calendar">
-                  <div class="thead">
-                      <div class="row">
-                          <div class="cell">mon</div>
-                          <div class="cell">tue</div>
-                          <div class="cell">wed</div>
-                          <div class="cell">thu</div>
-                          <div class="cell">fri</div>
-                          <div class="cell">sat</div>
-                          <div class="cell">sun</div>
-                      </div>
-                  </div>
-                  <div class="tbody">
-                      <div class="row" v-for="week, weekIndex in cellsForMonth" v-bind:key="'week_' + weekIndex">
-                          <div class="cell"
-                              :class="{
-                                  inactive: cell.notSameMonth,
-                                  active: (!cell.notSameMonth) && (selectedCell) && (selectedCell.day === cell.day) && (selectedCell.month === cell.month),
-                              }"
-                              v-for="cell, cellIndex in week"
-                              v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex"
-                              v-on:click="() => cell.notSameMonth ? 0 : selectCell(cell)">
-                              {{ cell.day }}
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <nwt-control-error-handler :control="this" />
+          <template v-if="isShowingControl">
+              <nwt-view-for-type-day-picker :settings="settings" />
+              <nwt-control-error-handler :control="this" />
+          </template>
       </div>`,
     data: function() {
       const finalData = {};
@@ -44893,6 +44876,17 @@ NwtResource.define({
         } else {
           this.selectedCell = cell;
         }
+      },
+      "getSelectedDayFormatted": function() {
+        trace("NwtControlForTypeDayPicker.methods.getSelectedDayFormatted");
+        let out = "none";
+        if (this.selectedCell) {
+          const year = this.selectedCell.year;
+          const month = this.selectedCell.month;
+          const day = this.selectedCell.day;
+          out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
+        }
+        return out;
       }
     },
     computed: {
@@ -44912,6 +44906,7 @@ NwtResource.define({
           const week = [];
           for (let i = 0; i < 7; i++) {
             week.push({
+              year: cursor.getFullYear(),
               month: cursor.getMonth(),
               notSameMonth: cursor.getMonth() !== month,
               day: cursor.getDate()
@@ -45282,32 +45277,6 @@ NwtResource.define({
   subtypeOf: "text",
   compileView: true,
   control: {
-    "schema": {
-      "year": {
-        "type": "control/for/text",
-        "hasStatement": "Año de creación"
-      },
-      "month": {
-        "type": "control/for/text",
-        "hasStatement": "Mes de creación"
-      },
-      "day": {
-        "type": "control/for/text",
-        "hasStatement": "Día de creación"
-      },
-      "hour": {
-        "type": "control/for/text",
-        "hasStatement": "Hora de creación"
-      },
-      "minute": {
-        "type": "control/for/text",
-        "hasStatement": "Minuto de creación"
-      },
-      "second": {
-        "type": "control/for/text",
-        "hasStatement": "Segundo de creación"
-      }
-    },
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
       trace("@compilable/control/for/type/hour-picker.control.onValidate");
       console.log("Validation at resource-level on control/for/type/hour-picker");
@@ -45323,79 +45292,16 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_type_date_by_boxes">
-          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
                   <slot name="hideable"></slot>
               </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
-          <div v-if="isShowingControl">
-              <input type="text" class="width_100" disabled="true" :value="getSelectedHourFormatted()" />
-              <div class="flex_row centered">
-                  <div class="flex_1">
-                      <div class="clock for_hours">
-                          <template v-if="selectedHourRange === 'am'">
-                              <span :class="{active:selectedHour === 1}" v-on:click="selectHour" style="--i:1">1</span>
-                              <span :class="{active:selectedHour === 2}" v-on:click="selectHour" style="--i:2">2</span>
-                              <span :class="{active:selectedHour === 3}" v-on:click="selectHour" style="--i:3">3</span>
-                              <span :class="{active:selectedHour === 4}" v-on:click="selectHour" style="--i:4">4</span>
-                              <span :class="{active:selectedHour === 5}" v-on:click="selectHour" style="--i:5">5</span>
-                              <span :class="{active:selectedHour === 6}" v-on:click="selectHour" style="--i:6">6</span>
-                              <span :class="{active:selectedHour === 7}" v-on:click="selectHour" style="--i:7">7</span>
-                              <span :class="{active:selectedHour === 8}" v-on:click="selectHour" style="--i:8">8</span>
-                              <span :class="{active:selectedHour === 9}" v-on:click="selectHour" style="--i:9">9</span>
-                              <span :class="{active:selectedHour === 10}" v-on:click="selectHour" style="--i:10">10</span>
-                              <span :class="{active:selectedHour === 11}" v-on:click="selectHour" style="--i:11">11</span>
-                              <span :class="{active:selectedHour === 12}" v-on:click="selectHour" style="--i:12">12</span>
-                          </template>
-                          <template v-else-if="selectedHourRange === 'pm'">
-                              <span :class="{active:selectedHour === 13}" v-on:click="selectHour" style="--i:1">13</span>
-                              <span :class="{active:selectedHour === 14}" v-on:click="selectHour" style="--i:2">14</span>
-                              <span :class="{active:selectedHour === 15}" v-on:click="selectHour" style="--i:3">15</span>
-                              <span :class="{active:selectedHour === 16}" v-on:click="selectHour" style="--i:4">16</span>
-                              <span :class="{active:selectedHour === 17}" v-on:click="selectHour" style="--i:5">17</span>
-                              <span :class="{active:selectedHour === 18}" v-on:click="selectHour" style="--i:6">18</span>
-                              <span :class="{active:selectedHour === 19}" v-on:click="selectHour" style="--i:7">19</span>
-                              <span :class="{active:selectedHour === 20}" v-on:click="selectHour" style="--i:8">20</span>
-                              <span :class="{active:selectedHour === 21}" v-on:click="selectHour" style="--i:9">21</span>
-                              <span :class="{active:selectedHour === 22}" v-on:click="selectHour" style="--i:10">22</span>
-                              <span :class="{active:selectedHour === 23}" v-on:click="selectHour" style="--i:11">23</span>
-                              <span :class="{active:selectedHour === 0}" v-on:click="selectHour" style="--i:12">0</span>
-                          </template>
-                          <div class="center">
-                              <button :class="{active:selectedHourRange === 'am'}" v-on:click="selectAm" class="mini">AM</button>
-                              <span style="min-width:4px;"></span>
-                              <button :class="{active:selectedHourRange === 'pm'}" v-on:click="selectPm" class="mini">PM</button>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="flex_1" style="min-width:20px;"></div>
-                  <div class="flex_1">
-                      <div class="clock for_minutes">
-                          <span :class="{active:selectedMinute === 5}" v-on:click="selectMinute" style="--i:1">5</span>
-                          <span :class="{active:selectedMinute === 10}" v-on:click="selectMinute" style="--i:2">10</span>
-                          <span :class="{active:selectedMinute === 15}" v-on:click="selectMinute" style="--i:3">15</span>
-                          <span :class="{active:selectedMinute === 20}" v-on:click="selectMinute" style="--i:4">20</span>
-                          <span :class="{active:selectedMinute === 25}" v-on:click="selectMinute" style="--i:5">25</span>
-                          <span :class="{active:selectedMinute === 30}" v-on:click="selectMinute" style="--i:6">30</span>
-                          <span :class="{active:selectedMinute === 35}" v-on:click="selectMinute" style="--i:7">35</span>
-                          <span :class="{active:selectedMinute === 40}" v-on:click="selectMinute" style="--i:8">40</span>
-                          <span :class="{active:selectedMinute === 45}" v-on:click="selectMinute" style="--i:9">45</span>
-                          <span :class="{active:selectedMinute === 50}" v-on:click="selectMinute" style="--i:10">50</span>
-                          <span :class="{active:selectedMinute === 55}" v-on:click="selectMinute" style="--i:11">55</span>
-                          <span :class="{active:selectedMinute === 0}" v-on:click="selectMinute" style="--i:12">0</span>
-                          <div class="center">
-                              <button v-on:click="decreaseMinute" class="mini">🔽</button>
-                              <span style="min-width:4px;"></span>
-                              <button v-on:click="increaseMinute" class="mini">🔼</button>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="flex_100"></div>
-              </div>
-          </div>
-          <nwt-control-error-handler :control="this" />
+          <template v-if="isShowingControl">
+              <nwt-view-for-type-hour-picker :settings="settings" />
+              <nwt-control-error-handler :control="this" />
+          </template>
       </div>`,
     data: function() {
       const finalData = {};
@@ -45411,14 +45317,6 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.data");
         return {
           value: undefined,
-        };
-      }).call(this));
-      // @COMPILED-BY: control/for/type/hour-picker
-      Object.assign(finalData, (function() {
-        return {
-          selectedHour: 0,
-          selectedMinute: 0,
-          selectedHourRange: "am",
         };
       }).call(this));
       return finalData;
@@ -45569,46 +45467,6 @@ NwtResource.define({
       "onValidate": function() {
         trace("NwtControlForTypeHourPicker.methods.onValidate");
         console.log("Validation at component-level on control/for/type/hour-picker");
-      },
-      "selectHour": function(event) {
-        trace("NwtControlForTypeHourPicker.methods.selectHour");
-        this.selectedHour = parseInt(event.target.textContent);
-      },
-      "selectMinute": function(event) {
-        trace("NwtControlForTypeHourPicker.methods.selectMinute");
-        this.selectedMinute = parseInt(event.target.textContent);
-      },
-      "selectAm": function() {
-        trace("NwtControlForTypeHourPicker.methods.selectAm");
-        this.selectedHourRange = "am";
-      },
-      "selectPm": function() {
-        trace("NwtControlForTypeHourPicker.methods.selectPm");
-        this.selectedHourRange = "pm";
-      },
-      "increaseMinute": function() {
-        trace("NwtControlForTypeHourPicker.methods.increaseMinute");
-        this.selectedMinute++;
-      },
-      "decreaseMinute": function() {
-        trace("NwtControlForTypeHourPicker.methods.decreaseMinute");
-        this.selectedMinute--;
-      },
-      "getSelectedHourFormatted": function() {
-        trace("NwtControlForTypeHourPicker.methods.getSelectedHourFormatted");
-        let out = "";
-        if (typeof this.selectedHour === "number") {
-          out += NwtUtils.padStart(this.selectedHour, 2, '0');
-        } else {
-          out += NwtUtils.padStart(0, 2, '0');
-        }
-        out += ":";
-        if (typeof this.selectedMinute === "number") {
-          out += NwtUtils.padStart(this.selectedMinute, 2, '0');
-        } else {
-          out += NwtUtils.padStart(0, 2, '0');
-        }
-        return out;
       }
     },
     computed: {},
@@ -45632,7 +45490,7 @@ NwtResource.define({
       trace("NwtControlForTypeHourPicker.created");
       NwtVue2.Toolkit.installToolkit(this);
       NwtVue2.Toolkit.installLocal(this);
-      this.$local.controls = {};
+      this.$local.control = {};
     },
     mounted: function() {
       // @COMPILED-BY: control/trait/for/getValue
@@ -45708,19 +45566,9 @@ NwtResource.define({
       "required": true
     }
   },
-  subtypeOf: "structure",
+  subtypeOf: "text",
   compileView: true,
   control: {
-    "schema": {
-      "day": {
-        "type": "control/for/type/day-picker",
-        "hasStatement": "Día"
-      },
-      "hour": {
-        "type": "control/for/type/hour-picker",
-        "hasStatement": "Hora"
-      }
-    },
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
       trace("@compilable/control/for/type/moment-picker.control.onValidate");
       console.log("Validation at resource-level on control/for/type/moment-picker");
@@ -45736,29 +45584,16 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_type_date_by_moment_picker">
-          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
                   <slot name="hideable"></slot>
               </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
-          <div v-if="isShowingControl">
-              <div v-for="column, columnName in $options.statically.control.schema"
-                  v-bind:key="'column-' + columnName"
-                  class="pad_left_1">
-                  <component :is="$toolkit.getComponentNameBySettings(column)"
-                      :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
-                      :settings="{
-                          ...column,
-                          isShowingControl: true,
-                          rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
-                          rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
-                          rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
-                      }" />
-              </div>
-          </div>
-          <nwt-control-error-handler :control="this" />
+          <template v-if="isShowingControl">
+              <nwt-view-for-type-moment-picker :settings="settings" />
+              <nwt-control-error-handler :control="this" />
+          </template>
       </div>`,
     data: function() {
       const finalData = {};
@@ -46214,7 +46049,7 @@ NwtResource.define({
                           <span v-else
                               class="text_decoration_underline">{{ $local.statement }}</span>
                           <span class="type_text">
-                              <span class="control_type_badge">{{ control.$options.statically.subtypeOf }}</span>
+                              <span class="control_type_badge">{{ minimizeType(control.$options.statically.id) }}</span>
                           </span>
                       </span>
                       <span class="description_text"
@@ -46290,6 +46125,10 @@ NwtResource.define({
         trace("NwtControlPartialForStatement.methods.toggleControl");
         this.control.toggleControl();
         this.control.$forceUpdate(true);
+      },
+      "minimizeType": function(typeText) {
+        trace("NwtControlPartialForStatement.methods.minimizeType");
+        return typeText.replace("control/for/type/", "").replace("control/for/", "");
       }
     },
     computed: {},
@@ -46331,8 +46170,1202 @@ NwtResource.define({
   },
 });
 
-// @vuebundler[Proyecto_base_001][218]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][218]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compiled.js
+NwtResource.define({
+  id: "view/for/type/day-picker",
+  apis: ["control", "view", "validation"],
+  inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
+  traits: {},
+  settingsSpec: {
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
+    },
+    "initialValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "default": new Date()
+    },
+    "hasFixedValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
+    },
+    "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
+      "type": Array,
+      "required": true
+    },
+    "onChange": {
+      "type": Function,
+      "default": function() {}
+    }
+  },
+  subtypeOf: "text",
+  compileView: true,
+  control: {
+    "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
+      trace("@compilable/view/for/type/day-picker.control.onValidate");
+      console.log("Validation at resource-level on view/for/type/day-picker");
+    }
+  },
+  view: {
+    name: "NwtViewForTypeDayPicker",
+    props: {
+      "settings": {
+        "type": Object,
+        "required": true
+      },
+      "isAttached": {
+        "type": Boolean,
+        "default": false
+      }
+    },
+    template: `
+      <div class="nwt_view_for_type_day_picker">
+          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+          <div class="calendar_container" v-if="settings.isShowingControl">
+              <div class="flex_row centered" v-if="!isAttached">
+                  <div class="flex_1 no_wrap">
+                      📌 Día: 
+                  </div>
+                  <div class="flex_100">
+                      <input type="text" class="width_100" :disabled="true" :ref="$nwt.Vue2.generateRefCallback(['$local','control'])" :value="getSelectedDayFormatted()" />
+                  </div>
+              </div>
+              <div class="flex_row centered">
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToPreviousYear">◀️</button>
+                  </div>
+                  <div class="flex_100 text_align_center">
+                      {{ dateForMonth.getFullYear() }}
+                  </div>
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToNextYear">▶️</button>
+                  </div>
+      
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToPreviousMonth">◀️</button>
+                  </div>
+                  <div class="flex_100 text_align_center">
+                      {{ $nwt.Utils.capitalize(dateForMonth.toLocaleDateString(undefined, { month: "long"} )) }}
+                  </div>
+                  <div class="flex_1">
+                      <button class="mini fluid width_100" v-on:click="goToNextMonth">▶️</button>
+                  </div>
+              </div>
+              <div class="no_table calendar">
+                  <div class="thead">
+                      <div class="row">
+                          <div class="cell">mon</div>
+                          <div class="cell">tue</div>
+                          <div class="cell">wed</div>
+                          <div class="cell">thu</div>
+                          <div class="cell">fri</div>
+                          <div class="cell">sat</div>
+                          <div class="cell">sun</div>
+                      </div>
+                  </div>
+                  <div class="tbody">
+                      <div class="row" v-for="week, weekIndex in cellsForMonth" v-bind:key="'week_' + weekIndex">
+                          <div class="cell"
+                              :class="{
+                                  inactive: cell.notSameMonth,
+                                  active: (!cell.notSameMonth) && (selectedCell) && (selectedCell.day === cell.day) && (selectedCell.month === cell.month) && (selectedCell.year === cell.year),
+                              }"
+                              v-for="cell, cellIndex in week"
+                              v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex"
+                              v-on:click="() => cell.notSameMonth ? 0 : selectCell(cell)">
+                              {{ cell.day }}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <nwt-control-error-handler :control="this" />
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: control/trait/for/showable
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/trait/for/getValue
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/getValue.data");
+        return {
+          value: undefined,
+        };
+      }).call(this));
+      // @COMPILED-BY: view/for/type/day-picker
+      Object.assign(finalData, (function() {
+        return {
+          dateForMonth: new Date(),
+          selectedCell: undefined,
+        };
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getValue": function() {
+        trace("@compilable/control/trait/for/getValue.methods.getValue");
+        const value = NwtStatic.api.control.getValueBySchema(this.settings.value, this.settings.valueIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(value);
+        return formattedValue;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
+      "getValueBySchema": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueBySchema");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(originalValue);
+        return formattedValue;
+      },
+      "setValueBySchema": function(value) {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootValueIndex,
+          value: value,
+        });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
+      },
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
+      "getValueByDom": function() {
+        trace("NwtViewForTypeDayPicker.methods.getValueByDom");
+        return this.getSelectedDayFormatted();
+      },
+      "setValueByDom": function(date) {
+        trace("NwtViewForTypeDayPicker.methods.setValueByDom");
+        this.selectedCell = this.fromDateToCell(date);
+      },
+      "reloadValue": function() {
+        return this.loadValue();
+      },
+      "saveValue": function() {
+        trace("NwtViewForTypeDayPicker.methods.saveValue");
+        const value = this.getValueByDom();
+        const indexes = this.getIndexForValue();
+        console.log("Saving:", indexes, value);
+        this.$toolkit.getRoot().$store.set(indexes, value);
+      },
+      "loadValue": function() {
+        trace("NwtViewForTypeDayPicker.methods.loadValue");
+        if (!this.$local.control) {
+          return false;
+        }
+        const value = this.getValueBySchema();
+        if (value) {
+          this.selectedCell = this.fromDateToCell(value);
+        }
+      },
+      "onValidate": function() {
+        trace("NwtViewForTypeDayPicker.methods.onValidate");
+        console.log("Validation at component-level on view/for/type/day-picker");
+      },
+      "goToPreviousMonth": function() {
+        trace("NwtViewForTypeDayPicker.methods.goToPreviousMonth");
+        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() - 1));
+      },
+      "goToNextMonth": function() {
+        trace("NwtViewForTypeDayPicker.methods.goToNextMonth");
+        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() + 1));
+      },
+      "goToPreviousYear": function() {
+        trace("NwtViewForTypeDayPicker.methods.goToPreviousYear");
+        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() - 1));
+      },
+      "goToNextYear": function() {
+        trace("NwtViewForTypeDayPicker.methods.goToNextYear");
+        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() + 1));
+      },
+      "selectCell": function(cell) {
+        trace("NwtViewForTypeDayPicker.methods.selectCell");
+        if (this.areSameCell(cell, this.selectedCell)) {
+          this.selectedCell = undefined;
+        } else {
+          this.selectedCell = cell;
+        }
+      },
+      "fromDateToCell": function(date) {
+        trace("NwtViewForTypeDayPicker.methods.fromDateToCell");
+        return {
+          year: date.getFullYear(),
+          month: date.getMonth(),
+          day: date.getDate(),
+        };
+      },
+      "areSameCell": function(cell1, cell2) {
+        trace("NwtViewForTypeDayPicker.methods.areSameCell");
+        return cell1.year === cell2.year && cell1.month === cell2.month && cell1.day === cell2.day;
+      },
+      "getSelectedDayFormatted": function() {
+        trace("NwtViewForTypeDayPicker.methods.getSelectedDayFormatted");
+        let out = "none";
+        if (this.selectedCell) {
+          const year = this.selectedCell.year;
+          const month = this.selectedCell.month;
+          const day = this.selectedCell.day;
+          out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
+        }
+        return out;
+      },
+      "onChangeWrapper": function(newValue, oldValue) {
+        trace("NwtViewForTypeDayPicker.methods.onChangeWrapper");
+        const value = this.getSelectedDayFormatted();
+        this.settings.onChange(value, this);
+      }
+    },
+    computed: {
+      "cellsForMonth": function() {
+        const currentMonth = this.dateForMonth;
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+        const firstOfMonth = new Date(year, month, 1);
+        const lastOfMonth = new Date(year, month + 1, 0);
+        const cells = [];
+        // JS: domingo=0 ... sábado=6 y queremos lunes=0
+        const day = (firstOfMonth.getDay() + 6) % 7;
+        const startDate = new Date(firstOfMonth);
+        startDate.setDate(firstOfMonth.getDate() - day);
+        const cursor = new Date(startDate);
+        while (true) {
+          const week = [];
+          for (let i = 0; i < 7; i++) {
+            const cell = {
+              year: cursor.getFullYear(),
+              month: cursor.getMonth(),
+              notSameMonth: cursor.getMonth() !== month,
+              day: cursor.getDate()
+            };
+            week.push(cell);
+            cursor.setDate(cursor.getDate() + 1);
+          }
+          cells.push(week);
+          if (cursor > lastOfMonth && cursor.getDay() === 1) {
+            break;
+          }
+        }
+        return cells;
+      }
+    },
+    watch: {
+      "value": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.value");
+        const propagator = this.settings.onChange || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      },
+      "valueOption": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.valueOption");
+        const propagator = this.settings.onChangeOption || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      },
+      "selectedCell": ["onChangeWrapper"]
+    },
+    created: function() {
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: view/for/type/day-picker
+      trace("NwtViewForTypeDayPicker.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {};
+    },
+    mounted: function() {
+      // @COMPILED-BY: control/trait/for/getValue
+      trace("@compilable/control/trait/for/getValue.mounted");
+      this.value = this.settings.hasFixedValue || this.settings.initialValue;
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
+      // @COMPILED-BY: control/trait/for/settings
+      trace("@compilable/control/trait/for/settings.mounted");
+      NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
+      // @COMPILED-BY: view/for/type/day-picker
+      trace("NwtViewForTypeDayPicker.mounted");
+      this.reloadValue();
+      this.selectedCell = this.settings.initialValue ? this.fromDateToCell(this.settings.initialValue) : this.fromDateToCell(new Date());
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
+    },
+  }
+});
 
-// @vuebundler[Proyecto_base_001][219]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+// @vuebundler[Proyecto_base_001][219]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compilable.css
 
-// @vuebundler[Proyecto_base_001][220]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][220]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compiled.js
+NwtResource.define({
+  id: "view/for/type/hour-picker",
+  apis: ["control", "view", "validation"],
+  inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
+  traits: {},
+  settingsSpec: {
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
+    },
+    "initialValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "default": new Date()
+    },
+    "hasFixedValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
+    },
+    "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
+      "type": Array,
+      "required": true
+    },
+    "onChange": {
+      "type": Function,
+      "default": function() {}
+    }
+  },
+  subtypeOf: "text",
+  compileView: true,
+  control: {
+    "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
+      trace("@compilable/view/for/type/hour-picker.control.onValidate");
+      console.log("Validation at resource-level on view/for/type/hour-picker");
+    }
+  },
+  view: {
+    name: "NwtViewForTypeHourPicker",
+    props: {
+      "settings": {
+        "type": Object,
+        "required": true
+      },
+      "isAttached": {
+        "type": Boolean,
+        "default": false
+      }
+    },
+    template: `
+      <div class="nwt_control_for_type_hour_picker">
+          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+          <div class="hour_picker_container" v-if="settings.isShowingControl">
+              <div class="flex_row centered" v-if="!isAttached">
+                  <div class="flex_1 no_wrap">
+                      📌 Hora: 
+                  </div>
+                  <div class="flex_100">
+                      <input type="text" class="width_100" :disabled="true" :ref="$nwt.Vue2.generateRefCallback(['$local','controls','moment'])" :value="getSelectedHourFormatted()" />
+                  </div>
+              </div>
+              <div class="flex_row centered" style="padding-top: 8px;padding-bottom: 8px;">
+                  <div class="flex_1">
+                      <div class="clock for_hours">
+                          <template v-if="selectedHourRange === 'am'">
+                              <span :class="{active:selectedHour === 1}" v-on:click="selectHour" style="--i:1">1</span>
+                              <span :class="{active:selectedHour === 2}" v-on:click="selectHour" style="--i:2">2</span>
+                              <span :class="{active:selectedHour === 3}" v-on:click="selectHour" style="--i:3">3</span>
+                              <span :class="{active:selectedHour === 4}" v-on:click="selectHour" style="--i:4">4</span>
+                              <span :class="{active:selectedHour === 5}" v-on:click="selectHour" style="--i:5">5</span>
+                              <span :class="{active:selectedHour === 6}" v-on:click="selectHour" style="--i:6">6</span>
+                              <span :class="{active:selectedHour === 7}" v-on:click="selectHour" style="--i:7">7</span>
+                              <span :class="{active:selectedHour === 8}" v-on:click="selectHour" style="--i:8">8</span>
+                              <span :class="{active:selectedHour === 9}" v-on:click="selectHour" style="--i:9">9</span>
+                              <span :class="{active:selectedHour === 10}" v-on:click="selectHour" style="--i:10">10</span>
+                              <span :class="{active:selectedHour === 11}" v-on:click="selectHour" style="--i:11">11</span>
+                              <span :class="{active:selectedHour === 0}" v-on:click="selectHour" style="--i:12">0</span>
+                          </template>
+                          <template v-else-if="selectedHourRange === 'pm'">
+                              <span :class="{active:selectedHour === 13}" v-on:click="selectHour" style="--i:1">13</span>
+                              <span :class="{active:selectedHour === 14}" v-on:click="selectHour" style="--i:2">14</span>
+                              <span :class="{active:selectedHour === 15}" v-on:click="selectHour" style="--i:3">15</span>
+                              <span :class="{active:selectedHour === 16}" v-on:click="selectHour" style="--i:4">16</span>
+                              <span :class="{active:selectedHour === 17}" v-on:click="selectHour" style="--i:5">17</span>
+                              <span :class="{active:selectedHour === 18}" v-on:click="selectHour" style="--i:6">18</span>
+                              <span :class="{active:selectedHour === 19}" v-on:click="selectHour" style="--i:7">19</span>
+                              <span :class="{active:selectedHour === 20}" v-on:click="selectHour" style="--i:8">20</span>
+                              <span :class="{active:selectedHour === 21}" v-on:click="selectHour" style="--i:9">21</span>
+                              <span :class="{active:selectedHour === 22}" v-on:click="selectHour" style="--i:10">22</span>
+                              <span :class="{active:selectedHour === 23}" v-on:click="selectHour" style="--i:11">23</span>
+                              <span :class="{active:selectedHour === 12}" v-on:click="selectHour" style="--i:12">12</span>
+                          </template>
+                          <div class="center">
+                              <button :class="{active:selectedHourRange === 'am'}" v-on:click="selectAm" class="mini">AM</button>
+                              <span style="min-width:4px;"></span>
+                              <button :class="{active:selectedHourRange === 'pm'}" v-on:click="selectPm" class="mini">PM</button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="flex_1" style="min-width:20px;"></div>
+                  <div class="flex_1">
+                      <div class="clock for_minutes">
+                          <span :class="{active:selectedMinute === 5}" v-on:click="selectMinute" style="--i:1">5</span>
+                          <span :class="{active:selectedMinute === 10}" v-on:click="selectMinute" style="--i:2">10</span>
+                          <span :class="{active:selectedMinute === 15}" v-on:click="selectMinute" style="--i:3">15</span>
+                          <span :class="{active:selectedMinute === 20}" v-on:click="selectMinute" style="--i:4">20</span>
+                          <span :class="{active:selectedMinute === 25}" v-on:click="selectMinute" style="--i:5">25</span>
+                          <span :class="{active:selectedMinute === 30}" v-on:click="selectMinute" style="--i:6">30</span>
+                          <span :class="{active:selectedMinute === 35}" v-on:click="selectMinute" style="--i:7">35</span>
+                          <span :class="{active:selectedMinute === 40}" v-on:click="selectMinute" style="--i:8">40</span>
+                          <span :class="{active:selectedMinute === 45}" v-on:click="selectMinute" style="--i:9">45</span>
+                          <span :class="{active:selectedMinute === 50}" v-on:click="selectMinute" style="--i:10">50</span>
+                          <span :class="{active:selectedMinute === 55}" v-on:click="selectMinute" style="--i:11">55</span>
+                          <span :class="{active:selectedMinute === 0}" v-on:click="selectMinute" style="--i:12">0</span>
+                          <div class="center">
+                              <button v-on:click="decreaseMinute" class="mini">🔽</button>
+                              <span style="min-width:4px;"></span>
+                              <button v-on:click="increaseMinute" class="mini">🔼</button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="flex_100"></div>
+              </div>
+          </div>
+          <nwt-control-error-handler :control="this" />
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: control/trait/for/showable
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/trait/for/getValue
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/getValue.data");
+        return {
+          value: undefined,
+        };
+      }).call(this));
+      // @COMPILED-BY: view/for/type/hour-picker
+      Object.assign(finalData, (function() {
+        return {
+          selectedHour: 0,
+          selectedMinute: 0,
+          selectedHourRange: "am",
+        };
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getValue": function() {
+        trace("@compilable/control/trait/for/getValue.methods.getValue");
+        const value = NwtStatic.api.control.getValueBySchema(this.settings.value, this.settings.valueIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(value);
+        return formattedValue;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
+      "getValueBySchema": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueBySchema");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(originalValue);
+        return formattedValue;
+      },
+      "setValueBySchema": function(value) {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootValueIndex,
+          value: value,
+        });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
+      },
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
+      "getValueByDom": function() {
+        trace("NwtViewForTypeHourPicker.methods.getValueByDom");
+        if (!this.$local.control) {
+          return this.getValueBySchema();
+        }
+        return this.$local.control.value;
+      },
+      "setValueByDom": function(value) {
+        trace("NwtViewForTypeHourPicker.methods.setValueByDom");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = value;
+      },
+      "reloadValue": function() {
+        return this.loadValue();
+      },
+      "saveValue": function() {
+        trace("NwtViewForTypeHourPicker.methods.saveValue");
+        const value = this.getValueByDom();
+        const indexes = this.getIndexForValue();
+        console.log("Saving:", indexes, value);
+        this.$toolkit.getRoot().$store.set(indexes, value);
+      },
+      "loadValue": function() {
+        trace("NwtViewForTypeHourPicker.methods.loadValue");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = this.getValueBySchema();
+      },
+      "onValidate": function() {
+        trace("NwtViewForTypeHourPicker.methods.onValidate");
+        console.log("Validation at component-level on view/for/type/hour-picker");
+      },
+      "selectHour": function(event) {
+        trace("NwtViewForTypeHourPicker.methods.selectHour");
+        this.selectedHour = parseInt(event.target.textContent);
+      },
+      "selectMinute": function(event) {
+        trace("NwtViewForTypeHourPicker.methods.selectMinute");
+        this.selectedMinute = parseInt(event.target.textContent);
+      },
+      "selectAm": function() {
+        trace("NwtViewForTypeHourPicker.methods.selectAm");
+        this.selectedHourRange = "am";
+      },
+      "selectPm": function() {
+        trace("NwtViewForTypeHourPicker.methods.selectPm");
+        this.selectedHourRange = "pm";
+      },
+      "increaseMinute": function() {
+        trace("NwtViewForTypeHourPicker.methods.increaseMinute");
+        this.selectedMinute++;
+      },
+      "decreaseMinute": function() {
+        trace("NwtViewForTypeHourPicker.methods.decreaseMinute");
+        this.selectedMinute--;
+      },
+      "getSelectedHourFormatted": function() {
+        trace("NwtViewForTypeHourPicker.methods.getSelectedHourFormatted");
+        let out = "";
+        if (typeof this.selectedHour === "number") {
+          out += NwtUtils.padStart(this.selectedHour, 2, '0');
+        } else {
+          out += NwtUtils.padStart(0, 2, '0');
+        }
+        out += ":";
+        if (typeof this.selectedMinute === "number") {
+          out += NwtUtils.padStart(this.selectedMinute, 2, '0');
+        } else {
+          out += NwtUtils.padStart(0, 2, '0');
+        }
+        return out;
+      },
+      "onChangeWrapper": function(newValue, oldValue) {
+        trace("NwtViewForTypeHourPicker.methods.onChangeWrapper");
+        const value = this.getSelectedHourFormatted();
+        this.settings.onChange(value, this);
+      }
+    },
+    computed: {},
+    watch: {
+      "value": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.value");
+        const propagator = this.settings.onChange || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      },
+      "valueOption": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.valueOption");
+        const propagator = this.settings.onChangeOption || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      },
+      "selectedHour": ["onChangeWrapper"],
+      "selectedMinute": ["onChangeWrapper"],
+      "selectedHourRange": ["onChangeWrapper"]
+    },
+    created: function() {
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: view/for/type/hour-picker
+      trace("NwtViewForTypeHourPicker.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {};
+    },
+    mounted: function() {
+      // @COMPILED-BY: control/trait/for/getValue
+      trace("@compilable/control/trait/for/getValue.mounted");
+      this.value = this.settings.hasFixedValue || this.settings.initialValue;
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
+      // @COMPILED-BY: control/trait/for/settings
+      trace("@compilable/control/trait/for/settings.mounted");
+      NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
+      // @COMPILED-BY: view/for/type/hour-picker
+      trace("NwtViewForTypeHourPicker.mounted");
+      this.reloadValue();
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
+    },
+  }
+});
+
+// @vuebundler[Proyecto_base_001][221]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compilable.css
+
+// @vuebundler[Proyecto_base_001][222]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/moment-picker/compiled.js
+NwtResource.define({
+  id: "view/for/type/moment-picker",
+  apis: ["control", "view", "validation"],
+  inherits: ["control/trait/for/showable", "control/trait/for/getValue", "control/trait/for/toolkit", "control/trait/for/remoteValue", "control/trait/for/remoteSchema", "control/trait/for/remoteComponent", "control/trait/for/settings"],
+  traits: {},
+  settingsSpec: {
+    "isShowingControl": {
+      "type": Boolean,
+      "default": true
+    },
+    "initialValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
+      "default": new Date()
+    },
+    "hasFixedValue": {
+      "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
+    },
+    "rootValueIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootSchemaIndex": {
+      "type": Array,
+      "required": true
+    },
+    "rootComponentIndex": {
+      "type": Array,
+      "required": true
+    },
+    "onChange": {
+      "type": Function,
+      "default": function() {}
+    }
+  },
+  subtypeOf: "text",
+  compileView: true,
+  control: {
+    "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
+      trace("@compilable/view/for/type/moment-picker.control.onValidate");
+      console.log("Validation at resource-level on view/for/type/moment-picker");
+    }
+  },
+  view: {
+    name: "NwtViewForTypeMomentPicker",
+    props: {
+      "settings": {
+        "type": Object,
+        "required": true
+      }
+    },
+    template: `
+      <div class="nwt_view_for_type_date_by_moment_picker">
+          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+          <div class="flex_row centered">
+              <div class="flex_1 no_wrap">
+                  📌 Momento: 
+              </div>
+              <div class="flex_100">
+                  <input type="text" class="width_100" :disabled="true" :ref="$nwt.Vue2.generateRefCallback(['$local','controls','moment'])" />
+              </div>
+          </div>
+          <nwt-view-for-type-day-picker
+              :settings="{
+                  ...settings,
+                  onChange: onChangeWrapper()
+              }"
+              :is-attached="true"
+              :ref="$nwt.Vue2.generateRefCallback(['$local', 'controls', 'day'])"
+          />
+          <nwt-view-for-type-hour-picker
+              :settings="{
+                  ...settings,
+                  onChange: onChangeWrapper()
+              }"
+              :is-attached="true"
+              :ref="$nwt.Vue2.generateRefCallback(['$local', 'controls', 'hour'])"
+          />
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: control/trait/for/showable
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/showable.data");
+        return {
+          isShowingControl: this.settings.isShowingControl,
+        };
+      }).call(this));
+      // @COMPILED-BY: control/trait/for/getValue
+      Object.assign(finalData, (function() {
+        trace("@compilable/control/trait/for/getValue.data");
+        return {
+          value: undefined,
+        };
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "showControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.showControl");
+        this.isShowingControl = true;
+      },
+      "hideControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.hideControl");
+        this.isShowingControl = false;
+      },
+      "toggleControl": function() {
+        trace("@compilable/control/trait/for/showable.methods.toggleControl");
+        this.isShowingControl = !this.isShowingControl;
+      },
+      "getValue": function() {
+        trace("@compilable/control/trait/for/getValue.methods.getValue");
+        const value = NwtStatic.api.control.getValueBySchema(this.settings.value, this.settings.valueIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(value);
+        return formattedValue;
+      },
+      "getComponentNameBySettings": function(...args) {
+        return this.$toolkit.getComponentNameBySettings(...args);
+      },
+      "getIndexForValue": function(...args) {
+        return this.$toolkit.getIndexForValue(...args);
+      },
+      "getFallbackValue": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValue");
+        const fullControlName = `control/for/${this.$options.statically.subtypeOf === "text"}`;
+        return this.getFallbackValueBySchema({
+          ...this.settings,
+          subtypeOf: fullControlName
+        });
+      },
+      "getFallbackValueBySchema": function(settings) {
+        trace("@compilable/control/trait/for/remoteValue.methods.getFallbackValueBySchema");
+        if (settings.hasFallbackValue) {
+          return settings.hasFallbackValue;
+        }
+        if (settings.type === "control/for/text") {
+          return "";
+        } else if (settings.type === "control/for/list") {
+          return [];
+        } else if (settings.type === "control/for/option") {
+          return this.getFallbackValueBySchema(settings.schema);
+        } else if (settings.type === "control/for/structure") {
+          const structureSchema = settings.schema;
+          const output = {};
+          for (let key in structureSchema) {
+            output[key] = this.getFallbackValueBySchema(this.settings.schema[key]);
+          }
+          return output;
+        }
+      },
+      "getValueBySchema": function() {
+        trace("@compilable/control/trait/for/remoteValue.methods.getValueBySchema");
+        if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
+        const indexes = this.getIndexForValue();
+        const fallbackFactory = this.getFallbackValue.bind(this);
+        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedValue = formatterBySettings(originalValue);
+        return formattedValue;
+      },
+      "setValueBySchema": function(value) {
+        trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
+        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
+        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootValueIndex,
+          value: value,
+        });
+      },
+      "rootListenerCallback": function() {
+        this.$forceUpdate(true);
+      },
+      "getIndexForSchema": function(...args) {
+        return this.$toolkit.getIndexForSchema(...args);
+      },
+      "getSchemaByIndex": function() {
+        trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
+        if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
+        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
+        let formattedSchema = formatterBySettings(originalSchema);
+        return formattedSchema;
+      },
+      "setSchemaByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteSchema.methods.setSchemaByIndex");
+        throw new Error("Tu para que quieres setSchemear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootSchemaIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootSchemaIndex,
+          value: value,
+        });
+      },
+      "getIndexForComponent": function(...args) {
+        return this.$toolkit.getIndexForComponent(...args);
+      },
+      "getComponentByIndex": function() {
+        trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
+        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+      },
+      "setComponentByIndex": function(value) {
+        trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
+        throw new Error("Tu para que quieres setComponentear")
+        this.$toolkit.getRoot().$store.set(this.settings.rootComponentIndex, value);
+        this.$toolkit.getRoot().$store.dispatch("set-value", {
+          index: this.settings.rootComponentIndex,
+          value: value,
+        });
+      },
+      "getValueByDom": function() {
+        trace("NwtViewForTypeMomentPicker.methods.getValueByDom");
+        if (!this.$local.control) {
+          return this.getValueBySchema();
+        }
+        return this.$local.control.value;
+      },
+      "setValueByDom": function(value) {
+        trace("NwtViewForTypeMomentPicker.methods.setValueByDom");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = value;
+      },
+      "reloadValue": function() {
+        return this.loadValue();
+      },
+      "saveValue": function() {
+        trace("NwtViewForTypeMomentPicker.methods.saveValue");
+        const value = this.getValueByDom();
+        const indexes = this.getIndexForValue();
+        console.log("Saving:", indexes, value);
+        this.$toolkit.getRoot().$store.set(indexes, value);
+      },
+      "loadValue": function() {
+        trace("NwtViewForTypeMomentPicker.methods.loadValue");
+        if (!this.$local.control) {
+          return false;
+        }
+        this.$local.control.value = this.getValueBySchema();
+      },
+      "onValidate": function() {
+        trace("NwtViewForTypeMomentPicker.methods.onValidate");
+        console.log("Validation at component-level on view/for/type/moment-picker");
+      },
+      "getSelectedMomentFormatted": function() {
+        trace("NwtViewForTypeMomentPicker.methods.getSelectedMomentFormatted");
+        let out = "";
+        const dayCell = this.$local.controls.day.selectedCell;
+        const year = dayCell.year;
+        const month = dayCell.month;
+        const day = dayCell.day;
+        out = `${year}/${NwtUtils.padStart(month, 2, '0')}/${NwtUtils.padStart(day, 2, '0')}`;
+        out += " ";
+        const hour = this.$local.controls.hour.selectedHour;
+        const minute = this.$local.controls.hour.selectedMinute;
+        out += `${NwtUtils.padStart(hour, 2, '0')}:${NwtUtils.padStart(minute, 2, '0')}:00`;
+        return out;
+      },
+      "onChangeWrapper": function() {
+        trace("NwtViewForTypeMomentPicker.methods.onChangeWrapper");
+        const that = this;
+        return function(subvalue, subevent, subcomponent) {
+          const value = that.getSelectedMomentFormatted();
+          Update_ui: {
+            that.$local.controls.moment.value = value;
+          }
+          that.settings.onChange(value, event, that, subcomponent);
+        };
+      }
+    },
+    computed: {},
+    watch: {
+      "value": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.value");
+        const propagator = this.settings.onChange || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      },
+      "valueOption": function(newValue, oldValue) {
+        trace("@compilable/control/trait/for/getValue.watch.valueOption");
+        const propagator = this.settings.onChangeOption || NwtUtils.noop;
+        propagator(newValue, oldValue, this);
+      }
+    },
+    created: function() {
+      // @COMPILED-BY: control/trait/for/toolkit
+      trace("@compilable/control/trait/for/toolkit.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      // @COMPILED-BY: view/for/type/moment-picker
+      trace("NwtViewForTypeMomentPicker.created");
+      NwtVue2.Toolkit.installToolkit(this);
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {
+        day: undefined,
+        hour: undefined,
+        moment: undefined,
+      };
+    },
+    mounted: function() {
+      // @COMPILED-BY: control/trait/for/getValue
+      trace("@compilable/control/trait/for/getValue.mounted");
+      this.value = this.settings.hasFixedValue || this.settings.initialValue;
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-synchronized
+      trace("@compilable/control/trait/for/remoteValue.mounted");
+      Add_listener: {
+        if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+          break Add_listener;
+        }
+        if (!this.$local.rootListenerCallback) {
+          this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
+        }
+        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+      }
+      // @COMPILED-BY: control/trait/for/settings
+      trace("@compilable/control/trait/for/settings.mounted");
+      NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
+      // @COMPILED-BY: view/for/type/moment-picker
+      trace("NwtViewForTypeMomentPicker.mounted");
+      this.reloadValue();
+      window.mmt = this;
+      this.$local.controls.moment.value = this.getSelectedMomentFormatted();
+    },
+    beforeDestroy: function() {
+      // @COMPILED-BY: control/trait/for/remoteValue
+      // @DONE: Self-unsynchronized
+      trace("@compilable/control/trait/for/remoteValue.beforeDestroy");
+      setTimeout(() => {
+        Remove_listener: {
+          if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
+            break Remove_listener;
+          }
+          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
+      }, 0);
+    },
+  }
+});
+
+// @vuebundler[Proyecto_base_001][223]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+
+// @vuebundler[Proyecto_base_001][224]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+
+// @vuebundler[Proyecto_base_001][225]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

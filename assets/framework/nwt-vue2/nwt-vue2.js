@@ -145,6 +145,26 @@
 
     static Toolkit = NwtVue2Toolkit;
 
+    static generateRefCallback(propIndex, mode = "object", arrayPos = undefined) {
+      return function(element) {
+        if(mode === "object") {
+          if(element === null) {
+            NwtAccessor.delete(this, propIndex);
+          } else {
+            NwtAccessor.set(this, propIndex, element);
+          }
+        } else if(mode === "array") {
+          if(element === null) {
+            NwtAccessor.splice(this, propIndex, [arrayPos, 1]);
+          } else {
+            NwtAccessor.push(this, propIndex, element);
+          }
+        } else {
+          throw new Error(`Supported modes are only 'object', 'array' but not «${mode}» on «NwtVue2.generateRefCallback»`);
+        }
+      }
+    }
+
   };
 
   return NwtVue2;

@@ -1,0 +1,44 @@
+.clock {
+    width: min(60vw, 130px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    position: relative;
+    font-family: sans-serif;
+}
+
+.clock > span {
+    position: absolute;
+    --width: 25px;
+    --angle: calc(var(--i) * 30deg - 90deg);
+    --radius: 42%;
+    left: calc(50% + cos(var(--angle)) * var(--radius));
+    top: calc(50% + sin(var(--angle)) * var(--radius));
+    transform: translate(-50%, -50%);
+    font-size: clamp(10px, 3vw, 11px);
+    border-radius: 50%;
+    border: 1px solid #1c5a93;
+    color: black;
+    width: var(--width);
+    height: var(--width);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.clock > span:hover {
+    background-color: #DDD;
+}
+
+.clock > span.active {
+    background-color: #709dd2;
+    color: white;
+    font-weight: bold;
+}
+
+.clock > div.center {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

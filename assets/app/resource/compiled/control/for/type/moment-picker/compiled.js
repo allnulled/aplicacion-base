@@ -30,19 +30,9 @@ NwtResource.define({
       "required": true
     }
   },
-  subtypeOf: "structure",
+  subtypeOf: "text",
   compileView: true,
   control: {
-    "schema": {
-      "day": {
-        "type": "control/for/type/day-picker",
-        "hasStatement": "Día"
-      },
-      "hour": {
-        "type": "control/for/type/hour-picker",
-        "hasStatement": "Hora"
-      }
-    },
     "onValidate": function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
       trace("@compilable/control/for/type/moment-picker.control.onValidate");
       console.log("Validation at resource-level on control/for/type/moment-picker");
@@ -58,29 +48,16 @@ NwtResource.define({
     },
     template: `
       <div class="nwt_control_for_type_date_by_moment_picker">
-          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
                   <slot name="hideable"></slot>
               </template>
               <slot></slot>
           </nwt-control-partial-for-statement>
-          <div v-if="isShowingControl">
-              <div v-for="column, columnName in $options.statically.control.schema"
-                  v-bind:key="'column-' + columnName"
-                  class="pad_left_1">
-                  <component :is="$toolkit.getComponentNameBySettings(column)"
-                      :ref="component => { if(component === null) { delete $local.controls[columnName]; } else { $local.controls[columnName] = component; } }"
-                      :settings="{
-                          ...column,
-                          isShowingControl: true,
-                          rootValueIndex: $toolkit.getIndexForValue().concat([columnName]),
-                          rootSchemaIndex: $toolkit.getIndexForSchema().concat(['schema', columnName]),
-                          rootComponentIndex: $toolkit.getIndexForComponent().concat(['$local','controls', columnName]),
-                      }" />
-              </div>
-          </div>
-          <nwt-control-error-handler :control="this" />
+          <template v-if="isShowingControl">
+              <nwt-view-for-type-moment-picker :settings="settings" />
+              <nwt-control-error-handler :control="this" />
+          </template>
       </div>`,
     data: function() {
       const finalData = {};

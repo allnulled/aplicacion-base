@@ -68,93 +68,19 @@ module.exports = {
         console.log("Validation at component-level on control/for/type/hour-picker");
       },
       ////////////////////////////////////
-      selectHour: function(event) {
-        trace("NwtControlForTypeHourPicker.methods.selectHour");
-        this.selectedHour = parseInt(event.target.textContent);
-      },
-      selectMinute: function(event) {
-        trace("NwtControlForTypeHourPicker.methods.selectMinute");
-        this.selectedMinute = parseInt(event.target.textContent);
-      },
-      selectAm: function() {
-        trace("NwtControlForTypeHourPicker.methods.selectAm");
-        this.selectedHourRange = "am";
-      },
-      selectPm: function() {
-        trace("NwtControlForTypeHourPicker.methods.selectPm");
-        this.selectedHourRange = "pm";
-      },
-      increaseMinute: function() {
-        trace("NwtControlForTypeHourPicker.methods.increaseMinute");
-        this.selectedMinute++;
-      },
-      decreaseMinute: function() {
-        trace("NwtControlForTypeHourPicker.methods.decreaseMinute");
-        this.selectedMinute--;
-      },
-      getSelectedHourFormatted: function() {
-        trace("NwtControlForTypeHourPicker.methods.getSelectedHourFormatted");
-        let out = "";
-        if(typeof this.selectedHour === "number") {
-          out += NwtUtils.padStart(this.selectedHour, 2, '0');
-        } else {
-          out += NwtUtils.padStart(0, 2, '0');
-        }
-        out += ":";
-        if(typeof this.selectedMinute === "number") {
-          out += NwtUtils.padStart(this.selectedMinute, 2, '0');
-        } else {
-          out += NwtUtils.padStart(0, 2, '0');
-        }
-        return out;
-      }
-      ////////////////////////////////////
     },
     created: function() {
       trace("NwtControlForTypeHourPicker.created");
       NwtVue2.Toolkit.installToolkit(this);
       NwtVue2.Toolkit.installLocal(this);
-      this.$local.controls = {};
+      this.$local.control = {};
     },
     mounted: function() {
       trace("NwtControlForTypeHourPicker.mounted");
       this.reloadValue();
     },
-    data: function() {
-      return {
-        selectedHour: 0,
-        selectedMinute: 0,
-        selectedHourRange: "am",
-      };
-    },
   },
   control: {
-    schema: {
-      year: {
-        type: "control/for/text",
-        hasStatement: "Año de creación",
-      },
-      month: {
-        type: "control/for/text",
-        hasStatement: "Mes de creación",
-      },
-      day: {
-        type: "control/for/text",
-        hasStatement: "Día de creación",
-      },
-      hour: {
-        type: "control/for/text",
-        hasStatement: "Hora de creación",
-      },
-      minute: {
-        type: "control/for/text",
-        hasStatement: "Minuto de creación",
-      },
-      second: {
-        type: "control/for/text",
-        hasStatement: "Segundo de creación",
-      },
-    },
     onValidate: function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
       trace("@compilable/control/for/type/hour-picker.control.onValidate");
       console.log("Validation at resource-level on control/for/type/hour-picker");

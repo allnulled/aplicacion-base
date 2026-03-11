@@ -21,6 +21,7 @@
       SIMPLE_GETTER: {},
       SIMPLE_SETTER: {},
       SIMPLE_MODIFIER: {},
+      SIMPLE_DELETER: {},
     };
 
     static Error = class extends Error {
@@ -80,6 +81,11 @@
             assertion(["string", "number"].includes(typeof selectorId), `Last provided selector at index «${index}» must be string or number but «${typeof selectorId}» was found at index «${currentIndex.join(".") || "[]"}» on selector «${selector.join(".")}» on «NwtAccessor.set»`);
             pivot[selectorId] = extra.payload;
             return pivot[selectorId];
+          } else if (successHandler === NwtAccessor.strategy.SIMPLE_DELETER) {
+            assertion(!["undefined", "boolean", "number", "string"].includes(typeof pivot), `Penultimate property «${currentIndex.concat([]).splice(-2)}» at index «${currentIndex.join(".") || "[]"}» must have accessible properties but it is type «${typeof pivot}» on selector «${selector.join(".")}» on «NwtAccessor.delete»`);
+            assertion(["string", "number"].includes(typeof selectorId), `Last provided selector at index «${index}» must be string or number but «${typeof selectorId}» was found at index «${currentIndex.join(".") || "[]"}» on selector «${selector.join(".")}» on «NwtAccessor.delete»`);
+            delete pivot[selectorId];
+            return true;
           } else if (successHandler === NwtAccessor.strategy.SIMPLE_MODIFIER) {
             assertion(!["undefined", "boolean", "number", "string"].includes(typeof pivot), `Penultimate property «${currentIndex.concat([]).splice(-2)}» at index «${currentIndex.join(".") || "[]"}» must have accessible properties but it is type «${typeof pivot}» on selector «${selector.join(".")}» on «NwtAccessor.modify»`);
             assertion(["string", "number"].includes(typeof selectorId), `Last provided selector at index «${index}» must be string or number but «${typeof selectorId}» was found at index «${currentIndex.join(".") || "[]"}» on selector «${selector.join(".")}» on «NwtAccessor.modify»`);
@@ -118,6 +124,11 @@
     static set(data, selector, payload, errorHandler = NwtAccessor.strategy.THROW_ORIGINAL_ERROR) {
       trace("NwtAccessor.set");
       return this.visit(data, selector, NwtAccessor.strategy.SIMPLE_SETTER, errorHandler, { payload });
+    }
+
+    static delete(data, selector, payload, errorHandler = NwtAccessor.strategy.THROW_ORIGINAL_ERROR) {
+      trace("NwtAccessor.delete");
+      return this.visit(data, selector, NwtAccessor.strategy.SIMPLE_DELETER, errorHandler, { payload });
     }
 
     static has(data, selector) {

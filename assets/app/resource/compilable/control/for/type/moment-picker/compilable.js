@@ -1,6 +1,6 @@
 module.exports = {
   id: "control/for/type/moment-picker",
-  subtypeOf: "structure",
+  subtypeOf: "text",
   compile: true,
   compileView: true,
   apis: [
@@ -80,16 +80,6 @@ module.exports = {
     }
   },
   control: {
-    schema: {
-      day: {
-        type: "control/for/type/day-picker",
-        hasStatement: "Día",
-      },
-      hour: {
-        type: "control/for/type/hour-picker",
-        hasStatement: "Hora",
-      },
-    },
     onValidate: function(value, settings, component, indexes = [], assertion = NwtAsserter.global) {
       trace("@compilable/control/for/type/moment-picker.control.onValidate");
       console.log("Validation at resource-level on control/for/type/moment-picker");

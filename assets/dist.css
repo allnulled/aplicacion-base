@@ -4128,7 +4128,115 @@ table>tbody>tr>* {
 
 /* @vuebundler[Proyecto_base_001][217]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][218]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css*/
+/* @vuebundler[Proyecto_base_001][218]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compiled.js*/
+
+/* @vuebundler[Proyecto_base_001][219]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compilable.css*/
+.calendar_container {
+    max-width: 310px;
+}
+.no_table.calendar {
+    border: 1px solid #1c5a93;
+}
+
+.no_table.calendar > .thead > .row,
+.no_table.calendar > .tbody > .row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.no_table.calendar > .tbody > .row > .cell,
+.no_table.calendar > .thead > .row > .cell {
+    text-align: center;
+    border: 0px solid black;
+}
+
+.no_table.calendar > .thead > .row > .cell {
+    background-color: #1c5a93;
+    color: white;
+}
+
+.no_table.calendar > .thead > .row > .cell,
+.no_table.calendar > .tbody > .row > .cell {
+    min-height: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no_table.calendar > .tbody > .row > .cell:hover {
+    background-color: #DDD;
+    cursor: pointer;
+}
+
+.no_table.calendar > .tbody > .row > .cell.inactive {
+    color: #BBB;
+}
+
+.no_table.calendar > .tbody > .row > .cell.inactive:hover {
+    background-color: inherit;
+    cursor: pointer;
+}
+
+.no_table.calendar > .tbody > .row > .cell.active {
+    background-color: #709dd2;
+    color: white;
+    font-weight: bold;
+}
+
+/* @vuebundler[Proyecto_base_001][220]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compiled.js*/
+
+/* @vuebundler[Proyecto_base_001][221]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compilable.css*/
+.hour_picker_container {
+    max-width: 310px;
+}
+.clock {
+    width: min(60vw, 130px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    position: relative;
+    font-family: sans-serif;
+}
+
+.clock > span {
+    position: absolute;
+    --width: 25px;
+    --angle: calc(var(--i) * 30deg - 90deg);
+    --radius: 42%;
+    left: calc(50% + cos(var(--angle)) * var(--radius));
+    top: calc(50% + sin(var(--angle)) * var(--radius));
+    transform: translate(-50%, -50%);
+    font-size: clamp(10px, 3vw, 11px);
+    border-radius: 50%;
+    border: 1px solid #1c5a93;
+    color: black;
+    width: var(--width);
+    height: var(--width);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.clock > span:hover {
+    background-color: #DDD;
+}
+
+.clock > span.active {
+    background-color: #709dd2;
+    color: white;
+    font-weight: bold;
+}
+
+.clock > div.center {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* @vuebundler[Proyecto_base_001][222]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/moment-picker/compiled.js*/
+
+/* @vuebundler[Proyecto_base_001][223]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css*/
 html,
 body {
     margin: 0px;
@@ -4654,10 +4762,10 @@ select.fluid {
     padding-right: 16px !important;
 }
 
-/* @vuebundler[Proyecto_base_001][219]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css*/
+/* @vuebundler[Proyecto_base_001][224]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css*/
 
 
-/* @vuebundler[Proyecto_base_001][220]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
+/* @vuebundler[Proyecto_base_001][225]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
 body {
     font: var(--w7-font);
 }
