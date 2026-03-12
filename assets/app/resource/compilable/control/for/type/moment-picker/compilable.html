@@ -1,4 +1,4 @@
-<div class="nwt_control_for_type_date_by_moment_picker">
+<div class="nwt_control_for_type_moment_picker">
     <nwt-control-partial-for-statement :control="this">
         <template v-slot:hideable>
             <slot name="hideable"></slot>
@@ -6,7 +6,7 @@
         <slot></slot>
     </nwt-control-partial-for-statement>
     <template v-if="isShowingControl">
-        <nwt-view-for-type-moment-picker :settings="settings" />
+        <nwt-view-for-type-moment-picker :settings="settings" :ref="$nwt.Vue2.generateRefCallback(['$local','control'])" />
         <nwt-control-error-handler :control="this" />
     </template>
 </div>

@@ -47,7 +47,7 @@ NwtResource.define({
       }
     },
     template: `
-      <div class="nwt_control_for_type_date_by_boxes">
+      <div class="nwt_control_for_type_hour_picker">
           <nwt-control-partial-for-statement :control="this">
               <template v-slot:hideable>
                   <slot name="hideable"></slot>
@@ -55,7 +55,7 @@ NwtResource.define({
               <slot></slot>
           </nwt-control-partial-for-statement>
           <template v-if="isShowingControl">
-              <nwt-view-for-type-hour-picker :settings="settings" />
+              <nwt-view-for-type-hour-picker :settings="settings" :ref="$nwt.Vue2.generateRefCallback(['$local','control'])" />
               <nwt-control-error-handler :control="this" />
           </template>
       </div>`,
@@ -143,11 +143,11 @@ NwtResource.define({
       },
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
-        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
-        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
-        this.$toolkit.getRoot().$store.dispatch("set-value", {
-          index: this.settings.rootValueIndex,
-          value: value,
+        const indexes = this.$toolkit.getIndexForValue();
+        this.$toolkit.getRoot().$store.set(indexes, value);
+        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+          index: indexes,
+          value: value
         });
       },
       "rootListenerCallback": function() {
@@ -194,14 +194,14 @@ NwtResource.define({
         if (!this.$local.control) {
           return this.getValueBySchema();
         }
-        return this.$local.control.value;
+        return this.$local.control.getValueByDom();
       },
       "setValueByDom": function(value) {
         trace("NwtControlForTypeHourPicker.methods.setValueByDom");
         if (!this.$local.control) {
           return false;
         }
-        this.$local.control.value = value;
+        return this.$local.control.setValueByDom(value);
       },
       "reloadValue": function() {
         return this.loadValue();
@@ -216,9 +216,13 @@ NwtResource.define({
       "loadValue": function() {
         trace("NwtControlForTypeHourPicker.methods.loadValue");
         if (!this.$local.control) {
-          return false;
+          return -1;
         }
-        this.$local.control.value = this.getValueBySchema();
+        const value = this.getValueBySchema();
+        if (typeof value === "undefined") {
+          return -2;
+        }
+        this.$local.control.setValueByDom(value);
       },
       "onValidate": function() {
         trace("NwtControlForTypeHourPicker.methods.onValidate");

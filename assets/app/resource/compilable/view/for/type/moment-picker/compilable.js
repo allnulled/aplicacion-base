@@ -36,34 +36,26 @@ module.exports = {
     methods: {
       getValueByDom: function () {
         trace("NwtViewForTypeMomentPicker.methods.getValueByDom");
-        if (!this.$local.control) {
-          return this.getValueBySchema();
-        }
-        return this.$local.control.value;
+        const day = this.$local.controls.day.getValueByDom();
+        const hour = this.$local.controls.hour.getValueByDom();
+        return `${day} ${hour}`;
       },
       setValueByDom: function (value) {
         trace("NwtViewForTypeMomentPicker.methods.setValueByDom");
-        if (!this.$local.control) {
-          return false;
-        }
-        this.$local.control.value = value;
+        this.$local.controls.day.setValueByDom(value);
+        this.$local.controls.hour.setValueByDom(value);
       },
       reloadValue: function () {
         return this.loadValue();
       },
-      saveValue: function () {
-        trace("NwtViewForTypeMomentPicker.methods.saveValue");
-        const value = this.getValueByDom();
-        const indexes = this.getIndexForValue();
-        console.log("Saving:", indexes, value);
-        this.$toolkit.getRoot().$store.set(indexes, value);
-      },
       loadValue: function () {
         trace("NwtViewForTypeMomentPicker.methods.loadValue");
-        if (!this.$local.control) {
-          return false;
+        const value = this.getValueBySchema();
+        if(!value) {
+          return -1;
         }
-        this.$local.control.value = this.getValueBySchema();
+        this.$local.controls.day.setValueByDom(value);
+        this.$local.controls.hour.setValueByDom(value);
       },
       onValidate: function () {
         trace("NwtViewForTypeMomentPicker.methods.onValidate");
@@ -72,17 +64,9 @@ module.exports = {
       ///////////////////////////////
       getSelectedMomentFormatted: function () {
         trace("NwtViewForTypeMomentPicker.methods.getSelectedMomentFormatted");
-        let out = "";
-        const dayCell = this.$local.controls.day.selectedCell;
-        const year = dayCell.year;
-        const month = dayCell.month;
-        const day = dayCell.day;
-        out = `${year}/${NwtUtils.padStart(month, 2, '0')}/${NwtUtils.padStart(day, 2, '0')}`;
-        out += " ";
-        const hour = this.$local.controls.hour.selectedHour;
-        const minute = this.$local.controls.hour.selectedMinute;
-        out += `${NwtUtils.padStart(hour, 2, '0')}:${NwtUtils.padStart(minute, 2, '0')}:00`;
-        return out;
+        const day = this.$local.controls.day.getSelectedDayFormatted();
+        const hour = this.$local.controls.hour.getSelectedHourFormatted();
+        return `${day} ${hour}`;
       },
       onChangeWrapper: function () {
         trace("NwtViewForTypeMomentPicker.methods.onChangeWrapper");

@@ -37,72 +37,35 @@ module.exports = {
         if (!this.$local.control) {
           return this.getValueBySchema();
         }
-        return this.$local.control.value;
+        return this.$local.control.getValueByDom();
       },
       setValueByDom: function (value) {
         trace("NwtControlForTypeDayPicker.methods.setValueByDom");
         if (!this.$local.control) {
-          return false;
+          return -1;
         }
-        this.$local.control.value = value;
-      },
-      reloadValue: function () {
-        return this.loadValue();
+        return this.$local.control.setValueByDom(value);
       },
       saveValue: function () {
         trace("NwtControlForTypeDayPicker.methods.saveValue");
         const value = this.getValueByDom();
-        const indexes = this.getIndexForValue();
-        console.log("Saving:", indexes, value);
-        this.$toolkit.getRoot().$store.set(indexes, value);
+        return this.setValueBySchema(value);
+      },
+      reloadValue: function () {
+        return this.loadValue();
       },
       loadValue: function () {
         trace("NwtControlForTypeDayPicker.methods.loadValue");
-        if (!this.$local.control) {
-          return false;
+        const value = this.getValueBySchema();
+        if(!value) {
+          return -1;
         }
-        this.$local.control.value = this.getValueBySchema();
+        this.setValueByDom(value);
       },
       onValidate: function () {
         trace("NwtControlForTypeDayPicker.methods.onValidate");
         console.log("Validation at component-level on control/for/type/day-picker");
       },
-      /////////////////////////////////////
-      goToPreviousMonth: function () {
-        trace("NwtControlForTypeDayPicker.methods.goToPreviousMonth");
-        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() - 1));
-      },
-      goToNextMonth: function () {
-        trace("NwtControlForTypeDayPicker.methods.goToNextMonth");
-        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() + 1));
-      },
-      goToPreviousYear: function () {
-        trace("NwtControlForTypeDayPicker.methods.goToPreviousYear");
-        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() - 1));
-      },
-      goToNextYear: function () {
-        trace("NwtControlForTypeDayPicker.methods.goToNextYear");
-        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() + 1));
-      },
-      selectCell: function(cell) {
-        trace("NwtControlForTypeDayPicker.methods.selectCell");
-        if(cell === this.selectedCell) {
-          this.selectedCell = undefined;
-        } else {
-          this.selectedCell = cell;
-        }
-      },
-      getSelectedDayFormatted: function() {
-        trace("NwtControlForTypeDayPicker.methods.getSelectedDayFormatted");
-        let out = "none";
-        if(this.selectedCell) {
-          const year = this.selectedCell.year;
-          const month = this.selectedCell.month;
-          const day = this.selectedCell.day;
-          out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
-        }
-        return out;
-      }
       /////////////////////////////////////
     },
     created: function () {
@@ -116,44 +79,6 @@ module.exports = {
       this.reloadValue();
     },
     ///////////////////////////////////
-    data: function () {
-      return {
-        dateForMonth: new Date(),
-        selectedCell: undefined,
-      };
-    },
-    computed: {
-      cellsForMonth: function () {
-        const currentMonth = this.dateForMonth;
-        const year = currentMonth.getFullYear();
-        const month = currentMonth.getMonth();
-        const firstOfMonth = new Date(year, month, 1);
-        const lastOfMonth = new Date(year, month + 1, 0);
-        const cells = [];
-        // JS: domingo=0 ... sábado=6 y queremos lunes=0
-        const day = (firstOfMonth.getDay() + 6) % 7;
-        const startDate = new Date(firstOfMonth);
-        startDate.setDate(firstOfMonth.getDate() - day);
-        const cursor = new Date(startDate);
-        while (true) {
-          const week = [];
-          for (let i = 0; i < 7; i++) {
-            week.push({
-              year: cursor.getFullYear(),
-              month: cursor.getMonth(),
-              notSameMonth: cursor.getMonth() !== month,
-              day: cursor.getDate()
-            });
-            cursor.setDate(cursor.getDate() + 1);
-          }
-          cells.push(week);
-          if (cursor > lastOfMonth && cursor.getDay() === 1) {
-            break;
-          }
-        }
-        return cells;
-      }
-    }
   },
   control: {
     onValidate: function (value, settings, component, indexes = [], assertion = NwtAsserter.global) {

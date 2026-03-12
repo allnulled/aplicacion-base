@@ -73,14 +73,30 @@
         return s.length >= width ? s : '0'.repeat(width - s.length) + s;
       };
       return (
-        String(Y).padStart(4, '0') + '-' +
-        pad(M) + '-' +
+        String(Y).padStart(4, '0') + '/' +
+        pad(M) + '/' +
         pad(D) + ' ' +
         pad(hh) + ':' +
         pad(mm) + ':' +
         pad(ss) + '.' +
         pad(ms, 3)
       );
+    }
+
+    static fromStringToDate(text) {
+      trace("NwtTimer.fromStringToDate");
+      assertion(typeof text === "string", "Parameter «t» must be string on «NwtTimer.fromStringToDate»");
+      const [day, hour] = text.split(" ");
+      const [years, months, days] = day.split("/");
+      const date = new Date();
+      date.setFullYear(years, months, days);
+      if(hour) {
+        const [hours, minutes = 0, seconds = 0, milliseconds = 0] = hour.split(/\.|\:/g);
+        date.setHours(hours, minutes, seconds, milliseconds);
+      } else {
+        date.setHours(0,0,0,0);
+      }
+      return date;
     }
 
     static fromMillisecondsToSeconds(ms) {

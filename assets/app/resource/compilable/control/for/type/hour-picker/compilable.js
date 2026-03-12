@@ -37,14 +37,14 @@ module.exports = {
         if(!this.$local.control) {
           return this.getValueBySchema();
         }
-        return this.$local.control.value;
+        return this.$local.control.getValueByDom();
       },
       setValueByDom: function(value) {
         trace("NwtControlForTypeHourPicker.methods.setValueByDom");
         if(!this.$local.control) {
           return false;
         }
-        this.$local.control.value = value;
+        return this.$local.control.setValueByDom(value);
       },
       reloadValue: function() {
         return this.loadValue();
@@ -59,9 +59,13 @@ module.exports = {
       loadValue: function() {
         trace("NwtControlForTypeHourPicker.methods.loadValue");
         if(!this.$local.control) {
-          return false;
+          return -1;
         }
-        this.$local.control.value = this.getValueBySchema();
+        const value = this.getValueBySchema();
+        if(typeof value === "undefined") {
+          return -2;
+        }
+        this.$local.control.setValueByDom(value);
       },
       onValidate: function () {
         trace("NwtControlForTypeHourPicker.methods.onValidate");

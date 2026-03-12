@@ -13,6 +13,6 @@
             :ref="component => { if(component === null) { delete $local.control; } else { $local.control = component; } }"
             :disabled="settings.hasFixedValue"
             :value="getValueBySchema()"></textarea>
+        <nwt-control-error-handler :control="this" />
     </div>
-    <nwt-control-error-handler :control="this" />
 </div>

@@ -40,7 +40,6 @@ module.exports = {
         }
         this.$local.control.value = value;
         this.unmarkAsChanged();
-
       },
       reloadValue: function() {
         return this.loadValue();

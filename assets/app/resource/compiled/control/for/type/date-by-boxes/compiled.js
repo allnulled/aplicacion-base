@@ -182,11 +182,11 @@ NwtResource.define({
       },
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
-        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
-        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
-        this.$toolkit.getRoot().$store.dispatch("set-value", {
-          index: this.settings.rootValueIndex,
-          value: value,
+        const indexes = this.$toolkit.getIndexForValue();
+        this.$toolkit.getRoot().$store.set(indexes, value);
+        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+          index: indexes,
+          value: value
         });
       },
       "rootListenerCallback": function() {

@@ -49,8 +49,7 @@ NwtResource.define({
       }
     },
     template: `
-      <div class="nwt_view_for_type_date_by_moment_picker">
-          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+      <div class="nwt_view_for_type_moment_picker">
           <div class="flex_row centered">
               <div class="flex_1 no_wrap">
                   📌 Momento: 
@@ -160,11 +159,11 @@ NwtResource.define({
       },
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
-        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
-        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
-        this.$toolkit.getRoot().$store.dispatch("set-value", {
-          index: this.settings.rootValueIndex,
-          value: value,
+        const indexes = this.$toolkit.getIndexForValue();
+        this.$toolkit.getRoot().$store.set(indexes, value);
+        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+          index: indexes,
+          value: value
         });
       },
       "rootListenerCallback": function() {
@@ -208,34 +207,26 @@ NwtResource.define({
       },
       "getValueByDom": function() {
         trace("NwtViewForTypeMomentPicker.methods.getValueByDom");
-        if (!this.$local.control) {
-          return this.getValueBySchema();
-        }
-        return this.$local.control.value;
+        const day = this.$local.controls.day.getValueByDom();
+        const hour = this.$local.controls.hour.getValueByDom();
+        return `${day} ${hour}`;
       },
       "setValueByDom": function(value) {
         trace("NwtViewForTypeMomentPicker.methods.setValueByDom");
-        if (!this.$local.control) {
-          return false;
-        }
-        this.$local.control.value = value;
+        this.$local.controls.day.setValueByDom(value);
+        this.$local.controls.hour.setValueByDom(value);
       },
       "reloadValue": function() {
         return this.loadValue();
       },
-      "saveValue": function() {
-        trace("NwtViewForTypeMomentPicker.methods.saveValue");
-        const value = this.getValueByDom();
-        const indexes = this.getIndexForValue();
-        console.log("Saving:", indexes, value);
-        this.$toolkit.getRoot().$store.set(indexes, value);
-      },
       "loadValue": function() {
         trace("NwtViewForTypeMomentPicker.methods.loadValue");
-        if (!this.$local.control) {
-          return false;
+        const value = this.getValueBySchema();
+        if (!value) {
+          return -1;
         }
-        this.$local.control.value = this.getValueBySchema();
+        this.$local.controls.day.setValueByDom(value);
+        this.$local.controls.hour.setValueByDom(value);
       },
       "onValidate": function() {
         trace("NwtViewForTypeMomentPicker.methods.onValidate");
@@ -243,17 +234,9 @@ NwtResource.define({
       },
       "getSelectedMomentFormatted": function() {
         trace("NwtViewForTypeMomentPicker.methods.getSelectedMomentFormatted");
-        let out = "";
-        const dayCell = this.$local.controls.day.selectedCell;
-        const year = dayCell.year;
-        const month = dayCell.month;
-        const day = dayCell.day;
-        out = `${year}/${NwtUtils.padStart(month, 2, '0')}/${NwtUtils.padStart(day, 2, '0')}`;
-        out += " ";
-        const hour = this.$local.controls.hour.selectedHour;
-        const minute = this.$local.controls.hour.selectedMinute;
-        out += `${NwtUtils.padStart(hour, 2, '0')}:${NwtUtils.padStart(minute, 2, '0')}:00`;
-        return out;
+        const day = this.$local.controls.day.getSelectedDayFormatted();
+        const hour = this.$local.controls.hour.getSelectedHourFormatted();
+        return `${day} ${hour}`;
       },
       "onChangeWrapper": function() {
         trace("NwtViewForTypeMomentPicker.methods.onChangeWrapper");

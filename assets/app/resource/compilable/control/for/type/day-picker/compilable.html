@@ -6,7 +6,7 @@
         <slot></slot>
     </nwt-control-partial-for-statement>
     <template v-if="isShowingControl">
-        <nwt-view-for-type-day-picker :settings="settings" />
+        <nwt-view-for-type-day-picker :settings="settings" :ref="$nwt.Vue2.generateRefCallback(['$local','control'])" />
         <nwt-control-error-handler :control="this" />
     </template>
 </div>

@@ -48,19 +48,12 @@ module.exports = {
       saveValue: function () {
         trace("NwtViewForTypeDayPicker.methods.saveValue");
         const value = this.getValueByDom();
-        const indexes = this.getIndexForValue();
-        console.log("Saving:", indexes, value);
-        this.$toolkit.getRoot().$store.set(indexes, value);
+        this.setValueBySchema(value);
       },
       loadValue: function () {
         trace("NwtViewForTypeDayPicker.methods.loadValue");
-        if (!this.$local.control) {
-          return false;
-        }
         const value = this.getValueBySchema();
-        if(value) {
-          this.selectedCell = this.fromDateToCell(value);
-        }
+        this.selectedCell = value ? this.fromDateToCell(value) : this.settings.initialValue ? this.fromDateToCell(this.settings.initialValue) : this.fromDateToCell(new Date());
       },
       onValidate: function () {
         trace("NwtViewForTypeDayPicker.methods.onValidate");
@@ -91,8 +84,15 @@ module.exports = {
           this.selectedCell = cell;
         }
       },
-      fromDateToCell: function(date) {
+      fromDateToCell: function(dateInput) {
         trace("NwtViewForTypeDayPicker.methods.fromDateToCell");
+        let date = dateInput;
+        if(typeof date === "string") {
+          date = NwtTimer.fromStringToDate(date);
+        }
+        if(!(date instanceof Date)) {
+          return date;
+        }
         return {
           year: date.getFullYear(),
           month: date.getMonth(),
@@ -101,24 +101,33 @@ module.exports = {
       },
       areSameCell: function(cell1, cell2) {
         trace("NwtViewForTypeDayPicker.methods.areSameCell");
-        return cell1.year === cell2.year && cell1.month === cell2.month && cell1.day === cell2.day;
+        try {
+          return cell1.year === cell2.year && cell1.month === cell2.month && cell1.day === cell2.day;
+        } catch (error) {
+          console.error("Error comparing cells:", error);
+          return false;
+        }
       },
-      getSelectedDayFormatted: function() {
+      getSelectedDayFormatted: function(forHumans = false) {
         trace("NwtViewForTypeDayPicker.methods.getSelectedDayFormatted");
         let out = "none";
+        let cell = undefined;
         if(this.selectedCell) {
-          const year = this.selectedCell.year;
-          const month = this.selectedCell.month;
-          const day = this.selectedCell.day;
-          out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
+          cell = this.selectedCell;
+        } else {
+          cell = this.fromDateToCell(new Date());
         }
+        const year = cell.year;
+        const month = parseInt(cell.month) + (forHumans ? 1 : 0);
+        const day = cell.day;
+        out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
         return out;
       },
       onChangeWrapper: function(newValue, oldValue) {
         trace("NwtViewForTypeDayPicker.methods.onChangeWrapper");
         const value = this.getSelectedDayFormatted();
         this.settings.onChange(value, this);
-      }
+      },
       /////////////////////////////////////
     },
     watch: {
@@ -133,7 +142,6 @@ module.exports = {
     mounted: function () {
       trace("NwtViewForTypeDayPicker.mounted");
       this.reloadValue();
-      this.selectedCell = this.settings.initialValue ? this.fromDateToCell(this.settings.initialValue) : this.fromDateToCell(new Date());
     },
     ///////////////////////////////////
     data: function () {

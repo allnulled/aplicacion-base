@@ -53,8 +53,7 @@ NwtResource.define({
       }
     },
     template: `
-      <div class="nwt_control_for_type_hour_picker">
-          <!--Nwt control for date {{ $nwt.Reflection.keys(settings) }}-->
+      <div class="nwt_view_for_hour_picker">
           <div class="hour_picker_container" v-if="settings.isShowingControl">
               <div class="flex_row centered" v-if="!isAttached">
                   <div class="flex_1 no_wrap">
@@ -221,11 +220,11 @@ NwtResource.define({
       },
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
-        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
-        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
-        this.$toolkit.getRoot().$store.dispatch("set-value", {
-          index: this.settings.rootValueIndex,
-          value: value,
+        const indexes = this.$toolkit.getIndexForValue();
+        this.$toolkit.getRoot().$store.set(indexes, value);
+        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+          index: indexes,
+          value: value
         });
       },
       "rootListenerCallback": function() {
@@ -269,17 +268,14 @@ NwtResource.define({
       },
       "getValueByDom": function() {
         trace("NwtViewForTypeHourPicker.methods.getValueByDom");
-        if (!this.$local.control) {
-          return this.getValueBySchema();
-        }
-        return this.$local.control.value;
+        return this.getSelectedHourFormatted();
       },
-      "setValueByDom": function(value) {
+      "setValueByDom": function(hourInput) {
         trace("NwtViewForTypeHourPicker.methods.setValueByDom");
-        if (!this.$local.control) {
-          return false;
-        }
-        this.$local.control.value = value;
+        const hourMinute = this.fromDateToHour(hourInput);
+        const [hour, minute] = hourMinute.split(":");
+        this.selectedHour = parseInt(hour);
+        this.selectedMinute = parseInt(minute);
       },
       "reloadValue": function() {
         return this.loadValue();
@@ -287,20 +283,29 @@ NwtResource.define({
       "saveValue": function() {
         trace("NwtViewForTypeHourPicker.methods.saveValue");
         const value = this.getValueByDom();
-        const indexes = this.getIndexForValue();
-        console.log("Saving:", indexes, value);
-        this.$toolkit.getRoot().$store.set(indexes, value);
+        return this.setValueBySchema(value);
       },
       "loadValue": function() {
         trace("NwtViewForTypeHourPicker.methods.loadValue");
-        if (!this.$local.control) {
-          return false;
+        const value = this.getValueBySchema();
+        if (typeof value === "undefined") {
+          return -1;
         }
-        this.$local.control.value = this.getValueBySchema();
+        return this.setValueByDom(value);
       },
       "onValidate": function() {
         trace("NwtViewForTypeHourPicker.methods.onValidate");
         console.log("Validation at component-level on view/for/type/hour-picker");
+      },
+      "fromDateToHour": function(dateInput) {
+        let date = dateInput;
+        if (typeof date === "string") {
+          date = NwtTimer.fromStringToDate(date);
+        }
+        if (!(date instanceof Date)) {
+          return date;
+        }
+        return `${NwtUtils.padStart(date.getHours(), 2, '0')}:${NwtUtils.padStart(date.getMinutes(), 2, '0')}:00.000`;
       },
       "selectHour": function(event) {
         trace("NwtViewForTypeHourPicker.methods.selectHour");

@@ -55,7 +55,7 @@ NwtResource.define({
               <slot></slot>
           </nwt-control-partial-for-statement>
           <template v-if="isShowingControl">
-              <nwt-view-for-type-day-picker :settings="settings" />
+              <nwt-view-for-type-day-picker :settings="settings" :ref="$nwt.Vue2.generateRefCallback(['$local','control'])" />
               <nwt-control-error-handler :control="this" />
           </template>
       </div>`,
@@ -73,13 +73,6 @@ NwtResource.define({
         trace("@compilable/control/trait/for/getValue.data");
         return {
           value: undefined,
-        };
-      }).call(this));
-      // @COMPILED-BY: control/for/type/day-picker
-      Object.assign(finalData, (function() {
-        return {
-          dateForMonth: new Date(),
-          selectedCell: undefined,
         };
       }).call(this));
       return finalData;
@@ -150,11 +143,11 @@ NwtResource.define({
       },
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
-        assertion(Array.isArray(this.settings.rootValueIndex), "Configuration «settings.rootValueIndex» must be array on «@compilable/control/trait/for/remoteValue.methods.getValueBySchema»");
-        this.$toolkit.getRoot().$store.set(this.settings.rootValueIndex, value);
-        this.$toolkit.getRoot().$store.dispatch("set-value", {
-          index: this.settings.rootValueIndex,
-          value: value,
+        const indexes = this.$toolkit.getIndexForValue();
+        this.$toolkit.getRoot().$store.set(indexes, value);
+        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+          index: indexes,
+          value: value
         });
       },
       "rootListenerCallback": function() {
@@ -201,104 +194,37 @@ NwtResource.define({
         if (!this.$local.control) {
           return this.getValueBySchema();
         }
-        return this.$local.control.value;
+        return this.$local.control.getValueByDom();
       },
       "setValueByDom": function(value) {
         trace("NwtControlForTypeDayPicker.methods.setValueByDom");
         if (!this.$local.control) {
-          return false;
+          return -1;
         }
-        this.$local.control.value = value;
-      },
-      "reloadValue": function() {
-        return this.loadValue();
+        return this.$local.control.setValueByDom(value);
       },
       "saveValue": function() {
         trace("NwtControlForTypeDayPicker.methods.saveValue");
         const value = this.getValueByDom();
-        const indexes = this.getIndexForValue();
-        console.log("Saving:", indexes, value);
-        this.$toolkit.getRoot().$store.set(indexes, value);
+        return this.setValueBySchema(value);
+      },
+      "reloadValue": function() {
+        return this.loadValue();
       },
       "loadValue": function() {
         trace("NwtControlForTypeDayPicker.methods.loadValue");
-        if (!this.$local.control) {
-          return false;
+        const value = this.getValueBySchema();
+        if (!value) {
+          return -1;
         }
-        this.$local.control.value = this.getValueBySchema();
+        this.setValueByDom(value);
       },
       "onValidate": function() {
         trace("NwtControlForTypeDayPicker.methods.onValidate");
         console.log("Validation at component-level on control/for/type/day-picker");
-      },
-      "goToPreviousMonth": function() {
-        trace("NwtControlForTypeDayPicker.methods.goToPreviousMonth");
-        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() - 1));
-      },
-      "goToNextMonth": function() {
-        trace("NwtControlForTypeDayPicker.methods.goToNextMonth");
-        this.dateForMonth = new Date(this.dateForMonth.setMonth(this.dateForMonth.getMonth() + 1));
-      },
-      "goToPreviousYear": function() {
-        trace("NwtControlForTypeDayPicker.methods.goToPreviousYear");
-        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() - 1));
-      },
-      "goToNextYear": function() {
-        trace("NwtControlForTypeDayPicker.methods.goToNextYear");
-        this.dateForMonth = new Date(this.dateForMonth.setFullYear(this.dateForMonth.getFullYear() + 1));
-      },
-      "selectCell": function(cell) {
-        trace("NwtControlForTypeDayPicker.methods.selectCell");
-        if (cell === this.selectedCell) {
-          this.selectedCell = undefined;
-        } else {
-          this.selectedCell = cell;
-        }
-      },
-      "getSelectedDayFormatted": function() {
-        trace("NwtControlForTypeDayPicker.methods.getSelectedDayFormatted");
-        let out = "none";
-        if (this.selectedCell) {
-          const year = this.selectedCell.year;
-          const month = this.selectedCell.month;
-          const day = this.selectedCell.day;
-          out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
-        }
-        return out;
       }
     },
-    computed: {
-      "cellsForMonth": function() {
-        const currentMonth = this.dateForMonth;
-        const year = currentMonth.getFullYear();
-        const month = currentMonth.getMonth();
-        const firstOfMonth = new Date(year, month, 1);
-        const lastOfMonth = new Date(year, month + 1, 0);
-        const cells = [];
-        // JS: domingo=0 ... sábado=6 y queremos lunes=0
-        const day = (firstOfMonth.getDay() + 6) % 7;
-        const startDate = new Date(firstOfMonth);
-        startDate.setDate(firstOfMonth.getDate() - day);
-        const cursor = new Date(startDate);
-        while (true) {
-          const week = [];
-          for (let i = 0; i < 7; i++) {
-            week.push({
-              year: cursor.getFullYear(),
-              month: cursor.getMonth(),
-              notSameMonth: cursor.getMonth() !== month,
-              day: cursor.getDate()
-            });
-            cursor.setDate(cursor.getDate() + 1);
-          }
-          cells.push(week);
-          if (cursor > lastOfMonth && cursor.getDay() === 1) {
-            break;
-          }
-        }
-        return cells;
-      }
-    },
+    computed: {},
     watch: {
       "value": function(newValue, oldValue) {
         trace("@compilable/control/trait/for/getValue.watch.value");

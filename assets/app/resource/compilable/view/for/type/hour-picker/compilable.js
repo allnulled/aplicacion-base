@@ -36,17 +36,14 @@ module.exports = {
     methods: {
       getValueByDom: function() {
         trace("NwtViewForTypeHourPicker.methods.getValueByDom");
-        if(!this.$local.control) {
-          return this.getValueBySchema();
-        }
-        return this.$local.control.value;
+        return this.getSelectedHourFormatted();
       },
-      setValueByDom: function(value) {
+      setValueByDom: function(hourInput) {
         trace("NwtViewForTypeHourPicker.methods.setValueByDom");
-        if(!this.$local.control) {
-          return false;
-        }
-        this.$local.control.value = value;
+        const hourMinute = this.fromDateToHour(hourInput);
+        const [hour, minute] = hourMinute.split(":");
+        this.selectedHour = parseInt(hour);
+        this.selectedMinute = parseInt(minute);
       },
       reloadValue: function() {
         return this.loadValue();
@@ -54,22 +51,31 @@ module.exports = {
       saveValue: function() {
         trace("NwtViewForTypeHourPicker.methods.saveValue");
         const value = this.getValueByDom();
-        const indexes = this.getIndexForValue();
-        console.log("Saving:", indexes, value);
-        this.$toolkit.getRoot().$store.set(indexes, value);
+        return this.setValueBySchema(value);
       },
       loadValue: function() {
         trace("NwtViewForTypeHourPicker.methods.loadValue");
-        if(!this.$local.control) {
-          return false;
+        const value = this.getValueBySchema();
+        if(typeof value === "undefined") {
+          return -1;
         }
-        this.$local.control.value = this.getValueBySchema();
+        return this.setValueByDom(value);
       },
       onValidate: function () {
         trace("NwtViewForTypeHourPicker.methods.onValidate");
         console.log("Validation at component-level on view/for/type/hour-picker");
       },
       ////////////////////////////////////
+      fromDateToHour: function(dateInput) {
+        let date = dateInput;
+        if(typeof date === "string") {
+          date = NwtTimer.fromStringToDate(date);
+        }
+        if(!(date instanceof Date)) {
+          return date;
+        }
+        return `${NwtUtils.padStart(date.getHours(), 2, '0')}:${NwtUtils.padStart(date.getMinutes(), 2, '0')}:00.000`;
+      },
       selectHour: function(event) {
         trace("NwtViewForTypeHourPicker.methods.selectHour");
         this.selectedHour = parseInt(event.target.textContent);
