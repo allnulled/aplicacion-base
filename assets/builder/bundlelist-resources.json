@@ -13,6 +13,8 @@
   "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/panel/compilable.css",
   "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compiled.js",
   "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css",
+  "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/compiled.js",
+  "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/compilable.css",
   "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date-by-boxes/compiled.js",
   "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compiled.js",
   "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compilable.css",
@@ -32,5 +34,7 @@
   "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compilable.css",
   "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compiled.js",
   "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compilable.css",
-  "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/moment-picker/compiled.js"
+  "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/moment-picker/compiled.js",
+  "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/hours-grid/compiled.js",
+  "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/hours-grid/compilable.css"
 ]

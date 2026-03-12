@@ -5,7 +5,7 @@ module.exports = {
   inherits: ["control/trait/for/toolkit"],
   settingsSpec: {
     rootValueIndex: {
-      type: LowCode.type.Array,
+      type: [LowCode.type.Array, LowCode.type.Undefined],
       required: true,
     }
   },
@@ -47,7 +47,12 @@ module.exports = {
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if(!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -55,8 +60,13 @@ module.exports = {
       setValueBySchema: function (value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, { index: indexes, value: value });
+        const rootComponent = this.$toolkit.getRoot();
+        if(!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, { index: indexes, value: value });
       },
       rootListenerCallback: function () {
         this.$forceUpdate(true);
@@ -72,7 +82,11 @@ module.exports = {
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if(rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
     },
     beforeDestroy: function () {
@@ -83,7 +97,11 @@ module.exports = {
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if(rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     }

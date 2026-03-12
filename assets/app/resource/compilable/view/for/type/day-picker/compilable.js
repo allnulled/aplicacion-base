@@ -23,11 +23,13 @@ module.exports = {
     },
     initialValue: {
       type: LowCode.type.Any,
-      default: LowCode.create("new Date()")
+      factory: function() {
+        return new Date();
+      },
     },
     onChange: {
       type: LowCode.type.Function,
-      default: function() {},
+      default: LowCode.create("NwtUtils.noop"),
     },
   },
   view: {
@@ -90,6 +92,7 @@ module.exports = {
         if(typeof date === "string") {
           date = NwtTimer.fromStringToDate(date);
         }
+        console.log("DATEEE:", date, date instanceof Date, this.$options.name);
         if(!(date instanceof Date)) {
           return date;
         }

@@ -86,6 +86,7 @@
     static fromStringToDate(text) {
       trace("NwtTimer.fromStringToDate");
       assertion(typeof text === "string", "Parameter «t» must be string on «NwtTimer.fromStringToDate»");
+      console.log("String to date?", text);
       const [day, hour] = text.split(" ");
       const [years, months, days] = day.split("/");
       const date = new Date();

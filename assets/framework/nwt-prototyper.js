@@ -74,19 +74,24 @@
           const possibleTypes = ruleBrute.type;
           const defaultValue = ruleBrute.default;
           const validator = ruleBrute.validator;
-          return [possibleTypes, defaultValue, validator || false];
+          const factory = ruleBrute.factory;
+          return [possibleTypes, defaultValue, validator || false, factory || false];
         })();
         const allowedTypes = Array.isArray(rule[0]) ? rule[0] : [rule[0]];
         const allowedIds = allowedTypes.map(t => this.fromTypeToString(t).toLowerCase());
         const defaultValue = rule[1];
         const validator = rule[2] || NwtUtils.noop;
-        const isMissingProperty = (!(key in target)) || typeof target[key] === "undefined";
+        const factory = rule[3] || false;
+        const isMissingProperty = (!(key in target)) || (typeof target[key] === "undefined");
         const hasNotDefaultValue = rule.length === 1;
         if (isMissingProperty) {
           if (hasNotDefaultValue) {
             throw new TypeError(`Invalid empty value for property «${key}» required ${allowedIds.join("|")}` + (extraErrorMessage ? (" " + extraErrorMessage) : ""));
           }
           target[key] = defaultValue;
+          if(factory) {
+            target[key] = factory(schema, target);
+          }
         }
         const value = target[key];
         validator(target[key], target, key, rule);

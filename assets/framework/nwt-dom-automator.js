@@ -40,6 +40,11 @@
       NwtDomAutomator.find(document.body, "*", "Temporizador")[0].click();
     }
 
+    static async abrirAgenda() {
+      trace("NwtDomAutomator.abrirAgenda");
+      NwtDomAutomator.find(document.body, "*", "Agenda")[0].click();
+    }
+
     static async abrirTodosLosTestsDeLaAplicacion() {
       trace("NwtDomAutomator.abrirTodosLosTestsDeLaAplicacion");
       await this.abrirTestsDeLaAplicacion();

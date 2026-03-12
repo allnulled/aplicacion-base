@@ -5,7 +5,7 @@ module.exports = {
   inherits: ["control/trait/for/toolkit"],
   settingsSpec: {
     rootSchemaIndex: {
-      type: LowCode.type.Array,
+      type: [LowCode.type.Array, LowCode.type.Undefined],
       required: true,
     }
   },
@@ -20,7 +20,9 @@ module.exports = {
       getSchemaByIndex: function () {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if(this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;

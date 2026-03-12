@@ -5,7 +5,7 @@ module.exports = {
   inherits: ["control/trait/for/toolkit"],
   settingsSpec: {
     rootComponentIndex: {
-      type: LowCode.type.Array,
+      type: [LowCode.type.Array, LowCode.type.Undefined],
       required: true,
     }
   },
@@ -16,7 +16,8 @@ module.exports = {
       },
       getComponentByIndex: function () {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       setComponentByIndex: function (value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");

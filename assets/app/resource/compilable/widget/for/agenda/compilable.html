@@ -1,0 +1,15 @@
+<div class="nwt_widget_for_agenda">
+    <nwt-view-for-type-day-picker
+        :ref="$nwt.Vue2.generateRefCallback(['$local','controls','day'])"
+        :settings="{
+            ...settings,
+            isShowingControl: true,
+            onChange: reload,
+        }"
+    />
+    <nwt-widget-for-agenda-hours-grid
+        :ref="$nwt.Vue2.generateRefCallback(['$local','controls','hours'])"
+        :settings="settings"
+        :agenda="this"
+    />
+</div>

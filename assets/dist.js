@@ -25494,6 +25494,7 @@ const { lutimesSync } = require("fs-extra");
     static fromStringToDate(text) {
       trace("NwtTimer.fromStringToDate");
       assertion(typeof text === "string", "Parameter «t» must be string on «NwtTimer.fromStringToDate»");
+      console.log("String to date?", text);
       const [day, hour] = text.split(" ");
       const [years, months, days] = day.split("/");
       const date = new Date();
@@ -25936,19 +25937,24 @@ const { lutimesSync } = require("fs-extra");
           const possibleTypes = ruleBrute.type;
           const defaultValue = ruleBrute.default;
           const validator = ruleBrute.validator;
-          return [possibleTypes, defaultValue, validator || false];
+          const factory = ruleBrute.factory;
+          return [possibleTypes, defaultValue, validator || false, factory || false];
         })();
         const allowedTypes = Array.isArray(rule[0]) ? rule[0] : [rule[0]];
         const allowedIds = allowedTypes.map(t => this.fromTypeToString(t).toLowerCase());
         const defaultValue = rule[1];
         const validator = rule[2] || NwtUtils.noop;
-        const isMissingProperty = (!(key in target)) || typeof target[key] === "undefined";
+        const factory = rule[3] || false;
+        const isMissingProperty = (!(key in target)) || (typeof target[key] === "undefined");
         const hasNotDefaultValue = rule.length === 1;
         if (isMissingProperty) {
           if (hasNotDefaultValue) {
             throw new TypeError(`Invalid empty value for property «${key}» required ${allowedIds.join("|")}` + (extraErrorMessage ? (" " + extraErrorMessage) : ""));
           }
           target[key] = defaultValue;
+          if(factory) {
+            target[key] = factory(schema, target);
+          }
         }
         const value = target[key];
         validator(target[key], target, key, rule);
@@ -26049,6 +26055,11 @@ const { lutimesSync } = require("fs-extra");
     static async abrirTemporizador() {
       trace("NwtDomAutomator.abrirTemporizador");
       NwtDomAutomator.find(document.body, "*", "Temporizador")[0].click();
+    }
+
+    static async abrirAgenda() {
+      trace("NwtDomAutomator.abrirAgenda");
+      NwtDomAutomator.find(document.body, "*", "Agenda")[0].click();
     }
 
     static async abrirTodosLosTestsDeLaAplicacion() {
@@ -42173,6 +42184,9 @@ Vue.component("MainWindow", {
         text: "Procedimientos",
         event: () => this.startProcedimientos(),
       }, {
+        text: "Agenda",
+        event: () => this.startAgenda(),
+      }, {
         text: "Configuraciones",
         event: () => this.startConfiguraciones(),
       }, {
@@ -42204,6 +42218,10 @@ Vue.component("MainWindow", {
         title: "Procedimientos",
         body: `<nwt-commands-manager-viewer :dialog="this" />`,
       });
+    },
+    startAgenda() {
+      trace("MainWindow.methods.startAgenda");
+      return NwtResource.for("widget/for/agenda").startDialog();
     },
     startConfiguraciones() {
       trace("MainWindow.methods.startConfiguraciones");
@@ -42571,15 +42589,24 @@ NwtResource.define({
       "default": true
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "onValidate": {
@@ -42694,7 +42721,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -42702,8 +42734,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -42717,7 +42754,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -42736,7 +42775,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -42822,7 +42862,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -42842,7 +42886,11 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
@@ -42861,15 +42909,24 @@ NwtResource.define({
       "default": false
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "onValidate": {
@@ -43025,7 +43082,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -43033,8 +43095,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -43048,7 +43115,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -43067,7 +43136,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -43220,7 +43290,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -43239,7 +43313,11 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
@@ -43260,15 +43338,24 @@ NwtResource.define({
       "default": false
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "onValidate": {
@@ -43406,7 +43493,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -43414,8 +43506,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -43429,7 +43526,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -43448,7 +43547,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -43530,7 +43630,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -43548,7 +43652,11 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
@@ -43571,15 +43679,24 @@ NwtResource.define({
       "default": false
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "onValidate": {
@@ -43710,7 +43827,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -43718,8 +43840,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -43733,7 +43860,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -43752,7 +43881,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -43828,7 +43958,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -43845,7 +43979,11 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
@@ -43866,15 +44004,24 @@ NwtResource.define({
       "default": true
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "onValidate": {
@@ -43991,7 +44138,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -43999,8 +44151,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -44014,7 +44171,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -44033,7 +44192,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -44131,7 +44291,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -44161,7 +44325,11 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
@@ -44306,7 +44474,88 @@ NwtResource.define({
 
 // @vuebundler[Proyecto_base_001][202]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/form/maker/viewer/compilable.css
 
-// @vuebundler[Proyecto_base_001][203]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date-by-boxes/compiled.js
+// @vuebundler[Proyecto_base_001][203]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/compiled.js
+NwtResource.define({
+  id: "widget/for/agenda",
+  apis: [],
+  inherits: ["control/trait/for/settings"],
+  traits: {},
+  compileView: true,
+  startDialog: function() {
+    trace("@widget/for/agenda.startDialog");
+    return NwtDialogs.openLayout1({
+      title: "Agenda",
+      body: `<div class="pad_1">
+        <nwt-widget-for-agenda :dialog="this" :settings="{}" />
+      </div>`,
+    });
+  },
+  view: {
+    name: "NwtWidgetForAgenda",
+    props: {
+      "settings": {
+        "type": Object,
+        "required": true
+      }
+    },
+    template: `
+      <div class="nwt_widget_for_agenda">
+          <nwt-view-for-type-day-picker
+              :ref="$nwt.Vue2.generateRefCallback(['$local','controls','day'])"
+              :settings="{
+                  ...settings,
+                  isShowingControl: true,
+                  onChange: reload,
+              }"
+          />
+          <nwt-widget-for-agenda-hours-grid
+              :ref="$nwt.Vue2.generateRefCallback(['$local','controls','hours'])"
+              :settings="settings"
+              :agenda="this"
+          />
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: widget/for/agenda
+      Object.assign(finalData, (function() {
+        trace("NwtWidgetForAgenda.data");
+        return {
+          isLoading: true,
+        };
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "reload": function() {
+        trace("NwtWidgetForAgenda.methods.reload");
+        this.$local.controls.hours.load();
+      }
+    },
+    computed: {},
+    watch: {},
+    created: function() {
+      // @COMPILED-BY: widget/for/agenda
+      trace("NwtWidgetForAgenda.created");
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.controls = {
+        day: undefined,
+        hours: undefined,
+      };
+    },
+    mounted: function() {
+      // @COMPILED-BY: control/trait/for/settings
+      trace("@compilable/control/trait/for/settings.mounted");
+      NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
+      // @COMPILED-BY: widget/for/agenda
+      trace("NwtWidgetForAgenda.mounted");
+      this.isLoading = false;
+    },
+  }
+});
+
+// @vuebundler[Proyecto_base_001][204]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/compilable.css
+
+// @vuebundler[Proyecto_base_001][205]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date-by-boxes/compiled.js
 NwtResource.define({
   id: "control/for/type/date-by-boxes",
   apis: ["control", "view", "validation"],
@@ -44327,15 +44576,24 @@ NwtResource.define({
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     }
   },
@@ -44484,7 +44742,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -44492,8 +44755,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -44507,7 +44775,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -44526,7 +44796,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -44610,7 +44881,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -44628,14 +44903,18 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][204]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compiled.js
+// @vuebundler[Proyecto_base_001][206]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compiled.js
 NwtResource.define({
   id: "control/for/type/day-picker",
   apis: ["control", "view", "validation"],
@@ -44656,15 +44935,24 @@ NwtResource.define({
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     }
   },
@@ -44774,7 +45062,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -44782,8 +45075,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -44797,7 +45095,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -44816,7 +45116,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -44899,7 +45200,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -44917,16 +45222,20 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][205]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compilable.css
+// @vuebundler[Proyecto_base_001][207]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compilable.css
 
-// @vuebundler[Proyecto_base_001][206]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js
+// @vuebundler[Proyecto_base_001][208]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js
 NwtResource.define({
   id: "control/for/type/duration",
   apis: ["control", "view", "validation"],
@@ -44938,15 +45247,24 @@ NwtResource.define({
       "default": true
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     }
   },
@@ -45049,7 +45367,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -45057,8 +45380,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -45072,7 +45400,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -45091,7 +45421,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -45156,7 +45487,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -45176,14 +45511,18 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][207]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compiled.js
+// @vuebundler[Proyecto_base_001][209]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compiled.js
 NwtResource.define({
   id: "control/for/type/hour-picker",
   apis: ["control", "view", "validation"],
@@ -45204,15 +45543,24 @@ NwtResource.define({
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     }
   },
@@ -45322,7 +45670,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -45330,8 +45683,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -45345,7 +45703,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -45364,7 +45724,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -45452,7 +45813,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -45470,16 +45835,20 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][208]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compilable.css
+// @vuebundler[Proyecto_base_001][210]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compilable.css
 
-// @vuebundler[Proyecto_base_001][209]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/moment-picker/compiled.js
+// @vuebundler[Proyecto_base_001][211]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/moment-picker/compiled.js
 NwtResource.define({
   id: "control/for/type/moment-picker",
   apis: ["control", "view", "validation"],
@@ -45500,15 +45869,24 @@ NwtResource.define({
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     }
   },
@@ -45618,7 +45996,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -45626,8 +46009,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -45641,7 +46029,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -45660,7 +46050,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -45749,7 +46140,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -45767,14 +46162,18 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][210]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
+// @vuebundler[Proyecto_base_001][212]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js
 NwtResource.define({
   id: "control/partial/for/error-handler",
   apis: ["control", "view", "validation"],
@@ -45824,9 +46223,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][211]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
+// @vuebundler[Proyecto_base_001][213]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css
 
-// @vuebundler[Proyecto_base_001][212]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
+// @vuebundler[Proyecto_base_001][214]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js
 NwtResource.define({
   id: "control/partial/for/list-panel",
   apis: ["control", "view", "validation"],
@@ -45857,7 +46256,7 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][213]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js
+// @vuebundler[Proyecto_base_001][215]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js
 NwtResource.define({
   id: "control/partial/for/pagination-panel",
   apis: ["control", "view", "validation"],
@@ -45968,9 +46367,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][214]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css
+// @vuebundler[Proyecto_base_001][216]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css
 
-// @vuebundler[Proyecto_base_001][215]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
+// @vuebundler[Proyecto_base_001][217]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js
 NwtResource.define({
   id: "control/partial/for/statement",
   apis: ["control", "view", "validation"],
@@ -46097,9 +46496,9 @@ NwtResource.define({
   }
 });
 
-// @vuebundler[Proyecto_base_001][216]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
+// @vuebundler[Proyecto_base_001][218]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css
 
-// @vuebundler[Proyecto_base_001][217]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
+// @vuebundler[Proyecto_base_001][219]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js
 NwtResource.define({
   id: "test/control/for/settingsSpecExample",
   apis: ["settings", "test"],
@@ -46121,7 +46520,7 @@ NwtResource.define({
   },
 });
 
-// @vuebundler[Proyecto_base_001][218]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compiled.js
+// @vuebundler[Proyecto_base_001][220]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compiled.js
 NwtResource.define({
   id: "view/for/type/day-picker",
   apis: ["control", "view", "validation"],
@@ -46134,26 +46533,37 @@ NwtResource.define({
     },
     "initialValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
-      "default": new Date()
+      "factory": function() {
+        return new Date();
+      }
     },
     "hasFixedValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "onChange": {
       "type": Function,
-      "default": function() {}
+      "default": NwtUtils.noop
     }
   },
   subtypeOf: "text",
@@ -46322,7 +46732,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -46330,8 +46745,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -46345,7 +46765,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -46364,7 +46786,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -46430,6 +46853,7 @@ NwtResource.define({
         if (typeof date === "string") {
           date = NwtTimer.fromStringToDate(date);
         }
+        console.log("DATEEE:", date, date instanceof Date, this.$options.name);
         if (!(date instanceof Date)) {
           return date;
         }
@@ -46539,7 +46963,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -46557,16 +46985,20 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][219]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compilable.css
+// @vuebundler[Proyecto_base_001][221]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compilable.css
 
-// @vuebundler[Proyecto_base_001][220]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compiled.js
+// @vuebundler[Proyecto_base_001][222]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compiled.js
 NwtResource.define({
   id: "view/for/type/hour-picker",
   apis: ["control", "view", "validation"],
@@ -46579,21 +47011,32 @@ NwtResource.define({
     },
     "initialValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
-      "default": new Date()
+      "factory": function() {
+        return new Date();
+      }
     },
     "hasFixedValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "onChange": {
@@ -46670,7 +47113,7 @@ NwtResource.define({
                           </div>
                       </div>
                   </div>
-                  <div class="flex_1" style="min-width:20px;"></div>
+                  <div class="flex_1" style="min-width:8px;"></div>
                   <div class="flex_1">
                       <div class="clock for_minutes">
                           <span :class="{active:selectedMinute === 5}" v-on:click="selectMinute" style="--i:1">5</span>
@@ -46782,7 +47225,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -46790,8 +47238,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -46805,7 +47258,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -46824,7 +47279,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -46962,7 +47418,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -46980,16 +47440,20 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][221]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compilable.css
+// @vuebundler[Proyecto_base_001][223]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compilable.css
 
-// @vuebundler[Proyecto_base_001][222]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/moment-picker/compiled.js
+// @vuebundler[Proyecto_base_001][224]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/moment-picker/compiled.js
 NwtResource.define({
   id: "view/for/type/moment-picker",
   apis: ["control", "view", "validation"],
@@ -47002,21 +47466,32 @@ NwtResource.define({
     },
     "initialValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null],
-      "default": new Date()
+      "factory": function() {
+        return new Date();
+      }
     },
     "hasFixedValue": {
       "type": [String, Boolean, Number, Object, Array, Function, undefined, null]
     },
     "rootValueIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootSchemaIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "rootComponentIndex": {
-      "type": Array,
+      "type": [
+        Array,
+        undefined
+      ],
       "required": true
     },
     "onChange": {
@@ -47144,7 +47619,12 @@ NwtResource.define({
         if (this.settings.hasFixedValue) return this.settings.hasFixedValue;
         const indexes = this.getIndexForValue();
         const fallbackFactory = this.getFallbackValue.bind(this);
-        const originalValue = this.$toolkit.getRoot().$store.get(indexes, fallbackFactory);
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        const originalValue = rootComponent.$store.get(indexes, fallbackFactory);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedValue = formatterBySettings(originalValue);
         return formattedValue;
@@ -47152,8 +47632,13 @@ NwtResource.define({
       "setValueBySchema": function(value) {
         trace("@compilable/control/trait/for/remoteValue.methods.setValueBySchema");
         const indexes = this.$toolkit.getIndexForValue();
-        this.$toolkit.getRoot().$store.set(indexes, value);
-        this.$toolkit.getRoot().$store.dispatch("@SetValue", indexes, {
+        const rootComponent = this.$toolkit.getRoot();
+        if (!rootComponent) {
+          // Los componentes no compatibles con formulario devolverán el valor inicial (probablemente no esté) o undefined
+          return this.settings.initialValue || undefined;
+        }
+        rootComponent.$store.set(indexes, value);
+        rootComponent.$store.dispatch("@SetValue", indexes, {
           index: indexes,
           value: value
         });
@@ -47167,7 +47652,9 @@ NwtResource.define({
       "getSchemaByIndex": function() {
         trace("@compilable/control/trait/for/remoteSchema.methods.getSchemaByIndex");
         if (this.settings.hasFixedSchema) return this.settings.hasFixedSchema;
-        const originalSchema = this.$toolkit.getRoot().$schema.get(this.settings.rootSchemaIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        // @MAYBE:
+        const originalSchema = rootComponent.$schema.get(this.settings.rootSchemaIndex);
         const formatterBySettings = this.settings.onFormat || NwtUtils.noopSelf;
         let formattedSchema = formatterBySettings(originalSchema);
         return formattedSchema;
@@ -47186,7 +47673,8 @@ NwtResource.define({
       },
       "getComponentByIndex": function() {
         trace("@compilable/control/trait/for/remoteComponent.methods.getComponentByIndex");
-        return NwtAccessor.get(this.$toolkit.getRoot(), this.settings.rootComponentIndex);
+        const rootComponent = this.$toolkit.getRoot();
+        return NwtAccessor.get(rootComponent, this.settings.rootComponentIndex);
       },
       "setComponentByIndex": function(value) {
         trace("@compilable/control/trait/for/remoteComponent.methods.setComponentByIndex");
@@ -47283,7 +47771,11 @@ NwtResource.define({
         if (!this.$local.rootListenerCallback) {
           this.$local.rootListenerCallback = this.rootListenerCallback.bind(this);
         }
-        this.$toolkit.getRoot().$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        const rootComponent = this.$toolkit.getRoot();
+        if (rootComponent) {
+          // Los componentes no compatibles con formulario no se registrarán en el store del root
+          rootComponent.$store.on("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+        }
       }
       // @COMPILED-BY: control/trait/for/settings
       trace("@compilable/control/trait/for/settings.mounted");
@@ -47303,15 +47795,102 @@ NwtResource.define({
           if (["list", "structure", "option"].includes(this.$options.statically.subtypeOf)) {
             break Remove_listener;
           }
-          this.$toolkit.getRoot().$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          const rootComponent = this.$toolkit.getRoot();
+          if (rootComponent) {
+            // Los componentes no compatibles con formulario no se desregistrarán del store del root
+            rootComponent.$store.off("@SetValue", this.settings.rootValueIndex, this.$local.rootListenerCallback);
+          }
         }
       }, 0);
     },
   }
 });
 
-// @vuebundler[Proyecto_base_001][223]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+// @vuebundler[Proyecto_base_001][225]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/hours-grid/compiled.js
+NwtResource.define({
+  id: "widget/for/agenda/hours-grid",
+  apis: [],
+  inherits: ["control/trait/for/settings"],
+  traits: {},
+  settingsSpec: {
+    "onChange": {
+      "type": Function,
+      "default": NwtUtils.noop
+    }
+  },
+  compileView: true,
+  view: {
+    name: "NwtWidgetForAgendaHoursGrid",
+    props: {
+      "settings": {
+        "type": Object,
+        "required": true
+      },
+      "agenda": {
+        "type": Vue,
+        "required": true
+      }
+    },
+    template: `
+      <div class="nwt_widget_for_agenda_hours_grid">
+          Día: {{ $local.selectedDayAsString }}.
+      </div>`,
+    data: function() {
+      const finalData = {};
+      // @COMPILED-BY: widget/for/agenda/hours-grid
+      Object.assign(finalData, (function() {
+        trace("NwtWidgetForAgendaHoursGrid.data");
+        return {};
+      }).call(this));
+      return finalData;
+    },
+    methods: {
+      "onChangeWrapper": function() {
+        trace("NwtWidgetForAgendaHoursGrid.methods.onChangeWrapper");
+        // @OK.
+      },
+      "load": function() {
+        trace("NwtWidgetForAgendaHoursGrid.methods.loadDay");
+        this.loadDay();
+        this.loadTasks();
+      },
+      "loadDay": function() {
+        trace("NwtWidgetForAgendaHoursGrid.methods.loadDay");
+        this.$local.selectedDayAsString = this.agenda.$local.controls.day.getSelectedDayFormatted();
+        this.$local.selectedDay = NwtTimer.fromStringToDate(this.$local.selectedDayAsString);
+      },
+      "loadTasks": function() {
+        trace("NwtWidgetForAgendaHoursGrid.methods.loadTasks");
+        const tasksOfDay = [];
+        // @TODO: coger, del cron, las tareas que coinciden con el día.
+        this.$local.selectedDayTasks = tasksOfDay;
+        this.$forceUpdate(true);
+      }
+    },
+    computed: {},
+    watch: {},
+    created: function() {
+      // @COMPILED-BY: widget/for/agenda/hours-grid
+      trace("NwtWidgetForAgendaHoursGrid.created");
+      NwtVue2.Toolkit.installLocal(this);
+      this.$local.selectedDay = undefined;
+      this.$local.selectedDayTasks = [];
+    },
+    mounted: function() {
+      // @COMPILED-BY: control/trait/for/settings
+      trace("@compilable/control/trait/for/settings.mounted");
+      NwtPrototyper.initializePropertiesOf(this.settings, this.$options.statically.settingsSpec || {}, `from component «${this.$options.name}»`, false);
+      // @COMPILED-BY: widget/for/agenda/hours-grid
+      trace("NwtWidgetForAgendaHoursGrid.mounted");
+      this.load();
+    },
+  }
+});
 
-// @vuebundler[Proyecto_base_001][224]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+// @vuebundler[Proyecto_base_001][226]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/hours-grid/compilable.css
 
-// @vuebundler[Proyecto_base_001][225]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css
+// @vuebundler[Proyecto_base_001][227]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css
+
+// @vuebundler[Proyecto_base_001][228]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css
+
+// @vuebundler[Proyecto_base_001][229]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css

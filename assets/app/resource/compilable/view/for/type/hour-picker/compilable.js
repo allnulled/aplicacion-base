@@ -23,7 +23,9 @@ module.exports = {
     },
     initialValue: {
       type: LowCode.type.Any,
-      default: LowCode.create("new Date()"),
+      factory: function() {
+        return new Date();
+      },
     },
     onChange: {
       type: LowCode.type.Function,

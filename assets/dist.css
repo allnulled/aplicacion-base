@@ -3864,11 +3864,18 @@ table>tbody>tr>* {
     font-size: 10px;
 }
 
-/* @vuebundler[Proyecto_base_001][203]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date-by-boxes/compiled.js*/
+/* @vuebundler[Proyecto_base_001][203]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][204]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compiled.js*/
+/* @vuebundler[Proyecto_base_001][204]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/compilable.css*/
+.nwt_widget_for_agenda {
+    font-size: 10px;
+}
 
-/* @vuebundler[Proyecto_base_001][205]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compilable.css*/
+/* @vuebundler[Proyecto_base_001][205]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/date-by-boxes/compiled.js*/
+
+/* @vuebundler[Proyecto_base_001][206]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compiled.js*/
+
+/* @vuebundler[Proyecto_base_001][207]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/day-picker/compilable.css*/
 .calendar_container {
     max-width: 310px;
 }
@@ -3921,11 +3928,11 @@ table>tbody>tr>* {
     font-weight: bold;
 }
 
-/* @vuebundler[Proyecto_base_001][206]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js*/
+/* @vuebundler[Proyecto_base_001][208]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/duration/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][207]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compiled.js*/
+/* @vuebundler[Proyecto_base_001][209]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][208]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compilable.css*/
+/* @vuebundler[Proyecto_base_001][210]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/hour-picker/compilable.css*/
 .clock {
     width: min(60vw, 130px);
     aspect-ratio: 1;
@@ -3971,11 +3978,11 @@ table>tbody>tr>* {
     justify-content: center;
 }
 
-/* @vuebundler[Proyecto_base_001][209]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/moment-picker/compiled.js*/
+/* @vuebundler[Proyecto_base_001][211]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/for/type/moment-picker/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][210]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js*/
+/* @vuebundler[Proyecto_base_001][212]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][211]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css*/
+/* @vuebundler[Proyecto_base_001][213]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/error-handler/compilable.css*/
 .nwt_control_partial_for_error_handler {
 
 }
@@ -4041,11 +4048,11 @@ table>tbody>tr>* {
     background: #777;
 }
 
-/* @vuebundler[Proyecto_base_001][212]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js*/
+/* @vuebundler[Proyecto_base_001][214]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/list-panel/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][213]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js*/
+/* @vuebundler[Proyecto_base_001][215]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][214]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css*/
+/* @vuebundler[Proyecto_base_001][216]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/pagination-panel/compilable.css*/
 .nwt_control_partial_for_pagination_panel button.pagination_button {
     padding-bottom: 2px !important;
     cursor: pointer;
@@ -4071,9 +4078,9 @@ table>tbody>tr>* {
     max-width: 42px;
 }
 
-/* @vuebundler[Proyecto_base_001][215]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js*/
+/* @vuebundler[Proyecto_base_001][217]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][216]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css*/
+/* @vuebundler[Proyecto_base_001][218]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/control/partial/for/statement/compilable.css*/
 .nwt_control_partial_for_statement {
     
 }
@@ -4126,11 +4133,11 @@ table>tbody>tr>* {
     
 }
 
-/* @vuebundler[Proyecto_base_001][217]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js*/
+/* @vuebundler[Proyecto_base_001][219]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/test/control/for/settingsSpecExample/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][218]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compiled.js*/
+/* @vuebundler[Proyecto_base_001][220]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][219]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compilable.css*/
+/* @vuebundler[Proyecto_base_001][221]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/day-picker/compilable.css*/
 .calendar_container {
     max-width: 310px;
 }
@@ -4183,14 +4190,14 @@ table>tbody>tr>* {
     font-weight: bold;
 }
 
-/* @vuebundler[Proyecto_base_001][220]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compiled.js*/
+/* @vuebundler[Proyecto_base_001][222]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][221]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compilable.css*/
+/* @vuebundler[Proyecto_base_001][223]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/hour-picker/compilable.css*/
 .hour_picker_container {
     max-width: 310px;
 }
 .clock {
-    width: min(60vw, 130px);
+    width: min(60vw, 100px);
     aspect-ratio: 1;
     border-radius: 50%;
     position: relative;
@@ -4199,7 +4206,7 @@ table>tbody>tr>* {
 
 .clock > span {
     position: absolute;
-    --width: 25px;
+    --width: 18px;
     --angle: calc(var(--i) * 30deg - 90deg);
     --radius: 42%;
     left: calc(50% + cos(var(--angle)) * var(--radius));
@@ -4208,6 +4215,7 @@ table>tbody>tr>* {
     font-size: clamp(10px, 3vw, 11px);
     border-radius: 50%;
     border: 1px solid #1c5a93;
+    border: 1px solid #cedef1;
     color: black;
     width: var(--width);
     height: var(--width);
@@ -4234,9 +4242,14 @@ table>tbody>tr>* {
     justify-content: center;
 }
 
-/* @vuebundler[Proyecto_base_001][222]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/moment-picker/compiled.js*/
+/* @vuebundler[Proyecto_base_001][224]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/view/for/type/moment-picker/compiled.js*/
 
-/* @vuebundler[Proyecto_base_001][223]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css*/
+/* @vuebundler[Proyecto_base_001][225]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/hours-grid/compiled.js*/
+
+/* @vuebundler[Proyecto_base_001][226]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/app/resource/compiled/widget/for/agenda/hours-grid/compilable.css*/
+.nwt_widget_for_agenda_hours_grid {}
+
+/* @vuebundler[Proyecto_base_001][227]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-framework.css*/
 html,
 body {
     margin: 0px;
@@ -4762,10 +4775,10 @@ select.fluid {
     padding-right: 16px !important;
 }
 
-/* @vuebundler[Proyecto_base_001][224]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css*/
+/* @vuebundler[Proyecto_base_001][228]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/one-framework/one-theme.css*/
 
 
-/* @vuebundler[Proyecto_base_001][225]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
+/* @vuebundler[Proyecto_base_001][229]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/css/custom/custom.css*/
 body {
     font: var(--w7-font);
 }

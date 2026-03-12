@@ -18,6 +18,9 @@ Vue.component("MainWindow", {
         text: "Procedimientos",
         event: () => this.startProcedimientos(),
       }, {
+        text: "Agenda",
+        event: () => this.startAgenda(),
+      }, {
         text: "Configuraciones",
         event: () => this.startConfiguraciones(),
       }, {
@@ -49,6 +52,10 @@ Vue.component("MainWindow", {
         title: "Procedimientos",
         body: `<nwt-commands-manager-viewer :dialog="this" />`,
       });
+    },
+    startAgenda() {
+      trace("MainWindow.methods.startAgenda");
+      return NwtResource.for("widget/for/agenda").startDialog();
     },
     startConfiguraciones() {
       trace("MainWindow.methods.startConfiguraciones");

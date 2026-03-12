@@ -2,7 +2,7 @@
     max-width: 310px;
 }
 .clock {
-    width: min(60vw, 130px);
+    width: min(60vw, 100px);
     aspect-ratio: 1;
     border-radius: 50%;
     position: relative;
@@ -11,7 +11,7 @@
 
 .clock > span {
     position: absolute;
-    --width: 25px;
+    --width: 18px;
     --angle: calc(var(--i) * 30deg - 90deg);
     --radius: 42%;
     left: calc(50% + cos(var(--angle)) * var(--radius));
@@ -20,6 +20,7 @@
     font-size: clamp(10px, 3vw, 11px);
     border-radius: 50%;
     border: 1px solid #1c5a93;
+    border: 1px solid #cedef1;
     color: black;
     width: var(--width);
     height: var(--width);
