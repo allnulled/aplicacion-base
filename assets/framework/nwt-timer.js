@@ -59,25 +59,49 @@
       return capitalize ? NwtUtils.capitalize(datestring) : datestring;
     }
 
+    static monthNamesByMonthIndex = {
+      0: "ene",
+      1: "feb",
+      2: "mar",
+      3: "abr",
+      4: "may",
+      5: "jun",
+      6: "jul",
+      7: "ago",
+      8: "set",
+      9: "oct",
+      10: "nov",
+      11: "dic",
+    };
+
+    static getMonthIndexByName(monthName) {
+      trace("NwtTimer.getMonthIndex");
+      const values = Object.values(this.monthNamesByMonthIndex);
+      const pos = values.indexOf(monthName);
+      if(pos === -1) {
+        return monthName;
+      }
+      return pos;
+    }
+
     static fromDateToString(d = new Date(), options = {}) {
       trace("NwtTimer.fromDateToString");
       // d puede ser Date, número (timestamp) o cadena aceptada por Date
       const date = d instanceof Date ? d : new Date(d);
-      const utc = !!options.utc;
-      const Y = utc ? date.getUTCFullYear() : date.getFullYear();
-      const M = (utc ? date.getUTCMonth() : date.getMonth()) + 1; // 0..11 -> 1..12
-      const D = utc ? date.getUTCDate() : date.getDate();
-      const hh = utc ? date.getUTCHours() : date.getHours();
-      const mm = utc ? date.getUTCMinutes() : date.getMinutes();
-      const ss = utc ? date.getUTCSeconds() : date.getSeconds();
-      const ms = utc ? date.getUTCMilliseconds() : date.getMilliseconds();
+      const Y = date.getFullYear();
+      const M = this.monthNamesByMonthIndex[date.getMonth()];
+      const D = date.getDate();
+      const hh = date.getHours();
+      const mm = date.getMinutes();
+      const ss = date.getSeconds();
+      const ms = date.getMilliseconds();
       const pad = (n, width = 2) => {
         const s = String(n);
         return s.length >= width ? s : '0'.repeat(width - s.length) + s;
       };
       return (
         String(Y).padStart(4, '0') + '/' +
-        pad(M) + '/' +
+        M + '/' +
         pad(D) + ' ' +
         pad(hh) + ':' +
         pad(mm) + ':' +
@@ -89,11 +113,10 @@
     static fromStringToDate(text) {
       trace("NwtTimer.fromStringToDate");
       assertion(typeof text === "string", "Parameter «t» must be string on «NwtTimer.fromStringToDate»");
-      console.log("String to date?", text);
       const [day, hour] = text.split(" ");
       const [years, months, days] = day.split("/");
       const date = new Date();
-      date.setFullYear(years, months, days);
+      date.setFullYear(years, this.getMonthIndexByName(months), days);
       if(hour) {
         const [hours, minutes = 0, seconds = 0, milliseconds = 0] = hour.split(/\.|\:/g);
         date.setHours(hours, minutes, seconds, milliseconds);

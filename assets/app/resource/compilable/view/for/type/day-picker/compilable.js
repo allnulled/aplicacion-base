@@ -35,6 +35,10 @@ module.exports = {
       type: LowCode.type.Function,
       default: LowCode.create("NwtUtils.noop"),
     },
+    onUpdateMonthMarks: {
+      type: LowCode.type.Function,
+      default: LowCode.create("NwtUtils.noop"),
+    }
   },
   view: {
     name: "NwtViewForTypeDayPicker",
@@ -96,7 +100,6 @@ module.exports = {
         if(typeof date === "string") {
           date = NwtTimer.fromStringToDate(date);
         }
-        console.log("DATEEE:", date, date instanceof Date, this.$options.name);
         if(!(date instanceof Date)) {
           return date;
         }
@@ -127,7 +130,7 @@ module.exports = {
         const year = cell.year;
         const month = parseInt(cell.month) + (forHumans ? 1 : 0);
         const day = cell.day;
-        out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
+        out = `${year}/${NwtTimer.monthNamesByMonthIndex[month]}/${NwtUtils.padStart(day,2,'0')}`;
         return out;
       },
       getSelectedDayAsDate: function() {
@@ -136,7 +139,7 @@ module.exports = {
           return new Date();
         }
         const date = new Date();
-        date.setFullYear(this.selectedCell.year, parseInt(this.selectedCell.month) - 1, this.selectedCell.day);
+        date.setFullYear(this.selectedCell.year, this.selectedCell.month, this.selectedCell.day);
         return date; 
       },
       onChangeWrapper: function(newValue, oldValue) {
@@ -146,8 +149,25 @@ module.exports = {
       },
       onChangeMonthWrapper: function(newValue, oldValue) {
         trace("NwtViewForTypeDayPicker.methods.onChangeMonthWrapper");
+        this.onUpdateMonthMarks();
         const value = this.getSelectedDayFormatted();
         this.settings.onChangeMonth(value, this);
+      },
+      onUpdateMonthMarks: async function() {
+        trace("NwtViewForTypeDayPicker.methods.onUpdateMonthMarks");
+        this.setMonthMarks({});
+        const monthMarks = await this.settings.onUpdateMonthMarks(this.dateForMonth, this);
+        if(typeof monthMarks !== "undefined") {
+          this.setMonthMarks(monthMarks);
+        }
+      },
+      setMonthMarks: function(monthMarks) {
+        assertion(typeof monthMarks === "object", "Parameter «monthMarks» must be object on «NwtViewForTypeDayPicker.methods.setMonthMarks»");
+        this.monthMarks = monthMarks;
+      },
+      clearMonthMarks: function() {
+        trace("NwtViewForTypeDayPicker.methods.clearMonthMarks");
+        this.monthMarks = {};
       },
       /////////////////////////////////////
     },
@@ -170,6 +190,7 @@ module.exports = {
       return {
         dateForMonth: new Date(),
         selectedCell: undefined,
+        monthMarks: {},
       };
     },
     computed: {

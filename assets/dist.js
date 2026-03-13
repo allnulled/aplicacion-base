@@ -22484,6 +22484,11 @@ if (window.location.href.startsWith("http://") || window.location.href.startsWit
 
   NwtTracer.global = new NwtTracer("global", true);
 
+  if((typeof window !== "undefined") && (window.location.protocol === "https")) {
+    // @PRODUCTION: desactivar el trace
+    NwtTracer.global.deactivate();
+  }
+
   NwtTracer.global.exportToGlobal();
 
   return NwtTracer;
@@ -25467,25 +25472,49 @@ const { lutimesSync } = require("fs-extra");
       return capitalize ? NwtUtils.capitalize(datestring) : datestring;
     }
 
+    static monthNamesByMonthIndex = {
+      0: "ene",
+      1: "feb",
+      2: "mar",
+      3: "abr",
+      4: "may",
+      5: "jun",
+      6: "jul",
+      7: "ago",
+      8: "set",
+      9: "oct",
+      10: "nov",
+      11: "dic",
+    };
+
+    static getMonthIndexByName(monthName) {
+      trace("NwtTimer.getMonthIndex");
+      const values = Object.values(this.monthNamesByMonthIndex);
+      const pos = values.indexOf(monthName);
+      if(pos === -1) {
+        return monthName;
+      }
+      return pos;
+    }
+
     static fromDateToString(d = new Date(), options = {}) {
       trace("NwtTimer.fromDateToString");
       // d puede ser Date, número (timestamp) o cadena aceptada por Date
       const date = d instanceof Date ? d : new Date(d);
-      const utc = !!options.utc;
-      const Y = utc ? date.getUTCFullYear() : date.getFullYear();
-      const M = (utc ? date.getUTCMonth() : date.getMonth()) + 1; // 0..11 -> 1..12
-      const D = utc ? date.getUTCDate() : date.getDate();
-      const hh = utc ? date.getUTCHours() : date.getHours();
-      const mm = utc ? date.getUTCMinutes() : date.getMinutes();
-      const ss = utc ? date.getUTCSeconds() : date.getSeconds();
-      const ms = utc ? date.getUTCMilliseconds() : date.getMilliseconds();
+      const Y = date.getFullYear();
+      const M = this.monthNamesByMonthIndex[date.getMonth()];
+      const D = date.getDate();
+      const hh = date.getHours();
+      const mm = date.getMinutes();
+      const ss = date.getSeconds();
+      const ms = date.getMilliseconds();
       const pad = (n, width = 2) => {
         const s = String(n);
         return s.length >= width ? s : '0'.repeat(width - s.length) + s;
       };
       return (
         String(Y).padStart(4, '0') + '/' +
-        pad(M) + '/' +
+        M + '/' +
         pad(D) + ' ' +
         pad(hh) + ':' +
         pad(mm) + ':' +
@@ -25497,11 +25526,10 @@ const { lutimesSync } = require("fs-extra");
     static fromStringToDate(text) {
       trace("NwtTimer.fromStringToDate");
       assertion(typeof text === "string", "Parameter «t» must be string on «NwtTimer.fromStringToDate»");
-      console.log("String to date?", text);
       const [day, hour] = text.split(" ");
       const [years, months, days] = day.split("/");
       const date = new Date();
-      date.setFullYear(years, months, days);
+      date.setFullYear(years, this.getMonthIndexByName(months), days);
       if(hour) {
         const [hours, minutes = 0, seconds = 0, milliseconds = 0] = hour.split(/\.|\:/g);
         date.setHours(hours, minutes, seconds, milliseconds);
@@ -26551,7 +26579,8 @@ const { lutimesSync } = require("fs-extra");
     };
 
     static visit(data, selector = [], successHandler = NwtAccessor.strategy.SIMPLE_GETTER, errorHandler = NwtAccessor.strategy.THROW_ORIGINAL_ERROR, extra = {}, assertion = NwtAsserter.silently) {
-      trace("NwtAccessor.visit", [data, selector]);
+      trace("NwtAccessor.visit");
+      // trace("NwtAccessor.visit", [data, selector]);
       let pivot = data;
       // assertion(["string", "function", "object"].indexOf(typeof data) !== -1, `Parameter «data» must be string, object or function on selector «${selector.join(".")}» on «NwtAccessor.visit»`);
       assertion(Array.isArray(selector), `Parameter «selector» must be array but type «${typeof selector}» was found on «NwtAccessor.visit»`);
@@ -28730,9 +28759,9 @@ const { lutimesSync } = require("fs-extra");
       assertion(Array.isArray(argnames), "Parameter «argnames» must be an array on «NwtCodeComposer.createAsyncFunction»");
       const AsyncFunction = (async function () { }).constructor;
       try {
-        console.log(`[nwt-code-composer][compiled][async]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
+        trace(`[nwt-code-composer][compiled][async]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
         const jsBeautified = this.beautifyJs(js);
-        console.log(`[nwt-code-composer][compiled][async]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
+        trace(`[nwt-code-composer][compiled][async]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
         const asyncFunction = new AsyncFunction(...argnames, jsBeautified);
         return asyncFunction;
       } catch (error) {
@@ -28746,9 +28775,9 @@ const { lutimesSync } = require("fs-extra");
       assertion(typeof js === "string", "Parameter «js» must be a string on «NwtCodeComposer.createSyncFunction»");
       assertion(Array.isArray(argnames), "Parameter «argnames» must be an array on «NwtCodeComposer.createSyncFunction»");
       try {
-        console.log(`[nwt-code-composer][compiled][sync]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
+        trace(`[nwt-code-composer][compiled][sync]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
         const jsBeautified = this.beautifyJs(js);
-        console.log(`[nwt-code-composer][compiled][sync]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
+        trace(`[nwt-code-composer][compiled][sync]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
         const syncFunction = new Function(...argnames, js);
         return syncFunction;
       } catch (error) {
@@ -37422,10 +37451,11 @@ Vue.component("NwtTesterNode", {
       trace("NwtCronExpression.prototype.isSameDayByDate");
       assertion(date instanceof Date, "Parameter «date» must be instance of Date on «NwtCronExpression.prototype.isSameDayByDate»");
       const { year, month, day } = this;
-      console.log("same day by date", year, month, day, date.getFullYear(), date.getMonth(), date.getDate());
+      // console.log("same day by date", year, month, day, date.getFullYear(), date.getMonth(), date.getDate());
       const isSameYear = date.getFullYear() === parseInt(year);
       const isSameMonth = date.getMonth() === (parseInt(month)-1);
       const isSameDay = date.getDate() === parseInt(day);
+      // console.log("same day by date", isSameYear, isSameMonth, isSameDay);
       return isSameYear && isSameMonth && isSameDay;
     }
 
@@ -44640,7 +44670,7 @@ NwtResource.define({
   traits: {},
   compileView: true,
   startDialog: function() {
-    trace("@widget/for/agenda.startDialog");
+    trace("@compilable/widget/for/agenda.startDialog");
     return NwtDialogs.openLayout1({
       title: "Agenda",
       body: `<div class="pad_1">
@@ -44664,6 +44694,7 @@ NwtResource.define({
                   ...settings,
                   isShowingControl: true,
                   onChange: reload,
+                  onUpdateMonthMarks: updateMonthMarksHandler,
               }"
           />
           <nwt-widget-for-agenda-hours-grid
@@ -44687,6 +44718,10 @@ NwtResource.define({
       "reload": function() {
         trace("NwtWidgetForAgenda.methods.reload");
         this.$local.controls.hours.load();
+      },
+      "updateMonthMarksHandler": function() {
+        trace("NwtWidgetForAgenda.methods.updateMonthMarksHandler");
+        this.reload();
       }
     },
     computed: {},
@@ -46726,6 +46761,10 @@ NwtResource.define({
     "onChangeMonth": {
       "type": Function,
       "default": NwtUtils.noop
+    },
+    "onUpdateMonthMarks": {
+      "type": Function,
+      "default": NwtUtils.noop
     }
   },
   subtypeOf: "text",
@@ -46803,6 +46842,9 @@ NwtResource.define({
                               v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex"
                               v-on:click="() => cell.notSameMonth ? 0 : selectCell(cell)">
                               {{ cell.day }}
+                              <div class="day_marks_box" v-if="cell.day in monthMarks">
+                                  <div class="day_mark_point">{{ monthMarks[cell.day] }}</div>
+                              </div>
                           </div>
                       </div>
                   </div>
@@ -46831,6 +46873,7 @@ NwtResource.define({
         return {
           dateForMonth: new Date(),
           selectedCell: undefined,
+          monthMarks: {},
         };
       }).call(this));
       return finalData;
@@ -47015,7 +47058,6 @@ NwtResource.define({
         if (typeof date === "string") {
           date = NwtTimer.fromStringToDate(date);
         }
-        console.log("DATEEE:", date, date instanceof Date, this.$options.name);
         if (!(date instanceof Date)) {
           return date;
         }
@@ -47046,7 +47088,7 @@ NwtResource.define({
         const year = cell.year;
         const month = parseInt(cell.month) + (forHumans ? 1 : 0);
         const day = cell.day;
-        out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
+        out = `${year}/${NwtTimer.monthNamesByMonthIndex[month]}/${NwtUtils.padStart(day,2,'0')}`;
         return out;
       },
       "getSelectedDayAsDate": function() {
@@ -47055,7 +47097,7 @@ NwtResource.define({
           return new Date();
         }
         const date = new Date();
-        date.setFullYear(this.selectedCell.year, parseInt(this.selectedCell.month) - 1, this.selectedCell.day);
+        date.setFullYear(this.selectedCell.year, this.selectedCell.month, this.selectedCell.day);
         return date;
       },
       "onChangeWrapper": function(newValue, oldValue) {
@@ -47065,8 +47107,25 @@ NwtResource.define({
       },
       "onChangeMonthWrapper": function(newValue, oldValue) {
         trace("NwtViewForTypeDayPicker.methods.onChangeMonthWrapper");
+        this.onUpdateMonthMarks();
         const value = this.getSelectedDayFormatted();
         this.settings.onChangeMonth(value, this);
+      },
+      "onUpdateMonthMarks": async function() {
+        trace("NwtViewForTypeDayPicker.methods.onUpdateMonthMarks");
+        this.setMonthMarks({});
+        const monthMarks = await this.settings.onUpdateMonthMarks(this.dateForMonth, this);
+        if (typeof monthMarks !== "undefined") {
+          this.setMonthMarks(monthMarks);
+        }
+      },
+      "setMonthMarks": function(monthMarks) {
+        assertion(typeof monthMarks === "object", "Parameter «monthMarks» must be object on «NwtViewForTypeDayPicker.methods.setMonthMarks»");
+        this.monthMarks = monthMarks;
+      },
+      "clearMonthMarks": function() {
+        trace("NwtViewForTypeDayPicker.methods.clearMonthMarks");
+        this.monthMarks = {};
       }
     },
     computed: {
@@ -48073,6 +48132,10 @@ NwtResource.define({
         // @TODO: coger, del cron, las tareas que coinciden con el día.
         this.$local.selectedDayTasks = tasksOfDay;
         this.$local.openedMonthTasks = tasksOfMonth;
+        const monthMarks = NwtObjectUtils.cleanMapByPairs(tasksOfMonth, (k, v) => {
+          return [k, v.length];
+        });
+        this.agenda.$local.controls.day.setMonthMarks(monthMarks);
         this.$forceUpdate(true);
       }
     },

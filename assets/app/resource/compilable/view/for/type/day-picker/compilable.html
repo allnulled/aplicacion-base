@@ -52,6 +52,9 @@
                         v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex"
                         v-on:click="() => cell.notSameMonth ? 0 : selectCell(cell)">
                         {{ cell.day }}
+                        <div class="day_marks_box" v-if="cell.day in monthMarks">
+                            <div class="day_mark_point">{{ monthMarks[cell.day] }}</div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -14,6 +14,10 @@ module.exports = {
       reload: function () {
         trace("NwtWidgetForAgenda.methods.reload");
         this.$local.controls.hours.load();
+      },
+      updateMonthMarksHandler: function() {
+        trace("NwtWidgetForAgenda.methods.updateMonthMarksHandler");
+        this.reload();
       }
     },
     watch: {},
@@ -40,7 +44,7 @@ module.exports = {
     props: {}
   },
   startDialog: function() {
-    trace("@widget/for/agenda.startDialog");
+    trace("@compilable/widget/for/agenda.startDialog");
     return NwtDialogs.openLayout1({
       title: "Agenda",
       body: `<div class="pad_1">

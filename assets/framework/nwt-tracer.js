@@ -95,6 +95,11 @@
 
   NwtTracer.global = new NwtTracer("global", true);
 
+  if((typeof window !== "undefined") && (window.location.protocol === "https")) {
+    // @PRODUCTION: desactivar el trace
+    NwtTracer.global.deactivate();
+  }
+
   NwtTracer.global.exportToGlobal();
 
   return NwtTracer;

@@ -63,6 +63,10 @@ module.exports = {
         // @TODO: coger, del cron, las tareas que coinciden con el día.
         this.$local.selectedDayTasks = tasksOfDay;
         this.$local.openedMonthTasks = tasksOfMonth;
+        const monthMarks = NwtObjectUtils.cleanMapByPairs(tasksOfMonth, (k, v) => {
+          return [k, v.length];
+        });
+        this.agenda.$local.controls.day.setMonthMarks(monthMarks);
         this.$forceUpdate(true);
       },
     },

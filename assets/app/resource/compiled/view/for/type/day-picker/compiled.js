@@ -45,6 +45,10 @@ NwtResource.define({
     "onChangeMonth": {
       "type": Function,
       "default": NwtUtils.noop
+    },
+    "onUpdateMonthMarks": {
+      "type": Function,
+      "default": NwtUtils.noop
     }
   },
   subtypeOf: "text",
@@ -122,6 +126,9 @@ NwtResource.define({
                               v-bind:key="'week_' + weekIndex + '_cell_' + cellIndex"
                               v-on:click="() => cell.notSameMonth ? 0 : selectCell(cell)">
                               {{ cell.day }}
+                              <div class="day_marks_box" v-if="cell.day in monthMarks">
+                                  <div class="day_mark_point">{{ monthMarks[cell.day] }}</div>
+                              </div>
                           </div>
                       </div>
                   </div>
@@ -150,6 +157,7 @@ NwtResource.define({
         return {
           dateForMonth: new Date(),
           selectedCell: undefined,
+          monthMarks: {},
         };
       }).call(this));
       return finalData;
@@ -334,7 +342,6 @@ NwtResource.define({
         if (typeof date === "string") {
           date = NwtTimer.fromStringToDate(date);
         }
-        console.log("DATEEE:", date, date instanceof Date, this.$options.name);
         if (!(date instanceof Date)) {
           return date;
         }
@@ -365,7 +372,7 @@ NwtResource.define({
         const year = cell.year;
         const month = parseInt(cell.month) + (forHumans ? 1 : 0);
         const day = cell.day;
-        out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
+        out = `${year}/${NwtTimer.monthNamesByMonthIndex[month]}/${NwtUtils.padStart(day,2,'0')}`;
         return out;
       },
       "getSelectedDayAsDate": function() {
@@ -374,7 +381,7 @@ NwtResource.define({
           return new Date();
         }
         const date = new Date();
-        date.setFullYear(this.selectedCell.year, parseInt(this.selectedCell.month) - 1, this.selectedCell.day);
+        date.setFullYear(this.selectedCell.year, this.selectedCell.month, this.selectedCell.day);
         return date;
       },
       "onChangeWrapper": function(newValue, oldValue) {
@@ -384,8 +391,25 @@ NwtResource.define({
       },
       "onChangeMonthWrapper": function(newValue, oldValue) {
         trace("NwtViewForTypeDayPicker.methods.onChangeMonthWrapper");
+        this.onUpdateMonthMarks();
         const value = this.getSelectedDayFormatted();
         this.settings.onChangeMonth(value, this);
+      },
+      "onUpdateMonthMarks": async function() {
+        trace("NwtViewForTypeDayPicker.methods.onUpdateMonthMarks");
+        this.setMonthMarks({});
+        const monthMarks = await this.settings.onUpdateMonthMarks(this.dateForMonth, this);
+        if (typeof monthMarks !== "undefined") {
+          this.setMonthMarks(monthMarks);
+        }
+      },
+      "setMonthMarks": function(monthMarks) {
+        assertion(typeof monthMarks === "object", "Parameter «monthMarks» must be object on «NwtViewForTypeDayPicker.methods.setMonthMarks»");
+        this.monthMarks = monthMarks;
+      },
+      "clearMonthMarks": function() {
+        trace("NwtViewForTypeDayPicker.methods.clearMonthMarks");
+        this.monthMarks = {};
       }
     },
     computed: {

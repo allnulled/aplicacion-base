@@ -90,10 +90,11 @@
       trace("NwtCronExpression.prototype.isSameDayByDate");
       assertion(date instanceof Date, "Parameter «date» must be instance of Date on «NwtCronExpression.prototype.isSameDayByDate»");
       const { year, month, day } = this;
-      console.log("same day by date", year, month, day, date.getFullYear(), date.getMonth(), date.getDate());
+      // console.log("same day by date", year, month, day, date.getFullYear(), date.getMonth(), date.getDate());
       const isSameYear = date.getFullYear() === parseInt(year);
       const isSameMonth = date.getMonth() === (parseInt(month)-1);
       const isSameDay = date.getDate() === parseInt(day);
+      // console.log("same day by date", isSameYear, isSameMonth, isSameDay);
       return isSameYear && isSameMonth && isSameDay;
     }
 

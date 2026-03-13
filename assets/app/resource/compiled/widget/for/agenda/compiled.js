@@ -5,7 +5,7 @@ NwtResource.define({
   traits: {},
   compileView: true,
   startDialog: function() {
-    trace("@widget/for/agenda.startDialog");
+    trace("@compilable/widget/for/agenda.startDialog");
     return NwtDialogs.openLayout1({
       title: "Agenda",
       body: `<div class="pad_1">
@@ -29,6 +29,7 @@ NwtResource.define({
                   ...settings,
                   isShowingControl: true,
                   onChange: reload,
+                  onUpdateMonthMarks: updateMonthMarksHandler,
               }"
           />
           <nwt-widget-for-agenda-hours-grid
@@ -52,6 +53,10 @@ NwtResource.define({
       "reload": function() {
         trace("NwtWidgetForAgenda.methods.reload");
         this.$local.controls.hours.load();
+      },
+      "updateMonthMarksHandler": function() {
+        trace("NwtWidgetForAgenda.methods.updateMonthMarksHandler");
+        this.reload();
       }
     },
     computed: {},

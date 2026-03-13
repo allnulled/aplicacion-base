@@ -48,7 +48,8 @@
     };
 
     static visit(data, selector = [], successHandler = NwtAccessor.strategy.SIMPLE_GETTER, errorHandler = NwtAccessor.strategy.THROW_ORIGINAL_ERROR, extra = {}, assertion = NwtAsserter.silently) {
-      trace("NwtAccessor.visit", [data, selector]);
+      trace("NwtAccessor.visit");
+      // trace("NwtAccessor.visit", [data, selector]);
       let pivot = data;
       // assertion(["string", "function", "object"].indexOf(typeof data) !== -1, `Parameter «data» must be string, object or function on selector «${selector.join(".")}» on «NwtAccessor.visit»`);
       assertion(Array.isArray(selector), `Parameter «selector» must be array but type «${typeof selector}» was found on «NwtAccessor.visit»`);

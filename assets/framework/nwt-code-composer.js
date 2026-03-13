@@ -93,9 +93,9 @@
       assertion(Array.isArray(argnames), "Parameter «argnames» must be an array on «NwtCodeComposer.createAsyncFunction»");
       const AsyncFunction = (async function () { }).constructor;
       try {
-        console.log(`[nwt-code-composer][compiled][async]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
+        trace(`[nwt-code-composer][compiled][async]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
         const jsBeautified = this.beautifyJs(js);
-        console.log(`[nwt-code-composer][compiled][async]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
+        trace(`[nwt-code-composer][compiled][async]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
         const asyncFunction = new AsyncFunction(...argnames, jsBeautified);
         return asyncFunction;
       } catch (error) {
@@ -109,9 +109,9 @@
       assertion(typeof js === "string", "Parameter «js» must be a string on «NwtCodeComposer.createSyncFunction»");
       assertion(Array.isArray(argnames), "Parameter «argnames» must be an array on «NwtCodeComposer.createSyncFunction»");
       try {
-        console.log(`[nwt-code-composer][compiled][sync]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
+        trace(`[nwt-code-composer][compiled][sync]\n\nfunction: ${argnames.join(", ")}\n\n${ js }\n\n`);
         const jsBeautified = this.beautifyJs(js);
-        console.log(`[nwt-code-composer][compiled][sync]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
+        trace(`[nwt-code-composer][compiled][sync]\n\nbeauty function: ${argnames.join(", ")}\n\n${ jsBeautified }\n\n`);
         const syncFunction = new Function(...argnames, js);
         return syncFunction;
       } catch (error) {

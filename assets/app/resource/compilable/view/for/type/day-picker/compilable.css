@@ -15,6 +15,7 @@
 .no_table.calendar > .thead > .row > .cell {
     text-align: center;
     border: 0px solid black;
+    position: relative;
 }
 
 .no_table.calendar > .thead > .row > .cell {
@@ -48,4 +49,22 @@
     background-color: #709dd2;
     color: white;
     font-weight: bold;
+}
+
+.day_marks_box {
+    position: absolute;
+    top: auto;
+    left: auto;
+    right: 2px;
+    bottom: 0px;
+    font-size: 6px;
+}
+.day_marks_box > .day_mark_point {
+    width: 8px;
+    height: 8px;
+    background-color: rgb(231, 186, 5);
+    color: black;
+    font-weight: normal;
+    border-radius: 50%;
+    padding: 0px;
 }
