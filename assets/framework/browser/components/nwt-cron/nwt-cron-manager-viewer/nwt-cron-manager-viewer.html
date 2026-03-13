@@ -32,6 +32,7 @@
                         v-on:click="() => removeJob(job)">❌</button>
                 </div>
             </div>
+            <nwt-progress-bar-viewer class="hidden" :progress-bar="$local.progressBar1" :ref="$nwt.Vue2.generateRefCallback(['$local','progressBarViewer1'])" />
             <div class="pad_top_1 pad_right_1" v-if="isOpened.indexOf(job) !== -1">
                 <div class="card">
                     <nwt-cron-job-form :job="job" :on-saved="() => toggleJob(job)" />

@@ -1,0 +1,10 @@
+.box_cron_pattern_to_natural {
+    text-align: center;
+    align-items: center;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    display: inline-block;
+    white-space: wrap;
+    width: 100%;
+    font-weight: bold;
+}

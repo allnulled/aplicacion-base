@@ -2856,7 +2856,16 @@ hr {
 /* @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-job-form/nwt-cron-job-form.js*/
 
 /* @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-job-form/nwt-cron-job-form.css*/
-
+.box_cron_pattern_to_natural {
+    text-align: center;
+    align-items: center;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    display: inline-block;
+    white-space: wrap;
+    width: 100%;
+    font-weight: bold;
+}
 
 /* @vuebundler[Proyecto_base_001][127]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-manager-viewer/nwt-cron-manager-viewer.html*/
 

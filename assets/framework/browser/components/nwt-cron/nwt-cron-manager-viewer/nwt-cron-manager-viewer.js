@@ -22,12 +22,16 @@ Vue.component("NwtCronManagerViewer", {
     },
     toggleJob(job) {
       trace("NwtCronManagerViewer.methods.toggleJob");
-      const pos = this.isOpened.indexOf(job);
-      if(pos === -1) {
-        this.isOpened.push(job);
-      } else {
-        this.isOpened.splice(pos, 1);
-      }
+      this.$local.progressBarViewer1.$el.classList.remove("hidden");
+      setTimeout(() => {
+        const pos = this.isOpened.indexOf(job);
+        if(pos === -1) {
+          this.isOpened.push(job);
+        } else {
+          this.isOpened.splice(pos, 1);
+        }
+        this.$local.progressBarViewer1.$el.classList.add("hidden");
+      }, 10);
     },
     removeJob(job) {
       trace("NwtCronManagerViewer.methods.removeJob");
@@ -42,7 +46,15 @@ Vue.component("NwtCronManagerViewer", {
       return NwtCronExpression.create({title: "Sin título"}).toPersistibleJob(NwtUtils.noop);
     }
   },
-  created() {},
+  created() {
+    trace("NwtCronManagerViewer.created");
+    NwtVue2Toolkit.installLocal(this);
+    this.$local.progressBarViewer1 = undefined;
+    this.$local.progressBar1 = NwtProgressBar.create();
+    this.$local.progressBar1.current = 98;
+    this.$local.progressBar1.total = 100;
+    this.$local.progressBar1._updatePercentage();
+  },
   mounted() {
     trace("NwtCronManagerViewer.mounted");
   },

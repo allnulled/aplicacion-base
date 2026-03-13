@@ -41,6 +41,10 @@ NwtResource.define({
     "onChange": {
       "type": Function,
       "default": NwtUtils.noop
+    },
+    "onChangeMonth": {
+      "type": Function,
+      "default": NwtUtils.noop
     }
   },
   subtypeOf: "text",
@@ -364,10 +368,24 @@ NwtResource.define({
         out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
         return out;
       },
+      "getSelectedDayAsDate": function() {
+        trace("NwtViewForTypeDayPicker.methods.getSelectedDayAsDate");
+        if (!this.selectedCell) {
+          return new Date();
+        }
+        const date = new Date();
+        date.setFullYear(this.selectedCell.year, parseInt(this.selectedCell.month) - 1, this.selectedCell.day);
+        return date;
+      },
       "onChangeWrapper": function(newValue, oldValue) {
         trace("NwtViewForTypeDayPicker.methods.onChangeWrapper");
         const value = this.getSelectedDayFormatted();
         this.settings.onChange(value, this);
+      },
+      "onChangeMonthWrapper": function(newValue, oldValue) {
+        trace("NwtViewForTypeDayPicker.methods.onChangeMonthWrapper");
+        const value = this.getSelectedDayFormatted();
+        this.settings.onChangeMonth(value, this);
       }
     },
     computed: {
@@ -414,7 +432,8 @@ NwtResource.define({
         const propagator = this.settings.onChangeOption || NwtUtils.noop;
         propagator(newValue, oldValue, this);
       },
-      "selectedCell": ["onChangeWrapper"]
+      "selectedCell": ["onChangeWrapper"],
+      "dateForMonth": ["onChangeMonthWrapper"]
     },
     created: function() {
       // @COMPILED-BY: control/trait/for/toolkit

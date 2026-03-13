@@ -27,6 +27,7 @@
   const NwtCronExpression = class {
 
     static create(...args) {
+      trace("NwtCronExpression.create");
       return new this(...args);
     }
 
@@ -42,24 +43,67 @@
     };
 
     static fromString(code) {
+      trace("NwtCronExpression.fromString");
       const [second, minute, hour, day, month, weekday, year = "*"] = code.split(" ");
       return new this({ second, minute, hour, day, month, weekday, year });
     }
 
     constructor(scope = {}) {
+      trace("NwtCronExpression.constructor");
       Object.assign(this, this.constructor.defaultScope, scope);
     }
 
     override(units = {}) {
+      trace("NwtCronExpression.prototype.override");
       Object.assign(this, units);
       return this;
     }
 
+    isOnlyNumberOrWord(val) {
+      return (val + "").match(/^([0-9]|[A-Za-z])+$/g);
+    }
+
+    isUniqueMoment() {
+      trace("NwtCronExpression.prototype.isUniqueMoment");
+      const {year, month, day, hour, minute, second, weekday} = this;
+      const list = [year, month, day, hour, minute, second, weekday];
+      for(let index=0; index<list.length; index++) {
+        const item = list[index];
+        const isUnique = this.isOnlyNumberOrWord(item);
+        if(!isUnique) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    isSameMonthByDate(date) {
+      trace("NwtCronExpression.prototype.isSameMonthByDate");
+      assertion(date instanceof Date, "Parameter «date» must be instance of Date on «NwtCronExpression.prototype.isSameMonthByDate»");
+      const { year, month } = this;
+      const isSameYear = date.getFullYear() === parseInt(year);
+      const isSameMonth = date.getMonth() === (parseInt(month)-1);
+      return isSameYear && isSameMonth;
+    }
+
+    isSameDayByDate(date) {
+      trace("NwtCronExpression.prototype.isSameDayByDate");
+      assertion(date instanceof Date, "Parameter «date» must be instance of Date on «NwtCronExpression.prototype.isSameDayByDate»");
+      const { year, month, day } = this;
+      console.log("same day by date", year, month, day, date.getFullYear(), date.getMonth(), date.getDate());
+      const isSameYear = date.getFullYear() === parseInt(year);
+      const isSameMonth = date.getMonth() === (parseInt(month)-1);
+      const isSameDay = date.getDate() === parseInt(day);
+      return isSameYear && isSameMonth && isSameDay;
+    }
+
     toString() {
+      trace("NwtCronExpression.prototype.toString");
       return `${this.second} ${this.minute} ${this.hour} ${this.day} ${this.month} ${this.weekday} ${this.year}`;
     }
 
     toObject() {
+      trace("NwtCronExpression.prototype.toObject");
       return NwtObjectUtils.exceptKeys(this, [
         "override",
         "toString",
@@ -70,10 +114,12 @@
     }
 
     toSchedulable(options = {}) {
+      trace("NwtCronExpression.prototype.toSchedulable");
       return new Cron(this.toString(), options);
     }
 
     toPersistibleJob(callback, options = {}) {
+      trace("NwtCronExpression.prototype.toPersistibleJob");
       assertion(typeof callback === "function", `Parameter «callback» must be function on «NwtCronExpression.toPersistibleJob»`);
       assertion(typeof options === "object", `Parameter «options» must be object on «NwtCronExpression.toPersistibleJob»`);
       return NwtCronManager.global.addJob({

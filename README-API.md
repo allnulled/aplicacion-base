@@ -125,6 +125,7 @@ Documentación de las APIs de Nwt.
 - `32. The NwtCronParserPegjs API`
 - `33. The NwtCronPersistibleJob API`
    - **@uses** `NwtCronManager`
+   - **@uses** `NwtCronExpression`
    - **@uses** `NwtObjectUtils`
 - `34. The NwtCronReport API`
 - `35. The NwtCronScope API`
@@ -520,10 +521,13 @@ Documentación de las APIs de Nwt.
    - **@uses** `NwtCodeComposer`
    - **@uses** `NwtCronExpression`
    - **@uses** `NwtVue2Toolkit`
+   - **@uses** `NwtProgressBar`
 - `143. [vue2] The NwtCronManagerViewer API`
    - **@uses** `NwtCronManager`
    - **@uses** `NwtCronExpression`
    - **@uses** `NwtUtils`
+   - **@uses** `NwtVue2Toolkit`
+   - **@uses** `NwtProgressBar`
 - `144. [vue2] The NwtDynamicTesterViewer API`
    - **@uses** `NwtFilesystem`
    - **@uses** `NwtPaths`
@@ -767,6 +771,13 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtLiveInjector
    - NwtTemplates
    - NwtCronJobForm
+- NwtProgressBar ✖️ 6
+   - NwtPack
+   - NwtTester
+   - NwtCronJobForm
+   - NwtCronManagerViewer
+   - NwtProcessManagerViewer
+   - NwtProgressBarViewer
 - NwtRandomizer ✖️ 6
    - NwtDialogDefinition
    - NwtFilesystem
@@ -817,11 +828,11 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtFiletreeSelectorInterpreter
    - NwtServiceManager
    - NwtVolatileStringShortener
-- NwtProgressBar ✖️ 4
-   - NwtPack
-   - NwtTester
-   - NwtProcessManagerViewer
-   - NwtProgressBarViewer
+- NwtVue2Toolkit ✖️ 4
+   - NwtVue2
+   - NwtVue2ToolkitFormControlInterface
+   - NwtCronJobForm
+   - NwtCronManagerViewer
 - NwtFiletreeSelectorInterpreter ✖️ 4
    - NwtFiletreeDirectory
    - NwtFiletree
@@ -852,10 +863,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtDecorableTree
    - NwtPack
    - NwtTester
-- NwtVue2Toolkit ✖️ 3
-   - NwtVue2
-   - NwtVue2ToolkitFormControlInterface
-   - NwtCronJobForm
 - require("os") ✖️ 3
    - NwtPaths
    - NwtSettings
@@ -876,6 +883,10 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtDialogDefinition
    - NwtPack
    - NwtProcessManager
+- NwtCronExpression ✖️ 3
+   - NwtCronPersistibleJob
+   - NwtCronJobForm
+   - NwtCronManagerViewer
 - window.addEventListener ✖️ 3
    - NwtCronManager
    - NwtErrorsManager
@@ -900,9 +911,6 @@ Esta lista es la invertida, muestra las APIs clasificadas por dependencia:
    - NwtAstTreeClass
    - NwtErrorsManager
    - NwtIterableFunction
-- NwtCronExpression ✖️ 2
-   - NwtCronJobForm
-   - NwtCronManagerViewer
 - NwtDecorableTree ✖️ 2
    - NwtPropagableStore
    - NwtStatic
@@ -1111,7 +1119,7 @@ El JSON original es:
 ```json
 {
   "root": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/builder/../..",
-  "generatedAt": "2026-03-12T23:27:47.383Z",
+  "generatedAt": "2026-03-13T03:17:08.113Z",
   "nodes": [
     {
       "path": "/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/nwt-abort.js",
@@ -1643,6 +1651,7 @@ El JSON original es:
       "dependencies": [
         "NwtCronPersistibleJob",
         "NwtCronManager",
+        "NwtCronExpression",
         "NwtObjectUtils"
       ]
     },
@@ -3237,7 +3246,8 @@ El JSON original es:
         "NwtObjectUtils",
         "NwtCodeComposer",
         "NwtCronExpression",
-        "NwtVue2Toolkit"
+        "NwtVue2Toolkit",
+        "NwtProgressBar"
       ]
     },
     {
@@ -3256,7 +3266,9 @@ El JSON original es:
         "NwtCronManagerViewer",
         "NwtCronManager",
         "NwtCronExpression",
-        "NwtUtils"
+        "NwtUtils",
+        "NwtVue2Toolkit",
+        "NwtProgressBar"
       ]
     },
     {

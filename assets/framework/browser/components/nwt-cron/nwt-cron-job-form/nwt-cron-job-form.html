@@ -1,5 +1,10 @@
 <div class="nwt_cron_job_form">
-    <div>
+    <div class="" v-if="isLoading">
+        <nwt-progress-bar-viewer
+            :progress-bar="$local.progressBarForLoading"
+        />
+    </div>
+    <div v-else>
         <div class="nowrap">
             <div class="flex_row centered">
                 <div class="flex_1">🪧 Nombre: </div>
@@ -16,7 +21,7 @@
             <div class="flex_row centered">
                 <div class="flex_1">⏰ Alarma: </div>
             </div>
-            <textarea class="width_100 text_align_right" type="text" disabled="true" :value="$window.cronstrue.toString(job.pattern)" />
+            <div class="box_cron_pattern_to_natural">{{ $window.cronstrue.toString(job.pattern) }}</div>
         </div>
         <div class="nowrap">
             <div class="flex_row centered">
@@ -51,6 +56,15 @@
                         :ref="(el) => { if(el === null) { delete $local.controls[magnitude.id]; } else { $local.controls[magnitude.id] = el; } }"
                         :value="$local.cronExpression[magnitude.id]"
                         :placeholder="magnitude.placeholder" />
+                </div>
+                <div class="flex_1">
+                    <button class="mini" v-on:click="() => setMagnitudeFromNow(magnitudeIndex)">🕓</button>
+                </div>
+                <div class="flex_1">
+                    <button class="mini" v-on:click="() => decreaseMagnitude(magnitudeIndex)">◀️</button>
+                </div>
+                <div class="flex_1">
+                    <button class="mini" v-on:click="() => increaseMagnitude(magnitudeIndex)">▶️</button>
                 </div>
             </div>
         </div>

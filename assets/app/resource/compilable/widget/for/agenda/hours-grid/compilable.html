@@ -1,3 +1,11 @@
 <div class="nwt_widget_for_agenda_hours_grid">
     Día: {{ $local.selectedDayAsString }}.
+    <template v-if="$local.selectedDay">
+        Tareas del mes:
+        <pre>{{ $local.openedMonthTasks }}</pre>
+    </template>
+    <template v-if="$local.selectedDay">
+        Tareas del dia:
+        <pre>{{ $local.selectedDayTasks }}</pre>
+    </template>
 </div>

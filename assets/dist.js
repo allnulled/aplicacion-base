@@ -25460,6 +25460,9 @@ const { lutimesSync } = require("fs-extra");
     static defaultLocale = "es-ES";
 
     static fromDateToNatural(d = new Date(), options = this.defaultNaturalOptions, locale = this.defaultLocale, capitalize = true) {
+      if(d === null) {
+        return "Indeterminado";
+      }
       const datestring = new Intl.DateTimeFormat(locale, options).format(d);
       return capitalize ? NwtUtils.capitalize(datestring) : datestring;
     }
@@ -37356,6 +37359,7 @@ Vue.component("NwtTesterNode", {
   const NwtCronExpression = class {
 
     static create(...args) {
+      trace("NwtCronExpression.create");
       return new this(...args);
     }
 
@@ -37371,24 +37375,67 @@ Vue.component("NwtTesterNode", {
     };
 
     static fromString(code) {
+      trace("NwtCronExpression.fromString");
       const [second, minute, hour, day, month, weekday, year = "*"] = code.split(" ");
       return new this({ second, minute, hour, day, month, weekday, year });
     }
 
     constructor(scope = {}) {
+      trace("NwtCronExpression.constructor");
       Object.assign(this, this.constructor.defaultScope, scope);
     }
 
     override(units = {}) {
+      trace("NwtCronExpression.prototype.override");
       Object.assign(this, units);
       return this;
     }
 
+    isOnlyNumberOrWord(val) {
+      return (val + "").match(/^([0-9]|[A-Za-z])+$/g);
+    }
+
+    isUniqueMoment() {
+      trace("NwtCronExpression.prototype.isUniqueMoment");
+      const {year, month, day, hour, minute, second, weekday} = this;
+      const list = [year, month, day, hour, minute, second, weekday];
+      for(let index=0; index<list.length; index++) {
+        const item = list[index];
+        const isUnique = this.isOnlyNumberOrWord(item);
+        if(!isUnique) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    isSameMonthByDate(date) {
+      trace("NwtCronExpression.prototype.isSameMonthByDate");
+      assertion(date instanceof Date, "Parameter «date» must be instance of Date on «NwtCronExpression.prototype.isSameMonthByDate»");
+      const { year, month } = this;
+      const isSameYear = date.getFullYear() === parseInt(year);
+      const isSameMonth = date.getMonth() === (parseInt(month)-1);
+      return isSameYear && isSameMonth;
+    }
+
+    isSameDayByDate(date) {
+      trace("NwtCronExpression.prototype.isSameDayByDate");
+      assertion(date instanceof Date, "Parameter «date» must be instance of Date on «NwtCronExpression.prototype.isSameDayByDate»");
+      const { year, month, day } = this;
+      console.log("same day by date", year, month, day, date.getFullYear(), date.getMonth(), date.getDate());
+      const isSameYear = date.getFullYear() === parseInt(year);
+      const isSameMonth = date.getMonth() === (parseInt(month)-1);
+      const isSameDay = date.getDate() === parseInt(day);
+      return isSameYear && isSameMonth && isSameDay;
+    }
+
     toString() {
+      trace("NwtCronExpression.prototype.toString");
       return `${this.second} ${this.minute} ${this.hour} ${this.day} ${this.month} ${this.weekday} ${this.year}`;
     }
 
     toObject() {
+      trace("NwtCronExpression.prototype.toObject");
       return NwtObjectUtils.exceptKeys(this, [
         "override",
         "toString",
@@ -37399,10 +37446,12 @@ Vue.component("NwtTesterNode", {
     }
 
     toSchedulable(options = {}) {
+      trace("NwtCronExpression.prototype.toSchedulable");
       return new Cron(this.toString(), options);
     }
 
     toPersistibleJob(callback, options = {}) {
+      trace("NwtCronExpression.prototype.toPersistibleJob");
       assertion(typeof callback === "function", `Parameter «callback» must be function on «NwtCronExpression.toPersistibleJob»`);
       assertion(typeof options === "object", `Parameter «options» must be object on «NwtCronExpression.toPersistibleJob»`);
       return NwtCronManager.global.addJob({
@@ -37457,6 +37506,11 @@ Vue.component("NwtTesterNode", {
       this.manager = manager;
       Object.assign(this, parameters);
       this.cronObject = new Cron(this.pattern, Object.assign({}, this.options), this.callback);
+    }
+
+    toCronExpression() {
+      trace("NwtCronPersistibleJob.prototype.toCronExpression");
+      return NwtCronExpression.fromString(this.pattern);
     }
 
     toJSON() {
@@ -37616,7 +37670,12 @@ Vue.component("NwtTesterNode", {
 Vue.component("NwtCronJobForm", {
   name: "NwtCronJobForm",
   template: `<div class="nwt_cron_job_form">
-    <div>
+    <div class="" v-if="isLoading">
+        <nwt-progress-bar-viewer
+            :progress-bar="\$local.progressBarForLoading"
+        />
+    </div>
+    <div v-else>
         <div class="nowrap">
             <div class="flex_row centered">
                 <div class="flex_1">🪧 Nombre: </div>
@@ -37633,7 +37692,7 @@ Vue.component("NwtCronJobForm", {
             <div class="flex_row centered">
                 <div class="flex_1">⏰ Alarma: </div>
             </div>
-            <textarea class="width_100 text_align_right" type="text" disabled="true" :value="\$window.cronstrue.toString(job.pattern)" />
+            <div class="box_cron_pattern_to_natural">{{ \$window.cronstrue.toString(job.pattern) }}</div>
         </div>
         <div class="nowrap">
             <div class="flex_row centered">
@@ -37668,6 +37727,15 @@ Vue.component("NwtCronJobForm", {
                         :ref="(el) => { if(el === null) { delete \$local.controls[magnitude.id]; } else { \$local.controls[magnitude.id] = el; } }"
                         :value="\$local.cronExpression[magnitude.id]"
                         :placeholder="magnitude.placeholder" />
+                </div>
+                <div class="flex_1">
+                    <button class="mini" v-on:click="() => setMagnitudeFromNow(magnitudeIndex)">🕓</button>
+                </div>
+                <div class="flex_1">
+                    <button class="mini" v-on:click="() => decreaseMagnitude(magnitudeIndex)">◀️</button>
+                </div>
+                <div class="flex_1">
+                    <button class="mini" v-on:click="() => increaseMagnitude(magnitudeIndex)">▶️</button>
                 </div>
             </div>
         </div>
@@ -37722,6 +37790,7 @@ Vue.component("NwtCronJobForm", {
   data() {
     trace("NwtCronJobForm.data");
     return {
+      isLoading: true,
       isEditingCallback: false,
     };
   },
@@ -37734,8 +37803,8 @@ Vue.component("NwtCronJobForm", {
 
     getValueByUi() {
       trace("NwtCronJobForm.methods.getValueByUi");
-      return NwtObjectUtils.cleanMapByPairs(this.$local.controls, (k,v) => {
-        if(k === "callback") {
+      return NwtObjectUtils.cleanMapByPairs(this.$local.controls, (k, v) => {
+        if (k === "callback") {
           return [k, NwtCodeComposer.hydrateFunction(v.value)]
         }
         return [k, v.value];
@@ -37744,38 +37813,114 @@ Vue.component("NwtCronJobForm", {
 
     async saveJob() {
       trace("NwtCronJobForm.methods.saveJob");
+      this.isLoading = true;
+      this.$local.progressBarForLoading.total = 7;
+      this.$local.progressBarForLoading.current = 0;
+      this.$local.progressBarForLoading.advance();
       const valueByUi = this.getValueByUi();
+      this.$local.progressBarForLoading.advance();
       this.job.title = valueByUi.title;
-      if(valueByUi.callback) {
+      if (valueByUi.callback) {
         this.job.callback = valueByUi.callback.toString();
       }
+      this.$local.progressBarForLoading.advance();
       this.job.pattern = NwtCronExpression.create(valueByUi).toString();
+      this.$local.progressBarForLoading.advance();
       await this.job.manager.save();
+      this.$local.progressBarForLoading.advance();
       await this.job.manager.reload();
+      this.$local.progressBarForLoading.advance();
       this.onSaved();
+      this.$local.progressBarForLoading.advance();
+      this.isLoading = false;
     },
 
     pastePlaceholderTemplate() {
       trace("NwtCronJobForm.methods.pastePlaceholderTemplate");
       this.$local.controls.callback.value = this.$local.controls.callback.placeholder;
+    },
+
+    setMagnitudeFromNow(magnitudeIndex) {
+      trace("NwtCronJobForm.methods.setMagnitudeFromNow");
+      const { id } = this.$local.magnitudes[magnitudeIndex];
+      const getterMethod = this.$local.magnitudeMethods[id].getter;
+      let magnitudeValueFromNow = (new Date())[getterMethod]();
+      if(id === "month") {
+        magnitudeValueFromNow++;
+      }
+      this.$local.controls[id].value = magnitudeValueFromNow;
+    },
+
+    increaseMagnitude(magnitudeIndex) {
+      trace("NwtCronJobForm.methods.increaseMagnitude");
+      const { id } = this.$local.magnitudes[magnitudeIndex];
+      const currentValue = this.$local.controls[id].value;
+      const intValue = parseInt(currentValue);
+      this.$local.controls[id].value = (Number.isNaN(intValue) || intValue <= 0 ? 0 : intValue) + 1;
+    },
+
+    decreaseMagnitude(magnitudeIndex) {
+      trace("NwtCronJobForm.methods.decreaseMagnitude");
+      const { id } = this.$local.magnitudes[magnitudeIndex];
+      const currentValue = this.$local.controls[id].value;
+      const intValue = parseInt(currentValue);
+      this.$local.controls[id].value = (Number.isNaN(intValue) || intValue <= 0 ? 1 : intValue) - 1;
     }
+
   },
   created() {
     trace("NwtCronJobForm.mounted");
     NwtVue2Toolkit.installLocal(this);
     this.$local.controls = {};
     this.$local.cronExpression = NwtCronExpression.fromString(this.job.pattern);
+    this.$local.magnitudeMethods = {
+      year: {
+        getter: "getFullYear",
+        setter: "setFullYear",
+      },
+      month: {
+        getter: "getMonth",
+        setter: "setMonth",
+      },
+      day: {
+        getter: "getDate",
+        setter: "setDate",
+      },
+      weekday: {
+        getter: "getDay",
+        setter: "setDay",
+      },
+      hour: {
+        getter: "getHours",
+        setter: "setHours",
+      },
+      minute: {
+        getter: "getMinutes",
+        setter: "setMinutes",
+      },
+      second: {
+        getter: "getSeconds",
+        setter: "setSeconds",
+      },
+      millisecond: {
+        getter: "getMilliseconds",
+        setter: "setMilliseconds",
+      },
+    };
     this.$local.magnitudes = [
-      {text:"📆 Año", id: "year", placeholder:"Ej: *,1984,2026-2029,*/4" },
-      {text:"📆 Mes", id: "month", placeholder:"Ej: *,12,1-6,*/3" },
-      {text:"📆 Día", id: "day", placeholder:"Ej: *,31,1-15,*/2" },
-      {text:"📆 Semanal", id: "weekday", placeholder:"Ej: *,MON,TUE,WED,THU,FRI,SAT,SUN" },
-      {text:"⌚️ Hora", id: "hour", placeholder:"Ej: *,0-12,23,*/8" },
-      {text:"⌚️ Minuto", id: "minute", placeholder:"Ej: *,0-30,59,*/5" },
-      {text:"⌚️ Segundo", id: "second", placeholder:"Ej: *,0-30,59,*/10" },
+      { text: "📆 Año", id: "year", placeholder: "Ej: *,1984,2026-2029,*/4" },
+      { text: "📆 Mes", id: "month", placeholder: "Ej: *,12,1-6,*/3" },
+      { text: "📆 Día", id: "day", placeholder: "Ej: *,31,1-15,*/2" },
+      { text: "📆 Semanal", id: "weekday", placeholder: "Ej: *,MON,TUE,WED,THU,FRI,SAT,SUN" },
+      { text: "⌚️ Hora", id: "hour", placeholder: "Ej: *,0-12,23,*/8" },
+      { text: "⌚️ Minuto", id: "minute", placeholder: "Ej: *,0-30,59,*/5" },
+      { text: "⌚️ Segundo", id: "second", placeholder: "Ej: *,0-30,59,*/10" },
     ];
+    this.$local.progressBarForLoading = NwtProgressBar.create();
   },
-  mounted() {},
+  mounted() {
+    this.isLoading = false;
+  },
 });
 
 // @vuebundler[Proyecto_base_001][126]=/home/carlos/Escritorio/Alvaro/aplicacion-generica-v1/assets/framework/browser/components/nwt-cron/nwt-cron-job-form/nwt-cron-job-form.css
@@ -37819,6 +37964,7 @@ Vue.component("NwtCronManagerViewer", {
                         v-on:click="() => removeJob(job)">❌</button>
                 </div>
             </div>
+            <nwt-progress-bar-viewer class="hidden" :progress-bar="\$local.progressBar1" :ref="\$nwt.Vue2.generateRefCallback(['\$local','progressBarViewer1'])" />
             <div class="pad_top_1 pad_right_1" v-if="isOpened.indexOf(job) !== -1">
                 <div class="card">
                     <nwt-cron-job-form :job="job" :on-saved="() => toggleJob(job)" />
@@ -37849,12 +37995,16 @@ Vue.component("NwtCronManagerViewer", {
     },
     toggleJob(job) {
       trace("NwtCronManagerViewer.methods.toggleJob");
-      const pos = this.isOpened.indexOf(job);
-      if(pos === -1) {
-        this.isOpened.push(job);
-      } else {
-        this.isOpened.splice(pos, 1);
-      }
+      this.$local.progressBarViewer1.$el.classList.remove("hidden");
+      setTimeout(() => {
+        const pos = this.isOpened.indexOf(job);
+        if(pos === -1) {
+          this.isOpened.push(job);
+        } else {
+          this.isOpened.splice(pos, 1);
+        }
+        this.$local.progressBarViewer1.$el.classList.add("hidden");
+      }, 10);
     },
     removeJob(job) {
       trace("NwtCronManagerViewer.methods.removeJob");
@@ -37869,7 +38019,15 @@ Vue.component("NwtCronManagerViewer", {
       return NwtCronExpression.create({title: "Sin título"}).toPersistibleJob(NwtUtils.noop);
     }
   },
-  created() {},
+  created() {
+    trace("NwtCronManagerViewer.created");
+    NwtVue2Toolkit.installLocal(this);
+    this.$local.progressBarViewer1 = undefined;
+    this.$local.progressBar1 = NwtProgressBar.create();
+    this.$local.progressBar1.current = 98;
+    this.$local.progressBar1.total = 100;
+    this.$local.progressBar1._updatePercentage();
+  },
   mounted() {
     trace("NwtCronManagerViewer.mounted");
   },
@@ -46564,6 +46722,10 @@ NwtResource.define({
     "onChange": {
       "type": Function,
       "default": NwtUtils.noop
+    },
+    "onChangeMonth": {
+      "type": Function,
+      "default": NwtUtils.noop
     }
   },
   subtypeOf: "text",
@@ -46887,10 +47049,24 @@ NwtResource.define({
         out = `${year}/${NwtUtils.padStart(month,2,'0')}/${NwtUtils.padStart(day,2,'0')}`;
         return out;
       },
+      "getSelectedDayAsDate": function() {
+        trace("NwtViewForTypeDayPicker.methods.getSelectedDayAsDate");
+        if (!this.selectedCell) {
+          return new Date();
+        }
+        const date = new Date();
+        date.setFullYear(this.selectedCell.year, parseInt(this.selectedCell.month) - 1, this.selectedCell.day);
+        return date;
+      },
       "onChangeWrapper": function(newValue, oldValue) {
         trace("NwtViewForTypeDayPicker.methods.onChangeWrapper");
         const value = this.getSelectedDayFormatted();
         this.settings.onChange(value, this);
+      },
+      "onChangeMonthWrapper": function(newValue, oldValue) {
+        trace("NwtViewForTypeDayPicker.methods.onChangeMonthWrapper");
+        const value = this.getSelectedDayFormatted();
+        this.settings.onChangeMonth(value, this);
       }
     },
     computed: {
@@ -46937,7 +47113,8 @@ NwtResource.define({
         const propagator = this.settings.onChangeOption || NwtUtils.noop;
         propagator(newValue, oldValue, this);
       },
-      "selectedCell": ["onChangeWrapper"]
+      "selectedCell": ["onChangeWrapper"],
+      "dateForMonth": ["onChangeMonthWrapper"]
     },
     created: function() {
       // @COMPILED-BY: control/trait/for/toolkit
@@ -47834,6 +48011,14 @@ NwtResource.define({
     template: `
       <div class="nwt_widget_for_agenda_hours_grid">
           Día: {{ $local.selectedDayAsString }}.
+          <template v-if="$local.selectedDay">
+              Tareas del mes:
+              <pre>{{ $local.openedMonthTasks }}</pre>
+          </template>
+          <template v-if="$local.selectedDay">
+              Tareas del dia:
+              <pre>{{ $local.selectedDayTasks }}</pre>
+          </template>
       </div>`,
     data: function() {
       const finalData = {};
@@ -47861,9 +48046,33 @@ NwtResource.define({
       },
       "loadTasks": function() {
         trace("NwtWidgetForAgendaHoursGrid.methods.loadTasks");
-        const tasksOfDay = [];
+        const allJobs = NwtCronManager.global.jobs;
+        const tasksOfMonth = {};
+        const tasksOfDay = {};
+        Iterating_jobs: for (let index = 0; index < allJobs.length; index++) {
+          const job = allJobs[index];
+          const cronExpression = job.toCronExpression();
+          Cuando_son_patrones: if (!cronExpression.isUniqueMoment()) {
+            // @TODO: Habría que calcular la siguiente, pero esto en estadio 2.
+            continue Iterating_jobs;
+          }
+          Cuando_coincide_con_el_mes_abierto: if (cronExpression.isSameMonthByDate(this.agenda.$local.controls.day.dateForMonth)) {
+            if (!(cronExpression.day in tasksOfMonth)) {
+              tasksOfMonth[cronExpression.day] = [];
+            }
+            tasksOfMonth[cronExpression.day].push(job);
+          }
+          const selectedDay = this.agenda.$local.controls.day.getSelectedDayAsDate();
+          Cuando_coincide_con_el_dia_seleccionado: if (cronExpression.isSameDayByDate(selectedDay)) {
+            if (!(cronExpression.hour in tasksOfDay)) {
+              tasksOfDay[cronExpression.hour] = [];
+            }
+            tasksOfDay[cronExpression.hour].push(job);
+          }
+        }
         // @TODO: coger, del cron, las tareas que coinciden con el día.
         this.$local.selectedDayTasks = tasksOfDay;
+        this.$local.openedMonthTasks = tasksOfMonth;
         this.$forceUpdate(true);
       }
     },
@@ -47875,6 +48084,7 @@ NwtResource.define({
       NwtVue2.Toolkit.installLocal(this);
       this.$local.selectedDay = undefined;
       this.$local.selectedDayTasks = [];
+      this.$local.openedMonthTasks = [];
     },
     mounted: function() {
       // @COMPILED-BY: control/trait/for/settings

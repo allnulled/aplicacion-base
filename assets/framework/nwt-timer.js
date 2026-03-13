@@ -52,6 +52,9 @@
     static defaultLocale = "es-ES";
 
     static fromDateToNatural(d = new Date(), options = this.defaultNaturalOptions, locale = this.defaultLocale, capitalize = true) {
+      if(d === null) {
+        return "Indeterminado";
+      }
       const datestring = new Intl.DateTimeFormat(locale, options).format(d);
       return capitalize ? NwtUtils.capitalize(datestring) : datestring;
     }

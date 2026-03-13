@@ -37,6 +37,11 @@
       this.cronObject = new Cron(this.pattern, Object.assign({}, this.options), this.callback);
     }
 
+    toCronExpression() {
+      trace("NwtCronPersistibleJob.prototype.toCronExpression");
+      return NwtCronExpression.fromString(this.pattern);
+    }
+
     toJSON() {
       trace("NwtCronPersistibleJob.prototype.toJSON");
       const persistible = NwtObjectUtils.exceptKeys(this, this.constructor.notPersistibleProps);
